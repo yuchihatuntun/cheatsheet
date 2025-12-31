@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  31 DEC 2025 13:13
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  31 DEC 2025 13:36
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1050,10 +1050,12 @@ File: images/image-2025-12-31-13-06-57.png Graphic file (type bmp)
 <images/image-2025-12-31-13-06-57.png>
 File: images/image-2025-12-31-13-09-33.png Graphic file (type bmp)
 <images/image-2025-12-31-13-09-33.png>
+File: images/image-2025-12-31-13-21-58.png Graphic file (type bmp)
+<images/image-2025-12-31-13-21-58.png>
 File: images/image-2025-12-30-20-09-04.png Graphic file (type bmp)
 <images/image-2025-12-30-20-09-04.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1085--1085
+Underfull \hbox (badness 10000) in paragraph at lines 1143--1143
 []\TU/PingFangSC(0)/m/n/5 决 定 输 出 窗 口 起 始 位 置，|  输 出 $\OML/cmm/m/it/5 Y$ \TU/PingFangSC(0)/m/n/5 对 应 输 入 域 的
  []
 
@@ -1062,31 +1064,31 @@ File: images/image-2025-12-30-20-14-01.png Graphic file (type bmp)
 File: images/image-2025-12-30-20-20-34.png Graphic file (type bmp)
 <images/image-2025-12-30-20-20-34.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1121--1121
+Underfull \hbox (badness 10000) in paragraph at lines 1179--1179
 [][]\TU/PingFangSC(0)/b/n/5 右 移
  []
 
 File: images/image-2025-12-30-20-28-49.png Graphic file (type bmp)
 <images/image-2025-12-30-20-28-49.png>
+[3]
 File: images/image-2025-12-30-21-05-25.png Graphic file (type bmp)
 <images/image-2025-12-30-21-05-25.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1166--1166
+Underfull \hbox (badness 10000) in paragraph at lines 1224--1224
 []\TU/PingFangSC(0)/m/n/5 最 后 一 级 经 过 \TU/lmr/m/n/5 Buffer \TU/PingFangSC(0)/m/n/5 输 出 最 终 结 果
  []
 
-[3]
 File: images/image-2025-12-30-21-26-07.png Graphic file (type bmp)
 <images/image-2025-12-30-21-26-07.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1245--1245
+Underfull \hbox (badness 10000) in paragraph at lines 1303--1303
 []\TU/PingFangSC(0)/m/n/5 输 入 信 号 与 反 馈 的  |“现 态”|  共 同 决 定  |“次
  []
 
 File: images/image-2025-12-30-21-32-44.png Graphic file (type bmp)
 <images/image-2025-12-30-21-32-44.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1279--1279
+Underfull \hbox (badness 10000) in paragraph at lines 1337--1337
 [][]\TU/PingFangSC(0)/b/n/5 策 略 二：| \TU/lmr/bx/n/5 (CS) +
  []
 
@@ -1098,15 +1100,15 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `VLSI-Cheatsheet.out' has not changed.
-(rerunfilecheck)             Checksum: A347956A4B5EAB0CD9452ED3433B859A;12053.
+(rerunfilecheck)             Checksum: 2A8A7BAEF6B84A51CB09D03FEB9BA4C3;12359.
  ) 
 Here is how much of TeX's memory you used:
- 28365 strings out of 473832
- 628324 string characters out of 5729481
- 1198951 words of memory out of 5000000
- 50906 multiletter control sequences out of 15000+600000
+ 28375 strings out of 473832
+ 628705 string characters out of 5729481
+ 1199270 words of memory out of 5000000
+ 50915 multiletter control sequences out of 15000+600000
  562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,17n,114p,618b,1025s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,17n,114p,618b,1033s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on VLSI-Cheatsheet.pdf (4 pages).

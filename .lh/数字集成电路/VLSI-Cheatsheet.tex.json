@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 37,
+            "activePatchIndex": 42,
             "patches": [
                 {
                     "date": 1767155038943,
@@ -156,6 +156,26 @@
                 {
                     "date": 1767157994059,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -988,23 +988,23 @@\n 实际的CMOS反相器或逻辑门是有输出电阻的：\n \n \\imgleft[0.4]{images/image-2025-12-31-13-09-33.png}{\n \n-\\entry{电路模型}{驱动器建模为理想电压源串联内阻 $R_s$。}\n-\\concepttable{\n-    \\conrow{电阻叠加}{首个节点充电路径包含 $R_s$，即 $R_1 = R_s + r\\Delta l$。后续所有节点路径均包含 $R_s$。}\n-    \\conrow{Elmore 延时}{将 $R_s$ 影响与导线自阻分离：$\\tau_D = R_s C_w + \\frac{RC}{2} = R_s (cL) + \\frac{rcL^2}{2}$。}\n+    \\entry{电路模型}{驱动器建模为理想电压源串联内阻 $R_s$。}\n+    \\concepttable{\n+        \\conrow{电阻叠加}{首个节点充电路径包含 $R_s$，即 $R_1 = R_s + r\\Delta l$。后续所有节点路径均包含 $R_s$。}\n+        \\conrow{Elmore 延时}{将 $R_s$ 影响与导线自阻分离：$\\tau_D = R_s C_w + \\frac{RC}{2} = R_s (cL) + \\frac{rcL^2}{2}$。}\n+    }\n+\n }\n+\n \\entry{传播延时 $t_p$}{结合集总与分布特性的系数修正，将时间常数转化为 50\\% 延时：}\n \\concepttable{\n     \\conrow{计算公式}{$\\boxed{t_p = 0.69 R_s C_w + 0.38 r c L^2}$}\n     \\conrow{物理意义}{第一项对应 $R_s$ 驱动集总电容（系数 0.69）；第二项对应导线内部分布 $RC$ 特性（系数 0.38）。}\n }\n \n-}\n \n-\n-\n \\subsection{长导线的延时优化}\n \n \\section{第六章\\ 组合逻辑}\n \n"
+                },
+                {
+                    "date": 1767158267737,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -998,9 +998,11 @@\n }\n \n \\entry{传播延时 $t_p$}{结合集总与分布特性的系数修正，将时间常数转化为 50\\% 延时：}\n \\concepttable{\n-    \\conrow{计算公式}{$\\boxed{t_p = 0.69 R_s C_w + 0.38 r c L^2}$}\n+    \\conrow{计算公式}{$\\boxed{\n+t_{p} = \\underbrace{\\textcolor{blue}{0.69 R_{s} \\cdot cL}}_{\\text{逻辑门延时}} + \\underbrace{\\textcolor{red}{0.38 r c L^{2}}}_{\\text{互连线延时}}\n+}$}\n     \\conrow{物理意义}{第一项对应 $R_s$ 驱动集总电容（系数 0.69）；第二项对应导线内部分布 $RC$ 特性（系数 0.38）。}\n }\n \n \n"
+                },
+                {
+                    "date": 1767158310455,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1001,9 +1001,8 @@\n \\concepttable{\n     \\conrow{计算公式}{$\\boxed{\n t_{p} = \\underbrace{\\textcolor{blue}{0.69 R_{s} \\cdot cL}}_{\\text{逻辑门延时}} + \\underbrace{\\textcolor{red}{0.38 r c L^{2}}}_{\\text{互连线延时}}\n }$}\n-    \\conrow{物理意义}{第一项对应 $R_s$ 驱动集总电容（系数 0.69）；第二项对应导线内部分布 $RC$ 特性（系数 0.38）。}\n }\n \n \n \\subsection{长导线的延时优化}\n"
+                },
+                {
+                    "date": 1767158604126,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -997,17 +997,31 @@\n \n }\n \n \\entry{传播延时 $t_p$}{结合集总与分布特性的系数修正，将时间常数转化为 50\\% 延时：}\n-\\concepttable{\n-    \\conrow{计算公式}{$\\boxed{\n+\n+\\entry{计算公式}{$\\boxed{\n t_{p} = \\underbrace{\\textcolor{blue}{0.69 R_{s} \\cdot cL}}_{\\text{逻辑门延时}} + \\underbrace{\\textcolor{red}{0.38 r c L^{2}}}_{\\text{互连线延时}}\n }$}\n-}\n \n \n \\subsection{长导线的延时优化}\n \n+\\subsubsection{方法一：插入中继器}\n+\n+\\img[0.8\\linewidth]{images/image-2025-12-31-13-21-58.png}\n+\n+物理策略：面对一根总长度为 $L$ 的长导线，为了打破 $L^2$ 的延时增长，我们将其等分为 $M$ 段。在每一段之间插入一个中继器（Repeater），电路图中三角形符号代表中继器。结果：原来的长导线变成了 $M$ 个独立的短导线段，每一段的长度为 $L/M$。延时公式推导 ($t_p$)：总延时 = （每一段导线的延时 + 中继器的延时） $\\times$ 段数 $M$。导线部分：每一段长度为 $\\frac{L}{M}$。根据 Slide 21 的结论，分布RC导线延时为 $0.38rc(\\text{Length})^2$。因此，一段导线的延时为 $0.38rc(\\frac{L}{M})^2$。中继器部分：假设每个中继器的固有延时为 $t_{pbuf}$。\n+\\concepttable{\n+    \\conrow{物理策略}{将长度为 $L$ 的长导线等分为 $M$ 段，段间插入中继器（Repeater）以打破 $L^2$ 延时增长。}\n+    \\conrow{结构结果}{长导线变为 $M$ 个独立段，每段长度为 $L/M$。}\n+    \\conrow{延时推导}{总延时 $t_{p,total} = (t_{p,wire} + t_{p,buf}) \\times M$。}\n+    \\conrow{\\red{延时计算}}{$t_{p,total} = 0.38rcL^2/M + M t_{p,buf}$。}\n+    \\conrow{参数说明}{$t_{p,wire} = 0.38rc(L/M)^2$，$t_{p,buf}$ 为中继器固有延时。}\n+}\n+\n+\\entry{优化结论}{选取最优 $M$ 可使总延时由 $L^2$ 增长转变为与 $L$ \\red{线性增长}。}\n+\n \\section{第六章\\ 组合逻辑}\n \n \\subsection{静态互补 CMOS 逻辑}\n \n"
+                },
+                {
+                    "date": 1767158636883,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1007,8 +1007,10 @@\n \\subsection{长导线的延时优化}\n \n \\subsubsection{方法一：插入中继器}\n \n+为简化分析，假设中继器（反相器或缓冲器）是理想的\n+\n \\img[0.8\\linewidth]{images/image-2025-12-31-13-21-58.png}\n \n \\concepttable{\n     \\conrow{物理策略}{将长度为 $L$ 的长导线等分为 $M$ 段，段间插入中继器（Repeater）以打破 $L^2$ 延时增长。}\n"
+                },
+                {
+                    "date": 1767158674708,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1009,16 +1009,16 @@\n \\subsubsection{方法一：插入中继器}\n \n 为简化分析，假设中继器（反相器或缓冲器）是理想的\n \n-\\img[0.8\\linewidth]{images/image-2025-12-31-13-21-58.png}\n-\n-\\concepttable{\n-    \\conrow{物理策略}{将长度为 $L$ 的长导线等分为 $M$ 段，段间插入中继器（Repeater）以打破 $L^2$ 延时增长。}\n-    \\conrow{结构结果}{长导线变为 $M$ 个独立段，每段长度为 $L/M$。}\n-    \\conrow{延时推导}{总延时 $t_{p,total} = (t_{p,wire} + t_{p,buf}) \\times M$。}\n-    \\conrow{\\red{延时计算}}{$t_{p,total} = 0.38rcL^2/M + M t_{p,buf}$。}\n-    \\conrow{参数说明}{$t_{p,wire} = 0.38rc(L/M)^2$，$t_{p,buf}$ 为中继器固有延时。}\n+\\imgleft[0.3]{images/image-2025-12-31-13-21-58.png}{\n+    \\concepttable{\n+        \\conrow{物理策略}{将长度为 $L$ 的长导线等分为 $M$ 段，段间插入中继器（Repeater）以打破 $L^2$ 延时增长。}\n+        \\conrow{结构结果}{长导线变为 $M$ 个独立段，每段长度为 $L/M$。}\n+        \\conrow{延时推导}{总延时 $t_{p,total} = (t_{p,wire} + t_{p,buf}) \\times M$。}\n+        \\conrow{\\red{延时计算}}{$t_{p,total} = 0.38rcL^2/M + M t_{p,buf}$。}\n+        \\conrow{参数说明}{$t_{p,wire} = 0.38rc(L/M)^2$，$t_{p,buf}$ 为中继器固有延时。}\n+    }\n }\n \n \\entry{优化结论}{选取最优 $M$ 可使总延时由 $L^2$ 增长转变为与 $L$ \\red{线性增长}。}\n \n"
                 }
             ],
             "date": 1767155038943,

@@ -998,13 +998,71 @@ CMOS 逻辑门的输出端可以等效为一个一阶 RC 电路。$V_{in}$ 代�
 }
 
 \entry{传播延时 $t_p$}{结合集总与分布特性的系数修正，将时间常数转化为 50\% 延时：}
-\concepttable{
-    \conrow{计算公式}{$\boxed{t_p = 0.69 R_s C_w + 0.38 r c L^2}$}
-    \conrow{物理意义}{第一项对应 $R_s$ 驱动集总电容（系数 0.69）；第二项对应导线内部分布 $RC$ 特性（系数 0.38）。}
-}
 
+\entry{计算公式}{$$\boxed{
+t_{p} = \underbrace{\textcolor{blue}{0.69 R_{s} \cdot cL}}_{\text{逻辑门延时}} + \underbrace{\textcolor{red}{0.38 r c L^{2}}}_{\text{互连线延时}}
+}$$}
+
+\vspace{-10pt}
 
 \subsection{长导线的延时优化}
+
+\subsubsection{方法一：插入中继器}
+
+为简化分析，假设中继器（反相器或缓冲器）是理想的
+
+\imgleft[0.3]{images/image-2025-12-31-13-21-58.png}{
+    \concepttable{
+        \conrow{物理原理}{将长度为 $L$ 的长导线等分为 $M$ 段，段间插入中继器以\red{打破 $L^2$ 延时增长}。}
+        \conrow{分段策略}{长导线变为 $M$ 个独立段，每段长度为 $L/M$。}
+    }
+}
+
+\concepttable{
+    \conrow{延时推导}{$t_{p,total} = (t_{p,wire} + t_{p,buf}) \times M$。}
+    \conrow{\red{延时计算}}{$t_{p,total} = 0.38rcL^2/M + M t_{p,buf}$。}
+    \conrow{参数说明}{$t_{p,wire} = 0.38rc(L/M)^2$，$t_{p,buf}$ 为\red{中继器固有延时}。}
+}
+
+\entry{优化结论}{选取最优 $M$ 可使总延时由 $L^2$ 增长转变为与 $L$ \red{线性增长}。}
+
+\entry{\red{延时总公式}}{$$\boxed{t_p = M [ 0.38rc(L/M)^2 + t_{p,buf} ] = \boxed{0.38rcL^2/M + M t_{p,buf}}}$$}
+
+\vspace{-6pt}
+
+\entry{最优解计算 ($M_{opt}$)}{寻找总延时最小的段数：}
+\concepttable{
+    \conrow{求导推导}{令 $\frac{dt_p}{dM} = 0$，得最优段数 $\boxed{M = L \sqrt{0.38rc / t_{pbuf}}}$。}
+    \conrow{设计依据}{分段数取决于导线物理参数 ($r, c$) 和中继器速度 ($t_{pbuf}$)。}
+}
+
+\entry{优化特性}{
+    \concepttable{
+        \conrow{线性化}{经过优化，总延时 $t_{p,opt}$ 与总长度 $L$ 呈\red{线性关系}。}
+        \conrow{性能指标}{$t_{p,opt} \propto \sqrt{t_{pwire} t_{pbuf}}$，成功打破了 $L^2$ 的限制。}
+    }
+}
+
+\subsubsection{插入中继器 (考虑负载)}
+
+将理想模型修正为包含输出电阻 $R_d$、输入电容 $C_d$ 及尺寸因子 $s$ 的实际模型。
+
+\concepttable{
+    \conrow{驱动电阻}{$R_{drv} = R_d/s$，尺寸 $s$ 越大，驱动电阻越小。}
+    \conrow{负载电容}{$C_{gate} = sC_d$，尺寸 $s$ 越大，下一级门电容负载越大。}
+    \conrow{自负载因子}{$\gamma = C_{p}/C_{g}$，反映中继器自身寄生电容比例。}
+}
+
+\entry{延时分解}{总延时 $t_p$ 由驱动器延时、负载充电延时及导线分布延时组成：}
+\entry{公式}{$t_p = M [ 0.69 \frac{R_d}{s} (s\gamma C_d + \frac{cL}{M} + sC_d) + 0.69 \frac{rL}{M} (sC_d) + 0.38rc (\frac{L}{M})^2 ]$}
+
+\entry{双重优化}{同时优化分段数 $M$ 与尺寸 $s$ 以达到阻抗匹配：}
+
+\concepttable{
+    \conrow{最优尺寸}{$\boxed{s_{opt} = \sqrt{R_d c / r C_d}}$，平衡驱动能力与负载效应。}
+    \conrow{最小延时}{$\boxed{t_{p,min} = (1.38 + 1.02\sqrt{\gamma+1}) L \sqrt{R_d C_d rc}}$}
+    \conrow{核心结论}{经过优化，长导线总延时与长度 $L$ 呈\red{线性正比}，消除了 $L^2$ 效应。}
+}
 
 \section{第六章\ 组合逻辑}
 
