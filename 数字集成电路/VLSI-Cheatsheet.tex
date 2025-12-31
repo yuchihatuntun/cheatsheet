@@ -912,6 +912,8 @@ CMOS 逻辑门的输出端可以等效为一个一阶 RC 电路。$V_{in}$ 代�
     \conrow{线间互感}{相邻导线间的磁场耦合产生感应电动势（互感），是产生串扰的磁性分量（对应容性串扰）。}
 }
 
+\entry{Elmore 延时}{工程近似方法。通用公式：$\tau_{DN} = \sum_{i=1}^{N} C_i (\sum_{j=1}^{i} R_j)$。即各节点电容与其到源端路径电阻之积的加权和。}
+\entry{均匀线推导}{将 $L$ 分为 $N$ 段，每段 $r\Delta L, c\Delta L$。取 $N \to \infty$ 极限，求和系数 $\frac{N(N+1)}{2N^2} \to \frac{1}{2}$。}
 
 \noindent
 \begin{minipage}[t]{0.48\linewidth}
@@ -925,7 +927,7 @@ CMOS 逻辑门的输出端可以等效为一个一阶 RC 电路。$V_{in}$ 代�
 \concepttable{
     \conrow{物理特性}{导线可被视为一个\red{等电位体}（理想导线）。}
     \conrow{\red{延时计算}}{$\boxed{\tau = RC = rcL^2}$。}
-    \conrow{参数说明}{$r, c$：单位长度的电阻和电容（Unit length parameters）。}
+    \conrow{参数说明}{$r, c$：单位长度的电阻和电容}
     \conrow{模型简化}{整根导线被简化为一个\red{单一的集总电容}，作为驱动门的负载负载。}
 }
 
@@ -933,8 +935,74 @@ CMOS 逻辑门的输出端可以等效为一个一阶 RC 电路。$V_{in}$ 代�
 \hfill
 \begin{minipage}[t]{0.48\linewidth}
 \subsection{分布模型}
-111
+
+\entry{适用条件}{\red{导线较长}，电阻效应显著，信号沿线存在电压梯度，不能视为等电位体。}
+
+\img[0.9\linewidth]{images/image-2025-12-31-12-45-41.png}
+\vspace{4pt}
+\concepttable{
+    \conrow{\red{延时计算}}{$\boxed{\tau = \frac{RC}{2} = \frac{rcL^2}{2}}$。}
+    \conrow{物理意义}{电容均匀分布，平均电流仅需流过一半电阻。延时为集总模型的 \red{1/2}。}
+}
+
 \end{minipage}
+
+\imgleft[0.3]{images/image-2025-12-31-12-47-11.png}{
+\entry{曲线分析}{图中曲线代表导线不同位置 $x$ 的电压响应：}
+\concepttable{
+    \conrow{$x=L/10$}{响应极快，上升沿陡峭，波形接近输入阶跃信号。}
+    \conrow{$x=L$}{响应最慢，上升沿变得非常平缓，延迟最大。}
+    \conrow{中间位置}{随着距离 $x$ 的增加，波形的\red{上升时间} 显著变长。}
+}
+\entry{物理特性分析}{
+    \concepttable{
+        \conrow{扩散效应}{由于分布电阻和电容的存在，信号能量被“平摊”。高频分量（对应陡峭上升沿）衰减比低频分量快。}
+        \conrow{信号延迟}{信号到达末端不仅幅值上升缓慢，且存在明显的传输延时。}
+    }
+}
+
+}
+
+\subsubsection{阶跃响应对比 (集总 vs 分布)}
+
+量化集总模型和分布模型在响应速度上的差异：
+
+\concepttable{
+    \conrow{传播延时 $t_p$ (50\%)}{集总：$t_p = 0.69 RC$ \par 分布：$t_p \approx 0.38 RC$}
+    \conrow{时间常数 $\tau$ (63\%)}{集总：$\tau = 1 RC$ \par 分布：$\tau = 0.5 RC$}
+    \conrow{上升时间 $t_r$ (10\%-90\%)}{集总：$t_r = 2.2 RC$ \par 分布：$t_r = 0.9 RC$}
+}
+
+\imgleft[0.4]{images/image-2025-12-31-13-06-57.png}{
+    \entry{波形分析}{
+        \concepttable{
+            \conrow{集总模型}{上升沿较缓。电流必须流经完整电阻 $R$ 才能为总电容 $C$ 充电。}
+            \conrow{分布模型}{上升沿较陡。靠近驱动端的电容路径阻抗极低，可迅速建立电压。}
+        }   
+    }
+    \entry{工程结论}{\red{集总 RC 模型是分布模型的保守估计}。若电路在集总模型下满足时序要求，则在实际分布环境下必有性能余量。}
+}
+
+\subsubsection{考虑驱动器内阻的分布模型}
+
+实际的CMOS反相器或逻辑门是有输出电阻的：
+
+\imgleft[0.4]{images/image-2025-12-31-13-09-33.png}{
+
+    \entry{电路模型}{驱动器建模为理想电压源串联内阻 $R_s$。}
+    \concepttable{
+        \conrow{电阻叠加}{首个节点充电路径包含 $R_s$，即 $R_1 = R_s + r\Delta l$。后续所有节点路径均包含 $R_s$。}
+        \conrow{Elmore 延时}{将 $R_s$ 影响与导线自阻分离：$\tau_D = R_s C_w + \frac{RC}{2} = R_s (cL) + \frac{rcL^2}{2}$。}
+    }
+
+}
+
+\entry{传播延时 $t_p$}{结合集总与分布特性的系数修正，将时间常数转化为 50\% 延时：}
+\concepttable{
+    \conrow{计算公式}{$\boxed{t_p = 0.69 R_s C_w + 0.38 r c L^2}$}
+    \conrow{物理意义}{第一项对应 $R_s$ 驱动集总电容（系数 0.69）；第二项对应导线内部分布 $RC$ 特性（系数 0.38）。}
+}
+
 
 \subsection{长导线的延时优化}
 

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "README.md",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1767155713293,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1767155713293,
+            "name": "Commit-0",
+            "content": "# cheatsheet\n\n某人新建 repo 的时候不带脑子，把只建了一个 readme 的空仓库同步到本地了，自己在本地还没 备份，写了 3-4 天的东西全没了，幸亏latex是每编译一段时间就把原来的版本删除到废纸篓，才能一张张图找回文件。"
+        }
+    ]
+}

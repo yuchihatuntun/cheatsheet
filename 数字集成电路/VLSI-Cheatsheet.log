@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  31 DEC 2025 12:30
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  31 DEC 2025 13:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -815,7 +815,7 @@ Package xeCJK Warning: Redefining CJKfamily `\CJKsfdefault' (STXihei).
 
 Package xeCJK Warning: Redefining CJKfamily `\CJKttdefault' (STFangsong).
 
-No file VLSI-Cheatsheet.aux.
+(./VLSI-Cheatsheet.aux)
 \openout1 = `VLSI-Cheatsheet.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 140.
@@ -895,6 +895,7 @@ LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
 (Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 140.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 140.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
 *geometry* verbose mode - [ preamble ] result:
@@ -930,14 +931,12 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 Package hyperref Info: Link coloring OFF on input line 140.
+(./VLSI-Cheatsheet.out) (./VLSI-Cheatsheet.out)
 \@outlinefile=\write4
 \openout4 = `VLSI-Cheatsheet.out'.
 
-
-Package hyperref Warning: Rerun to get /PageLabels entry.
-
 LaTeX Font Info:    Trying to load font information for U+msa on input line 151.
-(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
+ (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 151.
@@ -1043,15 +1042,18 @@ File: images/image-2025-12-31-11-38-34.png Graphic file (type bmp)
 [2]
 File: images/image-2025-12-31-12-02-32.png Graphic file (type bmp)
 <images/image-2025-12-31-12-02-32.png>
-
-Underfull \hbox (badness 10000) in paragraph at lines 930--930
-[]$\OML/cmm/m/it/5 r; c$\TU/PingFangSC(0)/m/n/5 ：|  单 位 长 度 的 电 阻 和 电 容  |（\TU/lmr/m/n/5 Unit
- []
-
+File: images/image-2025-12-31-12-45-41.png Graphic file (type bmp)
+<images/image-2025-12-31-12-45-41.png>
+File: images/image-2025-12-31-12-47-11.png Graphic file (type bmp)
+<images/image-2025-12-31-12-47-11.png>
+File: images/image-2025-12-31-13-06-57.png Graphic file (type bmp)
+<images/image-2025-12-31-13-06-57.png>
+File: images/image-2025-12-31-13-09-33.png Graphic file (type bmp)
+<images/image-2025-12-31-13-09-33.png>
 File: images/image-2025-12-30-20-09-04.png Graphic file (type bmp)
 <images/image-2025-12-30-20-09-04.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1017--1017
+Underfull \hbox (badness 10000) in paragraph at lines 1085--1085
 []\TU/PingFangSC(0)/m/n/5 决 定 输 出 窗 口 起 始 位 置，|  输 出 $\OML/cmm/m/it/5 Y$ \TU/PingFangSC(0)/m/n/5 对 应 输 入 域 的
  []
 
@@ -1060,7 +1062,7 @@ File: images/image-2025-12-30-20-14-01.png Graphic file (type bmp)
 File: images/image-2025-12-30-20-20-34.png Graphic file (type bmp)
 <images/image-2025-12-30-20-20-34.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1053--1053
+Underfull \hbox (badness 10000) in paragraph at lines 1121--1121
 [][]\TU/PingFangSC(0)/b/n/5 右 移
  []
 
@@ -1069,21 +1071,22 @@ File: images/image-2025-12-30-20-28-49.png Graphic file (type bmp)
 File: images/image-2025-12-30-21-05-25.png Graphic file (type bmp)
 <images/image-2025-12-30-21-05-25.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1098--1098
+Underfull \hbox (badness 10000) in paragraph at lines 1166--1166
 []\TU/PingFangSC(0)/m/n/5 最 后 一 级 经 过 \TU/lmr/m/n/5 Buffer \TU/PingFangSC(0)/m/n/5 输 出 最 终 结 果
  []
 
+[3]
 File: images/image-2025-12-30-21-26-07.png Graphic file (type bmp)
 <images/image-2025-12-30-21-26-07.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1177--1177
+Underfull \hbox (badness 10000) in paragraph at lines 1245--1245
 []\TU/PingFangSC(0)/m/n/5 输 入 信 号 与 反 馈 的  |“现 态”|  共 同 决 定  |“次
  []
 
 File: images/image-2025-12-30-21-32-44.png Graphic file (type bmp)
 <images/image-2025-12-30-21-32-44.png>
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 1211--1211
+
+Underfull \hbox (badness 10000) in paragraph at lines 1279--1279
 [][]\TU/PingFangSC(0)/b/n/5 策 略 二：| \TU/lmr/bx/n/5 (CS) +
  []
 
@@ -1094,23 +1097,16 @@ File: images/image-2025-12-30-21-51-35.png Graphic file (type bmp)
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
-
-
-Package rerunfilecheck Warning: File `VLSI-Cheatsheet.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `VLSI-Cheatsheet.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  04794EF29164E69FCD7B1BECCAD2B644;11689.
+Package rerunfilecheck Info: File `VLSI-Cheatsheet.out' has not changed.
+(rerunfilecheck)             Checksum: A347956A4B5EAB0CD9452ED3433B859A;12053.
  ) 
 Here is how much of TeX's memory you used:
- 28295 strings out of 473832
- 626331 string characters out of 5729481
- 1193680 words of memory out of 5000000
- 50846 multiletter control sequences out of 15000+600000
+ 28365 strings out of 473832
+ 628324 string characters out of 5729481
+ 1198951 words of memory out of 5000000
+ 50906 multiletter control sequences out of 15000+600000
  562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,17n,114p,618b,1017s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,17n,114p,618b,1025s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on VLSI-Cheatsheet.pdf (4 pages).
