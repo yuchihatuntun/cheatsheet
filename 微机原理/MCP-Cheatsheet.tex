@@ -27,8 +27,8 @@
 
 \definecolor{myblue}{HTML}{003153} % 蓝色字
 \definecolor{myred}{HTML}{85120F}  % 红色字
-\definecolor{hlblue}{HTML}{7090D3} % 蓝色高亮
-\definecolor{hlred}{HTML}{D66A83}  % 红色高亮
+\definecolor{hlblue}{HTML}{ADC1DB} % 蓝色高亮
+\definecolor{hlred}{HTML}{F3755E}  % 红色高亮
 \definecolor{hlyellow}{HTML}{E3C79F}  % 奢金高亮
 \definecolor{hlgreen}{HTML}{BED49D}  % 抹茶绿高亮
 
@@ -1115,6 +1115,443 @@ EA = \text{基址值} \left\{
         }
     }
 \end{minipage}
+
+\subsubsection{方式 2}
+
+\entry{功能定义}{
+    分频脉冲形成。作为 \red{$N$ 分频器}使用，产生\red{连续的、周期性的}负脉冲。每输入 $N$ 个时钟脉冲，输出 $1$ 个低电平脉冲。
+}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+\vspace{-0.2cm}
+\concepttable{
+    \conrow{初始化}{写入控制字后 \red{OUT 立即变高}。写入初值 $N$ 后，在下一个 CLK 下降沿将初值装入执行单元 (CE)。}
+    \conrow{计数过程}{计数器从 $N$ 开始递减。在 $N$ 减至 $1$ 期间，\red{OUT 保持高电平}。}
+    \conrow{关键跳变}{当计数值减到 \red{$1$} 时（注意不是 $0$），\red{OUT 跳变为低电平}，并维持 $1$ 个时钟周期 ($T_{CLK}$)。}
+    \conrow{自动重装}{经过 $1$ 个周期的低电平后，\red{计数器自动重新装入初值 $N$，OUT 恢复高电平，开始新一轮计数。}}
+}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+
+\entry{结论}{
+    方式 2 输出的是周期信号，周期 $T = N \times T_{CLK}$。其中高电平持续 $N-1$ 个周期，低电平持续 $1$ 个周期。
+}
+\vspace{0.5cm}
+\entry{GATE 硬件控制}{
+    \concepttable{
+        \conrow{GATE=1}{允许计数，正常执行分频功能。}
+        \conrow{GATE=0}{禁止计数。若在计数过程中变低，OUT 立即变高；恢复为 $1$ 后，计数器将\red{重新装入初值}开始计数。}
+    }
+}
+
+\end{minipage}
+
+\entry{分频}{
+        输出信号频率 $f_{out} = f_{in} / N$。
+}
+
+\imgleft[0.4]{images/image-2025-12-31-18-50-39.png}{
+
+    \concepttable{
+        \conrow{启动阶段}{$\overline{WR}$ 写入初值 $N$。下一个 CLK 下降沿，CE 载入 $N$，OUT 保持高电平。}
+        \conrow{计数阶段}{CLK 驱动 CE 递减 ($N \to \dots \to 1$)。当 \red{CE=1} 时，\red{OUT 变为低电平}。}
+        \conrow{循环阶段}{维持 $1$ 个 CLK 低电平后，CE 自动重装初值 $N$，OUT 恢复高电平，周而复始形成连续脉冲。}
+    }
+
+}
+
+\imgleft[0.4]{images/image-2025-12-31-18-55-24.png}{
+    \entry{GATE 信号控制与硬件同步}{
+        方式 2 下，外部硬件信号 \red{GATE} 对计数过程具有控制和同步作用。
+    }
+    \concepttable{
+        \conrow{GATE=0}{强制停止。计数器停止计数，\red{OUT 强制变为高电平}（若当前为低则立即拉高）。}
+        \conrow{GATE=1}{允许计数，正常执行分频。}
+        \conrow{GATE 上升沿}{触发\red{硬件同步}。无论当前计数值，立即在下一个 CLK \red{重新装入初值 $N$，从头开始计数}。常用于使计数周期与外部信号对齐。}
+    }
+}
+
+\imgleft[0.4]{images/image-2025-12-31-18-57-39.png}{
+
+    \entry{修改初值}{
+        在计数过程中，若 CPU 通过软件修改计数初值：
+    }
+    \concepttable{
+        \conrow{本次周期}{新初值仅存入 \red{初值寄存器 (CR)}。执行单元 (CE) 仍按旧值继续计数，直到完成当前周期（含低电平脉冲），不会出现“半截”脉冲。}
+        \conrow{生效时刻}{在当前周期结束、触发\red{自动重装}时，新值才从 CR 装入 CE。}
+        \conrow{对比方式 0}{方式 0 写入即生效（立即重启）；方式 2 写入后\red{下周期生效}，确保输出波形的完整性。}
+    }
+
+}
+
+\entry{方式 2 特性总结}{
+
+    \concepttable{
+        \conrow{初始状态}{写入控制字后，\red{OUT 立即变为高电平}。}
+        \conrow{启动时机}{写入初值后的下一个 \red{CLK} 下降沿，初值装入 \red{CE} 并开始减 1 计数。}
+        \conrow{输出波形}{当计数减至 \red{1} 时，输出一个宽度为 \red{1 个 $T_{CLK}$} 的负脉冲。}
+        \conrow{分频特性}{输出为连续周期信号，周期 \red{$T = N \times T_{CLK}$}，频率 \red{$f_{out} = f_{in} / N$}。}
+        \conrow{同步方式}{\blue{软件同步}：写入新初值，当前周期结束后生效；\blue{硬件同步}：\red{GATE 上升沿}触发立即重装初值并重新开始。}
+        \conrow{GATE 逻辑}{\red{0}：停止计数且 \red{OUT} 变高；\red{1}：允许计数。}
+    }
+
+}
+
+\subsubsection{方式 2 - 编程实例}
+
+\entry{实例：5 分频器}{
+    \blue{需求}：计数器 1，方式 2，初值 5，二进制，仅低 8 位。
+}
+\concepttable{
+    \conrow{控制字}{SC=01, RL=01, M=010, BCD=0 $\to$ \red{54H}}
+    \conrow{汇编实现}{
+        \texttt{MOV AL, 54H} \par
+        \texttt{OUT COUNTD, AL \ ;写控制字} \par
+        \texttt{MOV AL, 5} \par
+        \texttt{OUT COUNTB, AL \ ;写初值}
+    }
+}
+
+\entry{波形特征}{
+    总周期 $= N = 5$ 个 $T_{CLK}$；高电平持续 $N-1 = 4$ 个周期；低电平持续 $1$ 个周期。OUT1 在 $05, 04, 03, 02$ 期间为高，在 $01$ 期间为低，然后循环。
+}
+
+\subsubsection{方式 2 - 时常数计算}
+
+\blue{频率已知}：$N = \dfrac{f_{in}}{f_{out}}$
+
+\blue{周期已知}：$N = \dfrac{T_{out}}{T_{in}}$
+
+\noindent
+\begin{minipage}[t]{0.32\linewidth}
+    \entry{实例 1}{
+        \blue{已知}：$f_{in} = 2$ MHz，$f_{out} = 1$ kHz
+    }
+    \concepttable{
+        \conrow{计算}{$N = \dfrac{2 \times 10^6}{1 \times 10^3}$\par
+        $= \red{2000}$}
+    }
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.32\linewidth}
+    \entry{实例 2}{
+        \blue{已知}：$T_{in} = 1\ \mu$s，$T_{out} = 1.3$ ms
+    }
+    \concepttable{
+        \conrow{计算}{$1.3$ ms $= 1300\ \mu$s \par 
+        \vspace{3pt}
+        $N = \dfrac{1300}{1} = \red{1300}$}
+    }
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.32\linewidth}
+    \entry{实例 3}{
+        \blue{已知}：$f_{in} = 1$ MHz ($T_{in} = 1\ \mu$s)
+    }
+    \concepttable{
+        \conrow{波形图}{低电平 1.5 ms，高 3 ms}
+        \conrow{计算}{$T_{out} = 4.5$ ms $= 4500\ \mu$s \par $N = \red{4500}$}
+    }
+\end{minipage}
+
+\subsubsection{方式 3}
+
+\entry{功能定义}{
+    \red{方波信号发生器}。与方式 2 类似，也是一种分频器，但输出对称或近似对称的方波。输出信号周期 $T_{out} = N \times T_{CLK}$。
+}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+
+    \img[\linewidth]{images/image-2025-12-31-20-50-11.png}
+
+    \concepttable{
+        \conrow{N 为偶数}{输出\red{完全对称}方波。高电平持续 $N/2$ 个 $T_{CLK}$，低电平持续 $N/2$ 个 $T_{CLK}$。}
+        \conrow{N 为奇数}{输出\red{近似对称}方波。高电平持续 $(N+1)/2$ 个 $T_{CLK}$，低电平持续 $(N-1)/2$ 个 $T_{CLK}$。}
+    }
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+
+    \img[\linewidth]{images/image-2025-12-31-20-51-26.png}
+    \vspace{4pt}
+    \entry{GATE 硬件控制}{
+        与方式 2 逻辑一致：
+        \concepttable{
+            \conrow{GATE=1}{允许计数，正常输出方波。}
+            \conrow{GATE=0}{禁止计数，\red{OUT 立即跳变为高电平}。}
+            \conrow{GATE 上升沿}{触发硬件同步，使计数器\red{重新装入初值}开始计数。}
+        }   
+    }
+
+\end{minipage}
+
+\entry{修改初值}{
+    在计数过程中写入新初值，不会立即影响当前输出。新初值将在\red{当前半个周期（高电平或低电平）结束}、发生电平跳变时装入执行单元。
+}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+
+    \img[\linewidth]{images/image-2025-12-31-20-56-48.png}
+
+    \entry{方式 3 偶数计数逻辑}{
+        当计数初值 $N$ 为偶数时，8253 内部执行单元 (CE) 采用\red{减 2 计数}方式以实现对称方波。
+    }
+    \concepttable{
+        \conrow{初始化}{写入方式 3 控制字后，\red{OUT 端初始为高电平}。}
+        \conrow{前半周期 (高)}{写入偶数初值 $N$ 后，CE 从 $N$ 开始每隔一个 CLK \red{减 2}。当 $CE=0$ 时，OUT 翻转为低，\red{并自动重装初值 $N$}。}
+        \conrow{后半周期 (低)}{CE 再次从 $N$ 开始每脉冲\red{减 2}。当 $CE=0$ 时，OUT 翻转为高，并再次重装初值 $N$。}
+        \conrow{波形特征}{高低电平宽度相等，均为 $(N/2) \times T_{CLK}$，输出为\red{完全对称方波}。}
+    }
+
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+
+    \img[\linewidth]{images/image-2025-12-31-21-02-18.png}
+
+    \entry{方式 3 奇数计数逻辑}{
+        当初值 $N$ 为奇数时，8253 内部通过修正逻辑处理不对称性。
+    }
+    \vspace{0.65cm}
+    \concepttable{
+        \conrow{第一阶段 (高)}{装入时硬件自动将 $N$ 修正为偶数 $N-1$，并进行“减 2”计数。实际输出高电平时间为 $(N+1)/2 \times T_{CLK}$（由于修正周期的存在）。}
+        \conrow{第二阶段 (低)}{计数器重新装入修正后的偶数 $N-1$，进行“减 2”计数。实际输出低电平时间为 $(N-1)/2 \times T_{CLK}$。}
+    }
+
+\end{minipage}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+
+    \img[\linewidth]{images/image-2025-12-31-20-56-48.png}
+
+    \entry{方式 3 偶数初值时序分析 ($N=4$)}{
+     
+        \concepttable{
+            \conrow{初始化}{写入控制字后，\red{OUT} 端初始化为高电平。}
+            \conrow{写入初值}{通过 $\overline{WR}$ 信号的负脉冲将初值 \red{$N=4$} 写入。}
+            \conrow{启动延迟}{写入初值后的下一个 \red{CLK} 下降沿，计数器正式开始工作。}
+            \conrow{计数逻辑}{执行单元 (CE) 采用 \red{减 2} 方式变化：$04 \to 02 \to 00$。}
+            \conrow{波形输出}{CE 递减期间 \red{OUT 保持高电平} (2 个周期)；减至 $00$ 后，OUT 变低，CE 自动重装为 $04$ 并再次减至 $00$，此时 \red{OUT 保持低电平} (2 个周期)。}
+        }
+
+    }
+
+    \entry{应用场景}{方式 3 模式非常适合生成\red{低频时钟信号}，例如将系统高频晶振分频后提供给低速外设使用。}
+
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+
+\img[\linewidth]{images/image-2025-12-31-21-02-18.png}
+
+\vspace{3pt}
+
+\entry{方式 3 奇数初值时序分析 ($N=5$)}{
+    \concepttable{
+        \conrow{高电平阶段}{宽度为 \red{3} 个 $T_{CLK}$。内部状态：$04 \to 02 \to 00$。对应 $(N+1)/2$。}
+        \conrow{低电平阶段}{宽度为 \red{2} 个 $T_{CLK}$。内部状态：$04 \to 02$。对应 $(N-1)/2$。}
+        \conrow{波形特征}{高电平比低电平宽一个时钟周期，形成\red{近似对称}的方波。}
+    }
+}
+
+\end{minipage}
+
+\entry{方式 3 特性总结}{
+    \concepttable{
+        \conrow{初始状态}{写入控制字后，\red{OUT} 立即变高。}
+        \conrow{偶数初值 $N$}{高电平 $N/2$，低电平 $N/2$，输出\red{完全对称}方波。}
+        \conrow{奇数初值 $N$}{高电平 $(N+1)/2$，低电平 $(N-1)/2$，输出\red{近似对称}方波。}
+        \conrow{功能本质}{产生周期为 $N$ 的方波（即 \red{$N$ 分频}）。}
+        \conrow{软件同步}{写入新初值后，不立即打断当前半周期，需等待当前半周期结束后在下一次翻转重装时生效。}
+        \conrow{硬件同步}{\red{GATE 上升沿}触发，立即复位计数器并从高电平周期的起始点重新计数（相位同步）。}
+        \conrow{GATE 控制}{\red{0}：计数停止，\red{OUT 保持当前电平不变}（注意：方式 2 是强制变高）；\red{1}：允许工作。}
+    }
+}
+
+\entry{\hlblue{方式 3 编程示例 01：基本设计}}{
+    \blue{场景}：8254 计数器 0 连接 CPU 的 \red{5 MHz} 时钟，输出 \red{0.5 MHz} 方波。
+}
+
+\concepttable{
+    \conrow{参数计算}{输入频率 $f_{in} = 5$ MHz；输出频率 $f_{out} = 0.5$ MHz；分频系数 $N = f_{in}/f_{out} = 5/0.5 = \red{10}$。}
+    \conrow{控制字}{SC=00, RL=01 (低 8 位), M=011 (方式 3), BCD=0 $\to$ \red{16H}}
+    \conrow{汇编实现}{
+        \texttt{MOV DX, COUNTD} \par
+        \texttt{MOV AL, 16H} \par
+        \texttt{OUT DX, AL \ \ ;写控制字} \par
+        \texttt{MOV DX, COUNTA} \par
+        \texttt{MOV AL, 10} \par
+        \texttt{OUT DX, AL \ \ ;写初值}
+    }
+}
+
+\entry{波形特征}{
+    $N=10$ 为偶数，输出\red{完全对称方波}。高电平持续 $5$ 个 $T_{CLK}$，低电平持续 $5$ 个 $T_{CLK}$。周期 $T_{out} = 10 \times 0.2\ \mu\text{s} = 2\ \mu\text{s}$，对应频率 $0.5$ MHz。
+}
+
+\entry{\hlblue{方式 3 - 编程示例 02：级联方案}}{
+
+\entry{级联设计题目}{
+    \blue{系统配置}：8086 CPU 主频为 \red{5 MHz}。
+    
+    \blue{任务要求}：
+    \concepttable{
+        \conrow{任务 A}{计数器 0 输出 \red{1 MHz} 方波。}
+        \conrow{任务 B}{计数器 2 产生 \red{1 Hz} 的单脉冲周期信号。}
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.33\linewidth}
+    \entry{\hlred{级联方式 1：串行级联}}{
+
+        \entry{硬件连接逻辑}{
+            \concepttable{
+                \conrow{计数器 1}{输入：\red{5 MHz} 系统时钟；初值：$N_1=5000$；输出：\red{1 kHz}。}
+                \conrow{计数器 2}{输入：来自计数器 1 的输出 (\red{1 kHz})；初值：$N_2=1000$；输出：\red{1 Hz}。}
+            }
+        }
+
+        \entry{关键连接}{
+            计数器 1 的 \red{OUT1} $\to$ 计数器 2 的 \red{CLK2}。
+        }
+
+        \entry{编程实现}{
+            \concepttable{
+                \conrow{计数器 1}{控制字：\red{76H}；初值：\red{5000}。}
+                \conrow{计数器 2}{控制字：\red{B4H}；初值：\red{1000}。}
+            }
+        }
+
+        \blue{汇编代码}：
+        \begin{itemize}
+            \item \texttt{MOV AL, 76H}
+            \item \texttt{OUT COUNTD, AL}
+            \item \texttt{MOV AL, B4H}
+            \item \texttt{OUT COUNTD, AL}
+            \item \texttt{MOV AX, 5000}
+            \item \texttt{OUT COUNTB, AL}
+            \item \texttt{MOV AL, AH}
+            \item \texttt{OUT COUNTB, AL}
+            \item \texttt{MOV AX, 1000}
+            \item \texttt{OUT COUNTC, AL}
+            \item \texttt{MOV AL, AH}
+            \item \texttt{OUT COUNTC, AL}
+        \end{itemize}
+
+    }
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.33\linewidth}
+    \entry{\hlred{级联方式 2：并行输入}}{
+
+        \entry{硬件连接逻辑}{
+            \concepttable{
+                \conrow{计数器 0}{输入：\red{5 MHz}；初值：$N_0=5$；输出：\red{1 MHz}（任务 A）。}
+                \conrow{计数器 1}{输入：\red{5 MHz}（并行）；初值：$N_1=5000$；输出：\red{1 kHz}。}
+                \conrow{计数器 2}{输入：来自计数器 1 (\red{1 kHz})；初值：$N_2=1000$；输出：\red{1 Hz}（任务 B）。}
+            }
+        }
+
+        \entry{关键连接}{
+            计数器 0 与 1-2 组并行；计数器 1 的 \red{OUT1} $\to$ 计数器 2 的 \red{CLK2}。
+        }
+
+        \entry{编程实现}{
+            \concepttable{
+                \conrow{计数器 0}{控制字：\red{16H}；初值：\red{5}。}
+                \conrow{计数器 1}{控制字：\red{76H}；初值：\red{5000}。}
+                \conrow{计数器 2}{控制字：\red{B4H}；初值：\red{1000}。}
+            }
+        }
+
+        \blue{汇编代码}：
+        \begin{itemize}
+            \item \texttt{MOV AL, 16H}
+            \item \texttt{OUT COUNTD, AL}
+            \item \texttt{MOV AL, 76H}
+            \item \texttt{OUT COUNTD, AL}
+            \item \texttt{MOV AL, B4H}
+            \item \texttt{OUT COUNTD, AL}
+            \item \texttt{MOV AL, 5}
+            \item \texttt{OUT COUNTA, AL}
+            \item \texttt{MOV AX, 5000}
+            \item \texttt{OUT COUNTB, AL}
+            \item \texttt{MOV AL, AH}
+            \item \texttt{OUT COUNTB, AL}
+            \item \texttt{MOV AX, 1000}
+            \item \texttt{OUT COUNTC, AL}
+            \item \texttt{MOV AL, AH}
+            \item \texttt{OUT COUNTC, AL}
+        \end{itemize}
+
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.33\linewidth}
+
+\entry{\hlred{级联方式3：完全串联级联}}{
+    
+    \entry{硬件连接逻辑}{
+        充分利用计数器 0 的中间成果，形成 \red{C0 $\to$ C1 $\to$ C2} 的全级联结构。
+        \concepttable{
+            \conrow{计数器 0}{输入：\red{5 MHz}；初值：$N_0=5$；输出：\red{1 MHz}（任务 A）。}
+            \conrow{计数器 1}{输入：来自计数器 0 (\red{1 MHz})；初值：$N_1=1000$；输出：\red{1 kHz}。}
+            \conrow{计数器 2}{输入：来自计数器 1 (\red{1 kHz})；初值：$N_2=1000$；输出：\red{1 Hz}（任务 B）。}
+        }
+    }
+
+    \entry{关键连接}{
+        计数器 0 的 \red{OUT0} $\to$ 计数器 1 的 \red{CLK1}；计数器 1 的 \red{OUT1} $\to$ 计数器 2 的 \red{CLK2}。总分频比 $= 5 \times 1000 \times 1000 = 5,000,000$。
+    }
+
+    \entry{编程实现}{
+        \concepttable{
+            \conrow{计数器 0}{控制字：\red{16H}；初值：\red{5}。}
+            \conrow{计数器 1}{控制字：\red{76H}；初值：\red{1000}。}
+            \conrow{计数器 2}{控制字：\red{B4H}；初值：\red{1000}。}
+        }
+    }
+
+    \blue{汇编代码}：
+    \begin{itemize}
+        \item \texttt{MOV AL, 16H}
+        \item \texttt{OUT COUNTD, AL}
+        \item \texttt{MOV AL, 76H}
+        \item \texttt{OUT COUNTD, AL}
+        \item \texttt{MOV AL, B4H}
+        \item \texttt{OUT COUNTD, AL}
+        \item \texttt{MOV AL, 5}
+        \item \texttt{OUT COUNTA, AL}
+        \item \texttt{MOV AX, 1000}
+        \item \texttt{OUT COUNTB, AL}
+        \item \texttt{MOV AL, AH}
+        \item \texttt{OUT COUNTB, AL}
+        \item \texttt{MOV AX, 1000}
+        \item \texttt{OUT COUNTC, AL}
+        \item \texttt{MOV AL, AH}
+        \item \texttt{OUT COUNTC, AL}
+    \end{itemize}
+
+}
+
+\end{minipage}
+}
+
+\entry{方案对比}{
+    \concepttable{
+        \conrow{方案 1 (串行)}{C1 分频系数大 (5000)，C0 与 C1-C2 组独立。}
+        \conrow{方案 2 (并行)}{C0 独立完成 1 MHz，C1-C2 组并行接入 5 MHz。}
+        \conrow{方案 3 (完全串联)}{充分利用 C0 中间成果，形成完整级联链路。适合需要多级分频的场景。}
+    }
+}
 
 % --- 手动换栏命令（如果需要强制换列）---
 % \columnbreak 

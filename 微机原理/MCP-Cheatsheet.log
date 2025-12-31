@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  31 DEC 2025 12:28
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  31 DEC 2025 21:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -807,7 +807,7 @@ Package xeCJK Warning: Redefining CJKfamily `\CJKsfdefault' (STXihei).
 
 Package xeCJK Warning: Redefining CJKfamily `\CJKttdefault' (STFangsong).
 
-No file MCP-Cheatsheet.aux.
+(./MCP-Cheatsheet.aux)
 \openout1 = `MCP-Cheatsheet.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 139.
@@ -887,6 +887,7 @@ LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
 (Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 139.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 139.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
 *geometry* verbose mode - [ preamble ] result:
@@ -922,14 +923,12 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 Package hyperref Info: Link coloring OFF on input line 139.
+(./MCP-Cheatsheet.out) (./MCP-Cheatsheet.out)
 \@outlinefile=\write4
 \openout4 = `MCP-Cheatsheet.out'.
 
-
-Package hyperref Warning: Rerun to get /PageLabels entry.
-
 LaTeX Font Info:    Trying to load font information for U+msa on input line 147.
-(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
+ (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 147.
@@ -1045,28 +1044,229 @@ File: images/image-2025-12-29-15-43-06.png Graphic file (type bmp)
 <images/image-2025-12-29-15-43-06.png>
 File: images/image-2025-12-29-15-43-35.png Graphic file (type bmp)
 <images/image-2025-12-29-15-43-35.png>
-[3] (./MCP-Cheatsheet.aux)
+
+Overfull \hbox (1.88025pt too wide) in paragraph at lines 1148--1148
+[][]\TU/lmr/bx/n/5 GATE=1[]| 
+ []
+
+
+Overfull \hbox (1.88025pt too wide) in paragraph at lines 1148--1148
+[][]\TU/lmr/bx/n/5 GATE=0[]| 
+ []
+
+File: images/image-2025-12-31-18-50-39.png Graphic file (type bmp)
+<images/image-2025-12-31-18-50-39.png>
+File: images/image-2025-12-31-18-55-24.png Graphic file (type bmp)
+<images/image-2025-12-31-18-55-24.png>
+File: images/image-2025-12-31-18-57-39.png Graphic file (type bmp)
+<images/image-2025-12-31-18-57-39.png>
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 1236--1236
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 1247--1247
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 1257--1257
+[][] 
+ []
+
+File: images/image-2025-12-31-20-50-11.png Graphic file (type bmp)
+<images/image-2025-12-31-20-50-11.png>
+File: images/image-2025-12-31-20-51-26.png Graphic file (type bmp)
+<images/image-2025-12-31-20-51-26.png>
+
+Overfull \hbox (1.88025pt too wide) in paragraph at lines 1289--1289
+[][]\TU/lmr/bx/n/5 GATE=1[]| 
+ []
+
+
+Overfull \hbox (1.88025pt too wide) in paragraph at lines 1289--1289
+[][]\TU/lmr/bx/n/5 GATE=0[]| 
+ []
+
+File: images/image-2025-12-31-20-56-48.png Graphic file (type bmp)
+<images/image-2025-12-31-20-56-48.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+[][]\TU/PingFangSC(0)/b/n/5 前 半 周 期
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+[][]\TU/PingFangSC(0)/b/n/5 后 半 周 期
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+[]\TU/PingFangSC(0)/m/n/5 高 低 电 平 宽 度 相 等，|  均 为 $\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 N\OT1/cmr/m/n/5 /2) \OMS/cmsy/m/n/5 ^^B
+ []
+
+File: images/image-2025-12-31-21-02-18.png Graphic file (type bmp)
+<images/image-2025-12-31-21-02-18.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1325--1325
+[][]\TU/PingFangSC(0)/b/n/5 第 一 阶 段
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1325--1325
+[][]\TU/PingFangSC(0)/b/n/5 第 二 阶 段
+ []
+
+File: images/image-2025-12-31-20-56-48.png Graphic file (type bmp)
+<images/image-2025-12-31-20-56-48.png>
+File: images/image-2025-12-31-21-02-18.png Graphic file (type bmp)
+<images/image-2025-12-31-21-02-18.png>
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 1546--1546
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 1546--1546
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[]\TU/PingFangSC(0)/m/n/5 输 入：|  来 自 计 数 器 \TU/lmr/m/n/5 1 ([]\TU/lmr/bx/n/5 1
+ []
+
+
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 1546--1546
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 1546--1546
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[]\TU/PingFangSC(0)/m/n/5 输 入：|  来 自 计 数 器 \TU/lmr/m/n/5 0
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+\TU/lmr/m/n/5 ([]\TU/lmr/bx/n/5 1 MHz[]\TU/lmr/m/n/5 )\TU/PingFangSC(0)/m/n/5 ；|  初 值：|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[]\TU/PingFangSC(0)/m/n/5 输 入：|  来 自 计 数 器 \TU/lmr/m/n/5 1 ([]\TU/lmr/bx/n/5 1
+ []
+
+
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 1546--1546
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[][]\TU/PingFangSC(0)/b/n/5 计 数 器
+ []
+
+
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 1546--1546
+[][] 
+ []
+
+[4] (./MCP-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
-
-
-Package rerunfilecheck Warning: File `MCP-Cheatsheet.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `MCP-Cheatsheet.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  C4C29B85CEB3DA4A0B24376792027025;4434.
+Package rerunfilecheck Info: File `MCP-Cheatsheet.out' has not changed.
+(rerunfilecheck)             Checksum: A59076C167ABB2F62808CFBBA8B34190;4936.
  ) 
 Here is how much of TeX's memory you used:
- 27812 strings out of 473832
- 610713 string characters out of 5729481
- 1267054 words of memory out of 5000000
- 50383 multiletter control sequences out of 15000+600000
+ 27895 strings out of 473832
+ 613592 string characters out of 5729481
+ 1267133 words of memory out of 5000000
+ 50453 multiletter control sequences out of 15000+600000
  562624 words of font info for 73 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  93i,14n,114p,675b,1049s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on MCP-Cheatsheet.pdf (3 pages).
+Output written on MCP-Cheatsheet.pdf (4 pages).
