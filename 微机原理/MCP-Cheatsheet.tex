@@ -286,6 +286,23 @@ EA = \text{基址值} \left\{
 }
 
 
+\subsection{指令系统}
+
+\subsubsection{处理器控制类指令}
+\entry{\hlblue{标志操作指令}}{
+    \img[0.9\linewidth]{images/image-2026-01-01-04-02-42.png}
+    \vspace{-2pt}
+
+    \concepttable{
+        \conrow{CLC}{清除进位标志，\red{CF=0}。}
+        \conrow{STC}{设置进位标志，\red{CF=1}。}
+        \conrow{CMC}{进位标志取反，\red{CF=$\overline{CF}$}。}
+        \conrow{CLD}{清除方向标志，\red{DF=0}（地址递增）。}
+        \conrow{STD}{设置方向标志，\red{DF=1}（地址递减）。}
+        \conrow{CLI}{清除中断允许标志，\red{IF=0}（禁止中断）。}
+        \conrow{STI}{设置中断允许标志，\red{IF=1}（允许中断）。}
+    }
+}
 % --- 第3部分：图表占位 ---
 \section{第四章 汇编语言程序设计基础}
 \red{注意}：如果有图片，尽量不要插入大图。建议手绘或者用 TikZ，或者只是文字描述流程。
@@ -1497,7 +1514,7 @@ EA = \text{基址值} \left\{
 \hfill
 \begin{minipage}[t]{0.33\linewidth}
 
-\entry{\hlred{级联方式3：完全串联级联}}{
+\entry{\hlred {级联方式3：完全串联级联}}{
     
     \entry{硬件连接逻辑}{
         充分利用计数器 0 的中间成果，形成 \red{C0 $\to$ C1 $\to$ C2} 的全级联结构。
@@ -1550,6 +1567,35 @@ EA = \text{基址值} \left\{
         \conrow{方案 1 (串行)}{C1 分频系数大 (5000)，C0 与 C1-C2 组独立。}
         \conrow{方案 2 (并行)}{C0 独立完成 1 MHz，C1-C2 组并行接入 5 MHz。}
         \conrow{方案 3 (完全串联)}{充分利用 C0 中间成果，形成完整级联链路。适合需要多级分频的场景。}
+    }
+}
+
+\entry{\hlblue{8253 控制字与工作方式：共性总结}}{
+    \entry{1) 初始化/逻辑复位}{
+        向\red{控制寄存器}写入控制字时，芯片内部执行\red{逻辑复位}：清除旧配置，\red{OUT} 引脚回到该方式规定的初始状态（通常为高或低），为新一轮计数做准备。
+    }
+
+    \entry{2) GATE 信号的有效形式（按触发源分类）}{
+        \concepttable{
+            \conrow{电平控制（软件触发）}{\red{方式 0、方式 4}：\red{GATE=1} 允许计数，\red{GATE=0} 暂停计数；计数启动主要依靠\red{软件写入初值}。}
+            \conrow{上升沿触发（硬件触发）}{\red{方式 1、方式 5}：必须检测到 \red{GATE} 从 0$\to$1 的\red{上升沿}才启动计数，用于外部硬件触发定时。}
+            \conrow{双重触发（分频/发生器）}{\red{方式 2、方式 3}：既可通过\red{软件写初值}启动/更新周期，也可通过 \red{GATE 上升沿}强制\red{重同步}（从头开始当前周期）。}
+        }
+    }
+
+    \entry{3) CR 初值装入 CE 的时刻（按载入时机分类）}{
+        \concepttable{
+            \conrow{方式 0、方式 4}{写入初值后，在\red{下一个 CLK}（触发沿）时，\red{CR$\to$CE} 装入并开始计数。}
+            \conrow{方式 1、方式 5}{写入初值后\red{不立即装入}；需等待 \red{GATE 上升沿}到来后，在\red{下一个 CLK} 才 \red{CR$\to$CE} 装入开始计数。}
+            \conrow{方式 2、方式 3}{三种载入来源：\red{写初值后启动装入}；每周期结束时\red{自动重装}；\red{GATE 上升沿}可强制装入实现同步。}
+        }
+    }
+
+    \entry{4) 计数到 0 后的行为（是否周期性）}{
+        \concepttable{
+            \conrow{单次计数（不自动重装）}{\red{方式 0、1、4、5}：到达终值并完成 OUT 动作后，\red{内部计数并不停止}，仍会继续减 1（例如 $0\to FFFFH \to FFFEH \to \cdots$），但 OUT 通常保持在该方式规定的终态/后续状态。}
+            \conrow{循环计数（自动重装）}{\red{方式 2、3}：当 CE 到达终值后，芯片自动将 CR 中初值\red{再次装入} CE，进入下一周期，是形成连续波形的基础。}
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  31 DEC 2025 12:29
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  2 JAN 2026 00:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -927,14 +927,216 @@ Package hyperref Info: Link coloring OFF on input line 139.
 \@outlinefile=\write4
 \openout4 = `SCDP-Cheatsheet.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 164.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 156.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 164.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 156.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
+Overfull \hbox (27.18823pt too wide) in paragraph at lines 156--156
+ []|[][][][][][][] [][] 
+ []
+
+
+Overfull \hbox (22.18823pt too wide) in paragraph at lines 185--185
+ []|[][][][][][][] [][] 
+ []
+
+
+Overfull \hbox (57.18823pt too wide) in paragraph at lines 207--207
+ []|[][][][][][][] [][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 219--219
+[]\TU/PingFangSC(0)/m/n/5 载 流 子 浓 度 随 温 度 升 高 而[]\TU/PingFangSC(0)/b/n/5 增
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 219--219
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 227--227
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 235--235
+[][] 
+ []
+
+
+Overfull \hbox (22.18823pt too wide) in paragraph at lines 257--257
+ []|[][][][][][][] [][] 
+ []
+
+
+Overfull \hbox (22.18823pt too wide) in paragraph at lines 268--268
+ []|[][][][][][][] [][] 
+ []
+
+
+Overfull \hbox (27.18823pt too wide) in paragraph at lines 282--282
+ []|[][][][][][][] [][] 
+ []
+
+
+Overfull \hbox (27.18823pt too wide) in paragraph at lines 291--291
+ []|[][][][][][][] [][] 
+ []
+
+
+Overfull \hbox (27.18823pt too wide) in paragraph at lines 299--299
+ []|[][][][][][][] [][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 309--309
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 317--317
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 325--325
+[][] 
+ []
+
+
+Overfull \hbox (52.18823pt too wide) in paragraph at lines 333--333
+ []|[][][][][][][] [][] 
+ []
+
+
+Overfull \hbox (27.18823pt too wide) in paragraph at lines 341--341
+ []|[][][][][][][] [][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 358--358
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 367--367
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 376--376
+[][] 
+ []
+
+File: images/image-2026-01-01-13-25-54.png Graphic file (type bmp)
+<images/image-2026-01-01-13-25-54.png>
+
+Overfull \hbox (1.10318pt too wide) in paragraph at lines 445--445
+[]$\OML/cmm/m/it/5 x[] \OT1/cmr/m/n/5 = []$| 
+ []
+
+File: images/image-111.png Graphic file (type bmp)
+<images/image-111.png>
+
+Overfull \hbox (6.16669pt too wide) in paragraph at lines 466--469
+[]$\OML/cmm/m/it/5 ^^Np[]\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 x\OT1/cmr/m/n/5 ) = \OML/cmm/m/it/5 p[] [] [] []$ 
+ []
+
+
+Overfull \hbox (5.18349pt too wide) in paragraph at lines 470--473
+[]$\OML/cmm/m/it/5 ^^Nn[]\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 x\OT1/cmr/m/n/5 ) = \OML/cmm/m/it/5 n[] [] [] []$ 
+ []
+
+File: images/image-2026-01-01-20-07-05.png Graphic file (type bmp)
+<images/image-2026-01-01-20-07-05.png>
+
+Overfull \hbox (19.41618pt too wide) in paragraph at lines 538--539
+[] []|[][][][][][][] []$\OML/cmm/m/it/5 C[] \OT1/cmr/m/n/5 = [] [] [] []$[] 
+ []
+
+File: images/image-2026-01-01-21-53-18.png Graphic file (type bmp)
+<images/image-2026-01-01-21-53-18.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 590--590
+[][]\TU/PingFangSC(0)/b/n/5 物 理
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 590--590
+[]\TU/PingFangSC(0)/m/n/5 电 流 为 正 向 偏 置 电
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 590--590
+\TU/PingFangSC(0)/m/n/5 流，|  电 压 几 乎 全 部
+ []
+
+
+Overfull \hbox (1.84413pt too wide) in paragraph at lines 590--590
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 590--590
+[][]\TU/PingFangSC(0)/b/n/5 跳 变
+ []
+
+
+Overfull \hbox (1.84413pt too wide) in paragraph at lines 590--590
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 590--590
+[][]\TU/PingFangSC(0)/b/n/5 物 理
+ []
+
+
+Overfull \hbox (1.84413pt too wide) in paragraph at lines 590--590
+[][] 
+ []
+
+File: images/image-2026-01-01-23-29-31.png Graphic file (type bmp)
+<images/image-2026-01-01-23-29-31.png>
+File: images/image-2026-01-01-23-51-53.png Graphic file (type bmp)
+<images/image-2026-01-01-23-51-53.png>
+File: images/image-2026-01-01-23-52-18.png Graphic file (type bmp)
+<images/image-2026-01-01-23-52-18.png>
+File: images/image-2026-01-02-00-05-36.png Graphic file (type bmp)
+<images/image-2026-01-02-00-05-36.png>
+File: images/image-2026-01-02-00-07-32.png Graphic file (type bmp)
+<images/image-2026-01-02-00-07-32.png>
+File: images/image-2026-01-01-23-53-35.png Graphic file (type bmp)
+<images/image-2026-01-01-23-53-35.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 704--704
+[][]\TU/PingFangSC(0)/b/n/5 反 型 临 界 表
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 717--717
+[][]\TU/PingFangSC(0)/b/n/5 反 型 临 界 表
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 732--732
+[][]\TU/PingFangSC(0)/b/n/5 最 大 耗 尽 电
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 742--742
+[][]\TU/PingFangSC(0)/b/n/5 最 大 耗 尽 电
+ []
+
+[1
+
+]
 File: images/image-2025-12-30-12-07-58.png Graphic file (type bmp)
 <images/image-2025-12-30-12-07-58.png>
 File: images/image-2025-12-30-12-30-52.png Graphic file (type bmp)
@@ -946,7 +1148,7 @@ File: images/image-2025-12-30-12-36-22.png Graphic file (type bmp)
 File: images/image-2025-12-30-12-46-10.png Graphic file (type bmp)
 <images/image-2025-12-30-12-46-10.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 297--297
+Underfull \hbox (badness 10000) in paragraph at lines 918--918
 [][]\TU/PingFangSC(0)/b/n/5 总 势 能 最 高
  []
 
@@ -961,57 +1163,55 @@ File: images/image-2025-12-30-11-53-53.png Graphic file (type bmp)
 File: images/image-2025-12-30-11-56-22.png Graphic file (type bmp)
 <images/image-2025-12-30-11-56-22.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--432
+Underfull \hbox (badness 10000) in paragraph at lines 1055--1055
 [][]\TU/PingFangSC(0)/b/n/5 界 面 态 对 肖 特 基 势 垒 高 度
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--432
+Underfull \hbox (badness 10000) in paragraph at lines 1055--1055
 [][]\TU/PingFangSC(0)/b/n/5 加 偏 压 时 肖 特 基 势 垒 能 带
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--432
+Underfull \hbox (badness 10000) in paragraph at lines 1055--1055
 [][]\TU/PingFangSC(0)/b/n/5 金 属 与 重 掺 杂 半 导 体 接 触
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 440--440
+Underfull \hbox (badness 10000) in paragraph at lines 1063--1063
 [][]\TU/PingFangSC(0)/b/n/5 在 理 想 情 况 下，|  金 属 和 半
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 440--440
+Underfull \hbox (badness 10000) in paragraph at lines 1063--1063
 \TU/PingFangSC(0)/b/n/5 导 体 之 间 形 成 非 整 流 接 触
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 440--440
+Underfull \hbox (badness 10000) in paragraph at lines 1063--1063
 [][]\TU/PingFangSC(0)/b/n/5 根 据 给 出 的 金 属 与 半 导 体，|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 440--440
+Underfull \hbox (badness 10000) in paragraph at lines 1063--1063
 \TU/PingFangSC(0)/b/n/5 画 出 形 成 金 半 接 触 后 的 能
  []
 
-[1
-
-] (./SCDP-Cheatsheet.aux)
+[2] [3] (./SCDP-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `SCDP-Cheatsheet.out' has not changed.
-(rerunfilecheck)             Checksum: F7F6EE5322D04027E6E34AF927006746;1852.
+(rerunfilecheck)             Checksum: D72F0193DB15FBD9D3DC3B5915D34FAE;8429.
  ) 
 Here is how much of TeX's memory you used:
- 27534 strings out of 473832
- 598149 string characters out of 5729481
- 1125490 words of memory out of 5000000
- 50115 multiletter control sequences out of 15000+600000
+ 27662 strings out of 473832
+ 603287 string characters out of 5729481
+ 1240505 words of memory out of 5000000
+ 50233 multiletter control sequences out of 15000+600000
  562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,14n,114p,617b,606s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,15n,114p,617b,815s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on SCDP-Cheatsheet.pdf (1 page).
+Output written on SCDP-Cheatsheet.pdf (3 pages).
