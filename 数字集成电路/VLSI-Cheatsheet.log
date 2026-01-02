@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  31 DEC 2025 13:36
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  2 JAN 2026 14:27
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1052,10 +1052,53 @@ File: images/image-2025-12-31-13-09-33.png Graphic file (type bmp)
 <images/image-2025-12-31-13-09-33.png>
 File: images/image-2025-12-31-13-21-58.png Graphic file (type bmp)
 <images/image-2025-12-31-13-21-58.png>
+File: images/image-2026-01-02-09-48-02.png Graphic file (type bmp)
+<images/image-2026-01-02-09-48-02.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1106--1106
+[][]\TU/PingFangSC(0)/b/n/5 进 位 输 出
+ []
+
+File: images/image-2026-01-02-10-12-52.png Graphic file (type bmp)
+<images/image-2026-01-02-10-12-52.png>
+File: images/image-2026-01-02-10-36-13.png Graphic file (type bmp)
+<images/image-2026-01-02-10-36-13.png>
+File: images/image-2026-01-02-11-11-06.png Graphic file (type bmp)
+<images/image-2026-01-02-11-11-06.png>
+File: images/image-2026-01-02-11-31-54.png Graphic file (type bmp)
+<images/image-2026-01-02-11-31-54.png>
+[3]
+File: images/image-2026-01-02-11-49-55.png Graphic file (type bmp)
+<images/image-2026-01-02-11-49-55.png>
+File: images/image-2026-01-02-11-53-44.png Graphic file (type bmp)
+<images/image-2026-01-02-11-53-44.png>
+File: images/image-2026-01-02-09-54-17.png Graphic file (type bmp)
+<images/image-2026-01-02-09-54-17.png>
+File: images/image-2026-01-02-11-03-12.png Graphic file (type bmp)
+<images/image-2026-01-02-11-03-12.png>
+File: images/image-2026-01-02-12-12-59.png Graphic file (type bmp)
+<images/image-2026-01-02-12-12-59.png>
+
+Overfull \hbox (1.28688pt too wide) in paragraph at lines 1376--1376
+[][]$[] \OML/cmm/m/it/5 t[]$[]| 
+ []
+
+File: images/image-2026-01-02-12-01-35.png Graphic file (type bmp)
+<images/image-2026-01-02-12-01-35.png>
+File: images/image-2026-01-02-12-26-35.png Graphic file (type bmp)
+<images/image-2026-01-02-12-26-35.png>
+File: images/image-2026-01-02-12-41-03.png Graphic file (type bmp)
+<images/image-2026-01-02-12-41-03.png>
+File: images/image-2026-01-02-12-43-21.png Graphic file (type bmp)
+<images/image-2026-01-02-12-43-21.png>
+File: images/image-2026-01-02-13-03-13.png Graphic file (type bmp)
+<images/image-2026-01-02-13-03-13.png>
+File: images/image-2026-01-02-13-10-09.png Graphic file (type bmp)
+<images/image-2026-01-02-13-10-09.png>
 File: images/image-2025-12-30-20-09-04.png Graphic file (type bmp)
 <images/image-2025-12-30-20-09-04.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1143--1143
+Underfull \hbox (badness 10000) in paragraph at lines 1562--1562
 []\TU/PingFangSC(0)/m/n/5 决 定 输 出 窗 口 起 始 位 置，|  输 出 $\OML/cmm/m/it/5 Y$ \TU/PingFangSC(0)/m/n/5 对 应 输 入 域 的
  []
 
@@ -1064,51 +1107,68 @@ File: images/image-2025-12-30-20-14-01.png Graphic file (type bmp)
 File: images/image-2025-12-30-20-20-34.png Graphic file (type bmp)
 <images/image-2025-12-30-20-20-34.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1179--1179
+Underfull \hbox (badness 10000) in paragraph at lines 1598--1598
 [][]\TU/PingFangSC(0)/b/n/5 右 移
  []
 
 File: images/image-2025-12-30-20-28-49.png Graphic file (type bmp)
 <images/image-2025-12-30-20-28-49.png>
-[3]
+[4]
 File: images/image-2025-12-30-21-05-25.png Graphic file (type bmp)
 <images/image-2025-12-30-21-05-25.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1224--1224
+Underfull \hbox (badness 10000) in paragraph at lines 1643--1643
 []\TU/PingFangSC(0)/m/n/5 最 后 一 级 经 过 \TU/lmr/m/n/5 Buffer \TU/PingFangSC(0)/m/n/5 输 出 最 终 结 果
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1692--1692
+[][]\TU/PingFangSC(0)/b/n/5 固 化
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1692--1692
+[][]\TU/PingFangSC(0)/b/n/5 可 改 写
  []
 
 File: images/image-2025-12-30-21-26-07.png Graphic file (type bmp)
 <images/image-2025-12-30-21-26-07.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1303--1303
+Underfull \hbox (badness 10000) in paragraph at lines 1754--1754
 []\TU/PingFangSC(0)/m/n/5 输 入 信 号 与 反 馈 的  |“现 态”|  共 同 决 定  |“次
  []
 
 File: images/image-2025-12-30-21-32-44.png Graphic file (type bmp)
 <images/image-2025-12-30-21-32-44.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1337--1337
+Underfull \hbox (badness 10000) in paragraph at lines 1788--1788
 [][]\TU/PingFangSC(0)/b/n/5 策 略 二：| \TU/lmr/bx/n/5 (CS) +
  []
 
 File: images/image-2025-12-30-21-51-35.png Graphic file (type bmp)
 <images/image-2025-12-30-21-51-35.png>
-[4] (./VLSI-Cheatsheet.aux)
+[5] (./VLSI-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
-Package rerunfilecheck Info: File `VLSI-Cheatsheet.out' has not changed.
-(rerunfilecheck)             Checksum: 2A8A7BAEF6B84A51CB09D03FEB9BA4C3;12359.
+
+
+Package rerunfilecheck Warning: File `VLSI-Cheatsheet.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `VLSI-Cheatsheet.out':
+(rerunfilecheck)             Before: 455DF0670AB2B8FDBE293EBA7E8A2E55;14112
+(rerunfilecheck)             After:  9D982B060C45036EDEA7820A3A8F8DA4;13988.
  ) 
 Here is how much of TeX's memory you used:
- 28375 strings out of 473832
- 628705 string characters out of 5729481
- 1199270 words of memory out of 5000000
- 50915 multiletter control sequences out of 15000+600000
+ 28543 strings out of 473832
+ 635968 string characters out of 5729481
+ 1201106 words of memory out of 5000000
+ 51067 multiletter control sequences out of 15000+600000
  562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,17n,114p,618b,1033s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,17n,114p,618b,1061s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on VLSI-Cheatsheet.pdf (4 pages).
+Output written on VLSI-Cheatsheet.pdf (5 pages).

@@ -1094,17 +1094,436 @@ t_{p} = \underbrace{\textcolor{blue}{0.69 R_{s} \cdot cL}}_{\text{逻辑门延�
 
 \subsection{二进制加法器}
 
+这里主要是全加器的特性分析以及一些节省晶体管数的加法器结构，重点在进位而非求和。
+
+\imgleft[0.3]{images/image-2026-01-02-09-48-02.png}{
+    \entry{全加器逻辑}{
+        \concepttable{
+            \conrow{和 ($Sum$)}{$Sum = A \oplus B \oplus C_{in}$。$Sum$ 是 $A, B, C_{in}$ 三者的\red{异或 (XOR)} 和，逻辑上等同于\red{奇偶校验}，即当输入中有奇数个"1"时，结果为 1。}
+            \conrow{进位输出 ($C_{out}$)}{$C_{out} = AB + C_{in}(A + B)$。这是\red{多数表决函数}。只要 $A, B, C_{in}$ 这三个变量中有两个或两个以上为 1，则 $C_{out}$ 为 1。这与真值表的逻辑严格对应。}
+        }
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+    
+    \subsubsection{复合CMOS门实现}
+
+    \entry{定义}{基于布尔逻辑表达式的直接实现（常规静态 CMOS 逻辑）。}
+
+    \img[0.7\linewidth]{images/image-2026-01-02-10-12-52.png}
+
+    \entry{逻辑表达式推导}{
+        \concepttable{
+            \conrow{和位 $S$}{$S = A \oplus B \oplus C_i$\par
+            $= ABC_i + \overline{A}\overline{B}C_i + \overline{A}B\overline{C}_i + A\overline{B}\overline{C}_i$}
+            \conrow{进位 $C_o$}{$C_o = AB + C_i(A+B)$。}
+        }
+    }
+
+    \entry{晶体管数量计算(从这里就是\red{镜像上下拉结构})}{
+        \concepttable{
+            \conrow{总计}{$16 + 10 + 6 = \red{32}$ 个晶体管}
+        }
+    }
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+
+    \subsubsection{无XOR复合门实现}
+
+    利用逻辑共享进行优化。
+
+    \img[0.8\linewidth]{images/image-2026-01-02-10-36-13.png}
+
+    \entry{逻辑表达式推导}{
+        \concepttable{
+            \conrow{和位 $S$}{$S = ABC_i + \overline{C_o}(A+B+C_i)$}
+            \conrow{进位 $C_o$}{$C_o = AB + C_i(A+B)$。}
+        }
+    }
+
+    \entry{晶体管数量计算}{
+        \concepttable{
+            \conrow{注}{这里的输入不再需要反相器，但是不知为何把镜像结构也取消了}
+            \conrow{总计}{$14 + 10 + 2 + 2 = \red{28}$ 个晶体管}
+        }
+    }
+
+\end{minipage}
+
+\entry{复合 CMOS 实现电路结构分析}{
+    \concepttable{
+        \conrow{结构缺点}{$S$ 和 $C_o$ 的生成电路\red{完全分离}，没有共享逻辑资源，导致晶体管数量多、占用面积大。}
+    }
+}
+
+\entry{无 XOR 复合门实现电路结构分析}{
+    \concepttable{
+        \conrow{关键信号}{将最关键的进位输入 $C_i$连接到最靠近输出节点。这样可以\red{减小该节点对地的寄生电容放电路径的电阻}，从而减小延时（Elmore模型）。}
+        \conrow{负载}{级联使用的$C_{out}$ 连到下一级的 $C_{in}$，在电路中可以看到，$C_{in}$ 连接了 6 个管子的栅极，因此输入电容较大。}
+        \conrow{优化目标}{$SUM$ 只是本地计算，不参与级联传播。因此，优化 $C_{in} \to C_{out}$ 的速度是提升加法器整体性能的关键}
+    }
+}
+
+\subsubsection{进位产生、进位取消、进位传播信号}
+
+是理解后续所有高速加法器的理论基础
+
+\entry{信号定义（利用进位信号属于多数表决逻辑，2 个已知输入信号就决定了当前的进位情况）}{
+    \concepttable{
+        \conrow{进位产生信号 $G$}{$G = AB$。}
+        \conrow{进位消除信号 $K$}{$K = \overline{A} \cdot \overline{B} = \overline{A+B}$。}
+        \conrow{进位传播信号 $P$}{严格定义：$P = A \oplus B$；宽松定义：$P = A+B$。}
+    }
+}
+
+\entry{为什么可以取 $A+B$？}{
+    当 $G=1$ 或 $K=1$ 时，$P$ 值不影响 $C_o$；仅当一个输入为 1 另一个为 0 时 $P$ 才起作用，此时 $A \oplus B = A+B = 1$。因此用 $A+B$ 替代 $A \oplus B$ 逻辑等价且电路更简单（OR 门 vs XOR 门）。
+}
+
+\entry{逻辑重写}{利用 $G$ 和 $P$ 重写全加器方程：}
+\concepttable{
+    \conrow{和位}{$S(G, P) = P \oplus C_i$}
+    \conrow{进位输出}{\red{$C_o(G, P) = G + P C_i$}。将进位输出分解为"\red{本地产生}"和"\red{低位传播}"两部分。}
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+
+\subsubsection{\red{镜像加法器}}
+
+\entry{镜像结构优势}{利用全加器的\red{反相特性}与 CMOS 管导通特性的互补性，实现结构复用：}
+
+\img[0.8\linewidth]{images/image-2026-01-02-11-11-06.png}
+
+    \entry{逻辑表达式推导}{
+        \concepttable{
+            \conrow{和位 $S$}{$S = ABC_i + \overline{C_o}(A+B+C_i)$}
+            \conrow{进位 $C_o$}{$C_o = AB + C_i(A+B)$。}
+        }
+    }
+
+    \entry{晶体管数量计算}{
+        \concepttable{
+            \conrow{注}{这里输出的全是反相信号}
+            \conrow{总计}{$14 + 10 = \red{24}$ 个晶体管}
+        }
+    }
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+
+\subsubsection{传输门实现全加器}
+
+利用传输门作为开关来选择信号，类似于多路选择器（MUX）的逻辑。
+
+\img[0.8\linewidth]{images/image-2026-01-02-11-31-54.png}
+
+    \entry{逻辑表达式推导}{
+        \concepttable{
+            \conrow{传播信号}{$P = A \oplus B$}
+            \conrow{和位}{$S = P \oplus C_{in}$}
+            \conrow{进位输出}{$C_{out} = G + P C_{in}$}
+        }
+    }
+
+    \vspace{8pt}
+
+    \entry{晶体管数量计算}{
+        \concepttable{
+            \conrow{总计}{$12 + 8 + 2 + 2 = \red{24}$ 个晶体管}
+        }
+    }
+
+\end{minipage}
+
+\entry{传输门加法器电路特性分析}{
+    \concepttable{
+        \conrow{延时特性}{$SUM$ 和 $C_{out}$ \red{延时基本相同}。由于 $S$ 和 $C_o$ 都通过 $P$ 信号控制的传输门\red{并行产生}，无明显级联关系。}
+        \conrow{无阈值损失}{使用\red{互补传输门}，实现全摆幅传输。}
+        \conrow{驱动能力}{传输门逻辑主要依赖前级信号驱动。若级联过多，信号会衰减，通常需插入\red{缓冲器 (Buffer)} 增强驱动。若速度要求不高，可用反相器生成 $\bar{P}$。}
+    }
+}
+
+\subsubsection{进位产生电路优化：曼彻斯特进位门}
+
+\entry{控制原理}{利用控制信号直接决定进位输出 $C_o$ 连接到哪一个电位或信号源。}
+
+\imgleft[0.2]{images/image-2026-01-02-11-49-55.png}{
+    
+    \entry{约束条件}{
+        \concepttable{
+            \conrow{进位传播}{$P_i = a_i \oplus b_i$}
+            \conrow{进位产生}{$G_i = a_i b_i$}
+            \conrow{\red{互斥约束}}{$P_i G_i \neq 1$。对于一位加法器，$A$ 和 $B$ 不可能同时满足"既相等（用于 $G$）又不相等（用于 $P$）"。}
+        }
+    }
+
+    \entry{物理意义}{传播路径和产生路径在逻辑上是\red{互斥}的，不会发生竞争冲突。}
+
+}
+
+\imgleft[0.4]{images/image-2026-01-02-11-53-44.png}{
+
+    \entry{曼彻斯特进位链}{
+        \concepttable{
+            \conrow{传输管只用 N 管}{NMOS 的电子迁移率比 PMOS 的空穴迁移率高，导通电阻更小，信号传输速度快。}
+            \conrow{节点电容很小}{进位链上的每个中间节点（例如 $\overline{C_1}$）只连接极少器件，寄生电容极小。具体包含\red{四个扩散电容：本级传输管源/漏区、下一级传输管源/漏区、本级生成管漏区、本级预充 PMOS 管漏区。}}
+            \conrow{延时特性}{每一个导通的 NMOS 传输管被等效为一个电阻 $R$，每一个中间节点被等效为一个对地电容 $C$：等效为一个 RC 链结构：$t_p = 0.69 \frac{N(N+1)}{2} RC$}
+        }
+    }
+
+}
+
+
+\subsection{行波进位加法器}
+
+\entry{最坏情况分析}{以从 $A_0$ 到 $S_{N-1}$ 的进位传播路径为例：}
+
+\imgleft[0.3]{images/image-2026-01-02-09-54-17.png}{
+    
+    \concepttable{
+        \conrow{总延时公式}{$t_{adder} = (N-1)t_{carry} + t_{sum}$}
+        \conrow{参数说明}{$t_{carry}$ 为单级进位延时（$C_{in} \to C_{out}$），$t_{sum}$ 为求和逻辑延时（$A, B, C_{in} \to Sum$）。}
+    }
+
+}
+
+\entry{性能瓶颈}{
+    \concepttable{
+        \conrow{线性增长}{延时与位数 $N$ 成\red{线性正比}关系，即 $t_d = O(N)$。}
+        \conrow{设计矛盾}{结构简单、面积小，但速度是\red{最慢的加法器架构}，不适用于高性能场景。}
+    }
+}
+
+\subsubsection{单级加法器的反相特性}
+
+\entry{自对偶性质}{全加器逻辑函数具有\red{反相保持性}：}
+
+\concepttable{
+    \conrow{数学表达}{$\bar{S}(A,B,C_i) = S(\bar{A},\bar{B},\bar{C_i})$\par
+    $\overline{C_o}(A,B,C_i) = C_o(\bar{A},\bar{B},\bar{C_i})$}
+    \conrow{物理意义}{输入全部取反时，输出恰好也是原输出的反码。}
+}
+
+\entry{电路优化价值}{CMOS 基本门（NAND/NOR）天然产生反相输出。利用此性质可\red{省略级间反相器}，接受反相输入直接得到反相输出，从而减少延时与面积。}
+
+\subsubsection{优化行波级联结构}
+
+\entry{优化思路}{
+    \concepttable{
+        \conrow{优化思路}{利用全加器的\red{自对偶性}，通过交替改变输入极性，使级联信号在"正-负-正-负"间跳变，\red{省去级间反相器（能省一点是一点）}，但是输入需要配合反相的进位信号而增加输入反相器。}
+    }
+}
+
+\imgleft[0.4]{images/image-2026-01-02-11-03-12.png}{
+
+\entry{偶数级 (Stage 0, 2...)}{
+    \concepttable{
+        \conrow{输入}{$A_0, B_0$（正相）}
+        \conrow{输出}{去掉输出端反相器，直接输出\red{反相进位信号} $\overline{C_{o0}}$。}
+        \conrow{传递}{$\overline{C_{o0}}$ 直接连接到下一级作为反相进位输入。}
+    }
+}
+
+\entry{奇数级 (Stage 1, 3...)}{
+    \concepttable{
+        \conrow{输入变换}{为配合接收到的反相进位输入 $\overline{C_{in}}$，本级加数输入也取反，即输入 $\bar{A_1}, \bar{B_1}$（增加输入反相器）。}
+        \conrow{逻辑运算}{根据自对偶性，当输入为 $(\bar{A}, \bar{B}, \bar{C})$ 时，输出为 $\overline{S}$ 和 $\overline{C_{out}}$。}
+        \conrow{极性恢复}{利用 CMOS 门电路本身的反相特性，本级输出的进位信号 $C_{o1}$ \red{恢复为正相}。}
+    }
+}
+
+\entry{核心结论}{通过交替改变输入极性，实现正负极性交替，从而\red{移除级间反相器}，减少关键路径延时。}
+
+}
+
 \subsection{进位选择加法器}
+
+\entry{核心设计思想}{打破行波进位的串行依赖，采用\red{预测与并行计算}策略。}
+
+\concepttable{
+    \conrow{优化策略}{本级模块（一般不止一位运算，这里设定为 \red{N 个 M 位加法模块级联}）的进位输入 $C_{in}$ 只有 \red{0 或 1} 两种可能，采用双路并行计算：\par
+    • 使用两套相同的加法器硬件；\par
+    • 分别假定 $C_{in}=0$ 和 $C_{in}=1$ 同时进行计算；\par
+    • 当真正的进位信号 $C_{o,k-1}$ 到达时，通过\red{多路选择器 (MUX)} 从两组预计算结果中选择正确的一组。}
+    \conrow{物理意义}{用\red{空间换时间}：增加一倍硬件开销，换取进位传播延时的显著降低。}
+}
+
+\subsubsection{关键路径分析}
+
+\entry{电路结构}{图中有 4 个块（Bit 0-3, Bit 4-7, Bit 8-11, Bit 12-15，\red{N = 4}）。每个块（运算 4 位加法，\red{M=4}）都包含了上述的"两路并行计算 + MUX"结构。进位信号不再穿过每个块内部的加法器链，而是穿过\red{各级的MUX}。}
+
+\entry{\red{关键路径延时公式}}{
+    $t_{add} = t_{setup} + M t_{carry} + \left( \frac{N}{M} \right) t_{mux} + t_{sum}$
+}
+
+\imgleft[0.4]{images/image-2026-01-02-12-12-59.png}{
+
+    \entry{各项解释}{
+        \concepttable{
+            \conrow{$t_{setup}$}{初始化产生 $P, G$ 信号的时间。}
+            \conrow{$M t_{carry}$}{各块内部串行进位延时，所有块在此期间完成\red{并行计算}，等待 MUX 选通。}
+            \conrow{$\left( \frac{N}{M} \right) t_{mux}$}{新的\red{进位传播路径}。信号要穿过 $N/M$ 个 MUX 级。}
+            \conrow{$t_{sum}$}{最后一级 MUX 选好后，通过异或门产生最终 Sum 的时间。}
+        }
+    }
+
+}
+
+\entry{性能对比}{
+    \concepttable{
+        \conrow{速度比较}{进位传播时间仍然与 $N$ 成正比（\red{线性关系），但是斜率变小了}。因为 $t_{mux}$ 通常远小于 $M$ 个全加器的串行延时。所以它比逐位进位（行波进位）加法器快。}
+        \conrow{硬件开销}{因为它复制了进位链（双份硬件）并增加了 MUX。\red{硬件开销大约增加 30\%}。这是一个典型的 Trade-off（权衡）：\red{用 30\% 的面积换取速度提升}。}
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+
+\subsubsection{线性架构}
+
+    \entry{固定块大小（线性分组）}{
+        \img[\linewidth]{images/image-2026-01-02-12-01-35.png}
+    }
+
+    \entry{时间浪费}{所有块计算时间相同但 MUX 信号需串行传播，导致\red{高位块过早完成计算后空等低位进位信号}。}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+
+\subsubsection{平方根架构}
+
+    调整模块位宽来实现计算与传播的\red{时序匹配}。
+
+    \img[\linewidth]{images/image-2026-01-02-12-26-35.png}
+
+    \entry{优化思路}{后面的块增加位宽，使其计算时间恰好匹配前面块的 MUX 延时累积，避免空等。}
+
+\end{minipage}
+
+\entry{平方根延时推导}{设定总位数 $N$，分成 $P$ 个模块，第一级位数为 $M$。}
+
+\concepttable{
+    \conrow{级数构成}{后续每一级都比前一级多 1 位。}
+    \conrow{总位数}{$N = M + (M+1) + (M+2) + \dots = M \cdot P + \frac{P^2}{2} - \frac{P}{2}$}
+}
+
+\entry{平方根关系推导}{假设初始位数 $M \ll N$ 且 $P$ 较大，忽略低次项和常数项，则$N \approx \frac{P^2}{2}$，即$P \approx \sqrt{2N}$，此为平方根名称由来}
+
+\entry{\red{延时公式}}{\red{$t_{add} = t_{setup} + M t_{carry} + \sqrt{2N} t_{mux} + t_{sum}$}}
+
+\entry{性能对比}{
+    \concepttable{
+        \conrow{线性架构}{MUX 级数项为 $\frac{N}{M} t_{mux}$，与 $N$ 成\red{线性关系}。}
+        \conrow{平方根架构}{MUX 级数项为 $P t_{mux} \approx \sqrt{2N} t_{mux}$，与 $\sqrt{N}$ 成正比，属于\red{亚线性关系}。}
+    }
+}
+
+\imgleft[0.25]{images/image-2026-01-02-12-41-03.png}{
+    \entry{性能对比图}{
+        \concepttable{
+            \conrow{行波进位}{延时呈\red{线性增长} $O(N)$，斜率最陡。随位数增加，延时迅速飙升，高位宽场景性能不可接受。}
+            \conrow{线性选择}{延时仍为\red{线性增长} $O(N)$，但斜率较小。通过双路并行计算减少等待时间，但块大小固定导致级数 $P \propto N/M$，本质仍是线性关系。}
+            \conrow{平方根选择}{延时呈\red{亚线性增长} $O(\sqrt{N})$。低位宽时因额外开销略慢，但 $N > 16$ 后优势显著，延时增长极其平缓。}
+        }
+    }
+}
 
 \subsection{进位旁路加法器}
 
+检测本组内所有位是否都满足“进位传播”条件。
+
+\imgleft[0.4]{images/image-2026-01-02-12-43-21.png}{
+    \entry{最坏情况}{$P_0=0, P_1 \sim P_3=1$。}
+
+    \concepttable{
+        \conrow{条件解释}{此时旁路不开启，进位链必须在第 0 位产生或者消除，然后依次穿过第 1、2、3 位。}
+        \conrow{延时结论}{在单个模块内部，最坏情况下的延时并没有改善，依然是 $4 \times t_{carry}$。}
+    }
+
+    \entry{核心优势}{进位旁路加法器的真正优势在于多模块级联时，进位信号可以\red{连续跳过中间的多个模块}。}
+}
+
+\entry{延时公式}{\red{$t_{adder} = t_{setup} + M t_{carry} + (N/M - 1) t_{bypass} + (M-1) t_{carry} + t_{sum}$}}
+
+\entry{各项解释}{
+    \concepttable{
+        \conrow{$t_{setup}$}{\red{初始化时间}，并行计算所有位的 $P_i, G_i$ 信号。}
+        \conrow{$M t_{carry}$}{\red{首块延时}。假设进位是由第 0 位产生的（最坏情况），经过 $M$ 级到达第一个 MUX}
+        \conrow{$(N/M - 1) t_{bypass}$}{\red{中间旁路延时}。进位信号出了第一个块，在后续 MUX 中快速传输。}
+        \conrow{$(M-1) t_{carry}$}{\red{末块延时}。进位信号参与最后一个块内部的运算。为了得到最高位的 $Sum$，进位信号需要穿过该块内部的前 $M-1$ 级全加器。}
+        \conrow{$t_{sum}$}{最终一级全加器产生和位输出的逻辑延时。}
+    }
+}
+
+\imgleft[0.3]{images/image-2026-01-02-13-03-13.png}{
+
+    \entry{面积开销}{
+        相比行波进位，增加 \red{10\% 至 20\%}。
+    }
+
+    \entry{延时特性}{
+        旁路加法器延时（下方平缓曲线）与位数 $N$ 依然呈\red{线性关系}。旁路加法器斜率主要由 $t_{bypass}$ 决定。因 MUX 延时远小于 $M$ 个全加器串行延时，故\red{斜率显著降低}。
+    }
+
+    \entry{适用范围}{
+        \concepttable{
+            \conrow{交叉点}{图中两条曲线在约 $N \approx 4.8$ 处交叉。}
+            \conrow{$N$ 较小时}{旁路加法器反而\red{更慢}。因 Setup 电路与 MUX 的固定开销在位数少时成为累赘，无法体现跳跃优势。}
+            \conrow{设计结论}{当 $N$ 在 \red{4 至 8 位}或更大时，采用进位旁路才有收益。对于极短加法器，行波进位是最优解。}
+        }
+    }
+
+}
+
 \subsection{超前进位加法器}
+
+通过递归公式的展开，证明进位产生可以与位数 $N$ 无关。
+
+\entry{进位公式}{$C_{o,k} = G_k + P_k G_{k-1} + P_k P_{k-1} G_{k-2} + \dots + (P_k P_{k-1} \dots P_1)G_0 + (P_k P_{k-1} \dots P_0)C_{i,0}$}
+
+\imgleft[0.3]{images/image-2026-01-02-13-10-09.png}{
+    \entry{依赖关系改变}{观察展开后的长公式，$C_{o,k}$ 的表达式右边只包含：}
+    \concepttable{
+        \conrow{Setup 信号}{$G_i, P_i$。本级产生的信号，所有位\red{并行同时产生}。}
+        \conrow{原始进位}{$C_{i,0}$。整个加法器的最原始进位输入。}
+        \conrow{关键特性}{\red{不再依赖上一级}。公式中不再出现 $C_{o,k-1}$、$C_{o,k-2}$ 等中间进位量。}
+    }
+
+    \entry{最终结论}{"\red{加法时间与位数 $N$ 无关}"。}
+    \concepttable{
+        \conrow{理论性能}{无论 $N$ 是 4 还是 64，只要逻辑门能瞬间完成上述公式运算，进位就是\red{同时产生}的。}
+        \conrow{延时特性}{延时恒定为 $O(1)$，打破了行波进位的 $O(N)$ 限制。}
+    }
+
+}
+
+\entry{物理限制}{当位数 $N$ 较大时，CLA 面临三个致命问题：}
+
+\concepttable{
+    \conrow{大扇入}{随着 $N$ 增加，逻辑表达式项数急剧增加。例如计算 $C_{o,31}$ 需要一个有 32 个输入的巨大逻辑门。在 CMOS 中，多输入意味着串联晶体管变多，串联电阻增大，导致 $RC$ 延时急剧恶化。}
+    \conrow{大扇出}{低位的信号（如 $P_0, G_0$）会出现在所有高位进位的公式中。$G_0$ 需要驱动后面所有位的逻辑门，负载电容极大，导致 $G_0$ 信号本身的翻转变得极慢。}
+    \conrow{面积爆炸}{实现面积随位数 $N$ 的增加而增加。晶体管数量和连线复杂度呈几何级数增长。}
+}
+
+\entry{适用范围}{
+    \concepttable{
+        \conrow{位数限制}{一般超前进位只对小 $N$ 值（\red{$N \le 4$}）有效。}
+        \conrow{工程实现}{将加法器分成 4 位一组。\red{组内使用 CLA 结构}。\red{组间可以使用行波进位}，或者再套用一层 CLA（即分层超前进位加法器），或者使用旁路/选择逻辑。}
+    }
+}
 
 \section{第九章\ 乘法器}
 
-\subsection{二进制乘法器（有、无符号}
+\subsection{二进制乘法器（有、无符号）}
 
-\subsection{部分即产生（部分积压缩、Booth 编码）}
+\subsection{部分积产生（部分积压缩、Booth 编码）}
 
 \subsection{部分积累加}
 
@@ -1134,11 +1553,11 @@ t_{p} = \underbrace{\textcolor{blue}{0.69 R_{s} \cdot cL}}_{\text{逻辑门延�
 
 \entry{核心架构}{通过构建宽窗口统一处理逻辑、算术和循环移位。}
 
-\concepttable{
-    \conrow{基本原理}{构建一个 $2N-1$ 到 $0$ 的宽数据输入域（总位宽 $2N$），输出 $Y$ 为其中的 $N$ 位滑动窗口。}
-    \conrow{输入构成}{由两个 $N$ 位向量 $B$（高位 $2N-1 \dots N$）和 $C$（低位 $N-1 \dots 0$）拼接而成。}
-    \conrow{偏移量}{决定输出窗口起始位置，输出 $Y$ 对应输入域的 $[offset + N - 1 : offset]$ 区间。}
-}
+    \concepttable{
+        \conrow{基本原理}{构建一个 $2N-1$ 到 $0$ 的宽数据输入域（总位宽 $2N$），输出 $Y$ 为其中的 $N$ 位滑动窗口。}
+        \conrow{输入构成}{由两个 $N$ 位向量 $B$（高位 $2N-1 \dots N$）和 $C$（低位 $N-1 \dots 0$）拼接而成。}
+        \conrow{偏移量}{决定输出窗口起始位置，输出 $Y$ 对应输入域的 $[offset + N - 1 : offset]$ 区间。}
+    }
 
 }
 
@@ -1259,6 +1678,38 @@ t_{p} = \underbrace{\textcolor{blue}{0.69 R_{s} \cdot cL}}_{\text{逻辑门延�
 \section{第十一章\ MOS 存储器}
 
 \subsection{MOS 存储器分类}
+
+\entry{顶层分类}{基于数据存储的\red{易失性}与\red{读写特性}划分：}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{只读存储器 (ROM)}{
+        \concepttable{
+            \conrow{核心特性}{\red{非易失性}。断电后数据不丢失。}
+            \conrow{固化ROM}{Mask ROM。数据在制造时通过光刻掩模固化，出厂即定型。}
+            \conrow{可改写ROM}{EPROM（紫外线擦除）、EEPROM（电擦除，按字节）、FLASH（电擦除，按块）。}
+        }
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{随机存取存储器 (RAM)}{
+        \concepttable{
+            \conrow{核心特性}{\red{易失性}。断电后数据立即丢失。}
+            \conrow{SRAM}{利用\red{双稳态触发器}存储。静态保持，速度快，面积大（6T结构）。用作Cache。}
+            \conrow{DRAM}{利用\red{栅极电容}存储。需周期性刷新，集成度高（1T1C），用作主存。}
+        }
+    }
+\end{minipage}
+
+\entry{特殊用途存储器}{
+    \concepttable{
+        \conrow{FIFO}{先进先出。队列结构，用于跨时钟域缓冲。}
+        \conrow{LIFO}{后进先出。栈结构，用于堆栈操作。}
+        \conrow{CAM}{内容寻址。给数据找地址，并行比较，用于路由表查找。}
+        \conrow{多端口}{多组独立读写端口，支持并行访问，提高吞吐率。}
+    }
+}
 
 \subsection{存储器结构}
 
