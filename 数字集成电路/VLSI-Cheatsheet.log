@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  2 JAN 2026 17:15
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  2 JAN 2026 21:48
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -818,26 +818,26 @@ Package xeCJK Warning: Redefining CJKfamily `\CJKttdefault' (STFangsong).
 (./VLSI-Cheatsheet.aux)
 \openout1 = `VLSI-Cheatsheet.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 140.
-LaTeX Font Info:    ... okay on input line 140.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
 
 Package fontspec Info: 
 (fontspec)             Adjusting the maths setup (use [no-math] to avoid
@@ -845,56 +845,56 @@ Package fontspec Info:
 
 \symlegacymaths=\mathgroup9
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 140.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 140.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 140.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 140.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 140.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 140.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 140.
-LaTeX Font Info:    Redeclaring math accent \check on input line 140.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 140.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 140.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 140.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 140.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 140.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 142.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 142.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 142.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 142.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 142.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 142.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 142.
+LaTeX Font Info:    Redeclaring math accent \check on input line 142.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 142.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 142.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 142.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 142.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 142.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 140.
+(Font)              `operators' in the math version `normal' on input line 142.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 140.
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 142.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 140.
+(Font)              `operators' in the math version `bold' on input line 142.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 140.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 142.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 140.
+(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 140.
+(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 140.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 140.
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 140.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 142.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 140.
+(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 140.
+(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 140.
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 140.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 142.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
@@ -930,23 +930,23 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 140.
+Package hyperref Info: Link coloring OFF on input line 142.
 (./VLSI-Cheatsheet.out) (./VLSI-Cheatsheet.out)
 \@outlinefile=\write4
 \openout4 = `VLSI-Cheatsheet.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 151.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 153.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 151.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 153.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 File: images/image-2025-12-30-18-17-15.png Graphic file (type bmp)
 <images/image-2025-12-30-18-17-15.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 172--172
+Underfull \hbox (badness 10000) in paragraph at lines 174--174
 []$\OML/cmm/m/it/5 C[]; C[]$\TU/PingFangSC(0)/m/n/5 ，|  主 要 由 源\TU/lmr/m/n/5 /\TU/PingFangSC(0)/m/n/5 漏 扩 散 区 与 衬 底 形 成 的
  []
 
@@ -957,19 +957,19 @@ File: images/image-2025-12-30-18-37-19.png Graphic file (type bmp)
 File: images/image-2025-12-30-18-26-22.png Graphic file (type bmp)
 <images/image-2025-12-30-18-26-22.png>
 
-Overfull \hbox (2.13394pt too wide) in paragraph at lines 220--220
+Overfull \hbox (2.13394pt too wide) in paragraph at lines 222--222
 [][] 
  []
 
 File: images/image-2025-12-30-18-44-30.png Graphic file (type bmp)
 <images/image-2025-12-30-18-44-30.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 256--256
+Underfull \hbox (badness 10000) in paragraph at lines 258--258
 [][]\TU/PingFangSC(0)/b/n/5 上 拉 网 络
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 256--256
+Underfull \hbox (badness 10000) in paragraph at lines 258--258
 [][]\TU/PingFangSC(0)/b/n/5 下 拉 网 络
  []
 
@@ -983,39 +983,55 @@ File: images/image-2025-12-30-19-16-37.png Graphic file (type bmp)
 <images/image-2025-12-30-19-16-37.png>
 File: images/image-2025-12-30-19-34-42.png Graphic file (type bmp)
 <images/image-2025-12-30-19-34-42.png>
+File: images/image-2026-01-02-20-37-24.png Graphic file (type bmp)
+<images/image-2026-01-02-20-37-24.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+[][]\TU/PingFangSC(0)/b/n/5 亚 阈 值 漏 电
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+[][]\TU/PingFangSC(0)/b/n/5 栅 极 漏 电
+ []
+
+File: images/image-2026-01-02-21-41-25.png Graphic file (type bmp)
+<images/image-2026-01-02-21-41-25.png>
+File: images/image-2026-01-02-21-44-44.png Graphic file (type bmp)
+<images/image-2026-01-02-21-44-44.png>
+[1
+
+]
 File: images/image-2025-12-29-16-42-55.png Graphic file (type bmp)
 <images/image-2025-12-29-16-42-55.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 461--461
+Underfull \hbox (badness 10000) in paragraph at lines 506--506
 [][]\TU/PingFangSC(0)/b/n/5 总 能 耗
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 461--461
+Underfull \hbox (badness 10000) in paragraph at lines 506--506
 [][]\TU/PingFangSC(0)/b/n/5 存 储 能 量
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 461--461
+Underfull \hbox (badness 10000) in paragraph at lines 506--506
 [][]\TU/PingFangSC(0)/b/n/5 能 量 损 耗
  []
 
 File: images/image-2025-12-29-19-16-01.png Graphic file (type bmp)
 <images/image-2025-12-29-19-16-01.png>
-[1
-
-]
 File: images/image-2025-12-29-17-05-17.png Graphic file (type bmp)
 <images/image-2025-12-29-17-05-17.png>
 File: images/image-2025-12-29-19-29-40.png Graphic file (type bmp)
 <images/image-2025-12-29-19-29-40.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
+Underfull \hbox (badness 10000) in paragraph at lines 622--622
 [][]\TU/PingFangSC(0)/b/n/5 栅 极 漏 电
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
+Underfull \hbox (badness 10000) in paragraph at lines 622--622
 [][]\TU/PingFangSC(0)/b/n/5 结 泄 漏 电 流
  []
 
@@ -1037,9 +1053,9 @@ File: images/image-2025-12-31-11-25-02.png Graphic file (type bmp)
 <images/image-2025-12-31-11-25-02.png>
 File: images/image-2025-12-31-11-12-43.png Graphic file (type bmp)
 <images/image-2025-12-31-11-12-43.png>
+[2]
 File: images/image-2025-12-31-11-38-34.png Graphic file (type bmp)
 <images/image-2025-12-31-11-38-34.png>
-[2]
 File: images/image-2025-12-31-12-02-32.png Graphic file (type bmp)
 <images/image-2025-12-31-12-02-32.png>
 File: images/image-2025-12-31-12-45-41.png Graphic file (type bmp)
@@ -1055,7 +1071,7 @@ File: images/image-2025-12-31-13-21-58.png Graphic file (type bmp)
 File: images/image-2026-01-02-09-48-02.png Graphic file (type bmp)
 <images/image-2026-01-02-09-48-02.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1106--1106
+Underfull \hbox (badness 10000) in paragraph at lines 1152--1152
 [][]\TU/PingFangSC(0)/b/n/5 进 位 输 出
  []
 
@@ -1079,7 +1095,7 @@ File: images/image-2026-01-02-11-03-12.png Graphic file (type bmp)
 File: images/image-2026-01-02-12-12-59.png Graphic file (type bmp)
 <images/image-2026-01-02-12-12-59.png>
 
-Overfull \hbox (1.28688pt too wide) in paragraph at lines 1376--1376
+Overfull \hbox (1.28688pt too wide) in paragraph at lines 1422--1422
 [][]$[] \OML/cmm/m/it/5 t[]$[]| 
  []
 
@@ -1098,53 +1114,53 @@ File: images/image-2026-01-02-13-10-09.png Graphic file (type bmp)
 File: images/image-2025-12-30-20-09-04.png Graphic file (type bmp)
 <images/image-2025-12-30-20-09-04.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1562--1562
+Underfull \hbox (badness 10000) in paragraph at lines 1608--1608
 []\TU/PingFangSC(0)/m/n/5 决 定 输 出 窗 口 起 始 位 置，|  输 出 $\OML/cmm/m/it/5 Y$ \TU/PingFangSC(0)/m/n/5 对 应 输 入 域 的
  []
 
 File: images/image-2025-12-30-20-14-01.png Graphic file (type bmp)
 <images/image-2025-12-30-20-14-01.png>
+[4]
 File: images/image-2025-12-30-20-20-34.png Graphic file (type bmp)
 <images/image-2025-12-30-20-20-34.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1598--1598
+Underfull \hbox (badness 10000) in paragraph at lines 1644--1644
 [][]\TU/PingFangSC(0)/b/n/5 右 移
  []
 
 File: images/image-2025-12-30-20-28-49.png Graphic file (type bmp)
 <images/image-2025-12-30-20-28-49.png>
-[4]
 File: images/image-2025-12-30-21-05-25.png Graphic file (type bmp)
 <images/image-2025-12-30-21-05-25.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1643--1643
+Underfull \hbox (badness 10000) in paragraph at lines 1689--1689
 []\TU/PingFangSC(0)/m/n/5 最 后 一 级 经 过 \TU/lmr/m/n/5 Buffer \TU/PingFangSC(0)/m/n/5 输 出 最 终 结 果
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1692--1692
+Underfull \hbox (badness 10000) in paragraph at lines 1738--1738
 [][]\TU/PingFangSC(0)/b/n/5 固 化
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1692--1692
+Underfull \hbox (badness 10000) in paragraph at lines 1738--1738
 [][]\TU/PingFangSC(0)/b/n/5 可 改 写
  []
 
 File: images/image-2026-01-02-16-03-48.png Graphic file (type bmp)
 <images/image-2026-01-02-16-03-48.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1785--1785
+Underfull \hbox (badness 10000) in paragraph at lines 1831--1831
 []\TU/PingFangSC(0)/m/n/5 同 一 列 中 每 个 单 元 的 数 据 输 入\TU/lmr/m/n/5 /\TU/PingFangSC(0)/m/n/5 输 出 端 连 接
  []
 
 
-Overfull \hbox (8.4149pt too wide) in paragraph at lines 1846--1847
+Overfull \hbox (8.4149pt too wide) in paragraph at lines 1892--1893
  [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1887--1887
+Underfull \hbox (badness 10000) in paragraph at lines 1933--1933
 []\TU/PingFangSC(0)/m/n/5 最 后 的 字 线 驱 动 电 路 只 需 要 简 单 的 逻 辑 门
  []
 
@@ -1153,34 +1169,34 @@ File: images/image-2026-01-02-17-06-17.png Graphic file (type bmp)
 File: images/image-2025-12-30-21-26-07.png Graphic file (type bmp)
 <images/image-2025-12-30-21-26-07.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1968--1968
+Underfull \hbox (badness 10000) in paragraph at lines 2076--2076
 []\TU/PingFangSC(0)/m/n/5 输 入 信 号 与 反 馈 的  |“现 态”|  共 同 决 定  |“次
  []
 
 File: images/image-2025-12-30-21-32-44.png Graphic file (type bmp)
 <images/image-2025-12-30-21-32-44.png>
-
-Underfull \hbox (badness 10000) in paragraph at lines 2002--2002
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 2110--2110
 [][]\TU/PingFangSC(0)/b/n/5 策 略 二：| \TU/lmr/bx/n/5 (CS) +
  []
 
 File: images/image-2025-12-30-21-51-35.png Graphic file (type bmp)
 <images/image-2025-12-30-21-51-35.png>
-[5] (./VLSI-Cheatsheet.aux)
+[6] (./VLSI-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `VLSI-Cheatsheet.out' has not changed.
-(rerunfilecheck)             Checksum: 15817229DE56379A96704DDFB4F3B667;14175.
+(rerunfilecheck)             Checksum: AAF0A9D6584E26F245D7ED2D866A1ACC;14799.
  ) 
 Here is how much of TeX's memory you used:
- 28672 strings out of 473832
- 639278 string characters out of 5729481
- 1209669 words of memory out of 5000000
- 51194 multiletter control sequences out of 15000+600000
+ 28704 strings out of 473832
+ 640442 string characters out of 5729481
+ 1221955 words of memory out of 5000000
+ 51223 multiletter control sequences out of 15000+600000
  562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  93i,17n,114p,618b,1316s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on VLSI-Cheatsheet.pdf (5 pages).
+Output written on VLSI-Cheatsheet.pdf (6 pages).
