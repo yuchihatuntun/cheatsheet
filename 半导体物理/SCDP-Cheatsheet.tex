@@ -27,7 +27,7 @@
 
 \definecolor{myblue}{HTML}{003153} % 蓝色字
 \definecolor{myred}{HTML}{85120F}  % 红色字
-\definecolor{hlblue}{HTML}{7090D3} % 蓝色高亮
+\definecolor{hlblue}{HTML}{ADC1DB} % 蓝色高亮
 \definecolor{hlred}{HTML}{D66A83}  % 红色高亮
 \definecolor{hlyellow}{HTML}{E3C79F}  % 奢金高亮
 \definecolor{hlgreen}{HTML}{BED49D}  % 抹茶绿高亮
@@ -160,29 +160,30 @@
 能带受多种因素影响，主要包括温度和掺杂。
 
 \noindent
-\begin{minipage}[t]{0.49\linewidth}
+\begin{minipage}[t]{0.32\linewidth}
     \blue{温度影响}
     \concepttable{
         \conrow{机制}{温度升高 $\to$ 晶格膨胀 $\to$ 原子间作用减弱}
-        \conrow{结果}{$E_g$ 变窄 ($dE_g/dT < 0$)}
+        \conrow{结果}{$E_g$ 变窄}
     }
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.49\linewidth}
+\begin{minipage}[t]{0.32\linewidth}
     \blue{掺杂影响}
     \concepttable{
         \conrow{机制}{掺杂浓度增加 $\to$ 能带变窄效应}
         \conrow{结果}{影响能带结构}
     }
 \end{minipage}
-
-\subsubsection{本征激发}
+\hfill
+\begin{minipage}[t]{0.32\linewidth}
+\blue{本征激发}
 
 \concepttable{
-    \conrow{定义}{价带电子吸收热能跃迁至导带的过程}
+    \conrow{定义}{价电子吸收热能跃迁至导带}
     \conrow{载流子}{成对产生\red{电子}（导带）和\red{空穴}（价带）}
-    \conrow{意义}{半导体存在两种载流子的基本物理事实}
 }
+\end{minipage}
 
 \subsection{载流子统计分布}
 
@@ -195,7 +196,7 @@
     \conrow{\red{费米能级 $E_F$}}{化学势的具体体现，$f(E_F) = 1/2$，是表征半导体统计性质的参考能级}
     \conrow{导带电子浓度}{$n_0 = N_c \exp[-(E_c - E_F)/kT]$，其中 $N_c$ 为导带有效状态密度}
     \conrow{价带空穴浓度}{$p_0 = N_v \exp[-(E_F - E_v)/kT]$，其中 $N_v$ 为价带有效状态密度}
-    \conrow{质量作用定律}{$n_0 p_0 = n_i^2 = N_c N_v \exp(-E_g/kT)$，本征载流子浓度 $n_i$ 只与温度和 $E_g$ 有关}
+    \conrow{质量作用定律}{$n_0 p_0 = n_i^2 = N_c N_v \exp(-E_g/kT)$，$n_i$ 只与温度和 $E_g$ 有关}
 }
 
 \subsubsection{掺杂对载流子浓度的影响}
@@ -248,30 +249,33 @@
 
 \subsection{半导体的载流子输运}
 
-\subsubsection{漂移运动}
+主要分为漂移和扩散两种机制。
 
-\concepttable{
-    \conrow{定义}{载流子在电场作用下的定向运动}
-    \conrow{漂移速度}{$v_d = \mu E$，其中 $\mu$ 为迁移率}
-    \conrow{漂移电流密度}{$J_{drift} = nq\mu_n E + pq\mu_p E$}
-}
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{漂移运动}
 
-\entry{迁移率 $\mu$}{单位电场下载流子的平均漂移速度，反映运动能力，单位 $\mathrm{cm}^2/(\mathrm{V}\cdot\mathrm{s})$，受晶格散射和杂质散射影响}
+    \concepttable{
+        \conrow{定义}{载流子在电场作用下的定向运动}
+        \conrow{漂移速度}{$v_d = \mu E$，其中 $\mu$ 为迁移率}
+        \conrow{漂移电流密度}{$J_{drift} = nq\mu_n E + pq\mu_p E$}
+    }
 
-\entry{饱和速度 $v_{sat}$}{强电场下漂移速度趋于上限（Si 中约 $10^7\,\mathrm{cm/s}$），限制器件速度}
+    \entry{迁移率 $\mu$}{单位电场下载流子的平均漂移速度，反映运动能力，单位 $\mathrm{cm}^2/(\mathrm{V}\cdot\mathrm{s})$，受\red{晶格散射}和\red{杂质散射}影响}
 
-\subsubsection{扩散运动}
+    \entry{饱和速度 $v_{sat}$}{强电场下漂移速度趋于上限}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{扩散运动}
 
-\concepttable{
-    \conrow{定义}{载流子在浓度梯度驱动下从高浓度向低浓度区的运动}
-    \conrow{扩散电流密度}{$J_{diff} = qD_n\frac{dn}{dx} - qD_p\frac{dp}{dx}$，其中 $D$ 为扩散系数}
-}
+    \concepttable{
+        \conrow{定义}{载流子在浓度梯度驱动下从高浓度向低浓度区的运动}
+        \conrow{扩散电流密度}{$J_{diff} = qD_n\frac{dn}{dx} - qD_p\frac{dp}{dx}$}
+    }
 
-\entry{扩散系数 $D$}{}
-\concepttable{
-    \conrow{物理意义}{描述载流子扩散能力的参数}
-    \conrow{\red{爱因斯坦关系}}{\red{$D = \frac{kT}{q}\mu$}，扩散与漂移受相同散射机制限制}
-}
+    \entry{扩散系数 $D$}{\red{爱因斯坦关系}}{\red{$D = \frac{kT}{q}\mu$}，扩散与漂移受相同散射机制限制}
+\end{minipage}
 
 \subsubsection{总电流密度}
 
@@ -546,12 +550,6 @@
     }
 }
 
-\subsection{非均匀掺杂 PN 结}
-
-\subsection{PN 结击穿}
-
-\subsection{PN 结的小信号模型}
-
 \subsection{动态开关特性}
 
 从关态转变到开态所需开启时间很短，从开态转变到关态($+U \rightarrow -U$)所需关闭时间却很长。
@@ -744,7 +742,60 @@
 
 \subsection{MOS 电容的 C-V 特性}
 
+根据栅压和频率的不同，MOS 电容呈现不同的特性
+
+\imgleft[0.3]{images/image-2026-01-02-14-33-15.png}{
+
+    \concepttable{
+        \conrow{积累区}{$C_{\text{acc}} = C_{\text{ox}} = \varepsilon_{\text{ox}}/t_{\text{ox}}$}
+        \conrow{平带区}{$C_{\text{FB}} = \dfrac{C_{\text{ox}}}{t_{ox}+\frac{\varepsilon_{ox}}{\varepsilon_s}\sqrt{V_t\frac{\varepsilon_s}{eN_a}}}$}
+        \conrow{耗尽区}{$C_{\text{depl}} = \dfrac{C_{\text{ox}}}{1 + C_{\text{ox}}/C_{SD}}$}
+        \conrow{最小电容}{$C_{\min} = \dfrac{\varepsilon_{\text{ox}}}{t_{\text{ox}} + (\varepsilon_{\text{ox}}/\varepsilon_s)x_{dT}}$}
+        }
+
+    \noindent
+    \begin{minipage}[t]{0.49\linewidth}
+        \entry{低频强反型}{$C_{\text{inv}}^{\,\text{LF}} \approx C_{\text{ox}}$}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\linewidth}
+        \entry{高频强反型}{$C_{\text{inv}}^{\,\text{HF}} = C_{\min}$}
+    \end{minipage}
+
+}
+
 \subsection{MOSFET 的工作原理}
+
+I-V 特性：
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{NMOS}
+    \concepttable{
+        \conrow{饱和漏压}{$V_{DS(sat)} = V_{GS} - V_{TN}$}
+        \conrow{线性区}{$\frac{W \mu_n C_{ox}}{2L} [2(V_{GS}-V_{T})V_{DS}]$}
+        \conrow{饱和区}{$I_D = \frac{W \mu_n C_{ox}}{2L} (V_{GS} - V_{TN})^2$}
+        \conrow{线性跨导}{$g_m = \frac{W \mu_n C_{ox}}{2L} V_{DS}$}
+        \conrow{饱和跨导}{$g_m = \frac{W \mu_n C_{ox}}{L} (V_{GS} - V_{TN})$}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{PMOS}
+    \concepttable{
+        \conrow{饱和漏压}{$V_{SD(sat)} = V_{SG} - |V_{TP}|$}
+        \conrow{线性区}{$\frac{W \mu_p C_{ox}}{2L} [2(V_{SG}-|V_{T}|)V_{SD}]$}
+        \conrow{饱和区}{$I_D = \frac{W \mu_p C_{ox}}{2L} (V_{SG} - |V_{TP}|)^2$}
+        \conrow{线性跨导}{$g_m = \frac{W \mu_p C_{ox}}{2L} V_{SD}$}
+        \conrow{饱和跨导}{$g_m = \frac{W \mu_p C_{ox}}{L} (V_{SG} - |V_{TP}|)$}
+    }
+\end{minipage}
+
+\entry{普适公式}{$I_D = \frac{W \mu_{n(p)} C_{ox}}{L} \left[ (V_{GS(SG)} - V_{TN(|V_{TP}|)}) V_{DS(SD)} - \frac{V_{DS(SD)}^2}{2} \right]$}
+
+\entry{推导}{由高斯定理得 $-\epsilon_{ox} E_{ox} = Q'_{ss} + Q'_n + Q'_{SD(max)}$；栅压分配为 $V_{GS} - V_x = V_{ox} + \phi_{ms} + 2\phi_{fp}$，利用 $V_{ox} = E_{ox} t_{ox}$ 和 $C_{ox} = \epsilon_{ox}/t_{ox}$ 消去 $E_{ox}$，定义 $V_T = \phi_{ms} + 2\phi_{fp} + (Q'_{ss} + Q'_{SD(max)})/C_{ox}$ 得反型电荷 $|Q'_n(x)| = C_{ox}[(V_{GS} - V_x) - V_T]$；由漂移电流 $I_x = W|Q'_n|\mu_n dV_x/dx$ 沿通道积分 $\int_0^L I_D dx = \int_0^{V_{DS}} W\mu_n C_{ox}(V_{GS} - V_T - V_x)dV_x$ 得 \red{$I_D = \frac{W\mu_n C_{ox}}{L}[(V_{GS} - V_T)V_{DS} - \frac{1}{2}V_{DS}^2]$}（适用条件：$V_{GS} \ge V_T$，$0 < V_{DS} < V_{D(sat)}$）。}
+
+\entry{PMOS转换说明}{对于P型衬底PMOS：(1) 将电压符号改为 $V_{SG}$、$V_{SD}$，阈值电压改为 $|V_{TP}|$；(2) 迁移率 $\mu_n \to \mu_p$；(3) 反型电荷为空穴 $Q'_p$；(4) 电流方向从源极到漏极，公式形式不变：$I_D = \frac{W\mu_p C_{ox}}{L}[(V_{SG} - |V_{TP}|)V_{SD} - \frac{1}{2}V_{SD}^2]$。}
 
 \subsection{CMOS 技术}
 
@@ -763,7 +814,97 @@
 
 \section{第五章\ 双极型晶体管}
 
-\subsection{基本结构与工作原理}
+\subsection{工作原理}
+
+少子分布、能带图：
+
+\noindent
+\begin{minipage}[t]{0.24\linewidth}
+    \blue{正向有源区}
+    
+    \vspace{2pt}
+    \noindent
+    \begin{minipage}[t]{0.48\linewidth}
+        \blue{NPN 型}
+
+        \img[\linewidth]{images/image-2026-01-02-19-28-20.png}
+
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\linewidth}
+        \blue{PNP 型}
+    \end{minipage}
+
+    理想情况下，\red{集电结边界的少子的浓度为零}，希望从发射区注入的电子能越过基区扩散到集电结的空间电荷区，尽可能多的电子被集电极收集，而不是在基区复合，因此需要\red{基区的宽度与扩散长度相比很小}。
+
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.24\linewidth}
+    \blue{饱和区}
+
+    \vspace{2pt}
+    \noindent
+    \begin{minipage}[t]{0.48\linewidth}
+        \blue{NPN 型}
+
+        \img[\linewidth]{images/image-2026-01-02-19-29-32.png}
+
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\linewidth}
+        \blue{PNP 型}
+    \end{minipage}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.24\linewidth}
+    \blue{截止区}
+
+    \vspace{2pt}
+    \noindent
+    \begin{minipage}[t]{0.48\linewidth}
+        \blue{NPN 型}
+
+        \img[\linewidth]{images/image-2026-01-02-19-29-57.png}
+
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\linewidth}
+        \blue{PNP 型}
+    \end{minipage}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.24\linewidth}
+    \blue{反向有源区}
+
+    \vspace{2pt}
+    \noindent
+    \begin{minipage}[t]{0.48\linewidth}
+        \blue{NPN 型}
+
+        \img[\linewidth]{images/image-2026-01-02-19-30-42.png}
+
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\linewidth}
+        \blue{PNP 型}
+    \end{minipage}
+\end{minipage}
+
+BJT 有共射、共基、共集三种接法，为了使三极管处于正向有源区，从而实现正常的电流放大作用，必须同时满足以下两个条件：
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+
+\entry{\blue{发射结正向偏置}}{降低发射结势垒，\red{使发射区的高浓度多子（NPN是电子）能够顺利注入到基区。}}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+
+\entry{\blue{集电结反向偏置}}{在集电结建立较强的电场（耗尽层加宽），有利于\red{收集从基区扩散过来的少子}。形成集电极电流 $I_C$。}
+
+\end{minipage}
 
 \subsection{低频共基极电流增益}
 
@@ -1039,29 +1180,6 @@
 
 \subsection{异质结基本知识}
 
-\subsection{问答题整理}
-
-\blue{孟庆巨版本教材：} \red{红色题干}为作业、课件出现过的题目。
-\concepttable{
-    \conrow{界面态对肖特基势垒高度的影响}{在大多数实用的肖特基势垒中，\red{界面态在决定 $\phi_b$ 数值中处于支配地位}，势垒高度基本上与两个功函数差以及半导体中的掺杂度无关。由于表面态密度无法预知，势垒高度通常为经验值。}
-    \conrow{加偏压时肖特基势垒能带图中 $q\phi_b$ 几乎不变的原因}{由于金属中电子浓度极高，空间电荷区极薄，电势连续性决定了加偏压时肖特基势垒能带图中 $q\phi_b$ 几乎不变。}
-    \conrow{\red{肖特基势垒二极管与 PN 结二极管的区别}}{\textbf{肖特基势垒二极管}是\red{多子器件}，\textbf{PN 结二极管}是少子器件。主要区别：\par
-    (1) 无少数载流子存储，存储时间可忽略，适合高频和快速开关；\par
-    (2) 多数载流子电流远高于少数载流子，饱和电流远高于同面积 PN 结二极管；\par
-    (3) 对同样电流，肖特基势垒上的正向电压降远低于 PN 结，适合箝位和限幅应用；\par
-    (4) 多子数目起伏小，噪声小；\par
-    (5) 温度特性好。}
-    \conrow{金属与重掺杂半导体接触为何可形成欧姆接触}{若半导体为重掺杂（如 $10^{19}\,\mathrm{cm}^{-3}$ 或更高），空间电荷层宽度极薄，载流子可\red{隧道穿透}而非越过势垒。两侧电子均可隧穿，正反向偏压下 $I$-$V$ 曲线基本对称，表现为非整流、低电阻的欧姆接触。}
-}
-
-\blue{第四次作业相关：}
-
-\concepttable{
-    \conrow{在理想情况下，金属和半导体之间形成非整流接触势垒的条件是什么？}{前面有}
-    \conrow{画出n型欧姆接触时，零偏、正偏、反偏条件下的能带图}{这三个图前面都有}
-    \conrow{根据给出的金属与半导体，画出形成金半接触后的能带图}{原则就是让金属的费米能级不变，然后让半导体的费米能级和金属对齐，画出弯曲的能带图即可。然后根据半导体类型以及载流子的流向标注是阻挡层还是反阻挡层。}
-}
-
 
 
 \section{第六章\ 结型场效应晶体管}
@@ -1115,6 +1233,30 @@ x_n &= \left( \frac{2\epsilon_s V_{bi}}{e} \cdot \frac{N_A}{N_D} \cdot \frac{1}{
 E_{\max} &= \frac{-e N_d x_n}{\epsilon_s} = \frac{-(1.6 \times 10^{-19})(10^{15})(0.864 \times 10^{-4})}{(11.7)(8.85 \times 10^{-14})} = -1.34 \times 10^{4}\,\text{V/cm}
 \end{align*}
 }
+
+\subsection{问答题整理}
+
+\blue{孟庆巨版本教材：} \red{红色题干}为作业、课件出现过的题目。
+\concepttable{
+    \conrow{界面态对肖特基势垒高度的影响}{在大多数实用的肖特基势垒中，\red{界面态在决定 $\phi_b$ 数值中处于支配地位}，势垒高度基本上与两个功函数差以及半导体中的掺杂度无关。由于表面态密度无法预知，势垒高度通常为经验值。}
+    \conrow{加偏压时肖特基势垒能带图中 $q\phi_b$ 几乎不变的原因}{由于金属中电子浓度极高，空间电荷区极薄，电势连续性决定了加偏压时肖特基势垒能带图中 $q\phi_b$ 几乎不变。}
+    \conrow{\red{肖特基势垒二极管与 PN 结二极管的区别}}{\textbf{肖特基势垒二极管}是\red{多子器件}，\textbf{PN 结二极管}是少子器件。主要区别：\par
+    (1) 无少数载流子存储，存储时间可忽略，适合高频和快速开关；\par
+    (2) 多数载流子电流远高于少数载流子，饱和电流远高于同面积 PN 结二极管；\par
+    (3) 对同样电流，肖特基势垒上的正向电压降远低于 PN 结，适合箝位和限幅应用；\par
+    (4) 多子数目起伏小，噪声小；\par
+    (5) 温度特性好。}
+    \conrow{金属与重掺杂半导体接触为何可形成欧姆接触}{若半导体为重掺杂（如 $10^{19}\,\mathrm{cm}^{-3}$ 或更高），空间电荷层宽度极薄，载流子可\red{隧道穿透}而非越过势垒。两侧电子均可隧穿，正反向偏压下 $I$-$V$ 曲线基本对称，表现为非整流、低电阻的欧姆接触。}
+}
+
+\blue{第四次作业相关：}
+
+\concepttable{
+    \conrow{在理想情况下，金属和半导体之间形成非整流接触势垒的条件是什么？}{前面有}
+    \conrow{画出n型欧姆接触时，零偏、正偏、反偏条件下的能带图}{这三个图前面都有}
+    \conrow{根据给出的金属与半导体，画出形成金半接触后的能带图}{原则就是让金属的费米能级不变，然后让半导体的费米能级和金属对齐，画出弯曲的能带图即可。然后根据半导体类型以及载流子的流向标注是阻挡层还是反阻挡层。}
+}
+
 
 % --- 手动换栏命令（如果需要强制换列）---
 % \columnbreak 

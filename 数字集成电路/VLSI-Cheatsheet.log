@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  2 JAN 2026 14:27
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  2 JAN 2026 17:15
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1131,17 +1131,36 @@ Underfull \hbox (badness 10000) in paragraph at lines 1692--1692
 [][]\TU/PingFangSC(0)/b/n/5 可 改 写
  []
 
+File: images/image-2026-01-02-16-03-48.png Graphic file (type bmp)
+<images/image-2026-01-02-16-03-48.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1785--1785
+[]\TU/PingFangSC(0)/m/n/5 同 一 列 中 每 个 单 元 的 数 据 输 入\TU/lmr/m/n/5 /\TU/PingFangSC(0)/m/n/5 输 出 端 连 接
+ []
+
+
+Overfull \hbox (8.4149pt too wide) in paragraph at lines 1846--1847
+ [] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1887--1887
+[]\TU/PingFangSC(0)/m/n/5 最 后 的 字 线 驱 动 电 路 只 需 要 简 单 的 逻 辑 门
+ []
+
+File: images/image-2026-01-02-17-06-17.png Graphic file (type bmp)
+<images/image-2026-01-02-17-06-17.png>
 File: images/image-2025-12-30-21-26-07.png Graphic file (type bmp)
 <images/image-2025-12-30-21-26-07.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1754--1754
+Underfull \hbox (badness 10000) in paragraph at lines 1968--1968
 []\TU/PingFangSC(0)/m/n/5 输 入 信 号 与 反 馈 的  |“现 态”|  共 同 决 定  |“次
  []
 
 File: images/image-2025-12-30-21-32-44.png Graphic file (type bmp)
 <images/image-2025-12-30-21-32-44.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1788--1788
+Underfull \hbox (badness 10000) in paragraph at lines 2002--2002
 [][]\TU/PingFangSC(0)/b/n/5 策 略 二：| \TU/lmr/bx/n/5 (CS) +
  []
 
@@ -1152,23 +1171,16 @@ File: images/image-2025-12-30-21-51-35.png Graphic file (type bmp)
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
-
-
-Package rerunfilecheck Warning: File `VLSI-Cheatsheet.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `VLSI-Cheatsheet.out':
-(rerunfilecheck)             Before: 455DF0670AB2B8FDBE293EBA7E8A2E55;14112
-(rerunfilecheck)             After:  9D982B060C45036EDEA7820A3A8F8DA4;13988.
+Package rerunfilecheck Info: File `VLSI-Cheatsheet.out' has not changed.
+(rerunfilecheck)             Checksum: 15817229DE56379A96704DDFB4F3B667;14175.
  ) 
 Here is how much of TeX's memory you used:
- 28543 strings out of 473832
- 635968 string characters out of 5729481
- 1201106 words of memory out of 5000000
- 51067 multiletter control sequences out of 15000+600000
+ 28672 strings out of 473832
+ 639278 string characters out of 5729481
+ 1209669 words of memory out of 5000000
+ 51194 multiletter control sequences out of 15000+600000
  562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,17n,114p,618b,1061s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,17n,114p,618b,1316s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on VLSI-Cheatsheet.pdf (5 pages).

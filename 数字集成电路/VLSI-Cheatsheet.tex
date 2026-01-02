@@ -28,7 +28,7 @@
 
 \definecolor{myblue}{HTML}{003153} % 蓝色字
 \definecolor{myred}{HTML}{85120F}  % 红色字
-\definecolor{hlblue}{HTML}{7090D3} % 蓝色高亮
+\definecolor{hlblue}{HTML}{ADC1DB} % 蓝色高亮
 \definecolor{hlred}{HTML}{D66A83}  % 红色高亮
 \definecolor{hlyellow}{HTML}{E3C79F}  % 奢金高亮
 \definecolor{hlgreen}{HTML}{BED49D}  % 抹茶绿高亮
@@ -1713,9 +1713,238 @@ t_{p} = \underbrace{\textcolor{blue}{0.69 R_{s} \cdot cL}}_{\text{逻辑门延�
 
 \subsection{存储器结构}
 
-\subsection{存储体}
+\entry{通用结构}{尽管不同存储器（SRAM/DRAM/ROM）各有特点，但其总体结构是一致的：}
 
-\subsection{地址译码器}
+\imgleft[0.3]{images/image-2026-01-02-16-03-48.png}{
+
+    \concepttable{
+        \conrow{存储体}{位于核心，由 $N \times M$ 个单元组成，负责实际的数据存储。}
+        \conrow{地址译码驱动}{
+            \red{行译码器}：接收 $n$ 位行地址，负责选中特定的"行"。\par
+            \red{列译码器}：接收 $m$ 位列地址，负责控制列选开关。}
+        \conrow{列选开关}{根据列译码器的信号，从阵列中选出特定的数据列（MUX）。}
+        \conrow{读写控制电路}{接收片选和读写信号（WE/OE），控制数据的流向和时序。}
+        \conrow{输入/输出电路}{数据缓冲，连接外部数据总线。}
+    }
+
+    \entry{地址空间分割}{地址线被分为 $n$ 位\red{行地址}和 $m$ 位\red{列地址}。}
+    \concepttable{
+        \conrow{设计目的}{减少译码器复杂度并优化芯片版图形状（使其接近方形）。}
+        \conrow{地址关系}{\red{地址总位数 $= n + m$。}}
+    }
+}
+
+\subsubsection{存储体}
+
+\entry{逻辑容量}{
+    \concepttable{
+        \conrow{字数 ($N$)}{存储器的\red{"深度"}，即有多少个\red{独立的存储单元}地址。}
+        \conrow{位数 ($M$)}{每个字的\red{"宽度"}，即一次读写操作涉及多少个二进制位。}
+        \conrow{总容量}{为 $N \times M$。}
+    }
+}
+
+\entry{注}{$N$ 和 $M$ 通常是 2 的整数次幂。例如 $128 \times 8$ 表示有 128 个地址，每个地址存储 8 位数据。}
+
+\entry{物理实现差异}{$N$、$M$ 与物理行数、列数可能不同：}
+
+\concepttable{
+    \conrow{行数 $\le N$}{物理上的行数可能小于逻辑上的字数。}
+    \conrow{列数 $\ge M$}{物理上的列数通常大于或等于字长。}
+    \conrow{守恒定律}{物理行数 $\times$ 物理列数 = 逻辑字数 $N \times$ 逻辑字长 $M$。}
+}
+
+\entry{物理布局优化原因}{如果一个存储器是 $1024 \times 1$（细长型），直接做成 1024 行、1 列在硅片上极难布线，通常会做成 $32 \times 32$ 的方阵以\red{优化版图}。}
+
+\entry{存储单元}{所有存储器的共同点是：每个单元有两个相对稳定的状态，分别代表二进制的 \red{"0"} 和 \red{"1"}。}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{行选择机制 (Row Selection)}
+    
+    \entry{字线 (Word Line, WL)}{
+        \concepttable{
+            \conrow{定义}{同一行中每个单元的选择控制端连接在一起的导线，称为字线。}
+            \conrow{连接关系}{字线直接与\red{行译码器}相连。}
+            \conrow{工作原理}{当 $n$ 位行地址输入到行译码器时，译码器会使\red{唯一的一条字线}变为有效电平。}
+            \conrow{选中效果}{一旦某条字线被激活，该行上\red{所有的存储单元}都会被选中，准备与位线进行电荷或信号交换。}
+        }
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{列选择机制 (Column Selection)}
+    
+    \entry{位线 (Bit Line, BL)}{
+        \concepttable{
+            \conrow{定义}{同一列中每个单元的数据输入/输出端连接在一起的导线，称为位线。}
+            \conrow{连接关系}{位线连接到\red{列选开关}（由列译码器控制）。}
+            \conrow{数据通路}{当某一行被字线 (WL) 选中后，该行所有单元的数据都会放到各自的位线 (BL) 上。}
+            \conrow{选择效果}{列译码器输出信号控制列选开关，只接通\red{需要的那几条位线}，将其连接到数据总线，完成读写。}
+        }
+    }
+\end{minipage}
+
+\entry{多字存储与物理布局}{物理行较长,一行中包含多个字。}
+
+\concepttable{
+    \conrow{结构示例}{逻辑上是 $256 \times 8$(256个字),物理上可能设计成 $64 \times 32$ 的阵列。这意味着每一行物理行实际包含了 4 个逻辑字($32 \div 8 = 4$)。}
+    \conrow{插排方式}{这些字的存储单元通常是\red{按位的顺序分插排放(实际情况是把一行所有字的某一位放在一起)}的。列选开关不仅要选"列",还要从这一行的多个字中选出目标字。}
+    \conrow{地址映射}{行地址用于选中物理行,而\red{列地址(部分低位地址)}用于在列选开关中从这一行里选出具体的那个字。}
+}
+
+\entry{物理布局示例}{以 $256 \times 8$ 存储器（物理实现为 $64 \times 32$）为例：}
+\vspace{-10pt}
+\begin{center}
+\begin{tikzpicture}[scale=0.5, every node/.style={font=\tiny, inner sep=1pt}]
+    % 绘制一行的32个存储单元
+    \foreach \i in {0,...,31} {
+        \draw (\i*0.6,0) rectangle ++(0.6,0.8);
+    }
+    
+    % 标注4个字的分组（每个字8位）
+    % Word 0: bits 0-7
+    \draw [decorate,decoration={brace,amplitude=3pt,mirror},thick,blue] 
+        (0,-0.15) -- (4.8,-0.15) node[midway,below=3pt] {\blue{Word 0}};
+    
+    % Word 1: bits 8-15
+    \draw [decorate,decoration={brace,amplitude=3pt,mirror},thick,blue] 
+        (4.8,-0.15) -- (9.6,-0.15) node[midway,below=3pt] {\blue{Word 1}};
+    
+    % Word 2: bits 16-23
+    \draw [decorate,decoration={brace,amplitude=3pt,mirror},thick,blue] 
+        (9.6,-0.15) -- (14.4,-0.15) node[midway,below=3pt] {\blue{Word 2}};
+    
+    % Word 3: bits 24-31
+    \draw [decorate,decoration={brace,amplitude=3pt,mirror},thick,blue] 
+        (14.4,-0.15) -- (19.2,-0.15) node[midway,below=3pt] {\blue{Word 3}};
+    
+    % 标注位编号（每个字内的位序号）
+    \foreach \i/\bit in {0/7,1/6,2/5,3/4,4/3,5/2,6/1,7/0} {
+        \node at (\i*0.6+0.3,0.4) {b\bit};
+    }
+    \foreach \i/\bit in {8/7,9/6,10/5,11/4,12/3,13/2,14/1,15/0} {
+        \node at (\i*0.6+0.3,0.4) {b\bit};
+    }
+    \foreach \i/\bit in {16/7,17/6,18/5,19/4,20/3,21/2,22/1,23/0} {
+        \node at (\i*0.6+0.3,0.4) {b\bit};
+    }
+    \foreach \i/\bit in {24/7,25/6,26/5,27/4,28/3,29/2,30/1,31/0} {
+        \node at (\i*0.6+0.3,0.4) {b\bit};
+    }
+    
+    % 顶部标注
+    \draw [decorate,decoration={brace,amplitude=4pt},thick,red] 
+        (0,0.95) -- (19.2,0.95) node[midway,above=4pt] {\red{物理行（64行之一），包含4个逻辑字}};
+    
+    % 列选标注
+    \node[font=\tiny] at (2.4,-1.2) {列选开关};
+    \node[font=\tiny] at (7.2,-1.2) {选择其中};
+    \node[font=\tiny] at (12,-1.2) {一个字};
+    \node[font=\tiny] at (16.8,-1.2) {输出};
+    
+\end{tikzpicture}
+\end{center}
+
+\vspace{-8pt}
+
+\subsubsection{地址译码器}
+
+分为行地址译码器和列地址译码器两部分
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{行译码器 (Row Decoder)}
+
+\entry{基础译码器结构}{
+
+    \concepttable{
+        \conrow{互补信号}{缓冲器产生地址的\red{正相（原码）}和\red{反相（反码）}信号。}
+    }
+
+}
+
+\entry{编码电路（与非门阵列）}{
+    \concepttable{
+        \conrow{逻辑结构}{使用\red{与非门 (NAND)} 阵列实现。}
+        \conrow{\red{唯一选中性}}{在任何时刻，对于一组确定的输入地址，\red{只有一条字线}会被置为有效电平。}
+    }
+}
+
+\entry{多级译码}{当存储器容量增大，\red{地址线太多}时，直接使用单级译码会遇到瓶颈：}
+
+\concepttable{
+    \conrow{扇入过大}{如果地址线有 20 根，那么每个与非门就需要 20 个输入端。}
+}
+
+\entry{二级译码方案}{将高位地址和低位地址分开处理：}
+
+\concepttable{
+    \conrow{分组译码}{5 位地址 ($A_0 \sim A_4$) 被分为两组：\par
+    • 低 3 位进入 3-8 译码器，产生 8 个输出 ($L_0 \sim L_7$)。\par
+    • 高 2 位进入 2-4 译码器，产生 4 个输出 ($H_0 \sim H_3$)。}
+    \conrow{再次组合}{最后的字线驱动电路只需要简单的逻辑门（接收一个 $H$ 信号和一个 $L$ 信号）即可完成最终选通。}
+}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{列译码器 (Column Decoder)}
+
+    \entry{基础译码器结构}{
+
+        \concepttable{
+            \conrow{互补信号}{缓冲器产生地址的\red{正相（原码）}和\red{反相（反码）}信号。}
+        }
+
+    }
+
+    \entry{编码电路（传输门开关阵列）}{
+        \concepttable{
+            \conrow{逻辑结构}{使用\red{多级开关树} 阵列实现。}
+            \conrow{\red{唯一选中性}}{在任何时刻，对于一组确定的输入地址，\red{只有一条位线}会被置为有效电平。}
+        }
+    }
+
+    \entry{开关树设计}{当存储器容量增大，\red{地址线太多}时，直接使用单级译码会遇到瓶颈：}
+
+    \concepttable{
+        \conrow{扇入过大}{如果地址线有 20 根，那么每个与非门就需要 20 个输入端。}
+    }
+
+    \entry{二级译码方案}{将高位地址和低位地址分开处理：}
+
+    \concepttable{
+        \conrow{分组译码}{5 位地址 ($A_0 \sim A_4$) 被分为两组：\par
+        • 低 3 位进入 3-8 译码器，产生 8 个输出 ($L_0 \sim L_7$)。\par
+        • 高 2 位进入 2-4 译码器，产生 4 个输出 ($H_0 \sim H_3$)。}
+        \conrow{再次组合}{最后的字线驱动电路只需要简单的逻辑门（接收一个 $H$ 信号和一个 $L$ 信号）即可完成最终选通。}
+    }
+
+
+\end{minipage}
+
+\subsubsection{地址同步控制（电路实现）}
+
+深入到晶体管级（CMOS）设计细节，解释如何让同步控制更高效。
+
+\imgleft[0.25]{images/image-2026-01-02-17-06-17.png}{
+
+    \entry{优化策略1：快速下翻控制}{
+        \concepttable{
+            \conrow{实现方法}{将同步使能控制 ($En$) 晶体管放置在靠近与非门输出端}
+            \conrow{优化原理}{最关键的信号放在最靠近输出的位置，\red{在其他的信号把中间节点电容充或放电之后}，关键信号到达即可让输出翻转，减少不必要的等待时间。}
+        }
+    }
+    \entry{优化策略2：反相器阈值电压设计}{
+        \concepttable{
+            \conrow{实现方法}{调整反相器中 PMOS 和 NMOS 的宽长比，将转折电压 ($V_M$) 设计得较高。}
+            \conrow{阈值移动}{普通逻辑门阈值通常在 $V_{DD}/2$。将 $V_M$ 移向右侧（较高电压），意味着输入信号只要稍微下降一点点，反相器就会发生翻转。}
+        }
+    }
+
+}
+
 
 \subsection{读写控制及输入输出电路}
 
