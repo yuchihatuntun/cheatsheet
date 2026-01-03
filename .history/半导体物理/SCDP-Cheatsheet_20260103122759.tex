@@ -797,19 +797,210 @@ I-V 特性：
 
 \entry{PMOS转换说明}{对于P型衬底PMOS：(1) 将电压符号改为 $V_{SG}$、$V_{SD}$，阈值电压改为 $|V_{TP}|$；(2) 迁移率 $\mu_n \to \mu_p$；(3) 反型电荷为空穴 $Q'_p$；(4) 电流方向从源极到漏极，公式形式不变：$I_D = \frac{W\mu_p C_{ox}}{L}[(V_{SG} - |V_{TP}|)V_{SD} - \frac{1}{2}V_{SD}^2]$。}
 
-\subsection{CMOS 技术}
+\subsubsection{截止频率}
+
+截止频率 $f_T$ 是电流增益为 1 时的频率。\red{$f_T = \frac{g_m}{2\pi (C_{gsT} + C_M)} = \frac{g_m}{2\pi C_G}$}
+
+在理想饱和区，\red{$f_T = \frac{\mu_n}{2\pi L^2} (V_{GS} - V_T)$}，\textbf{提高频率特性的途径：}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{提高迁移率 $\mu_n$}
+    \concepttable{
+        \conrow{优化晶向}{选择高迁移率晶向（如硅的100方向）}
+        \conrow{新材料}{使用 GaAs 等高迁移率材料}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{缩短沟道长度 $L$}
+    \concepttable{
+        \conrow{效果}{$f_T \propto 1/L^2$，\red{最有效方法}}
+        \conrow{双重收益}{减小寄生电容 $C_{gs}$；增大跨导 $g_m$}
+    }
+\end{minipage}
 
 \section{第四章\ MOSFET 深入}
 
 \subsection{非理想效应}
 
-\subsection{按比例缩小}
+这里的图也需要记一记，可能没有那么多空来画。
 
-\subsection{阈值电压修正}
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \hlgreen{\textbf{亚阈值电导}}
 
-\subsection{附加电学特性}
+    \entry{定义}{在弱反型（$\phi_{fp} \leq \phi_s \leq 2\phi_{fp}$）中，电流$I_D$并没有截止，而是呈指数衰减。}
 
-\subsection{辐射和热电子效应}
+    \imgleft[0.3]{images/image-2026-01-03-10-14-50.png}{
+        \entry{理想与实际过渡区对比}{在 $V_T$ 以下，电流平滑过渡，存在"尾巴"，即亚阈值电流。}
+
+        \entry{物理机理}{弱反型势垒较低，根据玻尔兹曼分布，源区总有一部分高能量电子有概率越过势垒。此时电流的主要驱动机制是扩散，而非漂移}
+
+    }
+
+    \entry{I-V特性影响}{
+        $I_{D(sub)} \propto \left[ \exp \left( \frac{eV_{GS}}{kT} \right) \right] \cdot \left[ 1 - \exp \left( \frac{-eV_{DS}}{kT} \right) \right]$，$V_{DS}$过大时，$I_{D(sub)}$趋于饱和。
+    }
+
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \hlgreen{\textbf{沟道长度调制}}
+
+    \entry{定义}{饱和区，过剩的电压 $V_{DS} - V_{DS(sat)}$ 会导致夹断点向源极方向移动。}
+
+    \imgleft[0.3]{images/image-2026-01-03-10-30-27.png}{
+
+        $V_{DS} \uparrow \Rightarrow \Delta V_{DS} \uparrow \Rightarrow \Delta L \uparrow \Rightarrow L' = L - \Delta L \downarrow \Rightarrow I_D \uparrow$
+
+        \red{$I'_D = \frac{L}{L - \Delta L} I_{D(sat)}$}
+    
+    }
+
+    % 逻辑链符号化总结
+    
+    $N_A \downarrow \;\Longrightarrow\; x_d \uparrow \;\Longrightarrow\; \Delta L \uparrow \;\Longrightarrow\; L \downarrow \;\Longrightarrow\; \frac{\Delta L}{L} \uparrow \;\Longrightarrow\; \text{沟调效应增强} \quad \text{抑制方法:}\quad N_A \uparrow \text{ 或 } L \uparrow$
+
+    \hlgreen{\textbf{迁移率变化}}
+    \entry{定义}{
+
+    $V_{GS} \uparrow \;\Longrightarrow\; E_{\text{纵}} \uparrow \;\Longrightarrow\; \text{载流子靠近界面} \;\Longrightarrow\; \text{表面散射增强} \;\Longrightarrow\; \mu_{\text{eff}} = \frac{\mu_0}{1 + \theta[V_{GS} - V_T(x)]}$
+
+    }
+
+\end{minipage}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+
+    \hlgreen{\textbf{速度饱和}}
+
+    \entry{定义}{饱和漂移速度 $v_{sat}$，漏源电流提前饱和。\red{实际的饱和电压小于理想值}}
+
+    $I_{D(sat)} = W C_{ox} (V_{GS} - V_T) v_{sat}$(成线性关系了)$f_T = \frac{v_{sat}}{2\pi L}$ 
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+
+    \hlgreen{\textbf{弹道输运}}
+
+    \entry{定义}{由于\red{沟道长度非常短（$L <$ 散射平均自由程）}，载流子在沟道内几乎没有散射，直接从源极到达漏极，速度极快（主要出现在先进制程的短沟道器件中）}
+
+\end{minipage}
+
+\hlyellow{\textbf{按比例缩小}}
+\par
+\hlgreen{\textbf{完全按比例缩小}}
+尺寸与电压按同样比例缩小，电场强度保持不变，\red{最为理想，但难以实现}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+$W',L',t_{ox}',x_D' = kW, kL, kt_{ox}, kx_D$
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+$V_{DS}',V_{GS}',V_T' = kV_{DS}, kV_{GS}, kV_T$
+\end{minipage}
+
+\noindent
+\begin{minipage}[t]{0.32\linewidth}
+\entry{掺杂调整}{$N_A' = N_A/k$ }
+\entry{电流}{$I_D' = kI_D$}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.32\linewidth}
+\entry{功率}{$P' = k^2P$}
+\entry{电阻}{$R' = R$}\entry{电容}{$C_{ox}' = kC_{ox}$}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.32\linewidth}
+\entry{延迟}{$\tau' = k\tau$}
+\entry{功率密度}{$P'' = P$}
+\end{minipage}
+
+\entry{阈值电压不按比例缩小}{
+    \concepttable{
+        \conrow{原因}{$\phi_{fp} = V_t \ln(N_A/n_i) \approx \text{const}$，$\phi_{ms} \approx \text{const}$}
+        \conrow{实际}{$V_T' \approx V_T \neq kV_T$}
+        \conrow{后果}{$V_{DD} \downarrow \implies (V_{GS}-V_T) \downarrow \implies I_D, f_T \downarrow$}
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \hlgreen{\textbf{恒压按比例缩小}}
+    \textbf{尺寸缩小}：$L, W$ 缩小（按 $k$）。\textbf{电压不变}：$V_{DD}$ 保持。
+    \entry{后果}{电场增强：$E = V/L$。$V$ 不变，$L$ 减小 $\to$ \red{$E$ 剧增}（温度升高，乃至于击穿器件）}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \hlgreen{\textbf{一般化按比例缩小}}
+    \textbf{尺寸}：按比例因子 $k$ 缩小。\textbf{电场}：按另一个因子缩小（电压稍微降低一点，但降得没尺寸那么快）。\textbf{目的}：在保证可靠性和性能之间寻找平衡
+\end{minipage}
+
+\hlyellow{\textbf{阈值电压修正}}
+\par
+\hlgreen{\textbf{短沟道效应}}
+源和漏的 N+ 掺杂，与 P 型衬底之间会形成耗尽区。源和漏的电场会“协助”耗尽沟道两端的区域，使栅极需要耗尽的一部分电荷被源和漏分担了，受\red{栅极控制的耗尽层形状成为梯形}（即 $L'$ 的区域）。
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+
+    \vspace{-10pt}
+    \begin{minipage}[t]{0.49\linewidth}
+        \img{images/image-2026-01-03-11-55-02.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\linewidth}
+        \img{images/image-2026-01-03-11-57-28.png}
+    \end{minipage}
+    
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+
+$\Delta L = r_j (\sqrt{1 + \frac{2x_{dT}}{r_j}} - 1)$
+
+$\Delta V_T = - \frac{e N_A x_{dT}}{C_{ox}} [\frac{\Delta L}{L}] < 0$
+
+$r_j$ 为结深度，$L$ 和$r_j$ 同量级时，短沟道效应显著。
+
+\end{minipage}
+
+\hlgreen{\textbf{窄沟道效应}}
+当沟道变窄，源/漏结及沟道边缘的\red{耗尽区会向沟道中心延伸}，在沟道宽度的两侧存在附加的空间电荷区；这些附加的电荷也受栅压控制，栅极要使剩余的硅区反型，就需要施加更高的栅电压。因此，阈值电压增大。
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+
+    \vspace{-6pt}
+    \begin{minipage}[t]{0.49\linewidth}
+        \img{images/image-2026-01-03-12-17-11.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\linewidth}
+        \img{images/image-2026-01-03-12-10-55.png}
+    \end{minipage}
+    
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+
+$\Delta V_T = V_T(\text{窄}) - V_T(\text{宽})$
+
+$= \frac{e N_A x_{dT}}{C_{ox}} \cdot \frac{\xi x_{dT}}{W} > 0$
+
+$\xi$是几何因子，当 $W$ 和$x_{dT}$ 同量级时，窄沟道效应显著。
+
+\end{minipage}
+
+\hlgreen{\textbf{离子注入效应}}
+离子注入主要改变的是半导体表面的杂质浓度，进而改变耗尽层内的空间电荷密度 $|Q'_{SD(max)}|$
+
+$V_T = V_{T0} \pm \frac{e D_I}{C_{ox}},+\text{为同性掺杂}，-\text{为异性掺杂}$
 
 
 \section{第五章\ 双极型晶体管}
