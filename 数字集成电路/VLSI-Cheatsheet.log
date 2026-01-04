@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  4 JAN 2026 09:29
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  4 JAN 2026 12:01
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1072,20 +1072,23 @@ File: images/image-2026-01-03-21-45-53.png Graphic file (type bmp)
 <images/image-2026-01-03-21-45-53.png>
 File: images/image-2026-01-04-09-26-27.png Graphic file (type bmp)
 <images/image-2026-01-04-09-26-27.png>
-
-Underfull \hbox (badness 10000) in paragraph at lines 1179--1179
-[][][]\TU/PingFangSC(0)/b/n/5 晶 体 管 尺 寸 易 设
- []
-
-
-Overfull \hbox (34.18823pt too wide) in paragraph at lines 1179--1179
- []|[][][][][][][] [] [] 
- []
-
+File: images/image-2026-01-04-09-33-28.png Graphic file (type bmp)
+<images/image-2026-01-04-09-33-28.png>
+File: images/image-2026-01-04-10-40-02.png Graphic file (type bmp)
+<images/image-2026-01-04-10-40-02.png>
+ [3]
+File: images/image-2026-01-04-10-40-02.png Graphic file (type bmp)
+<images/image-2026-01-04-10-40-02.png>
+File: images/image-2026-01-04-11-44-59.png Graphic file (type bmp)
+<images/image-2026-01-04-11-44-59.png>
+File: images/image-2026-01-04-11-59-56.png Graphic file (type bmp)
+<images/image-2026-01-04-11-59-56.png>
+File: images/image-2026-01-04-11-23-55.png Graphic file (type bmp)
+<images/image-2026-01-04-11-23-55.png>
 File: images/image-2026-01-02-09-48-02.png Graphic file (type bmp)
 <images/image-2026-01-02-09-48-02.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1198--1198
+Underfull \hbox (badness 10000) in paragraph at lines 1349--1349
 [][]\TU/PingFangSC(0)/b/n/5 进 位 输 出
  []
 
@@ -1093,7 +1096,6 @@ File: images/image-2026-01-02-10-12-52.png Graphic file (type bmp)
 <images/image-2026-01-02-10-12-52.png>
 File: images/image-2026-01-02-10-36-13.png Graphic file (type bmp)
 <images/image-2026-01-02-10-36-13.png>
-[3]
 File: images/image-2026-01-02-11-11-06.png Graphic file (type bmp)
 <images/image-2026-01-02-11-11-06.png>
 File: images/image-2026-01-02-11-31-54.png Graphic file (type bmp)
@@ -1106,10 +1108,11 @@ File: images/image-2026-01-02-09-54-17.png Graphic file (type bmp)
 <images/image-2026-01-02-09-54-17.png>
 File: images/image-2026-01-02-11-03-12.png Graphic file (type bmp)
 <images/image-2026-01-02-11-03-12.png>
+[4]
 File: images/image-2026-01-02-12-12-59.png Graphic file (type bmp)
 <images/image-2026-01-02-12-12-59.png>
 
-Overfull \hbox (1.28688pt too wide) in paragraph at lines 1468--1468
+Overfull \hbox (1.28688pt too wide) in paragraph at lines 1619--1619
 [][]$[] \OML/cmm/m/it/5 t[]$[]| 
  []
 
@@ -1125,49 +1128,48 @@ File: images/image-2026-01-02-13-03-13.png Graphic file (type bmp)
 <images/image-2026-01-02-13-03-13.png>
 File: images/image-2026-01-02-13-10-09.png Graphic file (type bmp)
 <images/image-2026-01-02-13-10-09.png>
-[4]
 File: images/image-2026-01-03-17-22-26.png Graphic file (type bmp)
 <images/image-2026-01-03-17-22-26.png>
 
-Overfull \hbox (19.94026pt too wide) in paragraph at lines 1658--1659
+Overfull \hbox (19.94026pt too wide) in paragraph at lines 1809--1810
 []$\OML/cmm/m/it/5 XY \OT1/cmr/m/n/5 = \OML/cmm/m/it/5 x[]y[]\OT1/cmr/m/n/5 2[] + [] [] \OML/cmm/m/it/5 x[]y[]\OT1/cmr/m/n/5 2[] \OMS/cmsy/m/n/5 ^^@ []$ 
  []
 
 File: images/image-2026-01-03-17-25-28.png Graphic file (type bmp)
 <images/image-2026-01-03-17-25-28.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1682--1682
+Underfull \hbox (badness 10000) in paragraph at lines 1833--1833
 []$\OML/cmm/m/it/5 x[]y[]$ \TU/PingFangSC(0)/m/n/5 等 涉 及 一 个 符 号 位 的 交 叉
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1682--1682
+Underfull \hbox (badness 10000) in paragraph at lines 1833--1833
 \TU/PingFangSC(0)/m/n/5 项，|  原 本 应 该 做 减 法，|  但 在 矩 阵 中 被 替 换 成 了
  []
 
+[5]
 File: images/image-2026-01-03-21-00-14.png Graphic file (type bmp)
 <images/image-2026-01-03-21-00-14.png>
 File: images/image-2026-01-03-21-19-46.png Graphic file (type bmp)
 <images/image-2026-01-03-21-19-46.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1924--1924
+Underfull \hbox (badness 10000) in paragraph at lines 2075--2075
 []\TU/PingFangSC(0)/m/n/5 最 顶 部 的[]\TU/PingFangSC(0)/b/n/5 并 行[]\TU/PingFangSC(0)/m/n/5 操 作。|  所 有 $\OML/cmm/m/it/5 x[]y[]$ \TU/PingFangSC(0)/m/n/5 同 时 生 成[]\TU/PingFangSC(0)/b/n/5 延 迟
  []
 
 File: images/image-2025-12-30-20-09-04.png Graphic file (type bmp)
 <images/image-2025-12-30-20-09-04.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1982--1982
+Underfull \hbox (badness 10000) in paragraph at lines 2133--2133
 []\TU/PingFangSC(0)/m/n/5 决 定 输 出 窗 口 起 始 位 置，|  输 出 $\OML/cmm/m/it/5 Y$ \TU/PingFangSC(0)/m/n/5 对 应 输 入 域 的
  []
 
 File: images/image-2025-12-30-20-14-01.png Graphic file (type bmp)
 <images/image-2025-12-30-20-14-01.png>
-[5]
 File: images/image-2025-12-30-20-20-34.png Graphic file (type bmp)
 <images/image-2025-12-30-20-20-34.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2018--2018
+Underfull \hbox (badness 10000) in paragraph at lines 2169--2169
 [][]\TU/PingFangSC(0)/b/n/5 右 移
  []
 
@@ -1176,34 +1178,34 @@ File: images/image-2025-12-30-20-28-49.png Graphic file (type bmp)
 File: images/image-2025-12-30-21-05-25.png Graphic file (type bmp)
 <images/image-2025-12-30-21-05-25.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2063--2063
+Underfull \hbox (badness 10000) in paragraph at lines 2214--2214
 []\TU/PingFangSC(0)/m/n/5 最 后 一 级 经 过 \TU/lmr/m/n/5 Buffer \TU/PingFangSC(0)/m/n/5 输 出 最 终 结 果
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2112--2112
+Underfull \hbox (badness 10000) in paragraph at lines 2265--2265
 [][]\TU/PingFangSC(0)/b/n/5 固 化
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2112--2112
+Underfull \hbox (badness 10000) in paragraph at lines 2265--2265
 [][]\TU/PingFangSC(0)/b/n/5 可 改 写
  []
 
 File: images/image-2026-01-02-16-03-48.png Graphic file (type bmp)
 <images/image-2026-01-02-16-03-48.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2205--2205
+Underfull \hbox (badness 10000) in paragraph at lines 2358--2358
 []\TU/PingFangSC(0)/m/n/5 同 一 列 中 每 个 单 元 的 数 据 输 入\TU/lmr/m/n/5 /\TU/PingFangSC(0)/m/n/5 输 出 端 连 接
  []
 
-
-Overfull \hbox (8.4149pt too wide) in paragraph at lines 2266--2267
+[6]
+Overfull \hbox (8.4149pt too wide) in paragraph at lines 2419--2420
  [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2307--2307
+Underfull \hbox (badness 10000) in paragraph at lines 2460--2460
 []\TU/PingFangSC(0)/m/n/5 最 后 的 字 线 驱 动 电 路 只 需 要 简 单 的 逻 辑 门
  []
 
@@ -1212,14 +1214,14 @@ File: images/image-2026-01-02-17-06-17.png Graphic file (type bmp)
 File: images/image-2025-12-30-21-26-07.png Graphic file (type bmp)
 <images/image-2025-12-30-21-26-07.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2452--2452
+Underfull \hbox (badness 10000) in paragraph at lines 2605--2605
 []\TU/PingFangSC(0)/m/n/5 输 入 信 号 与 反 馈 的  |“现 态”|  共 同 决 定  |“次
  []
 
 File: images/image-2025-12-30-21-32-44.png Graphic file (type bmp)
 <images/image-2025-12-30-21-32-44.png>
-[6]
-Underfull \hbox (badness 10000) in paragraph at lines 2486--2486
+
+Underfull \hbox (badness 10000) in paragraph at lines 2639--2639
 [][]\TU/PingFangSC(0)/b/n/5 策 略 二：| \TU/lmr/bx/n/5 (CS) +
  []
 
@@ -1231,15 +1233,15 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `VLSI-Cheatsheet.out' has not changed.
-(rerunfilecheck)             Checksum: EB2348D97F47AAB9F95F3313D4F7D105;15884.
+(rerunfilecheck)             Checksum: B0FF4A6E20B01D91145DBD3095986E06;16536.
  ) 
 Here is how much of TeX's memory you used:
- 28786 strings out of 473832
- 644144 string characters out of 5729481
- 1222150 words of memory out of 5000000
- 51297 multiletter control sequences out of 15000+600000
+ 28864 strings out of 473832
+ 647961 string characters out of 5729481
+ 1214828 words of memory out of 5000000
+ 51370 multiletter control sequences out of 15000+600000
  562600 words of font info for 70 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,17n,114p,618b,1348s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,17n,114p,618b,1385s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on VLSI-Cheatsheet.pdf (7 pages).
