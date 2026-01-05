@@ -1266,6 +1266,8 @@ $V_{DD}\cdot \frac{R_{M2}}{R_{M1+TG}+R_{M2}} > V_M$}
 
 \subsubsection{基于多路选择器的设计}
 
+和前面提到的\red{多路开关锁存器}类似的结构，直接串联两个传输门锁存器（但控制时钟信号相反）：
+
 \concepttable{
     \conrow{Master（左半部分）}{由传输门 $T_1$（输入开关）与 $T_2$（保持开关）以及反相器 $I_2, I_3$ 组成。$I_3$ 的输出记为中间节点 $Q_M$。}
     \conrow{Slave（右半部分）}{由传输门 $T_3$（输入开关）与 $T_4$（保持开关）以及反相器 $I_5, I_6$ 组成。$I_6$ 的输出为最终输出 $Q$。}
@@ -1291,9 +1293,256 @@ $V_{DD}\cdot \frac{R_{M2}}{R_{M1+TG}+R_{M2}} > V_M$}
 
 \subsubsection{常见参数定义}
 
+\entry{核心定义}{时序参数是时序分析的理论基础，通常出现在填空或计算题的已知条件中。}
 
+\vspace{-2pt}
+\img[0.7\linewidth]{images/image-2026-01-05-13-31-19.png}
+\vspace{-2pt}
+
+\concepttable{
+    \conrow{$t_{su}$}{\blue{建立时间}，即在时钟有效沿到来\red{之前}，输入数据 $D$ 必须\red{保持稳定的最小时间}。}
+    \conrow{$t_{hold}$}{\blue{保持时间}，即在时钟有效沿到来\red{之后}，输入数据 $D$ 必须\red{继续保持稳定的最小时间}。}
+    \conrow{$t_{clk-q}$}{\blue{时钟至输出延时}，即从时钟有效沿（50\%点）到输出 $Q$ 稳定输出（50\%点）的时间间隔。\par
+    \red{传播延时 (Max)：}最慢情况，决定系统时钟周期 $T$ 的瓶颈。\par
+    \red{污染延时 (Min)：}最快情况，用于检查保持时间。}
+    \conrow{$t_{d-q}$}{\blue{输入至输出延时}，数据 $D$ 变化导致输出 $Q$ 变化的总延时。主要用于\red{锁存器}处于透明状态时或组合逻辑电路。}
+    \conrow{时钟周期 $T$}{时钟信号重复一次所需的时间，$f = 1/T$。}  
+}
+
+输出 $Q$ 的变化是\red{由时钟触发的}，而不是由 $D$ 直接触发的（除非是透明锁存器）。
+
+\subsubsection{寄存器延时机制}
+
+深入晶体管级电路（基于多路选择器的寄存器），分析 $t_{su}, t_{hold}, t_{clk-q}$ 到底是由电路中哪些部分决定
+
+\img[0.7\linewidth]{images/image-2026-01-05-13-36-33.png}
+
+\concepttable{
+    \conrow{\red{建立时间 $t_{su}$}}{在时钟上升沿前，数据 $D$ 必须穿过 $I_1 \to T_1 \to I_3 \to I_2$ \red{到达反馈管 $T_2$ 的两端}。若数据未及时到达，反馈环路闭合时将锁存错误值。\par
+    故 \red{$t_{su} = t_{pd,I1} + t_{pd,T1} + t_{pd,I3} + t_{pd,I2}$}。}
+    \conrow{\blue{保持时间 $t_{hold}$}}{时钟上升后，输入传输门 $T_1$ 完全关断需要时间。若 $D$ 在 $T_1$ 彻底关断前改变，新数据会污染内部节点。\par
+    故 $t_{hold}$ 取决于 \red{时钟信号到达 $T_1$ 的延时} 与 \red{$T_1$ 的关断速度}。}
+    \conrow{\green{时钟至输出 $t_{clk-q}$}}{时钟上升沿触发从锁存器变为透明，数据从中间节点 $Q_M$ 经 $T_3 \to I_6$ 传播至输出 $Q$。\par
+    故 \red{$t_{clk-q} = t_{pd,T3} + t_{pd,I6}$}。}
+}
+
+\subsubsection{\red{时序参数约束}}
+
+\hlblue{\textbf{建立时间约束}}
+
+\entry{概述}{允许的\red{最高时钟频率（或最小时钟周期）}由建立时间约束决定。研究数据从发起触发器（FF1）出发，经组合逻辑到达捕获触发器（FF2）并在下一次时钟沿被采样的时序关系。}
+
+\imgleft[0.4]{images/image-2026-01-05-13-56-48.png}{
+
+    \entry{分析要点}{
+    \begin{enumerate}[label=(\arabic*)]
+        \item \textbf{场景}：在 $t_1$ 时钟沿，FF1 更新输出；在 $t_2=t_1+T$ 时钟沿，FF2 采样输入数据；
+        \item \textbf{路径延时}：包括 $t_{clk-Q}$（时钟到 FF1 输出的传播延时，取最大值）、$t_{p,comb}(max)$（组合逻辑最大传播延时）和 $t_{setup}$（FF2 的建立时间）；
+        \item \textbf{要求}：数据必须在采样沿到来之前稳定，\red{即三个过程（FF1 完成输出 - 组合逻辑完成处理 - FF2 完成数据加载）必须在一个时钟周期内完成}，故 $t_{clk-Q} + t_{p,comb}(max) \le T - t_{setup}$。
+    \end{enumerate}
+    }
+
+}
+
+\entry{约束公式}{$t_{clk-Q} + t_{p,comb}(max) + t_{setup} \le T$}
+
+由此得到最小时钟周期 $T_{min}$，最大频率 $f_{max} = 1/T_{min}$
+
+\entry{物理意义}{触发器延时 + 组合逻辑延时 + 捕获端建立时间的总和不能超过一个时钟周期，否则会发生建立时间违例，导致时序错误。}
+
+\hlblue{\textbf{保持时间约束}}
+
+\entry{概述}{保持时间约束用于避免竞争冒险（Race），即防止来自前级的新数据在捕获触发器尚未完成对旧数据的保持前篡改其输入。旧数据还没处理完，新数据就来了，导致采样错误。}
+
+\imgleft[0.4]{images/image-2026-01-05-14-04-49.png}{
+
+    \entry{分析场景}{
+        \concepttable{
+            \conrow{问题背景}{在时钟沿 $t_1$ 到来时，FF2 正在采样“旧数据”，同时 FF1 在同一时刻驱出“新数据”。若新数据通过组合逻辑传播得太快，会在 FF2 的保持窗口内覆盖旧数据，导致采样错误（竞争）。}
+        }
+    }
+
+    \entry{最小延时路径（污染延时分析）}{
+        \concepttable{
+            \conrow{$t_{cdreg}$}{前级寄存器的污染延时（FF1 的最短$t_{clk-q}$）。}
+            \conrow{$t_{cdlogic}$}{组合逻辑的污染延时（数据通过组合逻辑的最短时间）。}
+            \conrow{$t_{hold}$}{接收寄存器的保持时间（FF2 需要输入保持的最短时间）。}
+        }
+    }
+
+}
+
+\entry{约束公式}{
+    \concepttable{
+        \conrow{公式}{\red{$t_{cdreg} + t_{cdlogic} \ge t_{hold}$}}
+        \conrow{物理意义}{新数据的最短到达时间必须不早于接收端的保持窗口结束，保证旧数据被安全捕获。}
+    }
+}
+
+\entry{特性与修复方法}{
+    \concepttable{
+        \conrow{与周期无关}{保持违例与时钟周期 $T$ 无关，降低频率无法修复。}
+        \conrow{常见解决办法}{\red{增加路径最小延时}（插入缓冲器 / 延长连线），工程上优先用插缓冲或时钟偏差来修复。}
+    }
+}
+
+\hlblue{\textbf{时序约束总结-01}}
+
+\entry{核心结论}{一条合法的时序路径必须同时满足“不跑太快（Min）”与“不跑太慢（Max）”两类约束，统一写作：}
+
+\red{$t_{hold2} \le t_{clk\text{-}Q1} + t_{p,comb} \le T - t_{setup2}$}
+
+\concepttable{
+    \conrow{左端（Min / 保持）}{对应保持时间约束，计算时应代入\red{最短延时（污染/Min）}，即 $t_{hold2} \le t_{cdreg} + t_{cdlogic}$.}
+    \conrow{右端（Max / 建立）}{对应建立时间约束，计算时应代入\red{最长延时（传播/Max）}，即 $t_{pdreg} + t_{pdlogic} \le T - t_{setup2}$.}
+}
 
 \subsubsection{时钟偏差和时钟抖动}
+
+\hlblue{\textbf{时钟偏差}}
+
+\entry{定义}{空间上\red{两个不同点处时钟沿到达时间的偏差}。数学表示：$\delta(i,j)=t_i - t_j$。}
+
+\vspace{-2pt}
+\img[0.7\linewidth]{images/image-2026-01-05-14-24-53.png}
+\vspace{-2pt}
+
+\entry{物理成因}{\concepttable{
+    \conrow{路径失配}{时钟信号从 PLL/时钟源到芯片各寄存器的走线长度和经过的缓冲器数量不同，导致传播延时差异。}
+    \conrow{负载差别}{不同时钟节点驱动的寄存器数量不同，电容负载 $C_L$ 不同，进而产生不同延时。}
+}}
+
+\entry{特性}{
+    \concepttable{
+        \conrow{\red{确定性}}{在工艺完成并在给定 PVT 条件下，偏差基本固定（周期间不变），这与随时间变化的抖动不同。}
+        \conrow{与抖动区别}{抖动为随机、随时间变化的相位噪声；偏差为空间上的确定性相位差。}
+        \conrow{仅影响相位，不影响周期}{Skew 只是使某些时钟沿整体提前或滞后，时钟频率（周期）本身保持不变。}
+    }
+}
+
+全芯片中，时钟到达最早的寄存器和到达最晚的寄存器之间的时间差，就是\textbf{最大时钟偏差}。
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \entry{正时钟偏差 (Positive Skew)}{%
+    \img{images/image-2026-01-05-14-35-16.png}
+    \concepttable{
+        \conrow{定义}{\red{时钟传播方向与数据传输方向相同}：时钟先经过发送端 R1，再到接收端 R2，导致接收端时钟 $t_{CLK2}$ 晚于发送端 $t_{CLK1}$ 到达。}
+        \conrow{图示说明}{CLK 从发送端向接收端传播（R1 → R2），接收端“迟到”。}
+        \conrow{物理意义}{接收端比预期更晚地进行采样；通常对建立时间约束有\red{放宽}作用，但可能使保持时间约束更紧。}
+    }%
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{负时钟偏差 (Negative Skew)}{%
+    \img{images/image-2026-01-05-14-35-39.png}
+    \concepttable{
+        \conrow{定义}{\red{时钟传播方向与数据传输方向相反}：CLK 先到达接收端 R3，再到发送端 R2，导致接收端时钟 $t_{CLK3}$ 早于发送端 $t_{CLK2}$ 到达。}
+        \conrow{图示说明}{CLK 从接收端向发送端传播（R3 ← R2），接收端“早退”。}
+        \conrow{物理意义}{接收端比预期更早地进行采样；通常对建立时间约束有\red{收紧}作用，但有利于满足保持时间约束。}
+    }%
+    }
+\end{minipage}
+
+\hlblue{\textbf{对时序约束的影响}}
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \entry{Setup 约束}{}
+    \concepttable{
+        \conrow{定量公式}{$t_{c-q} + t_{logic} + t_{su} \le T + \delta$}
+        \conrow{最小周期}{$T_{\min} = t_{c-q} + t_{logic} + t_{su} - \delta$}
+        \conrow{物理理解}{若接收端时钟晚到 $\delta$（$\delta>0$），相当于周期 $T$ 变长；若早到（$\delta<0$），有效周期缩短，要求更严。}
+        \conrow{最坏情况}{\red{负时钟偏差} ($\delta<0$) 是 Setup 的最坏情况，会增大 $T_{\min}$，迫使系统降频。}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{Hold 约束}{}
+    \concepttable{
+        \conrow{定量公式}{$t_{(c-q,cd)} + t_{(logic,cd)} \ge t_{hold} + \delta$}
+        \conrow{物理理解}{若接收端时钟晚到 $\delta$，则保持窗口相当于被延长了 $\delta$（右端变大），最短路径更容易违例。}
+        \conrow{最坏情况}{\red{正时钟偏差} ($\delta>0$) 是 Hold 的最坏情况，会使右侧增大，增加发生保持违例的风险。}
+    }
+\end{minipage}
+
+一般电路中，正时钟偏差和负时钟偏差是\red{同时存在}的。
+
+\hlblue{\textbf{时钟抖动}}
+
+\entry{定义}{须与 Skew（偏差）严格区分：Skew 为\red{空间}概念（同一时刻时钟到达不同点的时间差）；Jitter 为\red{时间}概念（同一点处时钟随时间的随机周期变化）。}
+
+\concepttable{
+    \conrow{统计特性}{抖动通常被视为\red{均值为零}的随机变量。}
+    \conrow{绝对抖动}{$t_{jitter}$：某一具体时钟边沿相对于理想参考边沿的最大偏差（按绝对值计）。}
+    \conrow{周期至周期抖动}{$T_{jitter}$：单个时钟周期相对于理想周期的偏差。}
+    \conrow{最坏情况 / 工程处理}{在最坏情况下，前一边沿晚到 $t_{jitter}$，后一边沿早到 $t_{jitter}$，\red{使周期被压缩 $2t_{jitter}$}。因此在时序分析中常将周期保守地视为 $T - 2t_{jitter}$。}
+}
+
+\entry{对建立时间 (Setup) 的影响}{仅考虑 Jitter 时对建立时间约束的影响。图示中虚线框表示时
+钟沿的不确定性窗口。}
+
+
+\vspace{-2pt}
+\img{images/image-2026-01-05-15-06-03.png}
+\vspace{-2pt}
+
+
+\concepttable{
+    \conrow{波形最坏情形}{Launch 边沿最坏为\red{晚触发}，推迟 $t_{jitter}$；Capture 边沿最坏为\red{早触发}，提前 $t_{jitter}$。}
+    \conrow{有效周期}{由于“晚发、早收”，可用的逻辑传播时间被两端抖动“吃掉”，有效周期为 $T_{effective}=T_{CLK}-2t_{jitter}$。}
+    \conrow{约束公式}{建立时间约束变为 $T_{CLK}-2t_{jitter} > t_{c-q} + t_{logic} + t_{su}$。}
+    \conrow{结论}{\red{抖动总是降低性能}：需增大物理周期 $T_{CLK}$ 以满足约束，从而降低系统最大频率。}
+}
+
+\subsubsection{时序约束（最终版）}
+
+考虑时钟偏差与抖动后的完整时序：
+
+\concepttable{
+    \conrow{Jitter ($2t_{jitter}$)}{\red{永远是破坏者}。为保证最坏情况：\par
+    • 在 setup 约束时，假设周期被压缩：$T \to T - 2t_{jitter}$；\par
+    • 在 hold 约束时，假设保持窗口被放宽：$t_{hold} \to t_{hold} + 2t_{jitter}$.}
+    \conrow{Skew ($\delta$)}{\red{亦正亦邪}：\par
+    • 正偏差 ($\delta>0$)：接收端时钟晚到，有利于 Setup（放宽），不利于 Hold（收紧）；\par
+    • 负偏差 ($\delta<0$)：接收端时钟早到，不利于 Setup（收紧），有利于 Hold（放宽）。}
+}
+
+\concepttable{
+    \conrow{\red{建立时间（Setup）约束}}{$t_{clk\text{-}Q} + t_{p,comb} + t_{su} \le T - 2t_{jitter} + \delta_{\text{setup}}$ \par（其中对 Setup 最不利时取 $\delta_{\text{setup}}=\min\{\delta\}$）}
+    \conrow{\red{保持时间（Hold）约束}}{$t_{cd,reg} + t_{cd,logic} \ge t_{hold} + \delta_{\text{hold}} + 2t_{jitter}$ \par（其中对 Hold 最不利时取 $\delta_{\text{hold}}=\max\{\delta\}$）}
+}
+
+\entry{注}{在时序分析中分别用最坏情形代入：Setup 用周期缩短 ($-2t_{jitter}$) 与最不利的偏差，Hold 用保持窗口放大 ($+2t_{jitter}$) 与最不利的偏差以保证安全性。}
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{\textbf{建立时间约束（Setup）}}
+    \entry{情况 A：正偏差 + Jitter}{（接收端晚到，部分有利）}
+    \concepttable{
+        \conrow{场景}{$\delta>0$（接收端晚到），但存在抖动 $t_{jitter}$}
+        \conrow{有效时间}{$T_{CLK}$ $+\delta$ $-2t_{jitter}$ $-t_{su}$}
+        \conrow{约束不等式}{$T_{CLK} + \delta - 2t_{jitter} - t_{su} > t_{clk-q} + t_{logic}$}
+        \conrow{结论}{正 Skew 可放宽要求，但 Jitter 会抵消部分优势}
+    }
+    \entry{情况 B：负偏差 + Jitter}{（接收端早到，为 Setup 的最坏情形）}
+    \concepttable{
+        \conrow{场景}{$\delta<0$（记为 $-|\delta|$），再加上抖动 $t_{jitter}$}
+        \conrow{有效时间}{$T_{CLK} - |\delta| - 2t_{jitter} - t_{su}$}
+        \conrow{约束不等式}{$T_{CLK} - |\delta| - 2t_{jitter} \ge t_{clk-q} + t_{logic} + t_{su}$}
+        \conrow{最小周期}{$T_{min} = t_{clk-q} + t_{logic} + t_{su} + |\delta| + 2t_{jitter}$}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{\textbf{保持时间约束（Hold）}}
+    \entry{要点}{关注数据跑得太快（Min Delay）是否在保持窗口内覆盖旧数据。Hold 与周期无关，检测最短路径。}
+    \entry{最坏情况：正偏差 + Jitter}{（接收端晚到是 Hold 的最坏情形）}
+    \concepttable{
+        \conrow{场景}{$\delta>0$（接收端晚到），存在抖动 $t_{jitter}$}
+        \conrow{最短数据延时}{前级最短路径 $t_{clk-q,cd} + t_{logic,cd}$}
+        \conrow{保持窗口}{$t_{hold} + \delta + 2t_{jitter}$}
+        \conrow{约束不等式}{$t_{clk-q,cd} + t_{logic,cd} > t_{hold} + \delta + 2t_{jitter}$}
+    }
+    \entry{结论}{若此最坏情形满足，则负偏差情形必然满足；工程上通过增加最小延时（插缓冲）或调整时钟偏差来修复保持违例。}
+\end{minipage}
 
 \subsection{习题解析}
 
@@ -1333,14 +1582,6 @@ $V_{DD}\cdot \frac{R_{M2}}{R_{M1+TG}+R_{M2}} > V_M$}
         \conrow{化简结果}{两边同时消去 $R$（并调整位置以匹配 PPT 写法）：$\frac{R}{s1} + \frac{R}{s2} < \frac{R}{s4}$，即 \red{$\frac{1}{s1} + \frac{1}{s2} < \frac{1}{s4}$}}
     }
 
-}
-\entry{作业 5-3}{
-    已知一个数字电路最坏情况下绝对时钟抖动 $t_{jitter} = 0.05\,\mathrm{ns}$，假设布线后可能的最大时钟偏差绝对值 $t_{skew} = 0.3\,\mathrm{ns}$，要求最高时钟频率大于等于 $400\,\mathrm{MHz}$，其中一级流水线电路逻辑部分的最长延时 $t_{logic} = 1\,\mathrm{ns}$，污染延时 $t_{logicd} = 0.1\,\mathrm{ns}$。两端寄存器的建立时间 $setup = 0.5\,\mathrm{ns}$，维持时间 $hold = 0\,\mathrm{ns}$，传播延时 $t_{clk-q} = 0.4\,\mathrm{ns}$，污染延时 $t_{clk,cd} = 0.2\,\mathrm{ns}$。请回答下列问题：
-    \vspace{-5pt}
-    \begin{enumerate}[label=(\arabic*)]
-        \item 定量说明考虑最坏情况，这段电路是否能够保证满足性能要求？
-        \item 考虑最坏情况，这段电路会不会出现竞争（即 hold 错误）？
-    \end{enumerate}
 }
 
 \section{第八章\ 加法器}
@@ -3139,6 +3380,8 @@ DRAM 典型单元为 \red{1T1C}（一个晶体管 + 一个电容）。
     \conrow{放大}{灵敏放大器检测到微小压差后触发正反馈，迅速将位线驱动至全摆幅（$V_{DD}$ 或 $GND$）。}
     \conrow{再生}{在字线 $W_k$ 开启期间，\red{位线全摆幅电压倒灌回存储电容 $C_S$}，恢复因电荷共享而损失的电荷。}
 }
+
+\green{存储器初步复习完毕（2026-01-05-12-19}）
 
 \section{第十二章\ Verilog 硬件设计}
 

@@ -1097,7 +1097,145 @@ BJT 有共射、共基、共集三种接法，为了使三极管处于正向有�
 
 \subsection{低频共基极电流增益}
 
+\subsubsection{电流成分划分}
+
+以 NPN 管为例，$J_{nE}$ 是形成集电极电流的基础，$J_{pE}$、$J_{RB}$ 等为损耗，理解各分量的来源与相互关系
+
+\imgleft[0.4]{images/image-2026-01-05-16-13-37.png}{
+
+    \concepttable{
+        \conrow{$J_{nE}$}{BE 结正向注入的电子电流，主要贡献集电极电流}
+        \conrow{$J_{pE}$}{BE 结反向注入的空穴电流}
+        \conrow{$J_R$}{基区复合电流}
+        \conrow{$J_{nC}$}{BC 结反向注入的电子电流}
+    }
+
+}
+
+电流由载流子浓度梯度驱动。\red{基区越薄（$W_B$ 越小），浓度梯度越大，扩散越快且复合越少，$J_{nC}$ 越接近 $J_{nE}$}
+
+\subsubsection{直流共基极电流增益}
+
+\entry{定义}{$\alpha_0 = I_C/I_E = \frac{J_{nC} + J_{G} + J_{pC0}}{J_{nE} + J_{R} + J_{pE}}$，即集电极电流与发射极电流之比。}
+
+在交流小信号下，\red{常量漏电流（$J_G, J_{pc0}$）不随电压变化，因此被微分滤除}，只剩下与信号相关的项，即下面的样子：
+
+\red{$\alpha=\frac{J_{n E}}{J_{nE}+J_{pE}}\cdot\frac{J_{nC}}{J_{nE}}\cdot\frac{J_{nE}+J_{pE}}{J_{nE}+J_{R}+J_{pE}} \quad \alpha=\gamma\alpha_{T}\delta$}
+
+其中：
+
+\concepttable{
+    \conrow{$\gamma$（发射极注入效率）}{$\gamma = \dfrac{J_{nE}}{J_{nE}+J_{pE}}$；衡量发射极发射出的电流中有用电子的比例}
+    \conrow{$\alpha_T$（基区输运系数）}{$\alpha_T = \dfrac{J_{nC}}{J_{nE}}$；注入基区的电子在穿过基区后\red{被集电极收集的比例}，损失为基区复合 $J_{RB}$}
+    \conrow{$\delta$（复合系数）}{$\delta = \dfrac{J_{nE}+J_{pE}}{J_{nE}+J_R+J_{pE}}$；反映发射结耗尽区复合 $J_R$ 的影响，现代工艺或简化模型常取 $\delta \approx 1$}
+}
+
+\entry{工程意义}{
+    三因子分别对应三个主要损耗：发射端电流纯度（$\gamma$）、基区复合（$\alpha_T$）和耗尽区复合（$\delta$）。提高 $\alpha$ 的方法即针对这三项减小损耗。
+}
+
+\hlblue{\textbf{$\gamma$（发射极注入效率）}}
+
+\entry{推导要点}{解扩散方程得到边界过剩载流子分布，代入 $J=-eD\,dn/dx$ 可得 $J_{pE}\propto D_E p_{E0}/L_E\cdot\tanh(x_E/L_E)$ 和 $J_{nE}\propto D_B n_{B0}/L_B\cdot\tanh(x_B/L_B)$。在正向偏置下 $e^{eV_{BE}/kT}\gg1$，因此可写为：}
+
+$\gamma=\dfrac{1}{1+J_{pE}/J_{nE}}$
+
+\entry{计算公式}{
+
+    \concepttable{
+        \conrow{\red{表达式}}{
+            在 $x_B\ll L_B,\;x_E\ll L_E$时，\red{$\displaystyle \gamma\approx\dfrac{1}{\,1+\dfrac{N_B}{N_E}\dfrac{D_E}{D_B}\dfrac{x_B}{x_E}\,}$}
+        }
+        \conrow{参数}{所有参数都会在题干中给出。}
+        \conrow{设计规律}{
+            增大 $N_E\gg N_B$（重掺杂发射区）、减小基宽 $x_B$、减小发射区有效厚度 $x_E$，以使 $\gamma\to1$。}
+    }
+
+}
+
+\hlblue{\textbf{$\alpha_T$（基区输运系数）}}
+
+\entry{推导概要}{解基区少子稳态扩散方程并在两端利用 $J=-eD_B\,d(\delta n_B)/dx$ 求得 $J_{nE}$（$x=0$）和 $J_{nC}$（$x=x_B$），两者相除可消去公因子，结果仅含双曲函数项。}
+
+\entry{计算公式}{
+
+    \concepttable{
+        \conrow{\red{表达式}}{当 $x_B\ll L_B$ 时，\red{$\displaystyle \alpha_T \approx 1-\tfrac{1}{2}\left(\dfrac{x_B}{L_B}\right)^2$}}
+        \conrow{参数}{所有参数都会在题干中给出。}
+        \conrow{设计规律}{为使 $\alpha_T\to1$，要求 \red{$x_B\ll L_B$}，采用薄基区/长扩散长度的工艺设计。}
+}
+
+}
+
+\hlblue{\textbf{$\delta$（复合系数）}}
+
+\entry{计算公式}{
+    \concepttable{
+        \conrow{\red{表达式}}{\red{$\displaystyle \delta=\frac{1}{1+\dfrac{J_{R0}}{J_{S0}}\exp\!\left(-\dfrac{eV_{BE}}{2kT}\right)}$}}
+        \conrow{参数}{$J_{R0}$题干里会给，$J_{s0}=\frac{e D_{B}n_{B0}}{L_{B}\tanh\left(x_{B} /L_{B}\right)}$}
+        \conrow{设计规律}{随着 $V_{BE}$ 增大，指数项迅速减小，$\delta\to1$；低 $V_{BE}$ 时 $J_R$ 占优，$\delta$ 较小，导致增益下降。}
+    }
+}
+
 \subsection{非理想效应}
+
+\subsubsection{厄利效应}
+
+\entry{结论}{基区越窄、掺杂越低，Early 效应越显著（$V_A$ 越小）。}
+
+
+\imgleft[0.3]{images/image-2026-01-05-17-10-31.png}{
+
+    \entry{物理机制}{
+        \concepttable{
+            \conrow{耗尽层扩展}{$V_{CB}$ 增大 $\to$ 集电结耗尽区向基区扩展}
+            \conrow{基区变窄}{耗尽层侵入基区，导致有效中性基区宽度 $x_B$ 减小}
+            \conrow{浓度梯度增大}{$J_n \propto D_n\frac{dn}{dx}\approx D_n\frac{n_p(0)}{x_B}$，$x_B\downarrow\Rightarrow I_C\uparrow$}
+        }
+    }
+
+}
+
+\entry{输出特性影响}{
+    \concepttable{
+        \conrow{曲线倾斜}{$I_C$ 与 $V_{CE}$ 开始相关，输出电阻为有限值 $r_o$}
+        \conrow{Early 电压}{$V_A$：曲线与 X 轴的截距。}
+        \conrow{电流修正}{$I_C = I_{C(\text{ideal})}\,(1 + V_{CE}/V_A)$}
+        \conrow{输出导纳}{$g_o = \dfrac{dI_C}{dV_{CE}} \approx \dfrac{I_C}{V_A}$}
+    }
+}
+
+\subsubsection{大注入效应}
+
+\entry{定义}{大注入时 $n_p(0)$ (注入少子浓度)可接近或超过 $N_A$（基区多子浓度）。}
+
+\imgleft[0.23]{images/image-2026-01-05-17-16-39.png}{
+
+    \entry{物理机理}{
+        \concepttable{
+            \conrow{电中性约束}{大量注入电子需伴随空穴增加以维持电中性，基区边界处 $p_p(0)$ 不再恒等于 $N_A$，而\red{随注入显著升高}。}
+            \conrow{对发射极注入效率的影响}{$\gamma=\dfrac{1}{1+J_{pE}/J_{nE}}$。由于 $p_p(0)$ 增大，反向空穴流 $J_{pE}$ 增幅通常大于 $J_{nE}$ 的增幅，\red{导致 $\gamma$ 下降}，进而使电流增益下降。}
+        }
+    }
+
+}
+
+\entry{电流特性曲线}{}
+
+\imgleft[0.3]{images/image-2026-01-05-19-12-01.png}{
+
+    电流曲线和 MOSFET 一样的大注入特性。
+
+    \entry{电流增益 $\beta$ 曲线}{
+        \concepttable{
+            \conrow{低电流区}{$\beta$ 增大，发射结耗尽区复合（$J_R$）占优时随 $I_C$ 提高而改善}
+            \conrow{中电流区}{$\beta$ 到达峰值并基本平坦，是器件的\red{理想工作区}。}
+            \conrow{高电流区}{$\beta$ 开始下降，\red{主要由大注入引起的 $\gamma$ 降低}（反向空穴注入 $J_{pE}$ 增加）以及串联电阻/高注入效应等共同作用导致。}
+        }
+    }
+}
+
+
 
 \subsection{等效电路模型}
 

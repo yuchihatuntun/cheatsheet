@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  4 JAN 2026 16:35
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  5 JAN 2026 19:15
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1176,6 +1176,19 @@ File: images/image-2026-01-02-19-29-57.png Graphic file (type bmp)
 <images/image-2026-01-02-19-29-57.png>
 File: images/image-2026-01-02-19-30-42.png Graphic file (type bmp)
 <images/image-2026-01-02-19-30-42.png>
+File: images/image-2026-01-05-16-13-37.png Graphic file (type bmp)
+<images/image-2026-01-05-16-13-37.png>
+File: images/image-2026-01-05-17-10-31.png Graphic file (type bmp)
+<images/image-2026-01-05-17-10-31.png>
+File: images/image-2026-01-05-17-16-39.png Graphic file (type bmp)
+<images/image-2026-01-05-17-16-39.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1221--1221
+[][]\TU/PingFangSC(0)/b/n/5 对 发 射 极 注 入 效 率
+ []
+
+File: images/image-2026-01-05-19-12-01.png Graphic file (type bmp)
+<images/image-2026-01-05-19-12-01.png>
 File: images/image-2025-12-30-12-07-58.png Graphic file (type bmp)
 <images/image-2025-12-30-12-07-58.png>
 File: images/image-2025-12-30-12-30-52.png Graphic file (type bmp)
@@ -1186,8 +1199,8 @@ File: images/image-2025-12-30-12-36-22.png Graphic file (type bmp)
 <images/image-2025-12-30-12-36-22.png>
 File: images/image-2025-12-30-12-46-10.png Graphic file (type bmp)
 <images/image-2025-12-30-12-46-10.png>
-
-Underfull \hbox (badness 10000) in paragraph at lines 1244--1244
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 1382--1382
 [][]\TU/PingFangSC(0)/b/n/5 总 势 能 最 高
  []
 
@@ -1206,50 +1219,49 @@ File: images/image-2026-01-03-15-56-08.png Graphic file (type bmp)
 File: images/image-2026-01-03-15-54-33.png Graphic file (type bmp)
 <images/image-2026-01-03-15-54-33.png>
 
-Overfull \hbox (11.93974pt too wide) in paragraph at lines 1453--1457
+Overfull \hbox (11.93974pt too wide) in paragraph at lines 1591--1595
 [][]\TU/PingFangSC(0)/b/n/5 漏 源 电 流[]\TU/PingFangSC(0)/m/n/5 ：| $\OML/cmm/m/it/5 I[] \OT1/cmr/m/n/5 = \OML/cmm/m/it/5 I[] []$ 
  []
 
-[2]
 File: images/image-2026-01-04-16-27-21.png Graphic file (type bmp)
 <images/image-2026-01-04-16-27-21.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1502--1502
+Underfull \hbox (badness 10000) in paragraph at lines 1640--1640
 [][]$\OML/cmm/m/it/5 V[] >
  []
 
 [3]
-Underfull \hbox (badness 10000) in paragraph at lines 1583--1583
+Underfull \hbox (badness 10000) in paragraph at lines 1721--1721
 [][]\TU/PingFangSC(0)/b/n/5 界 面 态 对 肖 特 基 势 垒 高 度
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1583--1583
+Underfull \hbox (badness 10000) in paragraph at lines 1721--1721
 [][]\TU/PingFangSC(0)/b/n/5 加 偏 压 时 肖 特 基 势 垒 能 带
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1583--1583
+Underfull \hbox (badness 10000) in paragraph at lines 1721--1721
 [][]\TU/PingFangSC(0)/b/n/5 金 属 与 重 掺 杂 半 导 体 接 触
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1591--1591
+Underfull \hbox (badness 10000) in paragraph at lines 1729--1729
 [][]\TU/PingFangSC(0)/b/n/5 在 理 想 情 况 下，|  金 属 和 半
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1591--1591
+Underfull \hbox (badness 10000) in paragraph at lines 1729--1729
 \TU/PingFangSC(0)/b/n/5 导 体 之 间 形 成 非 整 流 接 触
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1591--1591
+Underfull \hbox (badness 10000) in paragraph at lines 1729--1729
 [][]\TU/PingFangSC(0)/b/n/5 根 据 给 出 的 金 属 与 半 导 体，|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1591--1591
+Underfull \hbox (badness 10000) in paragraph at lines 1729--1729
 \TU/PingFangSC(0)/b/n/5 画 出 形 成 金 半 接 触 后 的 能
  []
 
@@ -1259,15 +1271,15 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `SCDP-Cheatsheet.out' has not changed.
-(rerunfilecheck)             Checksum: 7D8B5BDBCBF52810A3BB8066E186082D;7643.
+(rerunfilecheck)             Checksum: E82612CE9899593A3A6B55769F93DE3D;8107.
  ) 
 Here is how much of TeX's memory you used:
- 27824 strings out of 473832
- 610474 string characters out of 5729481
- 1254011 words of memory out of 5000000
- 50381 multiletter control sequences out of 15000+600000
+ 27871 strings out of 473832
+ 612565 string characters out of 5729481
+ 1254505 words of memory out of 5000000
+ 50424 multiletter control sequences out of 15000+600000
  562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,17n,114p,721b,783s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,17n,114p,721b,799s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on SCDP-Cheatsheet.pdf (5 pages).
