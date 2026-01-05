@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  4 JAN 2026 23:34
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  5 JAN 2026 12:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1218,15 +1218,26 @@ Underfull \hbox (badness 10000) in paragraph at lines 2470--2470
 
 File: images/image-2026-01-02-17-06-17.png Graphic file (type bmp)
 <images/image-2026-01-02-17-06-17.png>
+File: images/image-2026-01-05-10-55-03.png Graphic file (type bmp)
+<images/image-2026-01-05-10-55-03.png>
+File: images/image-2026-01-05-11-11-23.png Graphic file (type bmp)
+<images/image-2026-01-05-11-11-23.png>
+File: images/image-2026-01-05-11-22-16.png Graphic file (type bmp)
+<images/image-2026-01-05-11-22-16.png>
+File: images/image-2026-01-05-11-47-19.png Graphic file (type bmp)
+<images/image-2026-01-05-11-47-19.png>
+File: images/image-2026-01-05-11-57-31.png Graphic file (type bmp)
+<images/image-2026-01-05-11-57-31.png>
 File: images/image-2026-01-04-19-34-27.png Graphic file (type bmp)
 <images/image-2026-01-04-19-34-27.png>
 File: images/image-2026-01-04-19-30-40.png Graphic file (type bmp)
 <images/image-2026-01-04-19-30-40.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2628--2628
+Underfull \hbox (badness 10000) in paragraph at lines 2803--2803
 [][]\TU/PingFangSC(0)/b/n/5 存 储 核 心
  []
 
+[7]
 File: images/image-2026-01-04-20-04-42.png Graphic file (type bmp)
 <images/image-2026-01-04-20-04-42.png>
 File: images/image-2026-01-04-20-10-09.png Graphic file (type bmp)
@@ -1242,56 +1253,55 @@ File: images/image-2026-01-04-20-43-34.png Graphic file (type bmp)
 File: images/image-2026-01-04-20-50-40.png Graphic file (type bmp)
 <images/image-2026-01-04-20-50-40.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2801--2801
+Underfull \hbox (badness 10000) in paragraph at lines 2976--2976
 [][]\TU/PingFangSC(0)/b/n/5 电 路 复 杂 度 爆
  []
 
-[7]
+File: images/image-2026-01-05-10-09-59.png Graphic file (type bmp)
+<images/image-2026-01-05-10-09-59.png>
+File: images/image-2026-01-05-10-22-05.png Graphic file (type bmp)
+<images/image-2026-01-05-10-22-05.png>
+File: images/image-2026-01-05-10-36-59.png Graphic file (type bmp)
+<images/image-2026-01-05-10-36-59.png>
+File: images/image-2026-01-05-10-38-22.png Graphic file (type bmp)
+<images/image-2026-01-05-10-38-22.png>
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <5> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 2831.
-
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 3145.
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 2841.
+(hyperref)                than one, level fixed on input line 3155.
 
 File: images/image-2025-12-30-21-26-07.png Graphic file (type bmp)
 <images/image-2025-12-30-21-26-07.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2885--2885
+Underfull \hbox (badness 10000) in paragraph at lines 3199--3199
 []\TU/PingFangSC(0)/m/n/5 输 入 信 号 与 反 馈 的  |“现 态”|  共 同 决 定  |“次
  []
 
 File: images/image-2025-12-30-21-32-44.png Graphic file (type bmp)
 <images/image-2025-12-30-21-32-44.png>
-
-Underfull \hbox (badness 10000) in paragraph at lines 2919--2919
+[8]
+Underfull \hbox (badness 10000) in paragraph at lines 3233--3233
 [][]\TU/PingFangSC(0)/b/n/5 策 略 二：| \TU/lmr/bx/n/5 (CS) +
  []
 
 File: images/image-2025-12-30-21-51-35.png Graphic file (type bmp)
 <images/image-2025-12-30-21-51-35.png>
-[8] (./VLSI-Cheatsheet.aux)
+[9] (./VLSI-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
-
-
-Package rerunfilecheck Warning: File `VLSI-Cheatsheet.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `VLSI-Cheatsheet.out':
-(rerunfilecheck)             Before: 9B72F4FB5558C896F6BEDC74C719E0CC;16693
-(rerunfilecheck)             After:  D0F0E1F6B2BFF2D448251A974A182DC4;17815.
+Package rerunfilecheck Info: File `VLSI-Cheatsheet.out' has not changed.
+(rerunfilecheck)             Checksum: 8D7AC2C99D3BE68D4595C8D0BF1085A0;18176.
  ) 
 Here is how much of TeX's memory you used:
- 28962 strings out of 473832
- 651626 string characters out of 5729481
- 1220734 words of memory out of 5000000
- 51452 multiletter control sequences out of 15000+600000
+ 29086 strings out of 473832
+ 657513 string characters out of 5729481
+ 1221088 words of memory out of 5000000
+ 51567 multiletter control sequences out of 15000+600000
  562632 words of font info for 74 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  93i,17n,114p,618b,1381s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on VLSI-Cheatsheet.pdf (8 pages).
+Output written on VLSI-Cheatsheet.pdf (9 pages).
