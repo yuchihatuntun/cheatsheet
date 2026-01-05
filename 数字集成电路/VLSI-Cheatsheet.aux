@@ -75,6 +75,7 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.2}强制写入锁存器}{3}{subsubsection.7.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {7.3}主从边沿触发寄存器}{4}{subsection.7.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.1}基于多路选择器的设计}{4}{subsubsection.7.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.2}基于强制写入的设计}{4}{subsubsection.7.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {7.4}时序参数}{4}{subsection.7.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.1}常见参数定义}{4}{subsubsection.7.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.2}时钟偏差和时钟抖动}{4}{subsubsection.7.4.2}\protected@file@percent }
@@ -90,7 +91,7 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {8.1.6}进位产生电路优化：曼彻斯特进位门}{4}{subsubsection.8.1.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.2}行波进位加法器}{4}{subsection.8.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {8.2.1}单级加法器的反相特性}{4}{subsubsection.8.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.2.2}优化行波级联结构}{4}{subsubsection.8.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.2.2}优化行波级联结构}{5}{subsubsection.8.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.3}进位选择加法器}{5}{subsection.8.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.1}关键路径分析}{5}{subsubsection.8.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.2}线性架构}{5}{subsubsection.8.3.2}\protected@file@percent }
@@ -133,11 +134,19 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {11.4.1}伪 NMOS NOR 阵列}{7}{subsubsection.11.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {11.4.2}伪 NMOS NAND 阵列}{7}{subsubsection.11.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {11.5}SRAM}{7}{subsection.11.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {11.6}DRAM}{7}{subsection.11.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {12}第十二章\ Verilog 硬件设计}{7}{section.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.1}组合逻辑}{7}{subsection.12.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.2}时序逻辑}{7}{subsection.12.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {12.3}状态机}{7}{subsection.12.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.3.1}状态机设计描述方式}{7}{subsubsection.12.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.3.2}三段式状态机}{7}{subsubsection.12.3.2}\protected@file@percent }
-\gdef \@abspage@last{7}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.1}工作原理（读/写周期）}{7}{subsubsection.11.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.2}尺寸约束}{7}{subsubsection.11.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.3}输入输出电路}{7}{subsubsection.11.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.4}读出放大电路}{7}{subsubsection.11.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.5}整体 SRAM 电路架构}{7}{subsubsection.11.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {11.5.6}单、多端口 SRAM}{7}{subsubsection.11.5.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.6}DRAM}{8}{subsection.11.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}第十二章\ Verilog 硬件设计}{8}{section.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.0.1}组合逻辑举例：AOI 门（Slide 4）}{8}{subsubsection.12.0.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.0.2}模块例化（重点）}{8}{subsubsection.12.0.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.1}组合逻辑}{8}{subsection.12.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.2}时序逻辑}{8}{subsection.12.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.3}状态机}{8}{subsection.12.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.3.1}状态机设计描述方式}{8}{subsubsection.12.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {12.3.2}三段式状态机}{8}{subsubsection.12.3.2}\protected@file@percent }
+\gdef \@abspage@last{8}

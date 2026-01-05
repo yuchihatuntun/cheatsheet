@@ -1181,7 +1181,7 @@ t_{p} = \underbrace{\textcolor{blue}{0.69 R_{s} \cdot cL}}_{\text{逻辑门延�
         \conrow{\red{尺寸设计}}{这是一个\red{无争用}结构：输入路径与反馈路径通过传输门\red{互斥导通}，不存在电平冲突，因此对晶体管尺寸（如 $W/L$）没有特殊要求，只要能正常驱动即可。}
         \conrow{\red{晶体管数目多}}{需要两个反相器（4 管）+ 两个传输门（4 管），共约 \red{8} 个晶体管（甚至更多，取决于是否额外加入反相器缓冲）。}
         \conrow{\red{时钟负载大}}{CLK 信号需要驱动两个传输门的 NMOS 与 PMOS 栅极，负载电容较大，会增加时钟树功耗。（为减小时钟负载，可改为单 MOS 管的传输门电路，但也面临高电平阈值损失的问题）}
-        \conrow{\red{时钟重叠}}{在实际电路中，反相生成的时钟信号可能会有延迟，导致在某一瞬间，CLK 和 $\overline{\text{CLK}}$ 同时为有效电平。}
+        \conrow{\red{时钟重叠}}{在实际电路中，反相生成的时钟信号可能会有延迟，导致在某一瞬间，CLK 和 $\overline{\text{CLK}}$ 同时为有效电平，这样两个开关同时导通，就\red{又变成了强制写入锁存器}，但是我们没有好好设计尺寸，就可能出现写入失败的问题。}
     }
 }
 
@@ -1266,15 +1266,25 @@ $V_{DD}\cdot \frac{R_{M2}}{R_{M1+TG}+R_{M2}} > V_M$}
 
 \subsubsection{基于多路选择器的设计}
 
-\entry{电路拓扑结构}{由两个完全相同的多路开关锁存器串联构成：左为 Master，右为 Slave。总体为典型的 Master–Slave 锁存器架构。}
 \concepttable{
-    \conrow{Master（左半部分）}{由传输门 $T_1$（输入开关）与 $T_2$（反馈开关）以及反相器 $I_1, I_2, I_3$ 组成。$I_3$ 的输出记为中间节点 $Q_M$。}
-    \conrow{Slave（右半部分）}{由传输门 $T_3$（输入开关）与 $T_4$（反馈开关）以及反相器 $I_4, I_5, I_6$ 组成。$I_6$ 的输出为最终输出 $Q$。}
-    \conrow{信号流向}{在写入（Master 透明）阶段，$T_1$ 导通，将输入 $D$ 传至 $I_3$，产生 $Q_M$；在保持（Master 关闭）阶段，$Q_M$ 由 $I_2$ 保持；随后在采样（Slave 透明）阶段，$T_3$ 导通，将 $Q_M$ 传至 $I_6$，产生并保持输出 $Q$。}
-    \conrow{要点}{两个半部分时钟互补工作：Master 与 Slave 的输入/反馈传输门互为补相以保证边沿触发行为；$Q_M$ 为内部节点，不直接对外驱动，$Q$ 为对外受控输出。}
+    \conrow{Master（左半部分）}{由传输门 $T_1$（输入开关）与 $T_2$（保持开关）以及反相器 $I_2, I_3$ 组成。$I_3$ 的输出记为中间节点 $Q_M$。}
+    \conrow{Slave（右半部分）}{由传输门 $T_3$（输入开关）与 $T_4$（保持开关）以及反相器 $I_5, I_6$ 组成。$I_6$ 的输出为最终输出 $Q$。}
 }
 
 \img[0.7\linewidth]{images/image-2026-01-04-11-59-56.png}
+
+优点是结构简单，即连即用，缺点是之前说的那些问题：\red{时钟负载大、时钟重叠、晶体管数目多}等。
+
+\subsubsection{基于强制写入的设计}
+
+和作业 5-3 一样的结构，单纯串联了两个强制写入锁存器，只不过时钟控制相反，可以有效减小时钟信号的负载，计算方法见后面的习题解析。
+
+\img[0.7\linewidth]{images/image-2026-01-04-12-04-32.png}
+
+\hlblue{\textbf{避免时钟重叠}}
+
+以上升沿为例，也就是中间会出现一个 $CLK=1$ 和$\overline{CLK} = 1$ 的重叠区间，导致两个锁存器同时透明，成为一个电平敏感的锁存器，从而引入毛刺。
+
 
 
 \subsection{时序参数}
@@ -2574,9 +2584,279 @@ $= \sum_{i=0}^{i=n/2-1} (y_{2i-1} + y_{2i} - 2y_{2i+1})2^{2i} \quad y_{-1} = 0$
 
 \subsection{SRAM}
 
+\entry{标准化与兼容性}{SRAM 是数字系统的标准电路器件，意味着其设计与接口高度规范化，便于不同系统复用，并适合\red{大规模集成}，是 CPU \red{缓存（Cache）}的主要载体。}
+
+\entry{存取特性}{SRAM 属于 RAM：系统可以在工作过程中随时对存储信息进行\red{读取}与\red{写入}（随机存取）。}
+
+\entry{结构与易失性}{
+
+    \concepttable{
+        \conrow{本质电路}{双稳态触发器（正反馈锁存）存储 0/1}
+        \conrow{易失性}{断电 $\Rightarrow$ 状态无法维持 $\Rightarrow$ 数据丢失}
+    
+    
+        \conrow{应用场景}{高速但易失：用于存储\red{临时缓存数据}（如 Cache）}
+    }
+
+}
+
+\imgleft[0.2]{images/image-2026-01-04-19-34-27.png}{
+
+    \entry{逻辑本质（RS 双稳态）}{两个反相器首尾交叉耦合形成锁存器，构成\red{正反馈}：一个节点为“1”$\Rightarrow$ 另一个节点为“0”，反馈后维持原状态。}
+
+    说实话有点像前面的寄存器电路，不过是有两个强制写入传输门。
+
+}
+
+\imgleft[0.4]{images/image-2026-01-04-19-30-40.png}{
+
+    \entry{SRAM 6T 单元}{
+
+        \entry{晶体管级结构}{
+            \concepttable{
+                \conrow{存储核心 (4T)}{两对 CMOS 交叉耦合，形成双稳态存储节点 $Q$ 与 $\overline{Q}$。}
+                \conrow{访问管 (2T)}{两侧 Pass Transistor 受字线 $W$ 控制，将内部节点与位线 $B,\overline{B}$ 接通/断开。}
+            }
+        }
+
+        \entry{关键信号线}{}
+        \concepttable{
+            \conrow{字线 $W$}{选择控制端；当 $W=1$ 时，该单元与位线连通；当 $W=0$ 时单元保持（与位线隔离）。}
+            \conrow{位线 $B,\overline{B}$}{两条位线承载\red{互补电平}，提高抗干扰与读写速度。}
+        }
+    }
+}
+
+\subsubsection{工作原理（读/写周期）}
+
+\entry{读写方式}{
+    \concepttable{
+        \conrow{选中阶段}{无论读还是写，第一步都要将字线置有效：$W=1$。访问管导通后，内部存储节点 $(Q,\overline{Q})$ 与位线 $(B,\overline{B})$ 建立电气连接，单元进入可读/可写状态。}
+        \conrow{写操作}{外部写驱动器将目标数据与其反码分别施加到 $B$ 与 $\overline{B}$，并在 $W=1$ 期间保持足够时间。位线驱动器被设计为\red{足够强}，能克服交叉耦合反相器的保持能力，将双稳态电路\red{强制翻转}到新的稳态。}
+
+        \conrow{读操作}{先对 $(B,\overline{B})$ 做\red{预充电}，再令 $W=1$。存储单元会使其中一根位线更快放电，从而在 $B$ 与 $\overline{B}$ 上形成\red{差分电压}，由\red{灵敏放大器}放大并判决为标准逻辑电平输出。（课件上只是说根据两根位线读数据，这段话了解即可）}
+
+        \conrow{结束/保持}{字线恢复为 $W=0$，访问管关断，位线与单元隔离；内部交叉耦合反相器依靠电源继续保持当前稳态，读写周期结束。}
+    }
+}
+
+\subsubsection{尺寸约束}
+
+\entry{读扰动机理（以 $Q=0$ 为例）}{
+    \concepttable{
+        \conrow{初始状态}{假设存储为 $Q=0$、$\overline{Q}=1$；位线 $B$ 常被\red{预充}到高电平（可视为 $B=1$）。}
+        \conrow{读操作触发}{字线有效：$W=1$，访问管导通，存储节点与位线建立电气连接。}
+        \conrow{导通路径}{此时访问管 $M_6$ 与下拉管 $M_3$ 同时导通，形成 $B \rightarrow M_6 \rightarrow Q \rightarrow M_3 \rightarrow GND$ 的通路。}
+        \conrow{分压效应}{$Q$ 位于 $M_6$ 与 $M_3$ 之间，会因电阻分压而\red{从理想 $0V$ 上升}，其大小取决于 $M_6$ 与 $M_3$ 的导通能力（等效电阻）对比。}
+        \conrow{翻转触发条件}{若 $M_6$ \red{过强}（电阻过小）或 $M_3$ \red{过弱}（电阻过大），导致 $V_Q$ 上升过多；当 $V_Q$ 超过左侧反相器中驱动管 $M_1$ 的阈值时（记为 $V_Q > V_{th}$），$M_1$ 导通。}
+        \conrow{正反馈锁定}{$M_1$ 导通会拉低 $\overline{Q}$，触发交叉耦合反相器的\red{正反馈再生}，最终将 $Q$ 锁定为高电平，发生 $0 \rightarrow 1$ 的\red{错写}。}
+    }
+}
+
+\entry{尺寸约束结论（$\beta$ ratio）}{为避免读扰动，必须保证\red{下拉管 $M_3$ 的驱动能力显著强于访问管 $M_6$}（等价表述：$R_{on}(M_3)$ 应显著小于 $R_{on}(M_6)$），从而将 $Q$ 点电压钳制在低电平，确保读操作稳定。该约束称为\red{$\beta$ Ratio}约束。}
+
+\entry{可靠尺寸设计}{
+
+    \concepttable{
+        \conrow{$\beta$ Ratio}{定义为下拉管与访问管的驱动能力比值（常写作 $\beta = \beta_{driver}/\beta_{access}$）。\red{$\beta$ 越大，读稳定性越好}。}
+        \conrow{读稳定性目标}{使读取期间 $V_Q$ 不超过触发翻转的临界电压}
+        \conrow{工程实践}{通常将访问管 $M_5,M_6$ 与上拉管（负载管）取\red{最小尺寸}以省面积；仅将下拉管 $M_2,M_3$ 适当\red{加宽}以提高读稳定性。}
+        \conrow{经验比例}{下拉管宽度常取访问管的约 \red{$1.2 \sim 3$} 倍（工艺/电压/目标 SNM 不同会变化）。}
+    }
+
+}
+
+\subsubsection{输入输出电路}
+
+\entry{核心问题}{位线 $(B,\overline{B})$ 是\red{双向端口}：既要被写入驱动器强驱动（写），又要把单元的微弱差分送到外部（读）。因此需要\red{三态缓冲器}实现\red{通路选择与隔离}，避免总线竞争}
+
+\imgleft[0.35]{images/image-2026-01-04-20-04-42.png}{
+    
+    \entry{控制信号}{用 $W/\overline{R}$ 区分读写：$W/\overline{R}=1$ 表示\red{写}，$W/\overline{R}=0$ 表示\red{读}。}
+
+    \concepttable{
+        \conrow{$W/\overline{R}=1$}{打开输入侧三态缓冲器（buf1、buf2），将外部数据 $D_{in}$ 及其反码强驱动到位线：$B \leftarrow D_{in}$，$\overline{B} \leftarrow \overline{D_{in}}$；同时\red{关闭输出侧三态缓冲器}（高阻态），防止读写冲突。}
+        \conrow{$W/\overline{R}=0$}{打开输出侧三态缓冲器，将位线差分/判决后的信号送出形成 $D_{out}$，完成\red{从阵列到总线}的数据传输。}
+    }
+}
+
+\entry{位线共享机制、列结构}{
+    \concepttable{
+        \conrow{结构}{上图中两个 SRAM 存储单元（由字线 $W_1$ 与 $W_2$ 控制）挂载在同一对位线 $B$ 与 $\overline{B}$ 上，这是 SRAM 阵列的\red{列}结构：无论该列有多少个存储单元，它们都共享顶部同一套输入/输出（IO）电路。}
+        \conrow{工作逻辑}{\red{任意时刻 $W_1$ 与 $W_2$ 最多只有一个为高电平}（由行译码器保证）。被选中的单元\red{独占}位线资源，与顶部 IO 电路进行数据交换。}
+    }
+}
+
+\subsubsection{读出放大电路}
+
+\entry{背景与动机}{
+    \concepttable{
+        \conrow{驱动能力弱}{为追求高密度，SRAM \red{单元尺寸很小}，导致可提供的驱动电流很小。}
+        \conrow{负载大}{位线上挂载大量单元，位线寄生电容很大。}
+        \conrow{不放大后果}{单元在位线上产生的电压\red{摆幅很小}且\red{建立很慢}；若等待位线达到全摆幅（$0$ 或 $V_{DD}$），读出会极慢。}
+        \conrow{放大器作用}{检测 $B$ 与 $\overline{B}$ 的\red{微小差分电压}并迅速放大为标准逻辑电平，实现高速读出。}
+    }
+}
+
+\imgleft[0.3]{images/image-2026-01-04-20-10-09.png}{
+
+\entry{电路组成}{
+    \concepttable{
+        \conrow{结构}{上部为\red{预充平衡电路}，下部为\red{放大器电路}。}
+        \conrow{控制信号 $\phi$}{作为时序控制信号，决定“预充/平衡”与“读出/放大”两个阶段。}
+    }
+}
+
+\entry{预充阶段（$\phi = 0$）}{
+    \concepttable{
+        \conrow{放大器状态}{放大器与地断开，不工作，用于降低功耗。}
+        \conrow{预充与平衡}{顶部预充管导通：将 $B$ 与 $\overline{B}$ 同时拉高到 $V_{DD}$，并将二者短接以保证严格平衡。}
+        \conrow{初始条件}{为差分读出提供\red{统一初态}，并消除上一次读写残留电荷影响。}
+    }
+}
+
+\entry{读出/工作阶段（$\phi = 1$）}{
+    \concepttable{
+        \conrow{预充网络}{预充平衡电路关闭。}
+        \conrow{差分建立}{字线打开后，存储单元开始轻微拉低其中一根位线电压，在 $B$ 与 $\overline{B}$ 上形成微小压差。}
+        \conrow{放大机制}{放大器接地通路导通开始工作；依靠\red{正反馈}迅速判决哪边更低，并将微小压差放大为标准逻辑电平（$0/1$）。}
+    }
+}
+
+}
+
+\subsubsection{整体 SRAM 电路架构}
+
+最后就是把存储单元核心，地址译码器，读写控制电路，输入输出电路等模块整合在一起，形成完整的 SRAM 存储器。
+
+\imgleft[0.3]{images/image-2026-01-04-20-21-12.png}{
+
+    \entry{三大核心模块}{
+    \concepttable{
+        \conrow{存储阵列 (核心区)}{由大量 6T 存储单元组成矩阵：\red{横向为字线 (WL)}，\red{纵向为位线 (BL/$\overline{BL}$)}。}
+        \conrow{行控制 (左侧)}{包含\red{行译码器}。输入：使能信号 $En$ 与地址信号。功能：根据地址译码，在众多字线中\red{仅选中一行}（置高电平）。}
+        \conrow{列控制 (顶部)}{包含\red{列 IO 电路}（读写驱动 + 灵敏放大器 + 三态输出缓冲）。每一列（或每几列）配置对应电路，控制数据的 $D_{in}$ 输入与 $D_{out}$ 输出。}
+    }}
+
+}
+
+\subsubsection{单、多端口 SRAM}
+
+\entry{单端口 SRAM 的局限性}{由于\red{读写共享同一套访问通路}，会带来性能瓶颈与尺寸折中。}
+
+\imgleft[0.16]{images/image-2026-01-04-20-31-58.png}{
+
+    \concepttable{
+        \conrow{资源共享后果}{访问通路唯一，\red{同一时刻只能执行一次访问}（一次读或一次写），在共享存储场景（如多核共享）下：核心 A 读时核心 B 只能等待，导致流水线停顿、系统吞吐下降。}
+        \conrow{读写矛盾（尺寸折中）}{访问管既要满足\red{读稳定性}，又要满足\red{写入能力}：\par
+        • \red{读稳定}：为避免读扰动，需下拉管（如 $M2$）比访问管更强（等效 $R_{on}(M2)$ 更小）。\par
+        • \red{写容易}：为保证可写入，访问管又应足够强以压倒负载/上拉管。}
+    }
+
+}
+
+\hlblue{\red{一读一写两端口 SRAM}}（作业6-5中考察的电路结构）
+
+\imgleft[0.4]{images/image-2026-01-04-20-34-35.png}{
+    \entry{工作原理}{
+        \concepttable{
+            \conrow{核心存储节点}{中间仍是 4T 交叉耦合反相器，正反馈保持数据。}
+            \conrow{Port A（差分端口）}{和单端口相同的读写线，通常用于\red{写入}（\red{差分强驱动更容易压倒反馈环}），也可用于读取。}
+            \conrow{Port B（单端口）}{独立字线 $W_b$，单端位线 $B_b$（缺少 $\overline{B_b}$ 以节省面积）。用于\red{读取}。（从分析看来读取的应该是$\overline{Q}$，它是使用Q 作为输出传输管的控制信号的，而且还是用的NMOS 传输管。）}
+            \conrow{并行访问}{为 $Q/\overline{Q}$ 提供两套独立访问路径；$W_a$ 与 $W_b$ 由两套独立行译码器控制，因此\red{可同时向两个端口发送不同地址}。}
+            \conrow{限制}{需避免读写冲突；工程上通常通过\red{仲裁/时序约束}确保同一时刻只有一个端口对同一地址执行写操作。}
+        }
+    }
+}
+
+\hlblue{二读一写三端口 SRAM}
+
+就是在前面两端口 SRAM 基础上增加一个对称的读端口，毫无新意。
+
+\imgleft[0.4]{images/image-2026-01-04-20-43-34.png}{
+        
+    \entry{结构说明}{
+        \concepttable{
+            \conrow{Port A(读写)}{差分读写端口：字线 $W_a$，位线 $B_a,\overline{B_a}$。\par
+            通常用于\red{写入}（差分强驱动更容易压倒正反馈锁存），也可用于读取。}
+            \conrow{Port B}{单端读端口：字线 $W_b$，位线 $B_b$。}
+            \conrow{Port C}{单端读端口：字线 $W_c$，位线 $\overline{B_c}$。}
+        }
+    }
+
+    \entry{注}{多端口结构需避免端口间\red{同址写冲突}；实际系统仍需通过仲裁与时序约束保证同一地址同一时刻最多一个写操作。}
+}
+
+\hlblue{二读二写四端口 SRAM}
+
+\imgleft[0.4]{images/image-2026-01-04-20-50-40.png}{
+
+    \entry{代价分析}{}
+    \concepttable{
+        \conrow{电路复杂度爆发}{晶体管数量剧增（从标准的 $6$ 个增加到了 $10$ 个甚至更多）。}
+        \conrow{控制线密集}{图中有 $4$ 根字线（A-WL 到 D-WL）和对应的 $4$ 组位线。}
+        \conrow{面积代价}{每一个新增端口不仅意味着多了晶体管，更意味着多了横向和纵向的金属连线。在芯片设计中，\red{连线资源往往比晶体管更宝贵}。}
+    }
+
+}
+
+\hlblue{\textbf{多端口 SRAM 的特点}}
+
+\entry{优势}{可为系统多项任务同时提供读/写访问，是多端口结构存在的根本意义。}
+
+\concepttable{
+    \conrow{实现方式}{通过\red{多套地址译码电路}与\red{多套数据位线/端口}实现硬件冗余，从而支持并行访问。}
+}
+
+\entry{约束条件}{硬件支持并行，但必须遵守以下规则：}
+
+\concepttable{
+    \conrow{\red{禁止同址多写}}{绝不允许对同一存储单元同时进行多个写操作，否则位线电流冲突导致写入数据不确定，严重时可能损坏电路。}
+    \conrow{\red{禁止同址读写}}{不允许对同一存储单元\red{同时读和写}，否则读出数据是旧数据还是新数据不确定（竞争冒险），且写入大电流干扰可能导致读出错误。}
+    \conrow{\green{允许不同址并行}}{对\red{不同地址}的存储单元同时读写是允许且鼓励的（并行性的实际收益来源）。}
+}
+
+\entry{解耦优势}{由于读写位线分离，可避免读写对单元尺寸要求的矛盾。}
+\concepttable{
+    \conrow{多端口改进}{在多端口结构中，可分别优化：\par
+    • 写端口尺寸 $\rightarrow$ 增强写入能力；\par
+    • 读端口尺寸 $\rightarrow$ 增强读取稳定性；\par
+    读写不再共用同一个访问管（如 $M5$），从而减少痛苦的尺寸妥协。}
+}
+
 \subsection{DRAM}
 
 \section{第十二章\ Verilog 硬件设计}
+
+\entry{核心定义}{Verilog 程序的基本单元是 \blue{module}。每个模块必须以 \blue{\texttt{module}} 开头，以 \blue{\texttt{endmodule}} 结尾。}
+
+\concepttable{
+    \conrow{三要素}{\textbf{端口定义}（port list）+ \textbf{I/O 说明}（input/output/inout）+ \textbf{功能定义}（\texttt{assign}/\texttt{always}）。}
+    \conrow{端口方向}{\blue{\texttt{input}}：输入；\blue{\texttt{output}}：输出；\blue{\texttt{inout}}：双向端口。}
+    \conrow{信号类型}{组合连线常用 \blue{\texttt{wire}}；时序变量常用 \blue{\texttt{reg}}（SystemVerilog 可用 \texttt{logic} 统一）。}
+    \conrow{语法细节}{除 \texttt{endmodule} 等关键字外，语句行末必须有分号 \texttt{;}。}
+    \conrow{注释}{支持 \texttt{//} 单行注释与 \texttt{/*...*/} 多行注释。}
+}
+
+\subsubsection{组合逻辑举例：AOI 门（Slide 4）}
+
+\entry{逻辑表达式}{AOI（与-或-非）示例：$f=\sim((a \& b)\ |\ (\sim(c \& d)))$。运算符：\texttt{\&}（AND）、\texttt{|}（OR）、\texttt{\~}（NOT）。}
+
+\entry{编码要点}{
+\concepttable{
+    \conrow{\texttt{wire} 声明}{输入端口默认是 \texttt{wire}，但显式声明内部连线是好习惯。}
+    \conrow{\texttt{assign}}{\texttt{assign} 用于\red{连续赋值}，描述组合逻辑（无时钟、无触发）。}
+}}
+
+\subsubsection{模块例化（重点）}
+
+\entry{例化语法}{在一个模块中调用另一个模块：\blue{模块名} + \blue{实例名} + \blue{端口映射}。}
+
+\concepttable{
+    \conrow{模块名 vs 实例名}{\blue{\texttt{aoi}}：被调用模块名；\blue{\texttt{u\_aoi}}：实例名（同一层级内必须唯一）。}
+    \conrow{命名关联（推荐）}{端口映射写法：\texttt{.port(signal)}，例如 \texttt{.a(in\_a)} 表示将上层信号 \texttt{in\_a} 连接到子模块端口 \texttt{a}。}
+    \conrow{对比顺序关联}{顺序关联依赖端口顺序，易出错；考试与工程均优先使用\red{命名关联}。}
+}
 
 \subsection{组合逻辑}
 

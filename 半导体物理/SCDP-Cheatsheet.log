@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  3 JAN 2026 16:51
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  4 JAN 2026 16:35
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1210,56 +1210,64 @@ Overfull \hbox (11.93974pt too wide) in paragraph at lines 1453--1457
 [][]\TU/PingFangSC(0)/b/n/5 漏 源 电 流[]\TU/PingFangSC(0)/m/n/5 ：| $\OML/cmm/m/it/5 I[] \OT1/cmr/m/n/5 = \OML/cmm/m/it/5 I[] []$ 
  []
 
-[2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 1538--1538
+[2]
+File: images/image-2026-01-04-16-27-21.png Graphic file (type bmp)
+<images/image-2026-01-04-16-27-21.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1502--1502
+[][]$\OML/cmm/m/it/5 V[] >
+ []
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 1583--1583
 [][]\TU/PingFangSC(0)/b/n/5 界 面 态 对 肖 特 基 势 垒 高 度
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1538--1538
+Underfull \hbox (badness 10000) in paragraph at lines 1583--1583
 [][]\TU/PingFangSC(0)/b/n/5 加 偏 压 时 肖 特 基 势 垒 能 带
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1538--1538
+Underfull \hbox (badness 10000) in paragraph at lines 1583--1583
 [][]\TU/PingFangSC(0)/b/n/5 金 属 与 重 掺 杂 半 导 体 接 触
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+Underfull \hbox (badness 10000) in paragraph at lines 1591--1591
 [][]\TU/PingFangSC(0)/b/n/5 在 理 想 情 况 下，|  金 属 和 半
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+Underfull \hbox (badness 10000) in paragraph at lines 1591--1591
 \TU/PingFangSC(0)/b/n/5 导 体 之 间 形 成 非 整 流 接 触
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+Underfull \hbox (badness 10000) in paragraph at lines 1591--1591
 [][]\TU/PingFangSC(0)/b/n/5 根 据 给 出 的 金 属 与 半 导 体，|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+Underfull \hbox (badness 10000) in paragraph at lines 1591--1591
 \TU/PingFangSC(0)/b/n/5 画 出 形 成 金 半 接 触 后 的 能
  []
 
-[4] (./SCDP-Cheatsheet.aux)
+[4] [5] (./SCDP-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `SCDP-Cheatsheet.out' has not changed.
-(rerunfilecheck)             Checksum: 61B33C928EE9F86D9E767A32E97D4491;7101.
+(rerunfilecheck)             Checksum: 7D8B5BDBCBF52810A3BB8066E186082D;7643.
  ) 
 Here is how much of TeX's memory you used:
- 27792 strings out of 473832
- 608824 string characters out of 5729481
- 1253417 words of memory out of 5000000
- 50350 multiletter control sequences out of 15000+600000
+ 27824 strings out of 473832
+ 610474 string characters out of 5729481
+ 1254011 words of memory out of 5000000
+ 50381 multiletter control sequences out of 15000+600000
  562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,17n,114p,721b,765s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,17n,114p,721b,783s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on SCDP-Cheatsheet.pdf (4 pages).
+Output written on SCDP-Cheatsheet.pdf (5 pages).

@@ -1480,12 +1480,57 @@ BJT 有共射、共基、共集三种接法，为了使三极管处于正向有�
 
 \subsection{非理想因素}
 
+\subsubsection{沟道长度调制效应}
+
+\entry{1.\ 现象定义（核心概念）}{
+    \concepttable{
+        \conrow{定义}{在沟道夹断（pinch-off）后，若继续增大漏极电压 $V_{DS}$，电流不会像理想模型那样完全饱和不变。}
+        \conrow{物理过程}{当 $V_{DS} > V_{DS(\mathrm{sat})}$ 时，栅漏 PN 结反向偏置增大 $\Rightarrow$ 漏端耗尽区沿沟道方向扩展。}
+        \conrow{结果}{电中性导电沟道的\red{有效长度} $L'$ 变短。该“$L'$ 随 $V_{DS}$ 变化”的现象称为沟道长度调制效应。}
+    }
+}
+
+\imgleft[0.2]{images/image-2026-01-04-16-27-21.png}{
+
+    \entry{图解分析}{
+        \concepttable{
+            \conrow{$V_{DS}>V_{DS(\mathrm{sat})}$}{过夹断：夹断点向源端移动，漏端与夹断点之间形成耗尽区，长度记为 $\Delta L$（原理对所有导通情况适用）。}
+            \conrow{有效长度修正}{\red{$L' \approx L - \frac{\Delta L}{2}$}}
+        }
+    }
+
+}
+
+\hlblue{\textbf{电流方程修正}}
+
+\entry{$L'$ 变短 $\Rightarrow I_D$ 增加}{
+沟道纵向电阻满足 $R \propto \frac{\text{Length}}{\text{Area}}$。当有效沟道长度 $L'$ 变短时，沟道电阻减小，因此在相同电场驱动下，漏极电流 $I_D$ 相比理想情况（长度为 $L$）会略有增加。
+}
+
+\entry{修正因子}{
+    \concepttable{
+        \conrow{理想关系}{理想夹断电流 $I_{P1}$（即 $I_{DSS}$/饱和电流）分母含 $L$，因此电流与沟道长度成反比：$I \propto \frac{1}{L}$。}
+        \conrow{电流修正}{$I'_{D1} = I_{D1}\cdot \frac{L}{L-\frac{\Delta L}{2}}$，验证“长度越短，电流越大”。}
+        \conrow{耗尽区延伸量 $\Delta L$}{$\Delta L \approx \left[\frac{2\varepsilon_s\left(V_{DS}-V_{DS(\mathrm{sat})}\right)}{eN_d}\right]^{1/2}$，来源于 PN 结耗尽宽度公式。$\Delta L \propto \sqrt{V_{DS}-V_{DS(\mathrm{sat})}}$，即 $V_{DS}$ 超过饱和电压越多，延伸越长。}
+    }
+}
+
+\entry{\red{最终修正方程}}{
+    $I'_{D1(\mathrm{sat})}=I_{D1(\mathrm{sat})}(1+\lambda V_{DS})$。\par
+    其中 $I_{D1(\mathrm{sat})}$ 为理想饱和电流；$\lambda$ 为沟道长度调制系数
+}
+
+\entry{小信号输出阻抗 $r_{ds}$}{
+    $r_{ds}=\frac{\partial V_{DS}}{\partial I'_{D1}}\approx \frac{\Delta V_{DS}}{\Delta I'_{D1}}$。\par
+    理想情况下饱和区 $\Delta I_D=0$，故 $r_{ds}\to\infty$；考虑沟道长度调制后 $\Delta I_D\neq 0$，$r_{ds}$ 为有限值。
+}
+
 \subsection{等效电路和频率限制}
-1
+
 
 \newpage
 
-\section{课后习题整理}
+\section{附录 A\ 习题整理-01}
 
 这里仅整理作业题以及期中考试习题，不包含章节后习题。
 
@@ -1544,6 +1589,77 @@ E_{\max} &= \frac{-e N_d x_n}{\epsilon_s} = \frac{-(1.6 \times 10^{-19})(10^{15}
     \conrow{画出n型欧姆接触时，零偏、正偏、反偏条件下的能带图}{这三个图前面都有}
     \conrow{根据给出的金属与半导体，画出形成金半接触后的能带图}{原则就是让金属的费米能级不变，然后让半导体的费米能级和金属对齐，画出弯曲的能带图即可。然后根据半导体类型以及载流子的流向标注是阻挡层还是反阻挡层。}
 }
+
+\newpage
+
+\section{附录 B\ 习题整理-02}
+
+从此开始完全整理 Neaman 和 孟庆巨老师的教材/考研指导后面的计算类习题。（前四章就主要是我在期中之前整理的内容）
+
+\subsection{半导体物理基础}
+
+\hlgreen{\textbf{能带的产生}} 和 \hlgreen{\textbf{载流子的统计分布}} 上次也没考计算题相关的，这个记住概念和影响因素就行。
+
+\subsubsection{半导体载流子输运}
+
+
+\entry{5-1}{
+    硅中施主杂质原子的浓度为 $N_{d}=10^{15}\,\mathrm{cm}^{-3}$。设电子迁移率为 $\mu_{n}=1300\,\mathrm{cm}^2/\mathrm{V}\cdot\mathrm{s}$，空穴迁移率为 $\mu_{p}=450\,\mathrm{cm}^2/\mathrm{V}\cdot\mathrm{s}$。
+    (a) 求材料的电阻率；
+    (b) 求材料的电导率。
+}
+
+\entry{启发意义}{多数载流子决定导电性，少数载流子可忽略；掌握 $\rho$ 与 $\sigma$ 的互逆关系及电导率公式。}
+
+\entry{解答}{
+\[
+\rho=\frac{1}{e\mu_n N_d}=\frac{1}{(1.6\times10^{-19})(1300)(10^{15})}=4.808\ \Omega\text{-cm}
+\]
+\[
+\sigma=\frac{1}{\rho}=0.208\ (\Omega\text{-cm})^{-1}
+\]
+}
+
+
+\entry{5-6}{
+$T=300K$ 时，均匀掺杂的GaAs半导体的参数为 $N_{d}=10^{16}\,\mathrm{cm}^{-3}$，$N_{a}=0$。
+(a) 计算热平衡时的电子和空穴浓度；
+(b) 外加电场为 $E=10\,\mathrm{V/cm}$，计算漂移电流密度；
+(c) 当 $N_{d}=0$，$N_{a}=10^{16}\,\mathrm{cm}^{-3}$ 时，重做(a)和(b)的计算。
+}
+\entry{启发意义}{
+考查本征载流子浓度、漂移电流密度公式及对 N 型/P 型的迁移率选用。
+}
+
+(a) $N_d=10^{16}\,\mathrm{cm}^{-3}$，$N_a=0$，$n_i=1.8\times10^6\,\mathrm{cm}^{-3}$
+
+\[
+n_0 = N_d = 10^{16}\,\mathrm{cm}^{-3}
+\]
+\[
+p_0 = \frac{n_i^2}{n_0} = \frac{(1.8\times10^6)^2}{10^{16}} = 3.24\times10^{-4}\,\mathrm{cm}^{-3}
+\]
+
+(b) 电子迁移率 $\mu_n \approx 7500\,\mathrm{cm}^2/(\mathrm{V}\cdot\mathrm{s})$，$E=10\,\mathrm{V/cm}$
+
+\[
+J = e\mu_n n_0 E = (1.6\times10^{-19}) \times 7500 \times 10^{16} \times 10 = 120\,\mathrm{A/cm}^2
+\]
+
+(c) $N_d=0$，$N_a=10^{16}\,\mathrm{cm}^{-3}$
+
+\[
+p_0 = N_a = 10^{16}\,\mathrm{cm}^{-3}
+\]
+\[
+n_0 = \frac{n_i^2}{p_0} = 3.24\times10^{-4}\,\mathrm{cm}^{-3}
+\]
+空穴迁移率 $\mu_p \approx 310\,\mathrm{cm}^2/(\mathrm{V}\cdot\mathrm{s})$
+
+\[
+J = e\mu_p p_0 E = (1.6\times10^{-19}) \times 310 \times 10^{16} \times 10 = 4.96\,\mathrm{A/cm}^2
+\]
+
 
 
 % --- 手动换栏命令（如果需要强制换列）---
