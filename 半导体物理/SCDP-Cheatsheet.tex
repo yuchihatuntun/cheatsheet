@@ -27,6 +27,7 @@
 
 \definecolor{myblue}{HTML}{003153} % 蓝色字
 \definecolor{myred}{HTML}{85120F}  % 红色字
+\definecolor{mygreen}{HTML}{218254}  % 绿色字
 \definecolor{hlblue}{HTML}{ADC1DB} % 蓝色高亮
 \definecolor{hlred}{HTML}{D66A83}  % 红色高亮
 \definecolor{hlyellow}{HTML}{E3C79F}  % 奢金高亮
@@ -79,6 +80,7 @@
 % 颜色字
 \newcommand{\red}[1]{\textbf{\textcolor{myred}{#1}}}  
 \newcommand{\blue}[1]{\textbf{\textcolor{myblue}{#1}}} 
+\newcommand{\green}[1]{\textbf{\textcolor{mygreen}{#1}}}
 \newcommand{\entry}[2]{$\bullet$ \textbf{#1}: #2\par\vspace{0.5pt}}
 % 高亮
 \newcommand{\cbox}[2][yellow]{\begingroup\setlength{\fboxsep}{1pt}\colorbox{#1}{\strut#2}\endgroup}
@@ -550,6 +552,10 @@
     }
 }
 
+\subsection{PN 结击穿}
+
+
+
 \subsection{动态开关特性}
 
 从关态转变到开态所需开启时间很短，从开态转变到关态($+U \rightarrow -U$)所需关闭时间却很长。
@@ -1002,104 +1008,290 @@ $\xi$是几何因子，当 $W$ 和$x_{dT}$ 同量级时，窄沟道效应显著�
 
 $V_T = V_{T0} \pm \frac{e D_I}{C_{ox}},+\text{为同性掺杂}，-\text{为异性掺杂}$
 
+\subsection{附加电学特性}
+
+主要是四种击穿机制：
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{栅氧化层击穿}
+    \concepttable{
+        \conrow{机理}{氧化层中的缺陷在高场下由“缺陷 $\to$ 针孔 $\to$ 空洞 $\to$ 崩塌”，一旦击穿电流 $I$ 上升导致温度 $T$ 升高，形成热电正反馈并可致器件永久损坏}
+        \conrow{临界场}{当 $E_{ox}\approx V_{GS}/t_{ox}>E_B$（$E_B\approx(0.5\sim1)\times10^7\,$V/cm）时发生}
+        \conrow{设计要点}{工作电压应远低于击穿电压 $BV_{GS}$（可留 $\sim3\times$ 安全裕量）}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{漏 PN 结击穿（曲率效应）}
+    \concepttable{
+        \conrow{机理}{漏极 $n^+$ 与衬底 $p$ 的 PN 结在扩散区弯曲处电场最强，曲率效应使该处率先发生雪崩击穿}
+        \conrow{位置}{击穿常起始于漏区扩散边缘的弯曲部位}
+        \conrow{典型数值}{对于 $N\sim3\times10^{16}\,\mathrm{cm^{-3}}$ 的衬底，击穿电压约为 $\sim25\,$V}
+    }
+\end{minipage}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{沟道雪崩倍增 \& 寄生 BJT 导通}
+    \concepttable{
+        \conrow{阶段1（雪崩）}{短沟道高场区使电子被加速发生碰撞电离，产生 e–h 对，电子被漏极收集，空穴形成衬底电流 $I_{sub}$，倍增因子 $M_1\gg1$}
+        \conrow{阶段2（寄生 BJT）}{$I_{sub}$ 经衬底电阻 $R_{sub}$ 产生 $V_{sub}=I_{sub}R_{sub}$，当 $V_{sub}\sim0.6$–$0.7\,$V 时源—衬底结被正偏，触发寄生 NPN，形成正反馈并出现回滞/折回（snapback）负阻}
+        \conrow{表现}{一旦寄生 BJT 开启，$I_D$ 剧增且维持大电流所需 $V_{DS}$ 反而降低（负阻现象）}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{源—漏穿通效应（耗尽区合并）}
+    \concepttable{
+        \conrow{机理}{当 $V_{DS}$ 足够大时，漏端耗尽区向源端扩展并与源端耗尽区合并，势垒被强行拉低}
+        \conrow{后果}{源端电子可不受栅控直接注入漏极，导致漏电流巨增，器件失去 $V_{GS}$ 控制}
+        \conrow{输出特征}{在 $I_D$–$V_{DS}$ 曲线上表现为随 $V_{DS}$ 急剧上翘（失控上升）}
+    }
+\end{minipage}
+
+\subsection{辐射与热电子效应}
+
+不重要
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{辐射效应}
+    \entry{核心考点}{辐射如何在氧化层中引入正电荷？}
+    \concepttable{
+        \conrow{物理机制}{高能辐射（X射线、$\gamma$射线等）在 $SiO_2$ 中激发电子—空穴对}
+        \conrow{输运差异}{电子在 $SiO_2$ 中迁移率较高 $\sim 20\,\mathrm{cm}^2/(\mathrm{V}\cdot\mathrm{s})$，易在电场作用下被栅极收集或流走；空穴迁移率极低（$\sim10^{-4}\!-\!10^{-11}\,\mathrm{cm}^2/(\mathrm{V}\cdot\mathrm{s})$），以随机跃迁缓慢向 $Si$–$SiO_2$ 界面漂移}
+        \conrow{陷阱捕获}{空穴易被氧化层或界面处陷阱捕获，导致氧化层中累积正电荷}
+        \conrow{结论}{氧化层正电荷使 NMOS 阈值 $V_T$ 向负方向漂移（$V_T$ 减小，器件更易导通，严重时甚至变为耗尽型）}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{热电子效应}
+    \entry{核心考点}{沟道内的高能电子如何损伤氧化层？}
+    \concepttable{
+        \conrow{产生来源}{漏端高场区（包括雪崩倍增）产生的高能电子（Hot electrons）}
+        \conrow{注入过程}{在存在纵向电场且 $V_{GS}>0$ 时，热电子被加速并越过 $Si$–$SiO_2$ 界面注入氧化层}
+        \conrow{三大影响（考试必记）}{(1) 产生栅电流 $I_G$（典型量级：pA–fA）；(2) 引入负的氧化层电荷，导致 NMOS $V_T$ 向正方向漂移（$V_T$ 增大，器件变慢）；(3) 破坏界面化学键，产生额外界面态，降低迁移率 $\mu$ 与跨导 $g_m$}
+        \conrow{复习对比}{辐射主要引入正氧化层电荷，热电子主要引入负氧化层电荷}
+    }
+\end{minipage}
+
 \section{第五章\ 双极型晶体管}
 
 \subsection{工作原理}
 
-少子分布、能带图：
+\subsubsection{基本概念}
+
+\entry{掺杂浓度差异}{
+
+    \blue{发射区 $n^{++}$}
+    \concepttable{
+        \conrow{目的}{最大化发射极注入效率 $\gamma$}
+        \conrow{工程要求}{$N_E\gg N_B$，使 $\gamma\to1$，从而增大电流增益 $\beta$}
+        \conrow{不利后果}{$N_E$ 不足时，反向空穴流 $J_{pE}$ 增大，发射极电流中无效分量增多，$\beta$ 急剧下降}
+    }
+
+    \blue{基区 $p^{+}$（很薄）}
+    \concepttable{
+        \conrow{掺杂取舍}{$N_B \ll N_E$（但不能太低），\red{在高增益与抗穿通之间权衡}}
+        \conrow{宽度要求}{$x_B \ll L_B$，以使基区输运系数 $\alpha_T\to1$（$\alpha_T\approx 1-\tfrac{1}{2}(x_B/L_B)^2$）}
+    }
+
+    \blue{集电区 $n$（轻掺杂）}
+    \concepttable{
+        \conrow{提高耐压}{轻掺杂使耗尽层向集电区扩展，降低最大电场，\red{显著提高 $BV_{CBO}$ / $BV_{CEO}$}}
+        \conrow{减小结电容}{耗尽层宽度增大导致 $C_\mu$ 减小（$C=\epsilon A/d$），有利于提高频率特性}
+    }
+
+}
+
+\subsubsection{工作模式}
+
+\entry{基本工作原理}{BJT 有共射、共基、共集三种接法，为了使三极管处于\red{正向有源区}，从而实现正常的电流放大作用，必须同时满足以下两个条件：
+}
+
+\imgleft[0.3]{images/image-2026-01-06-09-47-43.png}{
+
+    \noindent
+    \begin{minipage}[t]{0.49\linewidth}
+
+    \entry{\blue{发射结正向偏置}}{降低发射结势垒，\red{使发射区的高浓度多子能够顺利注入到基区。}}
+
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\linewidth}
+
+    \entry{\blue{集电结反向偏置}}{在集电结建立较强的电场（耗尽层加宽），有利于\red{收集从基区扩散过来的少子}。形成集电极电流 $I_C$。}
+
+    \end{minipage}
+
+}
+
+\entry{NPN 型 BJT 能带图}{}
 
 \noindent
 \begin{minipage}[t]{0.24\linewidth}
+    \centering
     \blue{正向有源区}
-    
     \vspace{2pt}
-    \noindent
-    \begin{minipage}[t]{0.48\linewidth}
-        \blue{NPN 型}
 
-        \img[\linewidth]{images/image-2026-01-02-19-28-20.png}
-
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.48\linewidth}
-        \blue{PNP 型}
-    \end{minipage}
-
+    \img[\linewidth]{images/image-2026-01-02-19-28-20.png}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.24\linewidth}
+    \centering
     \blue{饱和区}
-
     \vspace{2pt}
-    \noindent
-    \begin{minipage}[t]{0.48\linewidth}
-        \blue{NPN 型}
 
-        \img[\linewidth]{images/image-2026-01-02-19-29-32.png}
-
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.48\linewidth}
-        \blue{PNP 型}
-    \end{minipage}
+    \img[\linewidth]{images/image-2026-01-02-19-29-32.png}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.24\linewidth}
+    \centering
     \blue{截止区}
-
     \vspace{2pt}
-    \noindent
-    \begin{minipage}[t]{0.48\linewidth}
-        \blue{NPN 型}
 
-        \img[\linewidth]{images/image-2026-01-02-19-29-57.png}
-
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.48\linewidth}
-        \blue{PNP 型}
-    \end{minipage}
+    \img[\linewidth]{images/image-2026-01-02-19-29-57.png}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.24\linewidth}
+    \centering
     \blue{反向有源区}
-
     \vspace{2pt}
-    \noindent
-    \begin{minipage}[t]{0.48\linewidth}
-        \blue{NPN 型}
 
-        \img[\linewidth]{images/image-2026-01-02-19-30-42.png}
+    \img[\linewidth]{images/image-2026-01-02-19-30-42.png}
+\end{minipage}
 
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.48\linewidth}
-        \blue{PNP 型}
-    \end{minipage}
+% PNP 型 BJT 能带图
+
+\entry{PNP 型 BJT 能带图}{}
+
+\noindent
+\begin{minipage}[t]{0.24\linewidth}
+    \centering
+    \blue{热平衡区}
+    \vspace{2pt}
+
+    \img[0.8\linewidth]{images/image-2026-01-06-09-36-39.png}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.24\linewidth}
+    \centering
+    \blue{正向有源区}
+    \vspace{2pt}
+
+    \img[0.8\linewidth]{images/image-2026-01-06-09-38-35.png}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.24\linewidth}
+    \centering
+    \blue{截止区}
+    \vspace{2pt}
+
+    \img[0.8\linewidth]{images/image-2026-01-06-09-41-07.png}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.24\linewidth}
+    \centering
+    \blue{反向有源区}
+    \vspace{2pt}
+
+    \img[0.8\linewidth]{images/image-2026-01-06-09-40-02.png}
 \end{minipage}
 
 理想情况下，\red{集电结边界的少子的浓度为零}，希望从发射区注入的电子能越过基区扩散到集电结的空间电荷区，尽可能多的电子被集电极收集，而不是在基区复合，因此需要\red{基区的宽度与扩散长度相比很小}。
 
-BJT 有共射、共基、共集三种接法，为了使三极管处于正向有源区，从而实现正常的电流放大作用，\red{必须同时满足以下两个条件}：
+\subsubsection{电流分析（正向有源区）}
 
-\noindent
+\hlblue{\textbf{集电极电流}}
+
+\imgleft[0.3]{images/image-2026-01-06-09-51-46.png}{
+
+    \concepttable{
+        \conrow{微观机制}{在正向有源区，发射区注入到基区的电子（作为少数载流子）\red{在基区内进行扩散运动}（基于电流连续性原理）。}
+        \conrow{\red{计算公式}}{\green{$i_C = I_S \exp\!\left(\dfrac{V_{BE}}{V_t}\right),\; I_S = \dfrac{e D_n A_{BE} n_{B0}}{x_B}$}}
+        \conrow{结论}{$i_C$ 与 $V_{BE}$ 呈\red{指数关系}，在理想模型下近似与 $V_{CB}$ \red{无关}，体现为压控电流源}
+    }
+
+}
+
+\hlblue{\textbf{发射极电流}}
+
+\imgleft[0.3]{images/image-2026-01-06-10-01-44.png}{
+    发射极电流由注入电子和反向注入空穴两部分组成，两者均随 $V_{BE}$ 指数变化。
+
+    \concepttable{
+        \conrow{计算公式}{\green{$i_{E1}=i_{C}=I_{S}\exp\left(\frac{V_{BE}}{V_{t}}\right)$}\par
+        \green{$i_{E2}=I_{S2}\left[\exp\left(\frac{V_{BE}}{V_{t}}\right)-1\right]$}\par
+        \green{$I_{S2}=\frac{eD_{p}A_{BE}\,p_{n0}}{L_{p}}$}}
+    }
+
+}
+
+\entry{电流增益 $\alpha$}{\green{$\alpha \equiv \dfrac{I_C}{I_E} \approx \frac{I_S}{I_S + I_{S2}}$}要使 $\alpha \to 1$，应尽量减小 $I_{S2}$（工艺上常采用\red{重掺杂发射区}）}
+
+\textbf{共基极输入、输出特性曲线}
+
 \begin{minipage}[t]{0.49\linewidth}
+    \hlblue{\textbf{输入特性（$i_E$ vs $V_{BE}$）}}
 
-\entry{\blue{发射结正向偏置}}{降低发射结势垒，\red{使发射区的高浓度多子（NPN是电子）能够顺利注入到基区。}}
-
+    \img[0.5\linewidth]{images/image-2026-01-06-10-16-09.png}
+  
+    \concepttable{
+        \conrow{形状}{即 PN 结正向特性，指数增长：$i_E \propto \exp\!(V_{BE}/V_t)$.}
+        \conrow{\red{Early 效应}}{随 $V_{CB}$ 变化曲线有微小位移，但在理想模型或小信号分析中常可忽略。}
+    }
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.49\linewidth}
+    \hlblue{\textbf{输出特性（$I_C$ vs $V_{CB}$）}}
 
-\entry{\blue{集电结反向偏置}}{在集电结建立较强的电场（耗尽层加宽），有利于\red{收集从基区扩散过来的少子}。形成集电极电流 $I_C$。}
-
+    \img[0.5\linewidth]{images/image-2026-01-06-10-16-40.png}
+    \vspace{6pt}
+    \concepttable{
+        \conrow{正向有源区}{$V_{CB}>0$ 时曲线近似平坦，$I_C$ 主要由发射注入决定（放大区）。}
+        \conrow{饱和区}{当集电结被正偏（$V_{CB}<0$）时收集效率下降，$I_C$ 急剧减小（饱和区）。}
+    }
 \end{minipage}
+
+\hlblue{\textbf{基极电流}}
+
+\imgleft[0.3]{images/image-2026-01-06-10-25-13.png}{
+    基极电流由空穴扩散电流和基区复合电流两部分组成。
+
+    \entry{计算公式}{\green{$i_B = i_{Ba} + i_{Bb} = I_{SB} \exp(\frac{V_{BE}}{V_t})$}}
+
+    \entry{电流增益}{\green{$\beta \equiv \frac{i_C}{i_B} = \frac{I_S}{I_{SB}}$}}
+}
+
+\textbf{共射极输入、输出特性曲线}
+
+\begin{minipage}[t]{0.49\linewidth}
+    \hlblue{\textbf{输入特性（$i_E$ vs $V_{BE}$）}}
+
+    \img[0.5\linewidth]{images/image-2026-01-06-10-29-51.png}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \hlblue{\textbf{输出特性（$I_C$ vs $V_{CB}$）}}
+
+    \img[0.5\linewidth]{images/image-2026-01-06-10-30-16.png}
+\end{minipage}
+
+\subsubsection{电流分析（反向有源区）}
+
+和正向有源区类似，但是由于BJT 并非对称器件，发射和收集的能力均有不足，导致增益不足，远不如正向有源区。
+
+\subsection{少子分布}
+
+这个部分基本上都是在画前面的少子分布图，鉴于我们不太可能真考解偏微分方程求解，这里就不展开了（直接记前面的结论图即可）。
 
 \subsection{低频共基极电流增益}
 
 \subsubsection{电流成分划分}
 
-以 NPN 管为例，$J_{nE}$ 是形成集电极电流的基础，$J_{pE}$、$J_{RB}$ 等为损耗，理解各分量的来源与相互关系
+以 NPN 管为例，$J_{nE}$ 是形成集电极电流的基础，$J_{pE}$、$J_{RB}$ 等为损耗。
 
 \imgleft[0.4]{images/image-2026-01-05-16-13-37.png}{
 
@@ -1112,57 +1304,48 @@ BJT 有共射、共基、共集三种接法，为了使三极管处于正向有�
 
 }
 
-电流由载流子浓度梯度驱动。\red{基区越薄（$W_B$ 越小），浓度梯度越大，扩散越快且复合越少，$J_{nC}$ 越接近 $J_{nE}$}
+电流由载流子浓度梯度驱动。\red{基区越薄（$W_B$ 越小）}，浓度梯度越大，扩散越快且复合越少，\red{$J_{nC}$ 越接近 $J_{nE}$}
 
 \subsubsection{直流共基极电流增益}
 
-\entry{定义}{$\alpha_0 = I_C/I_E = \frac{J_{nC} + J_{G} + J_{pC0}}{J_{nE} + J_{R} + J_{pE}}$，即集电极电流与发射极电流之比。}
-
-在交流小信号下，\red{常量漏电流（$J_G, J_{pc0}$）不随电压变化，因此被微分滤除}，只剩下与信号相关的项，即下面的样子：
-
-\red{$\alpha=\frac{J_{n E}}{J_{nE}+J_{pE}}\cdot\frac{J_{nC}}{J_{nE}}\cdot\frac{J_{nE}+J_{pE}}{J_{nE}+J_{R}+J_{pE}} \quad \alpha=\gamma\alpha_{T}\delta$}
+\entry{定义式}{
+\red{$\alpha=\frac{J_{n E}}{J_{nE}+J_{pE}}\cdot\frac{J_{nC}}{J_{nE}}\cdot\frac{J_{nE}+J_{pE}}{J_{nE}+J_{R}+J_{pE}}=\gamma\alpha_{T}\delta$}}
 
 其中：
 
 \concepttable{
-    \conrow{$\gamma$（发射极注入效率）}{$\gamma = \dfrac{J_{nE}}{J_{nE}+J_{pE}}$；衡量发射极发射出的电流中有用电子的比例}
-    \conrow{$\alpha_T$（基区输运系数）}{$\alpha_T = \dfrac{J_{nC}}{J_{nE}}$；注入基区的电子在穿过基区后\red{被集电极收集的比例}，损失为基区复合 $J_{RB}$}
-    \conrow{$\delta$（复合系数）}{$\delta = \dfrac{J_{nE}+J_{pE}}{J_{nE}+J_R+J_{pE}}$；反映发射结耗尽区复合 $J_R$ 的影响，现代工艺或简化模型常取 $\delta \approx 1$}
+    \conrow{$\gamma$（发射极注入效率）}{\green{$\gamma = \dfrac{J_{nE}}{J_{nE}+J_{pE}}$}}
+    \conrow{$\alpha_T$（基区输运系数）}{\green{$\alpha_T = \dfrac{J_{nC}}{J_{nE}}$}}
+    \conrow{$\delta$（复合系数）}{\green{$\delta = \dfrac{J_{nE}+J_{pE}}{J_{nE}+J_R+J_{pE}}$}}
 }
 
-\entry{工程意义}{
+\entry{物理意义}{
     三因子分别对应三个主要损耗：发射端电流纯度（$\gamma$）、基区复合（$\alpha_T$）和耗尽区复合（$\delta$）。提高 $\alpha$ 的方法即针对这三项减小损耗。
 }
 
 \hlblue{\textbf{$\gamma$（发射极注入效率）}}
 
-\entry{推导要点}{解扩散方程得到边界过剩载流子分布，代入 $J=-eD\,dn/dx$ 可得 $J_{pE}\propto D_E p_{E0}/L_E\cdot\tanh(x_E/L_E)$ 和 $J_{nE}\propto D_B n_{B0}/L_B\cdot\tanh(x_B/L_B)$。在正向偏置下 $e^{eV_{BE}/kT}\gg1$，因此可写为：}
-
-$\gamma=\dfrac{1}{1+J_{pE}/J_{nE}}$
-
 \entry{计算公式}{
 
     \concepttable{
         \conrow{\red{表达式}}{
-            在 $x_B\ll L_B,\;x_E\ll L_E$时，\red{$\displaystyle \gamma\approx\dfrac{1}{\,1+\dfrac{N_B}{N_E}\dfrac{D_E}{D_B}\dfrac{x_B}{x_E}\,}$}
+            在 $x_B\ll L_B,\;x_E\ll L_E$时，\green{$\displaystyle \gamma\approx\dfrac{1}{\,1+\dfrac{N_B}{N_E}\dfrac{D_E}{D_B}\dfrac{x_B}{x_E}\,}$}
         }
         \conrow{参数}{所有参数都会在题干中给出。}
         \conrow{设计规律}{
-            增大 $N_E\gg N_B$（重掺杂发射区）、减小基宽 $x_B$、减小发射区有效厚度 $x_E$，以使 $\gamma\to1$。}
+            增大 $N_E\gg N_B$（重掺杂发射区），使 $\gamma\to1$。}
     }
 
 }
 
 \hlblue{\textbf{$\alpha_T$（基区输运系数）}}
 
-\entry{推导概要}{解基区少子稳态扩散方程并在两端利用 $J=-eD_B\,d(\delta n_B)/dx$ 求得 $J_{nE}$（$x=0$）和 $J_{nC}$（$x=x_B$），两者相除可消去公因子，结果仅含双曲函数项。}
-
 \entry{计算公式}{
 
     \concepttable{
-        \conrow{\red{表达式}}{当 $x_B\ll L_B$ 时，\red{$\displaystyle \alpha_T \approx 1-\tfrac{1}{2}\left(\dfrac{x_B}{L_B}\right)^2$}}
+        \conrow{\red{表达式}}{当 $x_B\ll L_B$ 时，\green{$\displaystyle \alpha_T \approx 1-\tfrac{1}{2}\left(\dfrac{x_B}{L_B}\right)^2$}}
         \conrow{参数}{所有参数都会在题干中给出。}
-        \conrow{设计规律}{为使 $\alpha_T\to1$，要求 \red{$x_B\ll L_B$}，采用薄基区/长扩散长度的工艺设计。}
+        \conrow{设计规律}{为使 $\alpha_T\to1$，要求 \red{$x_B\ll L_B$}，采用\red{薄基区}设计。}
 }
 
 }
@@ -1171,15 +1354,15 @@ $\gamma=\dfrac{1}{1+J_{pE}/J_{nE}}$
 
 \entry{计算公式}{
     \concepttable{
-        \conrow{\red{表达式}}{\red{$\displaystyle \delta=\frac{1}{1+\dfrac{J_{R0}}{J_{S0}}\exp\!\left(-\dfrac{eV_{BE}}{2kT}\right)}$}}
-        \conrow{参数}{$J_{R0}$题干里会给，$J_{s0}=\frac{e D_{B}n_{B0}}{L_{B}\tanh\left(x_{B} /L_{B}\right)}$}
+        \conrow{\red{表达式}}{\green{$\displaystyle \delta=\frac{1}{1+\dfrac{J_{R0}}{J_{S0}}\exp\!\left(-\dfrac{eV_{BE}}{2kT}\right)}$}}
+        \conrow{参数}{$J_{R0}$题干里会给，\green{$J_{s0}=\frac{e D_{B}n_{B0}}{L_{B}\tanh\left(x_{B} /L_{B}\right)}$}}
         \conrow{设计规律}{随着 $V_{BE}$ 增大，指数项迅速减小，$\delta\to1$；低 $V_{BE}$ 时 $J_R$ 占优，$\delta$ 较小，导致增益下降。}
     }
 }
 
 \subsection{非理想效应}
 
-\subsubsection{厄利效应}
+\subsubsection{厄利效应(基区宽度调制效应)}
 
 \entry{结论}{基区越窄、掺杂越低，Early 效应越显著（$V_A$ 越小）。}
 
@@ -1201,7 +1384,7 @@ $\gamma=\dfrac{1}{1+J_{pE}/J_{nE}}$
         \conrow{曲线倾斜}{$I_C$ 与 $V_{CE}$ 开始相关，输出电阻为有限值 $r_o$}
         \conrow{Early 电压}{$V_A$：曲线与 X 轴的截距。}
         \conrow{电流修正}{$I_C = I_{C(\text{ideal})}\,(1 + V_{CE}/V_A)$}
-        \conrow{输出导纳}{$g_o = \dfrac{dI_C}{dV_{CE}} \approx \dfrac{I_C}{V_A}$}
+        \conrow{输出导纳}{\green{$g_o = \dfrac{dI_C}{dV_{CE}} \approx \dfrac{I_C}{V_{CE}+V_A}$}}
     }
 }
 
@@ -1235,14 +1418,221 @@ $\gamma=\dfrac{1}{1+J_{pE}/J_{nE}}$
     }
 }
 
+\subsubsection{发射区禁带变窄}
 
+\entry{定义}{当发射区掺杂浓度极高（$N_E \gtrsim 10^{18}\,\mathrm{cm^{-3}}$）时，杂质能级扩展成能带并与带边重叠，导致禁带宽度$E_g$缩小，记作$\Delta E_g$.}
+
+\concepttable{
+    \conrow{公式}{$n_i^2 \propto \exp\!\left(-\dfrac{E_g}{kT}\right)$，$E_g$减小会使有效\red{本征浓度$n_{iE}^2$呈指数级增加}。}
+    \conrow{对发射区少子浓度的影响}{发射区平衡少子浓度为 $p'_{E0} = n_{iE}^2 / N_E$。尽管增大$N_E$（分母）原本可减小$p'_{E0}$，但因$n_{iE}^2$因禁带变窄而快速增大，导致\red{$p'_{E0}$反而比预期增大。}}
+    \conrow{后果}{$p'_{E0}$增大会使反向注入电流 $J_{pE}$ 增强，\red{注入效率 $\gamma$ 降低}，最终使电流增益 $\beta$ 低于理想预期。}
+    \conrow{启示}{在设计上不能无限提高$N_E$以追求高$\beta$，需权衡重掺杂带来的禁带变窄效应。}
+}
+
+\subsubsection{电流集边效应}
+
+\green{这个部分我建议就记一下大致效应原理吧，图也挺难画的。}
+
+\entry{定义}{
+    从一维模型扩展到三维时，基区横向电阻 $r_B$ 会导致基极电位沿横向出现压降，进而使\red{发射结边缘的 $V_{BE}$ 高于中心}，造成\red{电流在边缘集中}的现象。
+}
+
+\imgleft[0.3]{images/image-2026-01-05-19-35-45.png}{
+
+    \concepttable{
+        \conrow{物理机理}{基极电流由基极接触横向流入发射结中心，沿途在 $r_B$ 上产生压降，典型量级 $\Delta V \sim I_B r_B$}
+        \conrow{非线性敏感性}{$J_E \propto \exp\!\left(\dfrac{eV_{BE}}{kT}\right)$，使得微小的 $V_{BE}$ 差异导致\red{显著的电流不均}}
+        \conrow{后果}{发射极边缘电流密度极高，易形成\red{局部过热并提前进入大注入区}，限制器件功率和可靠性}
+        \conrow{工程对策}{采用梳状（插指型）电极增加边缘周长、增密基极接触、降低基区电阻（增掺杂或金属互连），并用二维电阻网络或数值模拟优化布局（有点像 VLSI 那里的接触孔分流对策）}
+    }
+
+}
+
+\subsubsection{击穿}
+
+\hlblue{\textbf{穿通击穿}}
+
+\entry{物理机制}{
+    \concepttable{
+        \conrow{耗尽层扩展}{当 $V_{CB}$ 增大时，集电结\red{耗尽层向基区一侧扩展}（因 $N_B$ 通常较低）}
+        \conrow{穿通条件}{耗尽层扩展到与发射结耗尽层\red{相遇}，导致中性基区宽度 $x_B\to0$，基区势垒被削平}
+        \conrow{后果}{发射区电子可直接通过空间电荷区流入集电极，\red{不再受基极电流控制}，器件失去放大功能}
+    }
+}
+
+\entry{\red{穿通电压公式}}{
+    \red{$V_{pt}=\frac{ex_{B0}^{2}}{2\epsilon_{s}}\cdot\frac{N_{B}(N_{C}+N_{B})}{N_{C}}$}
+}
+
+\entry{设计权衡}{
+    \concepttable{
+        \conrow{\red{提高耐压的方法}}{增大基区掺杂 $N_B$ 或增大基宽 $x_{B0}$}
+        \conrow{折中}{提高 $N_B$ / $x_B$ 会降低电流增益 $\beta$（高增益/高频倾向于低 $N_B$、窄 $x_B$），需在耐压与增益间权衡}
+    }
+}
+
+\hlblue{\textbf{雪崩击穿}}
+
+\entry{共基极 ($BV_{CBO}$)}{
+    \concepttable{
+        \conrow{核心}{基于 PN 结的雪崩倍增效应：强反向电场使载流子发生碰撞电离，形成连锁放大（\red{倍增因子 $M$}）。}
+        \conrow{配置}{共基极（发射极开路 $I_E=0$）时，集电结等同于\red{单个反偏 PN 二极管}。}
+        \conrow{击穿条件}{在 CB 情况下需要 $M\to\infty$ 才发生击穿，$BV_{CBO}$ 定义为发射极开路时的集电极—基极击穿电压，主要取决于集电区掺杂与外延层厚度。}
+    }
+}
+
+\entry{共发射极 ($BV_{CEO}$)}{
+    \concepttable{
+        \conrow{物理场景}{基极开路 ($I_B=0$)、C–E 加压时集电结发生微弱雪崩，产生的空穴回流至发射极，等效为一个内部基极电流，被晶体管放大（放大倍数约为 $\beta$），增强集电电流，形成正反馈。}
+        \conrow{电流公式}{\red{$I_{CEO}=\dfrac{M I_{CBO}}{1-\alpha M}$}，当分母趋于 0（即 $\alpha M=1$）时发生击穿。}
+        \conrow{判断要点}{因 $\alpha\approx1$，只需 $M\gtrsim 1/\alpha$（略大于 1）即可引发击穿，故 $BV_{CEO}\ll BV_{CBO}$。}
+        \conrow{经验关系}{\red{$BV_{CEO}=\dfrac{BV_{CBO}}{\sqrt[n]{\beta}}$}，$\beta$ 越大，$BV_{CEO}$ 越小。}
+    }
+}
 
 \subsection{等效电路模型}
 
+\subsubsection{埃伯斯-摩尔模型}
+
+\entry{模型概述}{
+    用于\red{大信号与开关分析}，基于叠加原理——\red{将 BJT 看作两个 PN 结电流的叠加}，适用于有源、饱和、截止、反向等所有工作区。
+}
+
+\imgleft[0.3]{images/image-2026-01-05-20-00-42.png}{
+
+    \entry{基本表达式}{
+        \concepttable{
+            \conrow{集电极电流}{$I_C = \alpha_F I_F - I_R$，其中 $I_F$ 为发射结正向二极管电流，$I_R$ 为集电结的二极管电流}
+            \conrow{发射极电流}{$I_E = \alpha_R I_R - I_F$，$\alpha_R$ 为反向共基极增益}
+        }
+    }
+
+}
+
+\entry{参数含义与等效电路}{
+    \concepttable{
+        \conrow{$\alpha_F,\alpha_R$}{正向/反向共基极电流增益；一般 $\alpha_F\lesssim1,\ \alpha_R\ll\alpha_F$}
+        \conrow{等效电路}{包含\red{两个指数型二极管}（代表 $I_F,I_R$）和\red{两个受控电流源}（$\alpha_F I_F,\ \alpha_R I_R$），直观反映发射/集电结耦合与少子输运}
+    }
+}
+
+\entry{互惠关系}{
+    \concepttable{
+        \conrow{公式}{$\alpha_R I_{CS} = \alpha_F I_{ES}$}
+        \conrow{作用}{$\alpha_F,\alpha_R,I_{ES},I_{CS}$ 互相关联，遇到缺失参数可用此关系求解}
+    }
+}
+
+\subsubsection{混合$\pi$模型}
+
+\entry{定义}{混合 $\pi$ 模型：用于\red{小信号/高频分析}的 BJT 高频等效电路，包含基区电阻与结电容等寄生元件，能反映频率响应与输入/输出阻抗特性}
+
+\concepttable{
+    \conrow{节点映射}{外部节点：B、C、E；内部节点：B'、C'、E'。基极接触点 B 与有源基区 B' 之间存在基区体电阻 $r_b$（或 $r_{bb'}$）。$V_{be}$ 为外部电压，真正控制集电电流的是内部结电压 $V_{b'e'}$}
+}
+
+\imgleft[0.4]{images/image-2026-01-05-20-06-00.png}{
+
+    \concepttable{
+        \conrow{$r_b$}{\red{基区体电阻}：来源于基极接触到有源基区的半导体电阻，影响高频及边缘电流分布}
+        \conrow{$r_{\pi}$}{\red{发射结动态电阻}（输入电阻）：$r_{\pi}=(\partial I_B/\partial V_{b'e'})^{-1}$，与跨导和放大倍数相关，常用近似 $r_{\pi}\approx\beta/g_m$}
+        \conrow{$C_{\pi}$}{\red{发射结电容}：以扩散电容为主（正偏发射结的少子储存），主导器件的截止频率 $f_T$}
+        \conrow{$C_{\mu}$ (或 $C_{ob}$)}{\red{集电结势垒电容}（反馈电容）：连接 B' 与 C，产生密勒效应，使输入等效电容增大（约 $C_{\pi}+C_{\mu}(1+|A_v|)$），严重影响高频增益}
+        \conrow{$g_m$}{\red{跨导}：受控电流源系数，$i_C=g_m V_{b'e'}$，常用近似 $g_m\approx I_C/V_T$}
+        \conrow{$r_o$}{\red{输出电阻}：来自 Early 效应 / 基区宽度调制，近似 $r_o\approx V_A/I_C$，导致输出曲线斜率非零}
+    }
+
+}
+
 \subsection{频率上限}
+
+\entry{信号延迟时间的构成}{
+    \concepttable{
+        \conrow{总延时}{$\tau_{ec}=\tau_e+\tau_b+\tau_d+\tau_c$，表示载流子\red{从发射极到集电极的总耗时}，$\tau_{ec}$ 越短器件速度越好}
+    }
+}
+
+\entry{\blue{发射结充电时间 $\tau_e$}}{%
+    \concepttable{
+        \conrow{定义}{发射结在正偏时呈现电容特性（主要为扩散电容 $C_{\pi}$ / 势垒电容 $C_{je}$ 及寄生电容 $C_p$），信号变化时需先为这些电容充电}
+        \conrow{公式}{\red{$\tau_e = r_e' (C_{je} + C_p)$}，其中 \red{$r_e'=\dfrac{kT}{e I_E}$}，是发射结的动态电阻。}
+        \conrow{要点}{$I_E$ 越大，$r_e'$ 越小，充电时间越短，频率特性越好}
+    }%
+}
+
+\entry{\blue{基区渡越时间 $\tau_b$（核心）}}{%
+    \concepttable{
+        \conrow{定义}{电子\red{从发射结边缘通过中性基区到达集电结所需时间}，主要靠扩散运动决定}
+        \conrow{公式}{\red{$\tau_b = \dfrac{x_B^2}{2D_n}$}}
+        \conrow{要点}{与基区宽度 $x_B$ 的平方成正比，因而减小 $x_B$ 是提高工作频率的最有效手段；$D_n$ 为电子在基区的扩散系数}
+    }%
+}
+
+\entry{\blue{集电区渡越时间 $\tau_d$}}{%
+    \concepttable{
+        \conrow{定义}{电子进入集电结空间电荷区后在强电场下\red{漂移通过所需时间}}
+        \conrow{公式}{\red{$\tau_d = \dfrac{x_{dc}}{v_s}$}，$v_s$ 为饱和漂移速度}
+    }%
+}
+
+\entry{\blue{集电结充电时间 $\tau_c$}}{%
+    \concepttable{
+        \conrow{定义}{集电结的电阻与结电容（$C_{\mu}$ 等）构成的 RC 常数}
+        \conrow{公式}{\red{$\tau_c = r_c (C_{\mu} + C_s)$}}
+        \conrow{要点}{含反馈电容 $C_{\mu}$（密勒效应）时对高频影响更显著}
+    }%
+}
+
+\subsubsection{截止频率}
+
+\green{这里就是记这个图和三个截止频率定义与公式。}
+
+\imgleft[0.3]{images/image-2026-01-05-20-52-46.png}{
+
+    \entry{共基极频率响应}{
+        $\alpha$ 的频率响应近似为 $\alpha=\dfrac{\alpha_0}{1 + j\frac{f}{f_\alpha}}$ $f_\alpha=\dfrac{1}{2\pi\tau_{ec}}$（$|\alpha|=\alpha_0/\sqrt2$ 时的频率）。$\tau_{ec}$ 越小，$f_\alpha$ 越高。
+    }
+
+    \entry{转移频率 $f_T$}{
+        $f_T$ 定义为\red{共射电流增益 $\beta$ 的幅值为 1}时的频率。$f_T = \dfrac{1}{2\pi\tau_{ec}}$，和 $f_\alpha$ 计算公式相同。
+    }
+
+    \entry{共发射极截止频率 $f_\beta$}{
+        共发射极增益的频率响应为 $\beta=\dfrac{\beta_0}{1 + j\frac{f}{f_\beta}}$，$f_\beta$ 为 $|\beta|=\beta_0/\sqrt2$ 时的频率。$f_\beta \approx \dfrac{f_T}{\beta_0}$，故 $f_\beta\ll f_T$（增益高但带宽窄）。
+    }
+
+}
 
 \subsection{大信号开关}
 
+大信号（开关特性）关注的是\red{从一个稳态（如截止）完全跳变到另一个稳态（如饱和）的过程}。
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{开过程（Turn‑on）}
+    \concepttable{
+        \conrow{核心}{理解 $t_{on}$ 的两部分及各阶段发生的物理过程}
+        \conrow{延迟时间 $t_d$}{定义：输入阶跃（$t=0$）到 $I_C$ 上升到稳态值的 $10\%$ 所需时间。成因：发射结的势垒电容与扩散电容充电，$V_{BE}$ 从反偏变为正偏并超过开启电压（如 $0.7\,$V）之前无大量注入}
+        \conrow{上升时间 $t_r$}{定义：$I_C$ 从 $10\%$ 上升到 $90\%$ 的时间。成因：发射结已正偏，电子大量注入基区并扩散到集区，非平衡少子浓度建立使 $I_C$ 上升}
+        \conrow{稳态}{$t>t_2$ 时 $I_C$ 达到 $I_{C(\mathrm{sat})}$（由外电路 $V_{CC}/R_C$ 决定），器件进入饱和}
+        \conrow{公式}{$t_{on}=t_d+t_r$}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{关过程（Turn‑off）}
+    \concepttable{
+        \conrow{核心}{掌握“存储时间 $t_s$”的来源及其对关断速度的主导作用}
+        \conrow{存储时间 $t_s$}{定义：输入脉冲翻转（$t=t_3$）到 $I_C$ 开始明显下降（通常到 $90\%$）的时间。成因：在深饱和时集电结也正偏，基区累积过量非平衡少子 $Q_{Bx}$，必须通过反向基极电流抽取或复合才能恢复反偏}
+        \conrow{下降时间 $t_f$}{定义：$I_C$ 从 $90\%$ 下降到 $10\%$ 的时间。成因：集电结已恢复反偏，剩余基区电荷被抽取或复合，$I_C$ 下降直至截止}
+        \conrow{结论}{\red{存储时间越长（深饱和、$Q_{Bx}$ 越大），关断越慢}}
+        \conrow{公式}{$t_{off}=t_s+t_f$}
+    }
+\end{minipage}
+
+\imgleft[0.3]{images/image-2026-01-05-20-56-53.png}{
+
+}
 
 \section{第六章\ 金半接触}
 
@@ -1614,7 +2004,26 @@ $\gamma=\dfrac{1}{1+J_{pE}/J_{nE}}$
 
 \hlgreen{\textbf{MESFET}}
 
+\concepttable{
+    \conrow{夹断电压}{\red{$V_{P0}=\dfrac{e a^2 N_d}{2\varepsilon_s}$}\ (\textbf{与 n沟道JFET完全一致})}
+    \conrow{阈值电压}{\red{$V_T = V_{bi}-V_{P0}$}\quad（夹断条件 $V_{bi}-V_{GS}=V_{P0}\Leftrightarrow V_{GS}=V_T$）}
+    \conrow{模式判据}{耗尽型：$V_T<0$（$V_{GS}=0$ 导通）；增强型：$V_T>0$（需 $V_{GS}>V_T$ 才导通）}
+    \conrow{增强型条件}{\red{$V_T>0 \Leftrightarrow V_{bi}>V_{P0}$}（零偏即被内建场夹断）}
+    \conrow{耗尽层宽度}{\red{$h=\sqrt{\dfrac{2\varepsilon_s (V_{bi}-V_{GS})}{eN_d}}$}\quad（物理上 $0\le h\le a$）}
+}
+
 \end{minipage}
+
+\entry{\hlgreen{I\!-\!V 的平方律近似（\red{最常考}）}}{\red{近似条件：$(V_{GS}-V_T)\ll V_{P0}$，此时形式与 MOSFET 完全对称}}
+
+\concepttable{
+    \conrow{导电参数}{\red{$k_n=\dfrac{\mu_n\varepsilon_s W}{2aL}$}}
+    \conrow{线性区}{\red{$I_D \approx k_n\,[2(V_{GS}-V_T)V_{DS}-V_{DS}^2]$}\quad（$0<V_{DS}<V_{GS}-V_T$）}
+    \conrow{饱和边界}{\red{$V_{DS(\mathrm{sat})}\approx V_{GS}-V_T$}}
+    \conrow{饱和区}{\red{$I_{D(\mathrm{sat})}\approx k_n (V_{GS}-V_T)^2$}\quad（$V_{DS}\ge V_{GS}-V_T$）}
+    \conrow{饱和跨导}{\red{$g_{ms}=\dfrac{\partial I_D}{\partial V_{GS}}\approx 2k_n(V_{GS}-V_T)$}}
+    \conrow{零栅压电流}{耗尽型：$I_{DSS}=I_D|_{V_{GS}=0}\approx k_n(-V_T)^2$（因 $V_T<0$）}
+}
 
 \subsection{非理想因素}
 
@@ -1663,7 +2072,37 @@ $\gamma=\dfrac{1}{1+J_{pE}/J_{nE}}$
     理想情况下饱和区 $\Delta I_D=0$，故 $r_{ds}\to\infty$；考虑沟道长度调制后 $\Delta I_D\neq 0$，$r_{ds}$ 为有限值。
 }
 
+\subsubsection{速度饱和}
+
+原理同上，
+
 \subsection{等效电路和频率限制}
+
+\textbf{物理来源}
+
+\concepttable{
+    \conrow{两个主要限制因素}{沟道输运时间（Channel transit time）与电容充电时间（Capacitor charging time）}
+    \conrow{沟道输运时间}{$\tau_t = L / v_{sat}$；例如 $L=1\mu\text{m}=10^{-4}\,\text{cm}$，$v_{sat}=1\times10^7\,\text{cm/s}\Rightarrow \tau_t=10^{-11}\,\text{s}=10\,\text{ps}$，仅在极高频器件中成为瓶颈}
+    \conrow{电容充电时间}{通常为主导限制——由栅极寄生电容 $C_{gs},C_{gd}$ 决定，随频率升高位移电流增大，降低有效增益}
+}
+
+\textbf{等效电路与截止频率定义}
+
+\concepttable{
+    \conrow{高频小信号等效电路}{包含 $C_{gs},C_{gd}$（并联到输入端）和受控电流源 $g_m V_{gs}$}
+    \conrow{输入电流}{$I_i = j\omega (C_{gd}+C_{gs}) V_{gs}$（在输出短路/交流接地条件下）}
+    \conrow{输出电流}{$I_{ds} = g_m V_{gs}$（受控源提供）}
+    \conrow{截止频率 $f_T$ 的定义}{当 $|I_{ds}|=|I_i|$ 时，电流增益 $|A_i|=|I_{ds}/I_i|=1$，器件失去放大能力}
+    \conrow{由此得出}{$f_T = \dfrac{g_m}{2\pi (C_{gd}+C_{gs})} = \dfrac{g_m}{2\pi C_G}$}
+}
+
+\textbf{最大 $f_T$ 与器件物理参数}
+
+\concepttable{
+    \conrow{跨导与电容的近似表达式}{$g_{m(\max)} \approx \dfrac{e\mu_n N_d W a}{L},\quad C_G \approx \dfrac{\varepsilon_s W L}{a}$}
+    \conrow{代入得到}{$f_T = \dfrac{e\mu_n N_d a^2}{2\pi \varepsilon_s L^2}$}
+    \conrow{结论}{$f_T \propto \mu_n$（材料决定，如 GaAs 优于 Si），且 $f_T \propto 1/L^2$（缩短沟道是最有效的提升手段）}
+}
 
 
 \newpage

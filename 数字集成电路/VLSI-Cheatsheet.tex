@@ -1119,6 +1119,18 @@ t_{p} = \underbrace{\textcolor{blue}{0.69 R_{s} \cdot cL}}_{\text{逻辑门延�
 
 \subsection{静态互补 CMOS 逻辑}
 
+这里主要就是回顾一下静态互补电路的特点，具体细节主要还在第二章：
+
+\imgleft[0.3]{images/image-2026-01-05-21-09-32.png}{
+
+    \concepttable{
+        \conrow{全摆幅电路}{$V_{OH}=V_{DD}$、$V_{OL}=0$。结合陡峭的 VTC，得到较大的 $NM_H$ 和 $NM_L$ 噪声容限。}
+        \conrow{无比逻辑}{逻辑电平由 PUN/PDN 的\red{导通拓扑决定}，与晶体管相对尺寸 $W/L$ 无关（只要能导通/截止）。}
+        \conrow{低输出阻抗}{在稳态输出总通过导通晶体管（低电阻通道）连接到 $V_{DD}$ 或 $GND$，输出阻抗低，驱动能力强，抗扰能力好。}
+        \conrow{高输入阻抗}{输入连接到 MOS 的栅极，栅氧化层为绝缘体（$SiO_2$），直流输入电流几乎为零，输入阻抗极高，减小前级驱动负担。}
+    }
+}
+
 \subsection{有比逻辑}
 
 \subsection{传输门逻辑}
