@@ -633,7 +633,7 @@ $$C_L = \underbrace{C_{gd1} + C_{gd2}}_{\text{密勒电容, } \times 2} + \under
             第二快的是 B=1，A 从 0 变到 1 ，B 先给中间节点电容充电，这样 A 到了之后只需要给负载电容充电即可。}
         }
 
-        \entry{结论}{最慢的信号应该被放在最靠近输出端的管子上，这样它到达的时候，前面的管子已经把中间节点电容放电/充电完毕了，只需要给负载电容放电/充电即可。}
+        \entry{结论}{\red{最慢的信号应该被放在最靠近输出端的管子上}，这样它到达的时候，前面的管子已经把中间节点电容放电/充电完毕了，只需要给负载电容放电/充电即可。}
 
     }
 
@@ -676,6 +676,38 @@ N 输入逻辑门在保持等效驱动能力时，其本征延时随输入数 $n
 
 }
 
+\entry{本征延时的性质}{单纯增大晶体管尺寸 $W$ 并不能减小本征延时。}
+\concepttable{
+    \conrow{\red{尺寸系数 $S$}}{定义：将反相器中所有 PMOS 与 NMOS 的宽度均放大 $S$ 倍（相对于单位尺寸 $W_{min}$ 的比例因子）。}
+    \conrow{等效电阻 $R_{eq}$}{电阻与沟道宽度成反比。尺寸放大 $S$ 倍，等效电阻变化：$R_{eq} \propto 1/S$.}
+    \conrow{本征电容 $C_{int}$}{主要由漏极扩散等寄生电容构成；电容与面积成正比。尺寸放大 $S$ 倍，$C_{int} \propto S$.}
+    \conrow{延时推导}{将上述关系代入本征延时公式得：
+    $t_{p0} = 0.69 R_{eq} C_{int} = 0.69 R_{equ} C_{intu}$.}
+    \conrow{结论}{$S$ 在公式中被抵消：给定门的本征延时近似为常数，不随门的尺寸 $S$ 改变。原因是增大尺寸既降低了驱动电阻又等比例增加了自身寄生电容，产生“自我加载”效应。}
+}
+
+\entry{\red{归一化本征延时 $p$}}{
+
+将不同工艺/尺寸下的本征延时统一为无量纲量，便于按拓扑结构比较门的固有延时。
+
+    \concepttable{
+        \conrow{意义}{消除工艺常数（$R,C$）的影响，仅反映逻辑门拓扑复杂度对本征延时的相对贡献，便于跨工艺、跨尺寸的横向比较。}
+        \conrow{基准与定义}{以\textbf{标准反相器}的本征延时作为单位，定义：\par
+        \hspace{1em}$p = \dfrac{\text{某逻辑门的本征延时}}{\text{标准反相器的本征延时}}$.}
+        \conrow{等效计算}{在相同驱动能力（即等效电阻相等）条件下，也可用本征电容比估算：\par
+        \hspace{1em}$p \approx \dfrac{C_{int,\text{gate}}}{C_{int,\text{inv}}}$，其中 $C_{int}$ 表示\red{门的本征（寄生）电容}。}
+    }
+
+}
+
+\entry{不同逻辑门的本征延时}{标准反相器的电容总量是 3 个单位电容（$C_{int,inv}=3C$），其他门的本征电容与其比较得出归一化本征延时 $p$：}
+
+\vspace{-5pt}
+\img[0.7\linewidth]{images/image-2026-01-08-15-02-23.png}
+\vspace{-5pt}
+
+\entry{\red{p 的计算（归一化本征延时 $p$）}}{就是输出端口连接的并联的 MOS 管的电容之和，除以标准反相器的 3 个单位电容，更切合实际一点就是\red{输出连接的晶体管的尺寸系数之和除以 3。}}
+
 \hlblue{\textbf{努力延时 $t_{effort}$}}
 
 \concepttable{
@@ -683,6 +715,84 @@ N 输入逻辑门在保持等效驱动能力时，其本征延时随输入数 $n
     \conrow{物理关系}{$C_{ext}$ 由外部决定（与 $W$ 无关），而 $R_{eq}\propto 1/W$。}
     \conrow{结论}{因此 $t_{effort}\propto 1/W$，增大驱动晶体管尺寸可显著降低努力延时（改善本级电阻优化延时）。}
 }
+
+\entry{本征时间常量}{
+
+    \imgleft[0.3]{images/image-2026-01-08-15-13-01.png}{
+        \entry{两级电路延时示例}{以图中经典两级电路为例，总传播延时写为
+        $t_p = t_{p01} + t_{effort1} + t_{p02} + t_{effort2}$，需通过调整各级晶体管尺寸以优化总延时。}
+
+        \concepttable{
+            \conrow{第一级延时}{第一级的总延时可以表示为 $t_{p01} + 0.69\,R_{d1}\,C_{g2}$。第一级的负载为第二级的栅电容 $C_{g2}$，而 $C_{g2}$ 与第二级尺寸 $S_2$ 成正比}
+            \conrow{第二级延时}{第二级的总延时为 $t_{p02} + 0.69\,R_{d2}\,C_L$。第二级等效电阻与尺寸 $S_2$ 成反比}
+        }
+    
+    }
+
+}
+
+因此存在权衡：增大 $S_2$ 会增大第一级负载（使第一级变慢），但同时会降低第二级电阻（使第二级变快）。尺寸优化即在此矛盾中寻求全局最优。
+
+对总延时关于尺寸 $S_2$ 求导并令其为 $0$，可解得最佳尺寸：$S_{2opt}^2 = \dfrac{R_{u2} C_L}{R_{d1} C_{gu2}}$。将该解代回原式可验证：当两级逻辑门的\red{分摊努力延时相等时，总延时达到最小}。
+
+\entry{单位本征时间常数 $\tau$}{
+    \concepttable{
+        \conrow{代数关系}{$R_{d} C_{g} = \dfrac{R_u}{S}\,(S C_{gu}) = R_u C_{gu} \triangleq \tau$.}
+        \conrow{定义}{$\tau$ 为单位驱动电阻与单位输入栅电容的乘积，即 $R_{\text{unit}}\! \times C_{\text{gate,unit}}$。}
+        \conrow{物理意义}{$\tau$ 表征在该工艺下，一级门驱动与自身同等尺寸门所对应的固有时间常数；它由电路结构与工艺参数决定，与单级尺寸 $S$ 无关。}
+    }
+}
+
+不同器件有不同的本征时间常数 $\tau$（这个和本征时间需要区分），因为默认是使用单位电阻来驱动，所以不同器件的区别就在于\red{输入栅电容的不同}。
+
+\hlblue{\textbf{逻辑努力（Logical Effort）}}
+
+\entry{目的}{为了消除 $R_u$ 与 $C_{gu}$ 等带有具体工艺数值的参数，引入归一化参数——逻辑努力 $g$。}
+
+\entry{定义（必考公式）}{\red{$g = \dfrac{\tau_{gate}}{\tau_{inv}}$}，即逻辑门的本征时间常数与对称反相器的本征时间常数之比。（其实就是器件输入电容与标准反相器输入电容的比值）}
+
+\entry{物理含义}{以对称反相器为标尺，衡量某个复杂逻辑门相比反相器在提供相同输出驱动能力时，\red{对前一级呈现的等效负载“笨重”程度}。$g$ 越大表示该门在相同驱动条件下对前级造成的负载越大。}
+
+我们继续将努力延时用归一化参数表示，便于跨门比较与优化。
+
+\entry{变量定义}{
+    \concepttable{
+        \conrow{$C_{ext}$}{外部负载电容。}
+        \conrow{$C_g$}{该逻辑门的输入栅电容。}
+        \conrow{$f$（电气努力）}{$f = \dfrac{C_{ext}}{C_g}$。\par 物理意义：也称为有效扇出，衡量门需驱动的外部负载相对于自身输入电容的倍数，$f$ 越大负载越重。}
+        \conrow{$\gamma$（自载系数）}{$\gamma = \dfrac{C_{int\_inv}}{C_{g\_inv}}$，常近似取 $\gamma=1$。}
+    }
+}
+
+\entry{结论}{利用单位时间常数 $\tau$ 与逻辑努力 $g$ 的定义，可将努力延时和本征延时挂钩：
+\[
+t_{effort} = t_{p0}\times g\frac{f}{\gamma}
+\]
+其中 $t_{p0}$ 为参考反相器的本征延时（常数），$g$ 为逻辑门的逻辑努力（由门的拓扑决定），$f$ 为电气努力（由连接决定）。}
+
+\hlblue{\textbf{归一化门延时（Normalized Gate Delay）}}
+
+\entry{概述}{逻辑努力理论中最重要的公式推导，\red{将“绝对时间”转化为“相对延时”}。}
+
+\entry{1. 绝对延时公式}{逻辑门的总传播延时 $t_{pgate}$ 等于本征延时加努力延时：
+    $t_{pgate} = p \cdot t_{p0} + g \dfrac{f}{\gamma} t_{p0} = t_{p0}\big(p + g \dfrac{f}{\gamma}\big)$。
+    这里利用了 $p$ 的定义：某逻辑门的本征延时是反相器本征延时 $t_{p0}$ 的 $p$ 倍。}
+
+\entry{2. 归一化延时 $d$}{为消除工艺参数 $t_{p0}$ 的影响，定义无量纲延时：
+    $d = \dfrac{t_{pgate}}{t_{p0}}$.}
+
+\entry{3. 最终公式}{由上式得到归一化延时的简洁形式}
+
+\vspace{-5pt}
+$$d = p + \dfrac{g f}{\gamma}$$
+\vspace{-5pt}
+
+\concepttable{
+    \conrow{$p$}{归一化本征延时，纯由门的拓扑/内部寄生决定}
+    \conrow{$g$}{逻辑努力，衡量该门相对于对称反相器在相同驱动能力下对前级造成的输入负担}
+    \conrow{$f$}{电气努力，等于负载与该门输入电容之比：$f = C_{out}/C_{in}$。}
+}
+
 
 \subsubsection{\red{复杂逻辑门器件尺寸设计}}
 
@@ -751,15 +861,230 @@ N 输入逻辑门在保持等效驱动能力时，其本征延时随输入数 $n
     其中的多级内部节点电容 $C_1,C_2,C_3$ 会显著增加延时。
 }
 
-\subsubsection{逻辑努力（含义、计算）}
+\subsection{关键路径}
 
-\subsection{关键路径的计算}
+每一条时序路径是由时序弧组成：逻辑门时序弧与互联线时序弧。一个组合逻辑块中的关键路径是指\red{从输入到输出延时最长}的路径。
+
+\imgleft[0.4]{images/image-2026-01-08-15-51-51.png}{
+
+    \entry{关键路径的计算}{本页说明如何在电路中判定并计算关键路径（取最坏情形）：}
+
+    \concepttable{
+        \conrow{影响因素}{
+            \begin{itemize}[leftmargin=*]
+                \item 信号翻转方向：上升与下降延时通常不等，故需分别计算。
+                \item 前级翻转斜率：输入跳变越慢，本级门延时越大（输入波形依赖）。
+                \item 输入图形：门的导通拓扑（如单管导通或并联/串联组合）影响延时。
+                \item 状态依赖：\red{只有在某些输入组合下，路径才被“激活”传递信号，需针对敏化情形计算}。
+            \end{itemize}
+        }
+    }
+
+}
 
 \subsection{逻辑路径的延时模型}
 
+之前的延时都是计算单极逻辑门的传播延时，现在我们需要考虑整个系统：
+
+在 $N$ 级门串联且假设 $\gamma=1$ 的情况下，\red{$D = \sum_{i=1}^{N} d_i = \sum_{i=1}^{N} (p_i + h_i) = \sum_{i=1}^{N} p_i + \sum_{i=1}^{N} h_i$}，其中 $p_i$ 为第 $i$ 级的归一化本征延时，$h_i=g_i f_i$ 为第 $i$ 级的级努力。
+
+\entry{路径参数}{
+    \concepttable{
+        \conrow{路径逻辑努力 $G$}{$G = \prod_{i=1}^{N} g_i = g_1\cdot g_2 \cdots g_N$。\par 含义：路径上所有门的逻辑努力 $g$ 的乘积}
+        \conrow{路径电气努力 $F$}{$F = \dfrac{C_L}{C_{g1}}$。\par 含义：最后一级负载电容 $C_L$ 与第一级输入栅电容 $C_{g1}$ 之比}
+        \conrow{路径努力 $H$}{$H = \prod_{i=1}^{N} h_i = \prod_{i=1}^{N} (g_i f_i) = \big(\prod g_i\big)\big(\prod f_i\big) = G F$。\par 含义：$H=GF$，为衡量路径设计难度的总体指标。注：在无分支情形下隐含变换 $\prod f_i = \dfrac{C_2}{C_1}\cdot\dfrac{C_3}{C_2}\cdots\dfrac{C_L}{C_N} = \dfrac{C_L}{C_1} = F$。}
+    }
+}
+
 \subsection{尺寸优化问题}
 
+\entry{优化目标}{调节每一级的尺寸系数 $s_i$（或等价的电气努力 $f_i$），使总延时最小。总延时写为 $D = \sum p_i + \sum h_i$。由于 $\sum p_i$ 与尺寸近似无关（为常数），问题等价于：在固定的 $H=\prod h_i$ 下，最小化 $\sum h_i$.}
+
+\entry{数学结论：\red{等努力原则}}{利用多元函数极值或算术-几何平均不等式可得：当且仅当每一级的级努力相等时，总和取得最小值，即
+$\hat{h}=h_1=h_2=\dots=h_N$。
+由 $H=\prod h_i=(\hat{h})^N$，得到\red{最佳级努力为 $\hat{h}=\sqrt[N]{H}=H^{1/N}$}.}
+
+\entry{最小延时公式}{将最佳级努力代入总延时公式，可得\red{最小路径延时：
+$\hat{D}=\sum_{j=1}^{N} p_j + N\cdot\frac{\sqrt[N]{H}}{\gamma}$}。
+其中第一项为路径上所有门的本征延时之和，第二项为 $N$ 倍的最佳级努力。}
+
+\subsubsection{反推器件尺寸}
+
+已知最佳级努力 $\hat{h}$，对第 $i$ 级有 $\hat{h}=g_i f_i$，故最佳电气努力为
+$f_i=\dfrac{\hat{h}}{g_i}=\dfrac{C_{out,i}}{C_{in,i}}$。由此可逐级反推第 $i$ 级所需的输入电容 $C_{in,i}$（进而确定晶体管宽度/尺寸）。
+
 \subsection{分支努力}
+
+其实在计算题中出现频率不高，但理论上是需要掌握的。
+
+\imgleft[0.3]{images/image-2026-01-08-16-19-24.png}{
+
+    \entry{场景描述}{当信号在路径中出现分叉时，区分主路径（On-path，关注的延时路径）与旁路（Off-path，被分支驱动的其他门）。定义电容：$C_{on\text{-}path}$ 为主路径上有关联的下一级输入电容，$C_{off\text{-}path}$ 为旁路负载电容，$C_{gin}$ 为当前门的输入电容。}
+
+}
+
+\entry{分支努力 $b$）}{分支努力定义为总负载与主路径有用负载的比值：$b = \frac{C_{on\text{-}path} + C_{off\text{-}path}}{C_{on\text{-}path}} = \frac{C_{total}}{C_{useful}}
+$
+物理意义：$b$ 衡量因分流导致的负载放大倍数，范围 $b\ge1$，无分支时 $b=1$.}
+
+\entry{电气努力与有效扇出}{真实电气扇出 $f$ 写作：$f = \dfrac{C_{on\text{-}path} + C_{off\text{-}path}}{C_{gin}}$（包含旁路电容）。若只关注主路径的“有效”放大倍数，则为 $f/b$，即 $\dfrac{f}{b}=\dfrac{C_{on\text{-}path}}{C_{gin}}$.}
+
+\entry{路径级修正}{定义路径上每级的分支努力 $b_i$，路径分支努力 $B$ 为其连乘积：}
+\concepttable{
+    \conrow{路径分支努力 $B$}{ $B=\prod_{i=1}^{N} b_i$.}
+    \conrow{路径电气努力 $F$}{ $F=\dfrac{C_L}{C_{g1}}$，仅由首级输入电容和末级负载决定，与中间分支数无关。}
+    \conrow{路径总体努力 $H$}{\red{在存在分支时，路径总努力为 $H=G F B$}，其中 $G=\prod g_i$,$H=GFB$.}
+}
+
+\subsection{习题解析}
+
+\subsubsection{课堂练习}
+
+\entry{堂练 2-1}{一个CMOS反相器的假设该反相器输出端翻转时的充电电阻和放电电阻是恒定的，充电电阻为$108.5k\Omega$，放电电阻为$13k\Omega$，其驱动的负载电容为$6fF$，求它的传播延时等于$\underline{\hspace{1cm}}ps$（精确到小数点后1位）}
+
+\entry{启示意义}{这题就是理解基本的 RC 充电模型就行了，分别算充放电延时$t_p$，然后取平均即可。}
+
+\entry{解}{
+
+已知 $R_{charge}=108.5\text{ k}\Omega,\;R_{discharge}=13\text{ k}\Omega,\;C_L=6\text{ fF}$. 采用 $t_p\approx0.69RC$ 计算：
+
+$t_{pLH}=0.69R_{charge}C_L=0.69\times108.5\times6\ \text{ps}=449.19\ \text{ps}$
+
+$t_{pHL}=0.69R_{discharge}C_L=0.69\times13\times6\ \text{ps}=53.82\ \text{ps}$
+
+平均传播延时 $t_p=(t_{pLH}+t_{pHL})/2=(449.19+53.82)/2=251.505\ \text{ps}\approx251.5\ \text{ps}$.
+
+}
+
+\entry{堂练 2-2}{请画出一个实现$Y=\overline{AB+C}$运算的静态互补CMOS逻辑门的晶体管级电路（复合门），要求最大的上升传播延时和下降传播延时相等，假设对称反相器的PMOS和NMOS尺寸之比为2:1，请标出各个晶体管的尺寸系数。}
+
+\entry{启示意义}{这图太长了，我就不放在这里了，尺寸系数曾计算正确\green{（2026-01-08-14-50）}}
+
+\entry{堂练 2-3}{求解逻辑努力与归一化本征延时：}
+
+\img[0.6\linewidth]{images/image-2026-01-08-15-44-48.png}
+
+\entry{启示意义}{逻辑努力的计算就是计算输入电容，然后除以标准反相器的输入电容（3个单位电容），同一逻辑门的不同输入有不同的逻辑努力值，需要分别求解，归一化本征延时的计算就是计算输出端口连接的并联晶体管的尺寸系数之和，然后除以3。}
+
+\entry{堂练 2-4}{考虑图中所示的从A到B的路径，该路径包括3个2输入NAND门。第一个栅极的输入电容是C，负载电容也是C。这个路径的最小延迟是什么？晶体管的大小应该如何设计才能实现最小延迟？}
+
+\img[0.4\linewidth]{images/image-2026-01-08-16-38-18.png}
+
+\entry{最后正确时间}{\green{2026-01-08-16-37}}
+
+\entry{解}{
+
+\begin{enumerate}[label=\textbf{步骤\arabic*:},leftmargin=*]
+\item 提取参数：$g_{\text{NAND2}}=4/3$，$G=(4/3)^3\approx2.37$，$B=1$，$F=C_L/C_{in}=C/C=1$，$H=GFB\approx2.37$。
+\item 最优级努力：$N=3,\;h=H^{1/3}=(4/3)\approx1.33$。
+\item 最小归一化延时：单级本征 $p_{\text{NAND2}}=2$，$P_{\text{total}}=3p=6$，努力延时 $N\cdot h=3\cdot\frac{4}{3}=4$，故 $D=4+6=10\;(\tau\ \text{或}\ t_{p0})$。
+\item 尺寸反推：$C_{in,i}=\dfrac{g_i\,C_{out,i}}{h}$。末级 $C_{in3}=\dfrac{(4/3)\,C}{4/3}=C$，依次 $C_{in2}=C_{in1}=C$。结论：各级输入电容均为 $C$（尺寸因子均为 1）。
+\end{enumerate}
+
+}
+
+\entry{堂练 2-5}{考虑图中所示的从A到B的路径，该路径包括3个2输入NAND门。第一个栅极的输入电容是C，负载电容是8C。这个路径的最小延迟是什么？晶体管的大小应该如何设计才能实现最小延迟？}
+
+\img[0.4\linewidth]{images/image-2026-01-08-16-35-27.png}
+
+\entry{最后正确时间}{\green{2026-01-08-16-44}}
+
+\entry{解}{
+
+\begin{enumerate}[label=\textbf{步骤\arabic*:},leftmargin=*]
+\item 提取参数：$g_{\text{NAND2}}=4/3$，$G=(4/3)^3\approx2.37$，$B=1$，$F=C_L/C_{in}=8C/C=8$，$H=GFB\approx2.37\times8\approx18.96$。
+\item 最优级努力：$N=3,\;h=H^{1/3}\approx18.96^{1/3}\approx2.67$。
+\item 最小归一化延时：单级本征 $p_{\text{NAND2}}=2$，$P_{\text{total}}=3p=6$，努力延时 $N\cdot h=3\cdot2.67=8.01$，故 $D=8.01+6=14.01\;(\tau\ \text{或}\ t_{p0})$。
+\item 尺寸反推：$C_{in,i}=\dfrac{g_i\,C_{out,i}}{h}$。末级 $C_{in3}=\dfrac{(4/3)\,8C}{2.67}\approx4C$，依次 $C_{in2}=\dfrac{(4/3)\,4C}{2.67}\approx2C$，$C_{in1}=\dfrac{(4/3)\,2C}{2.67}\approx1C$。结论：各级输入电容尺寸比为 $1:2:4$。
+\end{enumerate}
+
+}
+
+\entry{堂练 2-6}{考虑图中所示的从A到B的路径，电气努力为4.5。这个路径的最小延迟是什么？晶体管的大小应该如何设计才能实现最小延迟？}
+
+\img[0.4\linewidth]{images/image-2026-01-08-16-50-36.png}
+
+\entry{启示意义}{这道题涉及分支努力，是不可多得的经典例题。}
+
+\entry{最后正确时间}{\green{2026-01-08-17-00}}
+
+\entry{解}{
+\begin{enumerate}[label=\textbf{步骤\arabic*:},leftmargin=*]
+\item \textbf{提取参数}：
+    \begin{itemize}
+        \item 逻辑努力 ($G$)：路径上有 3 个 NAND2 门。$g_{\mathrm{NAND2}}=4/3$，$G=(4/3)^3\approx2.37$。
+        \item 电气努力 ($F$)：$F=C_L/C_{in}=4.5C/C=4.5$。
+        \item 分支努力 ($B$)：逐级计算：
+            \begin{itemize}
+                \item 第1级：驱动 2 个相同门，$b_1=(y+y)/y=2$。
+                \item 第2级：驱动 3 个相同门，$b_2=(z+z+z)/z=3$。
+                \item 第3级：无旁路，$b_3=1$。
+            \end{itemize}
+            总分支努力 $B=b_1 b_2 b_3=2\times3\times1=6$。
+        \item 路径总努力 ($H$)：$H=G\cdot F\cdot B=(64/27)\times4.5\times6=64$。
+    \end{itemize}
+\item \textbf{最优级努力}：
+    \begin{itemize}
+        \item 级数 $N=3$。
+        \item 最优单级努力 $h=H^{1/N}=64^{1/3}=4$。
+    \end{itemize}
+\item \textbf{最小归一化延时}：
+    \begin{itemize}
+        \item 努力延时部分：$N\cdot h=3\times4=12$。
+        \item 本征延时部分：$p_{\mathrm{NAND2}}=2$，总本征延时 $3\times2=6$。
+        \item 总延时：$D=12+6=18.0\ (\tau\ \text{或}\ t_{p0})$。
+    \end{itemize}
+\item \textbf{尺寸反推（计算各级输入电容 $C_{in}$）}：公式 $C_{in}=\dfrac{g\cdot C_{\mathrm{load}}}{h}$。
+    \begin{itemize}
+        \item \textbf{第3级 ($z$)}：
+            \begin{itemize}
+                \item 负载为 $4.5C$（无旁路）。
+                \item $C_{in3}=\dfrac{(4/3)\cdot4.5C}{4}=1.5C$。
+            \end{itemize}
+        \item \textbf{第2级 ($y$)}：
+            \begin{itemize}
+                \item \red{驱动 3 个 $z$，$C_{\mathrm{load2}}=3\times C_{in3}=3\times1.5C=4.5C$。}
+                \item $C_{in2}=\dfrac{(4/3)\cdot4.5C}{4}=1.5C$。
+            \end{itemize}
+        \item \textbf{第1级}：
+            \begin{itemize}
+                \item \red{驱动 2 个 $y$，$C_{\mathrm{load1}}=2\times C_{in2}=2\times1.5C=3C$。}
+                \item $C_{in1}=\dfrac{(4/3)\cdot3C}{4}=C$，与题目给定一致。
+            \end{itemize}
+    \end{itemize}
+\end{enumerate}
+\textbf{结论}：第一级输入电容 $C$，第二级输入电容 $1.5C$，第三级输入电容 $1.5C$。
+}
+
+\subsubsection{作业题}
+
+\entry{作业 2-1}{请画出以下三个复合门的晶体管级电路图，注意标注尺寸使得每个门的等效驱动电阻与参考反相器相同；并且分别计算每个门的归一化本征延时p、每个端口对应的逻辑努力g。}
+
+\img[0.5\linewidth]{images/image-2026-01-08-17-04-41.png}
+
+\entry{最后正确时间}{\green{2026-01-08-17-20}}
+
+\entry{解}{这题是基础中的基础，留给自己练习，务必要全对，其中的第三个电路有意思，按照常理我们是按照 4-4 的方式串联，但是这个电路是 3-6 串联的，理由是让最长的串联通路的等效电阻等于参考反相器的电阻，而且要保证这三个串联电阻相等，所以是 6-6-6 串联，而非 8-8-4 串联，从而保证最坏情况的延时最小。}
+
+\entry{作业 2-2}{请画出一个实现 $X=((\overline{A}+\overline{B})(\overline{C}+\overline{D}+\overline{E})+\overline{F})\overline{G}$ 运算的静态互补 CMOS 逻辑门的晶体管级电路（复合门），调整器件大小，使得输出电阻与 NMOS W/L = 2 和 PMOS W/L = 6 的反相器的输出电阻相同。回答哪种输入模式会产生最差和最好的等效上拉或下拉电阻？}
+
+\entry{最后正确时间}{\green{2026-01-08-17-31}}
+
+\entry{解}{图就不画了，主要看看最好/最差上下拉电阻通路：\par
+最好情况都是让所有晶体管导通，这是普适的策略。\par
+最差情况就是仅一条通路导通，而且要是串联最长的通路，即有最多的内部节点电容的情况。}
+
+\entry{作业 2-3}{考虑如下3种6输入静态互补CMOS的AND电路(标准反相器Wp/Wn=2，自载系数=1)。如果已知各输入端到输出的路径电气努力等于F，当电气努力为16时，下面三个逻辑门哪个设计最快，为什么。}
+
+\img[0.5]{images/image-2026-01-08-17-44-57.png}
+
+\entry{最后正确时间}{\green{2026-01-08-17-44}}
+
+\entry{解}{\green{做是做完了，等晚上整理答案。（2026-01-08-17-44）}}
+
+\entry{作业 2-4}{下图所示电路是一个低摆幅总线的驱动器，已知 NMOS 的 $V_T=0.43V$，$V_{DSAT}=0.63V$，$k'=115\times 10^{-6}A/V^2$，沟道尺寸如图所示，输入信号摆幅等于 $2.5V$，驱动器电源电压是 $0.5V$，总负载电容为 $1pF$，请计算驱动器的上升传播延时和下降传播延时（忽略体效应和沟道长度调制效应，晶体管等效导通电阻取初态值和末态值的平均值）}
+
+
 
 \section{第三章\ 数字集成电路的功耗}
 

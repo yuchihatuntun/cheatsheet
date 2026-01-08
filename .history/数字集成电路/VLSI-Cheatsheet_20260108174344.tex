@@ -1,0 +1,4272 @@
+\documentclass[10pt, a4paper, landscape]{article}
+
+% -------------------------------------------------
+% 宏包引入
+% -------------------------------------------------
+\usepackage[fontset=mac]{ctex}       % 中文支持
+\usepackage{multicol}   % 多分栏
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry} % 页面设置
+\usepackage{amsmath,amsthm,amsfonts,amssymb} % 数学公式
+\usepackage{color,graphicx,overpic} % 颜色与图片
+\usepackage{hyperref}   % 超链接
+\usepackage{enumitem}   % 列表环境控制
+\usepackage{titlesec}   % 标题控制
+\usepackage{bm}         % 加粗数学符号
+\usepackage{xcolor}
+\usepackage{tikz}       % 绘图
+\usetikzlibrary{decorations.pathreplacing, positioning} % 加载brace装饰库
+\usetikzlibrary{calc, positioning, arrows.meta, decorations.markings}
+\setCJKmainfont{PingFang SC}
+\setCJKsansfont{PingFang SC}
+\setCJKmonofont{PingFang SC}
+
+% -------------------------------------------------
+% 自定义颜色
+% -------------------------------------------------
+
+\definecolor{myblue}{HTML}{003153} % 蓝色字
+\definecolor{myred}{HTML}{85120F}  % 红色字
+\definecolor{mygreen}{HTML}{218254}  % 绿色字
+\definecolor{hlblue}{HTML}{ADC1DB} % 蓝色高亮
+\definecolor{hlred}{HTML}{D66A83}  % 红色高亮
+\definecolor{hlyellow}{HTML}{E3C79F}  % 奢金高亮
+\definecolor{hlgreen}{HTML}{BED49D}  % 抹茶绿高亮
+
+% -------------------------------------------------
+% 极限空间压缩设置 (核心部分)
+% -------------------------------------------------
+
+% 1. 页边距设置为极小 (0.5cm)
+\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm}
+
+% 2. 去掉段落首行缩进，改为段落间略微留空（可选，这里为了紧凑设为0）
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% 3. 设置正文基础字体大小为 scriptsize (约8pt)，如果还觉得大，可以改为 \tiny
+\renewcommand{\baselinestretch}{0.9} % 压缩行间距
+\let\oldfootnotesize\footnotesize
+\renewcommand{\footnotesize}{\fontsize{7pt}{8pt}\selectfont}
+
+% 4. 压缩列表环境 (Itemize/Enumerate) 的间距
+\setlist{nolistsep} 
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*}
+
+% 5. 压缩标题间距
+\titleformat{\section}{\bfseries\scriptsize\color{myblue}}{}{0em}{}[\hrule] % 标题带下划线，蓝色，省空间
+\titlespacing*{\section}{0pt}{2pt}{1pt} % 上方留2pt，下方留1pt
+\titleformat{\subsection}
+    [runin] % 不换行
+    {\bfseries\scriptsize} % 粗体、scriptsize，黑色字体
+    {} % 不显示编号
+    {0pt} % 标题与正文间距
+    {\hlyellow} % 用hlyellow高亮命令包裹标题
+    [] % 标题内容后无内容
+\titleformat{\subsubsection}
+    [runin] % 不换行
+    {\bfseries\tiny} % 粗体、scriptsize，黑色字体
+    {} % 不显示编号
+    {0pt} % 标题与正文间距
+    {\hlgreen} % 用hlgreen高亮命令包裹标题
+    [] % 标题内容后无内容
+\titlespacing*{\subsection}{0pt}{1pt}{0.5em} % 上方1pt,下方0.5em(水平间距)
+\titlespacing*{\subsubsection}{0pt}{1pt}{0.5em} % 上方1pt,下方0.5em(水平间距)
+
+% -------------------------------------------------
+% 自定义命令
+% -------------------------------------------------
+% 颜色字
+\newcommand{\red}[1]{\textbf{\textcolor{myred}{#1}}}  
+\newcommand{\blue}[1]{\textbf{\textcolor{myblue}{#1}}} 
+\newcommand{\green}[1]{\textbf{\textcolor{mygreen}{#1}}}
+\newcommand{\entry}[2]{$\bullet$ \textbf{#1}: #2\par\vspace{0.5pt}}
+% 高亮
+\newcommand{\cbox}[2][yellow]{\begingroup\setlength{\fboxsep}{1pt}\colorbox{#1}{\strut#2}\endgroup}
+\newcommand{\hlblue}[1]{\cbox[hlblue]{#1}}
+\newcommand{\hlred}[1]{\cbox[hlred]{#1}}
+\newcommand{\hlyellow}[1]{\cbox[hlyellow]{#1}}
+\newcommand{\hlgreen}[1]{\cbox[hlgreen]{#1}} 
+% 图片插入
+\newcommand{\img}[2][0.9\linewidth]{%
+    {\par\vspace{1pt}\centering\includegraphics[width=#1]{#2}\par\vspace{1pt}}%
+}
+% 左图右文 (参数: [图片宽度比例]{图片路径}{右侧文字内容})
+\newcommand{\imgleft}[3][0.3]{%
+    \noindent\begin{minipage}[t]{#1\linewidth}%
+        \vspace{0pt}%
+        \includegraphics[width=\linewidth]{#2}%
+    \end{minipage}%
+    \hfill%
+    \begin{minipage}[t]{0.98\linewidth - #1\linewidth}%
+        \vspace{0pt}%
+        #3%
+    \end{minipage}\par\vspace{2pt}%
+}
+% 左文右图 (参数: [图片宽度比例]{图片路径}{左侧文字内容})
+\newcommand{\imgright}[3][0.3]{%
+    \noindent\begin{minipage}[t]{0.98\linewidth - #1\linewidth}%
+        \vspace{0pt}%
+        #3%
+    \end{minipage}%
+    \hfill%
+    \begin{minipage}[t]{#1\linewidth}%
+        \vspace{0pt}%
+        \includegraphics[width=\linewidth]{#2}%
+    \end{minipage}\par\vspace{2pt}%
+}
+% -------------------------------------------------
+% 新增：概念速查表专用命令
+% -------------------------------------------------
+% 表格容器
+\newcommand{\concepttable}[1]{%
+    {\setlength{\tabcolsep}{1.5pt}% 局部减小列间距
+     \renewcommand{\arraystretch}{0.92}% 局部紧缩行距
+     \par\vspace{2pt}{\color{myblue}\hrule height 0.6pt}\vspace{1pt}% 上边框(蓝色,0.6pt粗)
+     \noindent\begin{tabular}{@{}p{0.22\linewidth}p{0.76\linewidth}@{}}%
+     #1%
+     \end{tabular}%
+     \vspace{1pt}{\color{myblue}\hrule height 0.6pt}\par\vspace{2pt}}% 下边框(蓝色,0.6pt粗)
+}
+% 表格行 (参数: {概念名}{解释})
+\newcommand{\conrow}[2]{\blue{#1} & #2 \\}
+
+
+
+
+% -------------------------------------------------
+% 正文
+% -------------------------------------------------
+\begin{document}
+
+\tiny
+
+% 三栏布局
+\begin{multicols*}{3}
+
+\section{第一章\ 集成电路器件基础}
+
+\subsection{MOS 管寄生效应}（主要是 MOS 器件电容模型）
+
+\entry{主要耦合电容}{任意两端子间均存在电容耦合：}
+    \concepttable{
+        \conrow{$C_{GS}, C_{GD}$}{栅-源 / 栅-漏电容}
+        \conrow{$C_{GB}$}{栅-衬底电容}
+        \conrow{$C_{SB}, C_{DB}$}{源-衬底 / 漏-衬底电容}
+}
+
+\imgleft[0.4]{images/image-2025-12-30-18-17-15.png}{
+
+    \entry{电容分解}{分为\red{本征部分}（沟道相关）与\red{寄生部分}（结构决定）：}
+    \concepttable{
+        \conrow{栅源电容}{\red{$C_{GS} = C_{GCS} + C_{GSO}$}\par
+        $C_{GCS}$ 为本征栅-沟道-源电容\par
+        $C_{GSO}$ 为栅-源\red{覆盖寄生电容}。}
+        \conrow{栅漏电容}{\red{$C_{GD} = C_{GCD} + C_{GDO}$}\par
+        $C_{GCD}$ 为本征栅-沟道-漏电容\par
+        $C_{GDO}$ 为栅-漏\red{覆盖寄生电容}。}
+        \conrow{栅衬底电容}{$C_{GB} = C_{GCB}$，主要考虑本征栅-沟道-衬底电容。}
+        \conrow{源漏衬底电容}{$C_{SB}, C_{DB}$，主要由源/漏扩散区与衬底形成的 PN 结电容 $C_{Sdiff}, C_{Ddiff}$ 构成。}
+    }
+
+}
+
+\subsubsection{覆盖寄生电容}
+
+\entry{定义}{栅极与源/漏扩散区重叠部分形成的电容，称为\red{覆盖寄生电容}。}
+
+\imgleft[0.4]{images/image-2025-12-30-18-31-44.png}{
+
+\entry{物理成因}{由于横向扩散效应，源/漏杂质向栅极下方扩散 $x_d$，导致栅极边缘与源/漏区在垂直方向重叠形成平板电容。}
+
+\concepttable{
+    \conrow{线性特性}{大小仅取决于几何尺寸，不随偏置电压变化，属于\red{线性电容}。}
+    \conrow{密勒效应}{连接在输入（栅）与输出（漏）间的 $C_{GDO}$ 会受\red{密勒效应}影响被放大。}
+    \conrow{计算公式}{$C_{GSO} = C_{GDO} = C_{ox} x_d W = C_o W$}
+}
+
+\entry{参数说明}{$C_{ox}$ 为单位面积氧化层电容，$x_d$ 为横向扩散长度，$W$ 为晶体管宽度，$C_o = C_{ox}x_d$ 为单位宽度的覆盖电容。}
+
+}
+
+\subsubsection{PN 结电容}
+
+\entry{定义}{即源/漏区与衬底间的电容（$C_{SB}, C_{DB}$），由反偏 PN 结的势垒电容（耗尽电容）构成。}
+
+\imgleft[0.35]{images/image-2025-12-30-18-37-19.png}{
+    \concepttable{
+        \conrow{物理结构}{源/漏重掺杂区与衬底形成 PN 结。为防止漏电，常通过“沟道阻挡注入”增加侧壁掺杂浓度。}
+        \conrow{底板电容}{对应扩散区底面积 $AREA = L_S \times W$\par
+        \red{计算项：}$C_{bottom} = C_j \times AREA$，$C_j$ 为单位面积结电容。}
+        \conrow{侧壁电容}{对应扩散区侧面周长 $PERIMETER = 2L_S + W$（不含面向沟道的一侧）。\par
+        \red{计算项：}$C_{sw} = C_{jsw} \times PERIMETER$。}
+        \conrow{总扩散电容}{$C_{diff} = C_j L_S W + C_{jsw}(2L_S + W)$}
+    }
+}
+
+\subsubsection{栅沟道电容（本征电容）}
+
+由于不同工作区的沟道形态不同，栅沟道电容也不同：
+
+\imgleft[0.5]{images/image-2025-12-30-18-26-22.png}{
+    {\setlength{\tabcolsep}{1pt}
+    \begin{tabular}{l|ccc}
+    \hline
+    \blue{工作区} & \blue{$C_{GCB}$} & \blue{$C_{GCS}$} & \blue{$C_{GCD}$} \\ \hline
+    \red{截止} & $C_{ox}WL$ & 0 & 0 \\
+    \red{线性（电阻区）} & 0 & $\frac{1}{2}C_{ox}WL$ & $\frac{1}{2}C_{ox}WL$ \\
+    \red{饱和} & 0 & $\frac{2}{3}C_{ox}WL$ & 0 \\ \hline
+    \end{tabular}}
+}
+
+\subsection{阈值电压}
+
+（这部分看半导体器件物理 cheatsheet 观感更佳）
+
+\entry{定义}{$V_T$ 是表面载流子浓度等于衬底掺杂浓度（强反型）时的 $V_{GS}$。此时表面电势 $\phi_s$ 达到 $2\phi_F$。}
+
+\concepttable{
+    \conrow{功函数差 $\phi_{ms}$}{抵消金属与半导体费米能级不匹配，由材料本征属性决定。}
+    \conrow{耗尽电荷 $Q_B$}{补偿耗尽层固定电荷。NMOS 中 $Q_B < 0$，对应项 $-\frac{Q_B}{C_{ox}}$ 为正。}
+    \conrow{强反型电势 $2\phi_F$}{产生强反型所需的能带弯曲量。P 衬底 $\phi_F < 0$，项 $-2\phi_F$ 为正。}
+    \conrow{表面电荷 $Q_{SS}$}{氧化层界面正电荷，有助于感应电子，从而降低 $V_T$。项 $-\frac{Q_{SS}}{C_{ox}}$ 为负。}
+    \conrow{注入电荷 $Q_I$}{工艺调节项，通过离子注入（如 P 注入）精确修正 $V_T$ 数值。}
+}
+
+\entry{汇总公式}{$\boxed{V_T = \phi_{ms} - 2\phi_F - \frac{Q_B}{C_{ox}} - \frac{Q_{SS}}{C_{ox}} - \frac{Q_I}{C_{ox}}}$}
+
+\entry{物理本质}{$V_T$ 是克服材料差异、抵消干扰电荷、平衡耗尽层并建立强反型表面电势所需的栅极电压总和。}
+
+\subsection{速度饱和}
+
+这个暂时没在 PPT 上找到，先空着吧。
+
+\subsection{互补网络}
+
+\entry{架构组成}{由两个相互关联的网络组成：}
+
+\imgleft[0.25]{images/image-2025-12-30-18-44-30.png}{
+    
+    \concepttable{
+        \conrow{上拉网络 (PUN)}{连接 $V_{DD}$ 与输出 $F$。满足条件 $G$ 时导通，将输出上拉至 \red{Logic 1}。}
+        \conrow{下拉网络 (PDN)}{连接 $GND$ 与输出 $F$。满足条件 $\bar{G}$ 时导通，将输出下拉至 \red{Logic 0}。}
+    }
+    \entry{布尔表达式}{工作原理遵循 $F = 1 \cdot G + 0 \cdot \bar{G} = G$。}
+    \entry{互补性}{PUN 与 PDN 必须\red{互斥}（稳态下不能同时导通或截止），以确保输出电平确定并消除静态功耗。}
+}
+
+\subsection{习题解析}
+
+\subsubsection{课堂练习}
+
+主要就是一些判断逻辑以及跟器件强相关的题目，和模电很像。
+
+\imgleft[0.2]{images/image-2025-12-30-18-50-54.png}{
+    \entry{例题 1}{考虑图中的静态互补CMOS逻辑门，写出它的布尔表达式（注意化简）。}
+    \entry{启发意义}{没啥启发意义。}
+}
+
+\entry{解答}{这道题看下拉网络比较好判断逻辑，答案是 $F = \overline{A B + C D}$。}
+
+\imgleft[0.3]{images/image-2025-12-30-18-54-44.png}{
+    \entry{例题 2}{计算两个宽长比分别为$W1/L$和$W2/L$的串联NMOS晶体管的等效宽长比
+$W/L$。忽略体效应，阈值电压恒定。}
+    \entry{启发意义}{单看题目只是一个模集的题，但是为后面计算串联尺寸系数打下基础。}
+}
+
+\entry{解答}{
+        \entry{推导前提}{利用线性区电流公式 $I_{DS} = k' \frac{W}{L} [(V_{GS} - V_{T0})V_{DS} - \frac{1}{2}V_{DS}^2]$，基于电流连续性（$I_{DS1} = I_{DS2}$）进行推导。}
+
+        \concepttable{
+            \conrow{M2 (下管)}{$I_{DS} = k' \frac{W_2}{L} [ (V_{GS} - V_{T0})V_{DS2} - \frac{1}{2}V_{DS2}^2 ]$}
+            \conrow{M1 (上管)}{$I_{DS} = k' \frac{W_1}{L} [ (V_{GS} - V_{DS2} - V_{T0})(V_{DS} - V_{DS2}) - \frac{1}{2}(V_{DS} - V_{DS2})^2 ]$}
+        }
+
+        \entry{代数变换}{展开 M1 方程并提取项，可发现其包含 M2 的电压项。整理得：$I_{DS} = k' \frac{W_1}{L} [ ((V_{GS}-V_{T0})V_{DS} - \frac{1}{2}V_{DS}^2) - \frac{I_{DS}}{k' (W_2/L)} ]$。}
+
+        \entry{等效结果}{将 $I_{DS}$ 项移项合并，对比标准方程可得：$\boxed{\frac{1}{W_{eq}} = \frac{1}{W_1} + \frac{1}{W_2}}$ 或 $\boxed{W_{eq} = \frac{W_1 W_2}{W_1 + W_2}}$。}
+
+        \entry{物理意义与设计指导}{
+            \concepttable{
+                \conrow{电阻类比}{导通电阻 $R_{on} \propto L/W$。串联电阻 $R_{eq} = R_1 + R_2$ 对应 $\frac{L}{W_{eq}} = \frac{L}{W_1} + \frac{L}{W_2}$。}
+                \conrow{尺寸补偿}{串联会降低驱动能力。若要使两个串联管等效于宽度为 $W$ 的单管，则每个管子宽度需设为 \red{$2W$}。}
+            }
+        }
+}
+
+\subsubsection{作业题}
+
+有一些奇奇怪怪的题，不知道牢王都从哪找的。
+
+\imgleft[0.2]{images/image-2025-12-30-19-03-08.png}{
+    \entry{作业 1-1}{
+        \begin{enumerate}[label=(\arabic*)]
+            \item 考虑下图的静态互补 CMOS 逻辑门，写出布尔表达式（注意化简），并画出下拉网络结构；
+            \item 画出实现 $Y = AB + C(D + E)$ 的静态互补 CMOS 逻辑门电路的晶体管级电路图。
+        \end{enumerate}
+    }
+    \entry{启发意义}{这道题的上拉电路给的很怪，没有办法直接看出逻辑表达式，需要通过分析通路来推导。}
+}
+
+\entry{第一步}{寻找从 $V_{DD}$ 到 Output 所有可能通路（PMOS 导通需低电平）：}
+\concepttable{
+    \conrow{直接路径}{路径 1：$\overline{A}\overline{C}$；路径 2：$\overline{B}\overline{D}$}
+    \conrow{跨桥路径}{路径 3：$\overline{A}\overline{E}\overline{D}$；路径 4：$\overline{B}\overline{E}\overline{C}$}
+    \conrow{PUN 逻辑}{$F = \overline{A}\overline{C} + \overline{B}\overline{D} + \overline{A}\overline{E}\overline{D} + \overline{B}\overline{E}\overline{C}$}
+}
+
+\entry{第二步}{推导下拉网络 (PDN) 的导通条件：}
+\concepttable{
+    \conrow{设计原理}{CMOS 逻辑具有反相特性。PDN 由 NMOS 构成（高电平导通），需满足输出为低电平 (\red{Logic 0}) 的条件，即求 $\overline{Out}$。}
+    \conrow{德·摩根变换}{对 PUN 表达式整体取反：$\overline{Out} = \overline{(\bar{A}\bar{C} + \bar{A}\bar{E}\bar{D} + \bar{B}\bar{D} + \bar{B}\bar{E}\bar{C})}$}
+    \conrow{逻辑展开}{根据 $\overline{X+Y} = \bar{X} \cdot \bar{Y}$，得 $\overline{Out} = (\overline{\bar{A}\bar{C}}) \cdot (\overline{\bar{A}\bar{E}\bar{D}}) \cdot (\overline{\bar{B}\bar{D}}) \cdot (\overline{\bar{B}\bar{E}\bar{C}})$}
+    \conrow{去反号}{根据 $\overline{XY} = \bar{X} + \bar{Y}$，得 $\overline{Out} = (A+C)(A+E+D)(B+D)(B+E+C)$}
+}
+
+\imgleft[0.3]{images/image-2025-12-30-19-16-37.png}{
+    \entry{代数化简}{通过提取公因式进行重组：}
+    \concepttable{
+        \conrow{分组观察}{前两项含 $A$，后两项含 $B$。利用分配律：$(A+C)(A+E+D) = A + C(E+D)$}
+        \conrow{最终嵌套形式}{$\overline{Out} = AB+AED+CD+BEC$}
+        \conrow{电路对应}{该表达式直接决定了 PDN 的串并联拓扑结构。}
+    }
+}
+
+\entry{作业 1-2}{请分别解释说明体效应、短沟效应、 DIBL对阈值电压影响及原理。}
+
+\entry{启发意义}{一些牢王自己忘记讲的概念}
+
+\entry{解析}{
+
+\concepttable{
+    \conrow{体效应}{当 $V_{SB} > 0$ 时，更多负电荷聚集在栅氧化层下，增加了耗尽层电荷，导致 \red{$V_T$ 增加}。公式：$V_T = V_{T0} + \gamma (\sqrt{V_{SB} + |2\phi_F|} - \sqrt{|2\phi_F|})$。源端势垒上升，\red{需更大栅压克服势垒}。}
+    \conrow{短沟道效应}{当 $L$ 减小时，\red{$V_T$ 随之减小}。部分栅下区域空穴被漏-衬底 PN 结电场耗尽，导致 $Q_B$ 下降；同时 MOS 效应影响区域比例变小，导致 $V_{T0}$ 下降。}
+    \conrow{DIBL 效应}{漏端感应势垒降低。$V_{DS}$ 增加使漏端耗尽区扩大并接近源端，引起源端势垒降低，使源区注入电子增加，导致 \red{$V_T$ 下降}。}
+}
+
+}
+
+\entry{作业 1-3}{请分别解释说明速度饱和对短沟器件和长沟器件的影响及原理。}
+
+\entry{启发意义}{算是弥补上文缺失的速度补偿部分，牢王应该是又忘讲了。}
+
+\entry{解析}{
+\entry{载流子速度}{速度 $v$ 与电场 $E$ 的关系近似为：$v = \frac{\mu_n E}{1 + E/E_c}$。}
+\concepttable{
+    \conrow{临界电场 $E_c$}{速度饱和发生时的电场。连续性要求：当 $E=E_c$ 时，$v_{sat} = \mu_n E_c / 2$。}
+    \conrow{短沟道修正}{由于 $L$ 极小，水平电场大，很快达到饱和。修正公式：$I_D = k' [(V_{GS}-V_T)V_{DS} - \frac{1}{2}V_{DS}^2] \kappa(V_{DS})$，其中 $\kappa(V) = \frac{1}{1 + V/(E_c L)} < 1$。}
+}
+
+\entry{饱和电压 $V_{DSAT}$}{由连续性要求解得：$V_{DSAT} = \kappa(V_{GT})V_{GT}$。}
+\concepttable{
+    \conrow{物理结论}{因为 $\kappa(V_{GT}) < 1$，所以 \red{$V_{DSAT} < V_{GT}$}。短沟道器件速度饱和的 $V_{DSAT}$ 小于长沟道沟道夹断的 $V_{DSAT}$。}
+    \conrow{长沟道特性}{当 $E_c \gg V_{GT}/L$ 时，$I_{DSAT} = \frac{1}{2} \frac{W}{L} C_{ox} \mu_n V_{GT}^2$，电流电压为\red{二次关系}。}
+    \conrow{短沟道特性}{当 $E_c \ll V_{GT}/L$ 时，$I_{DSAT} = v_{sat} C_{ox} W V_{GT}$，电流电压为\red{一次关系}。}
+}
+
+}
+
+\imgleft[0.2]{images/image-2025-12-30-19-34-42.png}{
+    \entry{作业 1-4}{如图所示电路，已知 M1 参数如下（忽略体效应和沟道长度调制效应）：
+
+    \concepttable{
+        \conrow{电压参数}{$V_{T0} = 0.43V, V_{DSAT} = 0.63V$}
+        \conrow{工艺常数}{$k' = 115 \times 10^{-6} A/V^2, C_{ox} = 6 fF/\mu m^2$}
+        \conrow{覆盖电容}{$C_{gso} = C_{gdo} = 0.31 fF/\mu m$}
+    }
+
+    \begin{enumerate}[label=(\arabic*)]
+        \item 当 $V_{in} = 2.5V$ 时，$V_{out}$ 的稳态电压（记为 $V_{OL}$）是多少？M1 管处在什么工作区？
+        \item 如果 $V_{in}$ 从 $0V$ 上升到 $2.5V$，而 $V_{out}$ 的初始电压等于 $2.5V$，那么从 $In$ 端变化开始到 $V_{out}$ 达到稳态这个过程中由 $In$ 端注入的总净电荷量等于多少？
+    \end{enumerate}
+
+    }
+}
+
+\entry{解答 (1)}{采用假设-验证法确定 $V_{OL}$ 与工作区：}
+\concepttable{
+    \conrow{假设}{M1 工作在\red{线性区}，即满足 $V_{OL} < V_{DSAT} = 0.63V$。}
+    \conrow{方程组}{1. 线性区电流公式：$I_{ds} = k' \frac{W}{L} [(V_{in} - V_{T0})V_{OL} - \frac{1}{2}V_{OL}^2]$ \par 
+    2. 根据分压定律：$I_{ds} \cdot R + V_{OL} = V_{DD}$ (KVL)}
+    \conrow{参数代入}{$V_{DSAT} = V_{in}-V_{T0} = 2.07V$，$k'W/L = 460 \mu A/V^2$，$R = 8k\Omega$。}
+    \conrow{计算结果}{解得 $V_{OL} \approx 0.31V$ (另一解 $4.37V$ 舍去)。}
+    \conrow{验证}{因 $0.31V < 0.63V$，假设成立，M1 确实处于\red{线性区}。}
+}
+
+\entry{\red{解答 (2)}}{计算注入总净电荷 $\Delta Q = Q_{final} - Q_{initial}$：}
+\concepttable{
+    \conrow{初始态 $Q_1$}{$V_{in}=0V, V_{out}=2.5V$ (\red{截止区})。\par
+    沟道未形成，$C_{GCB}$ 无压差。$C_{GCS} = 0$，且 GS 之间也没有压差，$C_{GCD} = 0$，但是 GD 之间存在电压  \par 
+    $Q_1 = C_{GD} \times (V_G - V_D) = C_{gd0} \times W \times (V_G - V_D) = (0.31 \times 1) \times (0 - 2.5) = -0.775 fC$（这里完全是 PN 结扩散电容）}
+    \conrow{稳态 $Q_2$}{$V_{in}=2.5V, V_{out}=0.31V$ (\red{线性区})。沟道形成。 \par 
+    后面的计算留给读者自己完成，\red{步骤就是：查表看电容 $\rightarrow$ 看 GS、GD、GB 之间是否有电压$\rightarrow$有电压有电容的地方计算电荷 $\rightarrow$ 累加。}}
+    \conrow{总注入量}{$\Delta Q = 4.97 - (-0.775) = 5.745 fC$。}
+}
+
+\green{第一章初步复习结束（2026-01-02）}
+
+\section{第二章\ 数字集成电路的速度}
+
+\subsection{MOS 管漏电流}
+
+分为亚阈值漏电流、栅漏电流、PN 结反向漏电流三种主要成分：
+
+\imgleft[0.4]{images/image-2026-01-02-20-37-24.png}{
+    \concepttable{
+        \conrow{亚阈值漏电 $I_{SUB}$}{当 $V_{GS} < V_{th}$ 时，沟道仍存在微弱扩散电流（从漏到源）。该电流与 $V_{GS}$ 呈\red{指数关系}。阈值电压 $V_{th}$ 降低会导致漏电剧增。是\red{主要漏电源}。}
+        \conrow{栅极漏电 $I_{GS}, I_{GD}$}{纵向穿过栅氧化层的电流，从栅极流向沟道/衬底。由载流子\red{量子隧穿效应}引起。当栅极施加高电场时，电子有一定概率直接穿透绝缘栅氧层，形成栅极隧穿电流。}
+        \conrow{PN 结漏电流 $I_{LEAK}$}{源/漏扩散区与衬底间形成的 PN 结，在正常工作时处于\red{反向偏置}状态。耗尽区会有\red{少子产生-复合电流}和带带隧穿电流，导致少量漏电流流过 PN 结。}
+    }
+}
+
+\subsection{逻辑门的静态特性}
+
+\subsubsection{电压传输特性曲线 (VTC)}
+
+逻辑门在静态（直流）条件下，输出电压 $V_{out}$ 随输入电压 $V_{in}$ 变化的函数关系。
+
+\imgleft[0.3]{images/image-2026-01-02-21-41-25.png}{
+    \entry{理想 vs. 实际}{对比 VTC 曲线形态：}
+    \concepttable{
+        \conrow{理想 VTC}{倒置阶跃函数，在 $V_M$ 处瞬间翻转。输出仅有 $V_{OH}$ 与 $V_{OL}$ 两个电平。}
+        \conrow{实际 VTC}{存在有限斜率的\red{过渡区}，而非垂直突变。}
+    }
+
+    \entry{关键参数}{
+        \concepttable{
+            \conrow{$V_{OH}$}{输出高电平。CMOS 具有 \red{Rail-to-rail} 特性，输出能达到电源电压。}
+            \conrow{$V_{OL}$}{输出低电平。输出能达到地电位。}
+            \conrow{$V_M$}{$V_{in} = V_{out}$ 的交点（图中虚线与曲线交点）。逻辑判断的中间分界点，是计算重点。}
+        }
+    }
+}
+
+\imgleft[0.3]{images/image-2026-01-02-21-44-44.png}{
+    \entry{短沟道器件 VTC}{考虑\red{速度饱和 (Velocity Saturation)} 效应，这改变了工作区的物理定义。}
+
+    \concepttable{
+        \conrow{物理本质}{载流子在达到夹断电压前，漂移速度已达极限。}
+        \conrow{饱和机制对比}{长沟道饱和源于\red{沟道夹断 (Pinch-off)}；短沟道饱和源于\red{速度饱和}。}
+        \conrow{过渡区特性}{在 $V_M$ 附近的陡峭区域，nMOS 和 pMOS 可能同时处于速度饱和状态，这是计算短沟道 $V_M$ 的依据。}
+        \conrow{电阻区}{即线性区，此时载流子速度尚未达到饱和极限。}
+    }
+
+    \entry{考试指导}{若题目给出 $E_{sat}$ 或 $v_{sat}$ 等参数，需套用短沟道模型；否则通常按长沟道模型分析。}
+}
+
+\subsection{阈值电压}
+
+\entry{定义}{$V_M$ 为 VTC 上满足 $V_{in}=V_{out}$ 的点，即输入输出相等的平衡电压。此时 PMOS 与 NMOS \red{同时导通}，\red{电流大小相等（绝对值相等）}。}
+
+\subsubsection{定义式解析解}
+
+以最经典的互补反相器为例：
+
+\entry{电流平衡求解（KCL）}{在 $V_M$ 点有
+$\,I_{DSn} = -I_{DSp}\,$（或 $|I_{DSn}| = |I_{DSp}|$），代入速度饱和近似的简化电流模型得：
+$k_n V_{DSATn}\big(V_M - V_{Tn} - \tfrac{V_{DSATn}}{2}\big)
++ k_p V_{DSATp}\big(V_M - V_{DD} - V_{Tp} - \tfrac{V_{DSATp}}{2}\big) = 0$.}
+
+\entry{解析解}{\red{$V_M = \dfrac{\big(V_{Tn} + \tfrac{V_{DSATn}}{2}\big) + r\big(V_{DD} + V_{Tp} + \tfrac{V_{DSATp}}{2}\big)}{1 + r}$}，其中 $r$ 为驱动能力比。}
+
+\concepttable{
+    \conrow{比值 $r$}{$r = \dfrac{k_p |V_{DSATp}|}{k_n V_{DSATn}}
+    = \dfrac{W_p \mu_p C_{ox} |V_{DSATp}| / L}{W_n \mu_n C_{ox} V_{DSATn} / L}
+    \approx \dfrac{v_{sat,p} W_p}{v_{sat,n} W_n}$.}
+    \conrow{\red{物理意义}}{$r$ 表征 \red{PMOS 相对 NMOS 的驱动能力}。$r$ 增大时 $V_M$ 向 $V_{DD}$ 方向移动（PMOS 更强）；$r$ 减小时 $V_M$ 向 $0$ 靠近（NMOS 更强）。}
+}
+
+\entry{结论}{由此可知，PMOS 上拉越强，$V_M$ 越高；NMOS 下拉越强，$V_M$ 越低。}
+
+\imgleft[0.4]{images/image-2026-01-07-18-58-01.png}{
+
+    \entry{器件尺寸比敏感度分析}{}
+    \concepttable{
+        \conrow{趋势}{曲线随 $\frac{W_p}{W_n}$ 缓慢单调上升。}
+        \conrow{不敏感性}{即便 $\frac{W_p}{W_n}$ 变化较大，$V_M$ 的变化幅度相对较小（横纵轴的刻度不同）}
+    }
+
+    \entry{设计目标}{使反相器的翻转点 $V_M$ 接近电源中点 $V_{DD}/2$，从而平衡上/下噪声容限，获得最大整体噪声裕度。}
+
+    \entry{常用尺寸比}{\red{$W_p = 2 W_n$（尺寸设计约束 01）}}
+    \concepttable{
+        \conrow{迁移率差异}{电子迁移率 $\mu_n$ 明显大于空穴迁移率 $\mu_p$，因此为追求驱动平衡需放大 PMOS 宽度；工程常用比例约为 $2\!:\!1$。}
+    }
+
+}
+
+\subsection{CMOS 逻辑门的延时特性}
+
+\subsubsection{最简延时模型}
+
+\entry{等效电路}{输入信号相当于经过一个 RC 电路。}
+
+\imgleft[0.3]{images/image-2026-01-07-19-20-55.png}{
+
+    \concepttable{
+        \conrow{负载电容}{负载以电容为主：下一级栅极电容及互连寄生电容，\red{CMOS数字电路中的逻辑门负载在绝大多数情况下是容性的}。}
+        \conrow{电阻}{MOS 管导通时近似为电阻 $R$}
+        \conrow{时间常数}{$\tau = R\times C$}
+    }
+
+}
+
+\subsubsection{常用时间常数}
+
+\entry{系统响应模型}{$V_{out}(t)=V_{DD}\big(1-e^{-t/\tau}\big)$，时间常数 $\tau=RC$。}
+
+\imgleft[0.3]{images/image-2026-01-08-11-12-46.png}{
+
+    \concepttable{    
+        \conrow{\red{传播延时 $t_p$}}{输入从 50\% 处跳变到输出达到 50\% 的时间。}
+        \conrow{推导}{令 $V_{out}=0.5V_{DD}$：$0.5=1-e^{-t_p/\tau}\Rightarrow t_p=\ln(2)\tau\approx0.69RC$.}
+        \conrow{结论}{\red{$t_p\approx0.69RC$}}
+    }
+
+    \concepttable{
+        \conrow{\red{翻转时间 $t_r$}}{输出从 10\% 上升到 90\% 的时间（本 PPT 取 10\%-90\%）。}
+        \conrow{推导}{$t_{10}=\tau\ln\!\tfrac{10}{9}$，$t_{90}=\tau\ln(10)$，故 $t_r=t_{90}-t_{10}=\tau\ln(9)\approx2.2RC$.}
+        \conrow{结论}{\red{$t_r\approx2.2RC$}}
+    }
+
+}
+
+\red{后面我们基本上只关心传播延时 $t_p$ 的分析。}
+
+\subsection{传播延时 $t_p$}
+
+\subsubsection{基本物理模型}
+
+\entry{延时模型构建}{两种常用的物理视角：}
+
+\imgleft[0.2]{images/image-2026-01-08-11-20-06.png}{
+
+    \entry{延时估计模型 1 —— 恒流源充放电模型}{
+        \concepttable{
+            \conrow{物理模型}{在输出从 $V_{DD}$ 放电到 $0$ 的过程中，\red{NMOS 在较大时间段近似处于饱和区}，可视为受控电流源。}
+            \conrow{模型抽象}{将晶体管近似为恒定平均电流源 $I_{av}$，利用电荷守恒 $Q=C\Delta V=I\Delta t$ 估算延时。}
+            \conrow{传播延时公式}{$t_{pHL} = \dfrac{C_L\,V_{swing}/2}{I_{av}}$，其中 $V_{swing}/2$ 对应 50\% 传播点。}
+            \conrow{注释}{该模型直接说明：\red{减小 $C_L$ 或增大 $I_{av}$ 都能缩短延时}；可用器件饱和电流或电流积分近似 $I_{av}$。}
+        }
+    }
+
+}
+
+\imgleft[0.2]{images/image-2026-01-08-11-22-48.png}{
+
+    \entry{延时估计模型 2 —— \red{RC 充放电模型}}{
+        \concepttable{
+            \conrow{物理模型}{为简化计算，将 MOS 等效为一个线性电阻 $R_{on}$，电容 $C_L$ 通过 $R_{on}$ 充放电。}
+            \conrow{模型抽象}{开关 + 等效电阻 $R_{on}$ + 负载电容 $C_L$，形成一阶 RC 回路。}
+            \conrow{传播延时公式}{$t_{pHL} = 0.69\,R_{on} C_L$，这是 50\% 延时的常用近似。}
+            \conrow{驱动能力解释}{“驱动能力”本质上是 $I_{av}$ 的大小或 $R_{on}^{-1}$；$R_{on}$ 越小（或 $I_{av}$ 越大），延时越短。}
+        }
+    }
+
+}
+
+\entry{综上所述}{优化延时的两大方向：\red{减小负载电容}（主要是栅极电容）和\red{增大驱动能力}（减小等效电阻）。}
+
+\subsubsection{容抗参数估算}
+
+\hlblue{\textbf{等效电阻估算}}
+
+\imgleft[0.3]{images/image-2026-01-08-11-30-09.png}{
+
+    \entry{背景}{MOS 管\red{不是理想电阻}，瞬时等效电阻可写为 $R_{on}(t)=V_{DS}(t)/I_D(t)$，随 $V_{DS},V_{GS}$ 及工作区而显著变化。直接用瞬时 $R_{on}$ 做 RC 分析会导致误差，需要用等效电阻 $R_{eq}$ 代替。}
+
+    \entry{等效电阻近似}{翻转区间 $[t_1,t_2]$ 上的时间平均电阻（积分形式），常用近似：\par
+    \red{$R_{eq}\approx\frac{1}{2}\big(R_{on}(t_1)+R_{on}(t_2)\big)$}\par
+    取 $t_1$ 对应输出刚开始放电（$V_{out}=V_{DD}$），$t_2$ 取输出达到 50\%（$V_{DD}/2$）}
+}
+
+\entry{传播延时与等效电阻}{单级反相器的传播延时取上升与下降平均：\par
+\red{$t_p=\frac{t_{pHL}+t_{pLH}}{2}=0.69\,C_L\cdot\frac{R_{eqn}+R_{eqp}}{2}$},需\red{分别求出 NMOS 的 $R_{eqn}$ 与 PMOS 的 $R_{eqp}$}并求平均。}
+
+\hlblue{\textbf{负载电容估算}}
+
+\imgleft[0.13]{images/image-2026-01-08-11-35-48.png}{
+    \entry{电容组成分析}{}
+    \concepttable{
+        \conrow{本征电容}{驱动门本身的寄生：漏极扩散电容（$C_{db1}+C_{db2}$）、栅漏覆盖电容 $C_{gd12}$（驱动器内）等。}
+        \conrow{连线电容}{互连产生的对地电容 $C_w$（与长度成正比）。}
+        \conrow{外部负载}{下一级门的栅极电容，即扇出栅电容 $C_{g3}+C_{g4}$。}
+    }
+
+}
+
+\imgleft[0.2]{images/image-2026-01-08-11-39-32.png}{
+    \entry{漏电容估算}{}
+    \concepttable{
+        \conrow{漏源沟道电容}{近似为 0：晶体管仅处于饱和或截止状态}
+        \conrow{覆盖（栅-漏）电容}{$C_{gd}=C_{GD0}\,W$，栅与漏的几何重叠电容}
+        \conrow{密勒效应}{当输入 $V_{in}$ 上升 $\Delta V$ 时，输出 $V_{out}$ 通常下降约 $\Delta V$（方向相反），因此栅-漏两端的电压变化约为 $2\Delta V$，因此，$C_{gd}$ 在输入/输出端被放大 2 倍：\red{$C_{gd,eff}=2C_{gd}=2C_{GD0}W$}}
+    }
+}
+
+\entry{扇出栅电容估算}{}
+
+\concepttable{
+    \conrow{假设}{在计算第一级延时时，假设下一级尚未开始翻转（下一级输出 $V_{out2}$ 短时保持不变）。因此不存在对输入端的密勒放大。此时，\red{下一级对第一级的等效负载为纯栅极电容之和}，不包含 $C_{gd}$ 的密勒效应放大。}
+    \conrow{组成}{每个栅极电容由两部分构成：\red{覆盖寄生电容} $(C_{GSO}+C_{GDO})\times W$ 与\red{栅氧化层电容} $W\times L\times C_{ox}$。}
+    \conrow{计算公式}{$C_{\text{fanout}}=C_{\text{gate,n}}+C_{\text{gate,p}}$ \par
+    $= \big((C_{GSO_n}+C_{GDO_n})W_n + W_nL_nC_{ox}\big) + \big((C_{GSO_p}+C_{GDO_p})W_p + W_pL_pC_{ox}\big)$}
+}
+
+\entry{\red{总负载电容 $C_L$}}{}
+
+\vspace{-5pt}
+$$C_L = \underbrace{C_{gd1} + C_{gd2}}_{\text{密勒电容, } \times 2} + \underbrace{C_{db1} + C_{db2}}_{\text{扩散电容}} + \underbrace{C_{g3} + C_{g4}}_{\text{扇出电容}} + \underbrace{C_w}_{\text{连线}}$$
+\vspace{-5pt}
+
+\entry{延时受输入图形的影响}{
+
+    \imgleft[0.3]{images/image-2026-01-08-14-30-29.png}{
+
+        以 2 输入 NAND 门为例，输入信号有多种可能的变化方式（设在 PDN 串联中，A 管更靠近输出端口）：
+
+        \concepttable{
+            \conrow{放电过程}{以 B=1 ，A 从 0 变到 1 为最快，也是给后面铺垫了，B 先给中间节点电容放电，这样 A 到了之后只需要给负载电容放电即可。这样是最快的。}
+            \conrow{充电过程}{A和B 管同时上拉最快，理由很简单，两个管子的驱动能力叠加肯定最强\par
+            第二快的是 B=1，A 从 0 变到 1 ，B 先给中间节点电容充电，这样 A 到了之后只需要给负载电容充电即可。}
+        }
+
+        \entry{结论}{\red{最慢的信号应该被放在最靠近输出端的管子上}，这样它到达的时候，前面的管子已经把中间节点电容放电/充电完毕了，只需要给负载电容放电/充电即可。}
+
+    }
+
+}
+
+\subsubsection{本征延时、努力延时}
+
+\hlblue{\textbf{延时组成}}
+
+\entry{门延时的组成}{总延时分为两部分：\par
+$t_p = 0.69 R_{eq} (C_{int} + C_{ext}) = \underbrace{0.69 R_{eq} C_{int}}_{t_{p0}} + \underbrace{0.69 R_{eq} C_{ext}}_{t_{effort}}.$ 其中 $C_{int}$ 为本征电容，$C_{ext}$ 为外部负载电容。}
+
+\concepttable{
+    \conrow{本征电容 $C_{int}$}{反相器自身寄生电容：主要为扩散电容 $C_{db}$ 与栅-漏覆盖电容（含密勒效应部分）。}
+    \conrow{外部电容 $C_{ext}$}{由连线电容、下一级栅电容等外部负载决定，与驱动门尺寸无关。}
+}
+
+\hlblue{\textbf{本征延时 $t_{p0}$}}
+
+\concepttable{
+    \conrow{定义}{ $t_{p0}=0.69 R_{eq} C_{int}$。}
+    \conrow{物理关系}{$R_{eq}\propto 1/W$，且 $C_{int}\propto W$，二者关于晶体管宽度 $W$ 近似互相抵消。}
+    \conrow{结论}{因此 $t_{p0}$ 对尺寸 $W$ 近似不敏感，即增大晶体管尺寸不能显著降低本征延时。}
+}
+
+\entry{本征延时受扇入的影响}{
+
+N 输入逻辑门在保持等效驱动能力时，其本征延时随输入数 $n$ 的增长近似呈 $O(n^2)$（过多串联 MOS 管会导致引入大量节点电容）。以 N 输入 NAND 门为例：
+
+    \imgleft[0.3]{images/image-2026-01-08-14-21-48.png}{
+
+        \concepttable{
+            \conrow{下拉延时}{\red{$t_{pHL} = 0.69\,R\big(\tfrac{n^2}{2} + \tfrac{5}{2}n\big)C$}。其中\red{平方项来自内部节点的寄生电容累加}，线性项主要来自输出负载 $C_L$ 的贡献。}
+            \conrow{上拉延时}{\red{$t_{pLH} = 0.69nRC$}。主要就是本征电容（这里是本征延时，不考虑外部电容）扩大为 $nC$，无平方项。}
+        }
+
+    }
+
+    图中最后的传播延时是两个延时的折中处理，一边是平方项，一边是线性项，注意\red{单逻辑门扇入应控制在合理范围内（通常不超过 4）}。
+
+}
+
+\entry{本征延时的性质}{单纯增大晶体管尺寸 $W$ 并不能减小本征延时。}
+\concepttable{
+    \conrow{\red{尺寸系数 $S$}}{定义：将反相器中所有 PMOS 与 NMOS 的宽度均放大 $S$ 倍（相对于单位尺寸 $W_{min}$ 的比例因子）。}
+    \conrow{等效电阻 $R_{eq}$}{电阻与沟道宽度成反比。尺寸放大 $S$ 倍，等效电阻变化：$R_{eq} \propto 1/S$.}
+    \conrow{本征电容 $C_{int}$}{主要由漏极扩散等寄生电容构成；电容与面积成正比。尺寸放大 $S$ 倍，$C_{int} \propto S$.}
+    \conrow{延时推导}{将上述关系代入本征延时公式得：
+    $t_{p0} = 0.69 R_{eq} C_{int} = 0.69 R_{equ} C_{intu}$.}
+    \conrow{结论}{$S$ 在公式中被抵消：给定门的本征延时近似为常数，不随门的尺寸 $S$ 改变。原因是增大尺寸既降低了驱动电阻又等比例增加了自身寄生电容，产生“自我加载”效应。}
+}
+
+\entry{\red{归一化本征延时 $p$}}{
+
+将不同工艺/尺寸下的本征延时统一为无量纲量，便于按拓扑结构比较门的固有延时。
+
+    \concepttable{
+        \conrow{意义}{消除工艺常数（$R,C$）的影响，仅反映逻辑门拓扑复杂度对本征延时的相对贡献，便于跨工艺、跨尺寸的横向比较。}
+        \conrow{基准与定义}{以\textbf{标准反相器}的本征延时作为单位，定义：\par
+        \hspace{1em}$p = \dfrac{\text{某逻辑门的本征延时}}{\text{标准反相器的本征延时}}$.}
+        \conrow{等效计算}{在相同驱动能力（即等效电阻相等）条件下，也可用本征电容比估算：\par
+        \hspace{1em}$p \approx \dfrac{C_{int,\text{gate}}}{C_{int,\text{inv}}}$，其中 $C_{int}$ 表示\red{门的本征（寄生）电容}。}
+    }
+
+}
+
+\entry{不同逻辑门的本征延时}{标准反相器的电容总量是 3 个单位电容（$C_{int,inv}=3C$），其他门的本征电容与其比较得出归一化本征延时 $p$：}
+
+\vspace{-5pt}
+\img[0.7\linewidth]{images/image-2026-01-08-15-02-23.png}
+\vspace{-5pt}
+
+\entry{\red{p 的计算（归一化本征延时 $p$）}}{就是输出端口连接的并联的 MOS 管的电容之和，除以标准反相器的 3 个单位电容，更切合实际一点就是\red{输出连接的晶体管的尺寸系数之和除以 3。}}
+
+\hlblue{\textbf{努力延时 $t_{effort}$}}
+
+\concepttable{
+    \conrow{定义}{ $t_{effort}=0.69 R_{eq} C_{ext}$。}
+    \conrow{物理关系}{$C_{ext}$ 由外部决定（与 $W$ 无关），而 $R_{eq}\propto 1/W$。}
+    \conrow{结论}{因此 $t_{effort}\propto 1/W$，增大驱动晶体管尺寸可显著降低努力延时（改善本级电阻优化延时）。}
+}
+
+\entry{本征时间常量}{
+
+    \imgleft[0.3]{images/image-2026-01-08-15-13-01.png}{
+        \entry{两级电路延时示例}{以图中经典两级电路为例，总传播延时写为
+        $t_p = t_{p01} + t_{effort1} + t_{p02} + t_{effort2}$，需通过调整各级晶体管尺寸以优化总延时。}
+
+        \concepttable{
+            \conrow{第一级延时}{第一级的总延时可以表示为 $t_{p01} + 0.69\,R_{d1}\,C_{g2}$。第一级的负载为第二级的栅电容 $C_{g2}$，而 $C_{g2}$ 与第二级尺寸 $S_2$ 成正比}
+            \conrow{第二级延时}{第二级的总延时为 $t_{p02} + 0.69\,R_{d2}\,C_L$。第二级等效电阻与尺寸 $S_2$ 成反比}
+        }
+    
+    }
+
+}
+
+因此存在权衡：增大 $S_2$ 会增大第一级负载（使第一级变慢），但同时会降低第二级电阻（使第二级变快）。尺寸优化即在此矛盾中寻求全局最优。
+
+对总延时关于尺寸 $S_2$ 求导并令其为 $0$，可解得最佳尺寸：$S_{2opt}^2 = \dfrac{R_{u2} C_L}{R_{d1} C_{gu2}}$。将该解代回原式可验证：当两级逻辑门的\red{分摊努力延时相等时，总延时达到最小}。
+
+\entry{单位本征时间常数 $\tau$}{
+    \concepttable{
+        \conrow{代数关系}{$R_{d} C_{g} = \dfrac{R_u}{S}\,(S C_{gu}) = R_u C_{gu} \triangleq \tau$.}
+        \conrow{定义}{$\tau$ 为单位驱动电阻与单位输入栅电容的乘积，即 $R_{\text{unit}}\! \times C_{\text{gate,unit}}$。}
+        \conrow{物理意义}{$\tau$ 表征在该工艺下，一级门驱动与自身同等尺寸门所对应的固有时间常数；它由电路结构与工艺参数决定，与单级尺寸 $S$ 无关。}
+    }
+}
+
+不同器件有不同的本征时间常数 $\tau$（这个和本征时间需要区分），因为默认是使用单位电阻来驱动，所以不同器件的区别就在于\red{输入栅电容的不同}。
+
+\hlblue{\textbf{逻辑努力（Logical Effort）}}
+
+\entry{目的}{为了消除 $R_u$ 与 $C_{gu}$ 等带有具体工艺数值的参数，引入归一化参数——逻辑努力 $g$。}
+
+\entry{定义（必考公式）}{\red{$g = \dfrac{\tau_{gate}}{\tau_{inv}}$}，即逻辑门的本征时间常数与对称反相器的本征时间常数之比。（其实就是器件输入电容与标准反相器输入电容的比值）}
+
+\entry{物理含义}{以对称反相器为标尺，衡量某个复杂逻辑门相比反相器在提供相同输出驱动能力时，\red{对前一级呈现的等效负载“笨重”程度}。$g$ 越大表示该门在相同驱动条件下对前级造成的负载越大。}
+
+我们继续将努力延时用归一化参数表示，便于跨门比较与优化。
+
+\entry{变量定义}{
+    \concepttable{
+        \conrow{$C_{ext}$}{外部负载电容。}
+        \conrow{$C_g$}{该逻辑门的输入栅电容。}
+        \conrow{$f$（电气努力）}{$f = \dfrac{C_{ext}}{C_g}$。\par 物理意义：也称为有效扇出，衡量门需驱动的外部负载相对于自身输入电容的倍数，$f$ 越大负载越重。}
+        \conrow{$\gamma$（自载系数）}{$\gamma = \dfrac{C_{int\_inv}}{C_{g\_inv}}$，常近似取 $\gamma=1$。}
+    }
+}
+
+\entry{结论}{利用单位时间常数 $\tau$ 与逻辑努力 $g$ 的定义，可将努力延时和本征延时挂钩：
+\[
+t_{effort} = t_{p0}\times g\frac{f}{\gamma}
+\]
+其中 $t_{p0}$ 为参考反相器的本征延时（常数），$g$ 为逻辑门的逻辑努力（由门的拓扑决定），$f$ 为电气努力（由连接决定）。}
+
+\hlblue{\textbf{归一化门延时（Normalized Gate Delay）}}
+
+\entry{概述}{逻辑努力理论中最重要的公式推导，\red{将“绝对时间”转化为“相对延时”}。}
+
+\entry{1. 绝对延时公式}{逻辑门的总传播延时 $t_{pgate}$ 等于本征延时加努力延时：
+    $t_{pgate} = p \cdot t_{p0} + g \dfrac{f}{\gamma} t_{p0} = t_{p0}\big(p + g \dfrac{f}{\gamma}\big)$。
+    这里利用了 $p$ 的定义：某逻辑门的本征延时是反相器本征延时 $t_{p0}$ 的 $p$ 倍。}
+
+\entry{2. 归一化延时 $d$}{为消除工艺参数 $t_{p0}$ 的影响，定义无量纲延时：
+    $d = \dfrac{t_{pgate}}{t_{p0}}$.}
+
+\entry{3. 最终公式}{由上式得到归一化延时的简洁形式}
+
+\vspace{-5pt}
+$$d = p + \dfrac{g f}{\gamma}$$
+\vspace{-5pt}
+
+\concepttable{
+    \conrow{$p$}{归一化本征延时，纯由门的拓扑/内部寄生决定}
+    \conrow{$g$}{逻辑努力，衡量该门相对于对称反相器在相同驱动能力下对前级造成的输入负担}
+    \conrow{$f$}{电气努力，等于负载与该门输入电容之比：$f = C_{out}/C_{in}$。}
+}
+
+
+\subsubsection{\red{复杂逻辑门器件尺寸设计}}
+
+\hlblue{\textbf{并联 MOS 等效电阻}}
+
+\entry{概述}{并联 NMOS/PMOS 的等效导通电阻取决于\red{同时导通的晶体管数目}，影响门的驱动能力与延时。}
+
+\imgleft[0.3]{images/image-2026-01-08-12-09-14.png}{
+    \entry{以 NAND 为例}{并联结构的有效电阻随导通管数变化}
+    \concepttable{
+        \conrow{情况 A（单管导通）}{$A=1, B=0$ 或 $A=0, B=1$：仅一个 PMOS 导通，等效电阻 $R_{eq}=R_p$. \red{为最坏情况}，电阻最大，延时最长。}
+        \conrow{情况 B（双管导通）}{$A=0, B=0$：两个 PMOS 同时导通，等效电阻 $R_{eq}=R_p \parallel R_p = R_p/2$. \red{是最好情况}，电阻最小，延时最短。}
+    }
+    在传播延时或器件尺寸设计时通常以\red{最坏情况}为准（即仅有一个管子导通）。目标是确保即使在最坏情况下，该单管的驱动能力仍能满足参考反相器的要求。\red{$t_{pLH}=0.69\,R_p\,C_L$}
+}
+
+\hlblue{\textbf{串联 MOS 等效电阻}}
+
+\imgleft[0.3]{images/image-2026-01-08-12-12-07.png}{
+
+    \entry{堆叠效应}{
+        当两个管子的等效电阻均为 $R_n$ 串联时，总等效电阻为 $R_{eq}=R_n+R_n=2R_n$。
+    }
+
+    \entry{\red{尺寸补偿策略}}{
+        \concepttable{
+            \conrow{目标}{希望串联结构的总电阻满足 $R_{total}=R_{ref}$，与单个参考管相同，从而保证驱动能力不变。}
+            \conrow{计算}{对 $N$ 个串联管，总电阻需为 $R_{ref}$，故每个管的电阻应为 $R_{ref}/N$。}
+            \conrow{手段}{由于电阻与宽度 $W$ 成反比（$R\propto 1/W$），要使电阻变为原来的 $1/N$，则应将每个管的宽度增大 $N$ 倍。}
+            \conrow{结论}{因此：对于 $N$ 个串联的 MOS 管，为使等效电阻等同于单个参考管，每个管的宽度需约增大 $N$ 倍。例：两个串联时，NMOS 宽度应加倍。}
+        }
+    }
+
+}
+
+\hlblue{\textbf{复杂门的电容估算}}
+
+\imgleft[0.2]{images/image-2026-01-08-12-26-21.png}{
+
+\entry{输出端负载电容 $C_L$}{
+    \concepttable{
+        \conrow{计算公式}{$C_{L}=C_{db2}+C_{db3}+C_{db4}+2C_{gd2}+2C_{gd3}+2C_{gd4}+C_{ext}$}
+    }
+}
+
+\entry{内部节点电容 $C_{int}$}{
+    \concepttable{
+        \conrow{定义}{指串联晶体管之间中间节点（例如 M1 与 M2 之间节点）对地/对相邻节点的电容总和，影响堆叠结构的等效负载和延时分布。}
+        \conrow{计算公式}{$C_{int} = C_{db1} + C_{s2} + 2C_{gd1} + 2C_{gs2}$}
+    }
+}
+
+\entry{结论}{当串联堆叠晶体管数目较少（例如 2 输入门）时，内部节点电容对总延时影响可近似忽略；但当\red{堆叠数增加（3 输入、4 输入 NAND 等）时，内部分布电容不再可忽略}，必须在延时与尺寸优化中显式考虑。}
+}
+
+\imgleft[0.25]{images/image-2026-01-08-12-36-13.png}{
+    \entry{多堆叠晶体管延时计算示例（Elmore 模型）}{
+        $t_{pHL} = 0.69[$
+
+        \hspace{1em} $R_1 C_1$ \\
+        \hspace{1em} $+ (R_1 + R_2) C_2$ \\
+        \hspace{1em} $+ (R_1 + R_2 + R_3) C_3$ \\
+        \hspace{1em} $+ (R_1 + R_2 + R_3 + R_4) C_L]$\\ 
+        $= 0.69R_{eqn}(C_1 + 2C_2 + 3C_3 + 4C_L)$
+    }
+    其中的多级内部节点电容 $C_1,C_2,C_3$ 会显著增加延时。
+}
+
+\subsection{关键路径}
+
+每一条时序路径是由时序弧组成：逻辑门时序弧与互联线时序弧。一个组合逻辑块中的关键路径是指\red{从输入到输出延时最长}的路径。
+
+\imgleft[0.4]{images/image-2026-01-08-15-51-51.png}{
+
+    \entry{关键路径的计算}{本页说明如何在电路中判定并计算关键路径（取最坏情形）：}
+
+    \concepttable{
+        \conrow{影响因素}{
+            \begin{itemize}[leftmargin=*]
+                \item 信号翻转方向：上升与下降延时通常不等，故需分别计算。
+                \item 前级翻转斜率：输入跳变越慢，本级门延时越大（输入波形依赖）。
+                \item 输入图形：门的导通拓扑（如单管导通或并联/串联组合）影响延时。
+                \item 状态依赖：\red{只有在某些输入组合下，路径才被“激活”传递信号，需针对敏化情形计算}。
+            \end{itemize}
+        }
+    }
+
+}
+
+\subsection{逻辑路径的延时模型}
+
+之前的延时都是计算单极逻辑门的传播延时，现在我们需要考虑整个系统：
+
+在 $N$ 级门串联且假设 $\gamma=1$ 的情况下，\red{$D = \sum_{i=1}^{N} d_i = \sum_{i=1}^{N} (p_i + h_i) = \sum_{i=1}^{N} p_i + \sum_{i=1}^{N} h_i$}，其中 $p_i$ 为第 $i$ 级的归一化本征延时，$h_i=g_i f_i$ 为第 $i$ 级的级努力。
+
+\entry{路径参数}{
+    \concepttable{
+        \conrow{路径逻辑努力 $G$}{$G = \prod_{i=1}^{N} g_i = g_1\cdot g_2 \cdots g_N$。\par 含义：路径上所有门的逻辑努力 $g$ 的乘积}
+        \conrow{路径电气努力 $F$}{$F = \dfrac{C_L}{C_{g1}}$。\par 含义：最后一级负载电容 $C_L$ 与第一级输入栅电容 $C_{g1}$ 之比}
+        \conrow{路径努力 $H$}{$H = \prod_{i=1}^{N} h_i = \prod_{i=1}^{N} (g_i f_i) = \big(\prod g_i\big)\big(\prod f_i\big) = G F$。\par 含义：$H=GF$，为衡量路径设计难度的总体指标。注：在无分支情形下隐含变换 $\prod f_i = \dfrac{C_2}{C_1}\cdot\dfrac{C_3}{C_2}\cdots\dfrac{C_L}{C_N} = \dfrac{C_L}{C_1} = F$。}
+    }
+}
+
+\subsection{尺寸优化问题}
+
+\entry{优化目标}{调节每一级的尺寸系数 $s_i$（或等价的电气努力 $f_i$），使总延时最小。总延时写为 $D = \sum p_i + \sum h_i$。由于 $\sum p_i$ 与尺寸近似无关（为常数），问题等价于：在固定的 $H=\prod h_i$ 下，最小化 $\sum h_i$.}
+
+\entry{数学结论：\red{等努力原则}}{利用多元函数极值或算术-几何平均不等式可得：当且仅当每一级的级努力相等时，总和取得最小值，即
+$\hat{h}=h_1=h_2=\dots=h_N$。
+由 $H=\prod h_i=(\hat{h})^N$，得到\red{最佳级努力为 $\hat{h}=\sqrt[N]{H}=H^{1/N}$}.}
+
+\entry{最小延时公式}{将最佳级努力代入总延时公式，可得\red{最小路径延时：
+$\hat{D}=\sum_{j=1}^{N} p_j + N\cdot\frac{\sqrt[N]{H}}{\gamma}$}。
+其中第一项为路径上所有门的本征延时之和，第二项为 $N$ 倍的最佳级努力。}
+
+\subsubsection{反推器件尺寸}
+
+已知最佳级努力 $\hat{h}$，对第 $i$ 级有 $\hat{h}=g_i f_i$，故最佳电气努力为
+$f_i=\dfrac{\hat{h}}{g_i}=\dfrac{C_{out,i}}{C_{in,i}}$。由此可逐级反推第 $i$ 级所需的输入电容 $C_{in,i}$（进而确定晶体管宽度/尺寸）。
+
+\subsection{分支努力}
+
+其实在计算题中出现频率不高，但理论上是需要掌握的。
+
+\imgleft[0.3]{images/image-2026-01-08-16-19-24.png}{
+
+    \entry{场景描述}{当信号在路径中出现分叉时，区分主路径（On-path，关注的延时路径）与旁路（Off-path，被分支驱动的其他门）。定义电容：$C_{on\text{-}path}$ 为主路径上有关联的下一级输入电容，$C_{off\text{-}path}$ 为旁路负载电容，$C_{gin}$ 为当前门的输入电容。}
+
+}
+
+\entry{分支努力 $b$）}{分支努力定义为总负载与主路径有用负载的比值：$b = \frac{C_{on\text{-}path} + C_{off\text{-}path}}{C_{on\text{-}path}} = \frac{C_{total}}{C_{useful}}
+$
+物理意义：$b$ 衡量因分流导致的负载放大倍数，范围 $b\ge1$，无分支时 $b=1$.}
+
+\entry{电气努力与有效扇出}{真实电气扇出 $f$ 写作：$f = \dfrac{C_{on\text{-}path} + C_{off\text{-}path}}{C_{gin}}$（包含旁路电容）。若只关注主路径的“有效”放大倍数，则为 $f/b$，即 $\dfrac{f}{b}=\dfrac{C_{on\text{-}path}}{C_{gin}}$.}
+
+\entry{路径级修正}{定义路径上每级的分支努力 $b_i$，路径分支努力 $B$ 为其连乘积：}
+\concepttable{
+    \conrow{路径分支努力 $B$}{ $B=\prod_{i=1}^{N} b_i$.}
+    \conrow{路径电气努力 $F$}{ $F=\dfrac{C_L}{C_{g1}}$，仅由首级输入电容和末级负载决定，与中间分支数无关。}
+    \conrow{路径总体努力 $H$}{\red{在存在分支时，路径总努力为 $H=G F B$}，其中 $G=\prod g_i$,$H=GFB$.}
+}
+
+\subsection{习题解析}
+
+\subsubsection{课堂练习}
+
+\entry{堂练 2-1}{一个CMOS反相器的假设该反相器输出端翻转时的充电电阻和放电电阻是恒定的，充电电阻为$108.5k\Omega$，放电电阻为$13k\Omega$，其驱动的负载电容为$6fF$，求它的传播延时等于$\underline{\hspace{1cm}}ps$（精确到小数点后1位）}
+
+\entry{启示意义}{这题就是理解基本的 RC 充电模型就行了，分别算充放电延时$t_p$，然后取平均即可。}
+
+\entry{解}{
+
+已知 $R_{charge}=108.5\text{ k}\Omega,\;R_{discharge}=13\text{ k}\Omega,\;C_L=6\text{ fF}$. 采用 $t_p\approx0.69RC$ 计算：
+
+$t_{pLH}=0.69R_{charge}C_L=0.69\times108.5\times6\ \text{ps}=449.19\ \text{ps}$
+
+$t_{pHL}=0.69R_{discharge}C_L=0.69\times13\times6\ \text{ps}=53.82\ \text{ps}$
+
+平均传播延时 $t_p=(t_{pLH}+t_{pHL})/2=(449.19+53.82)/2=251.505\ \text{ps}\approx251.5\ \text{ps}$.
+
+}
+
+\entry{堂练 2-2}{请画出一个实现$Y=\overline{AB+C}$运算的静态互补CMOS逻辑门的晶体管级电路（复合门），要求最大的上升传播延时和下降传播延时相等，假设对称反相器的PMOS和NMOS尺寸之比为2:1，请标出各个晶体管的尺寸系数。}
+
+\entry{启示意义}{这图太长了，我就不放在这里了，尺寸系数曾计算正确\green{（2026-01-08-14-50）}}
+
+\entry{堂练 2-3}{求解逻辑努力与归一化本征延时：}
+
+\img[0.6\linewidth]{images/image-2026-01-08-15-44-48.png}
+
+\entry{启示意义}{逻辑努力的计算就是计算输入电容，然后除以标准反相器的输入电容（3个单位电容），同一逻辑门的不同输入有不同的逻辑努力值，需要分别求解，归一化本征延时的计算就是计算输出端口连接的并联晶体管的尺寸系数之和，然后除以3。}
+
+\entry{堂练 2-4}{考虑图中所示的从A到B的路径，该路径包括3个2输入NAND门。第一个栅极的输入电容是C，负载电容也是C。这个路径的最小延迟是什么？晶体管的大小应该如何设计才能实现最小延迟？}
+
+\img[0.4\linewidth]{images/image-2026-01-08-16-38-18.png}
+
+\entry{最后正确时间}{\green{2026-01-08-16-37}}
+
+\entry{解}{
+
+\begin{enumerate}[label=\textbf{步骤\arabic*:},leftmargin=*]
+\item 提取参数：$g_{\text{NAND2}}=4/3$，$G=(4/3)^3\approx2.37$，$B=1$，$F=C_L/C_{in}=C/C=1$，$H=GFB\approx2.37$。
+\item 最优级努力：$N=3,\;h=H^{1/3}=(4/3)\approx1.33$。
+\item 最小归一化延时：单级本征 $p_{\text{NAND2}}=2$，$P_{\text{total}}=3p=6$，努力延时 $N\cdot h=3\cdot\frac{4}{3}=4$，故 $D=4+6=10\;(\tau\ \text{或}\ t_{p0})$。
+\item 尺寸反推：$C_{in,i}=\dfrac{g_i\,C_{out,i}}{h}$。末级 $C_{in3}=\dfrac{(4/3)\,C}{4/3}=C$，依次 $C_{in2}=C_{in1}=C$。结论：各级输入电容均为 $C$（尺寸因子均为 1）。
+\end{enumerate}
+
+}
+
+\entry{堂练 2-5}{考虑图中所示的从A到B的路径，该路径包括3个2输入NAND门。第一个栅极的输入电容是C，负载电容是8C。这个路径的最小延迟是什么？晶体管的大小应该如何设计才能实现最小延迟？}
+
+\img[0.4\linewidth]{images/image-2026-01-08-16-35-27.png}
+
+\entry{最后正确时间}{\green{2026-01-08-16-44}}
+
+\entry{解}{
+
+\begin{enumerate}[label=\textbf{步骤\arabic*:},leftmargin=*]
+\item 提取参数：$g_{\text{NAND2}}=4/3$，$G=(4/3)^3\approx2.37$，$B=1$，$F=C_L/C_{in}=8C/C=8$，$H=GFB\approx2.37\times8\approx18.96$。
+\item 最优级努力：$N=3,\;h=H^{1/3}\approx18.96^{1/3}\approx2.67$。
+\item 最小归一化延时：单级本征 $p_{\text{NAND2}}=2$，$P_{\text{total}}=3p=6$，努力延时 $N\cdot h=3\cdot2.67=8.01$，故 $D=8.01+6=14.01\;(\tau\ \text{或}\ t_{p0})$。
+\item 尺寸反推：$C_{in,i}=\dfrac{g_i\,C_{out,i}}{h}$。末级 $C_{in3}=\dfrac{(4/3)\,8C}{2.67}\approx4C$，依次 $C_{in2}=\dfrac{(4/3)\,4C}{2.67}\approx2C$，$C_{in1}=\dfrac{(4/3)\,2C}{2.67}\approx1C$。结论：各级输入电容尺寸比为 $1:2:4$。
+\end{enumerate}
+
+}
+
+\entry{堂练 2-6}{考虑图中所示的从A到B的路径，电气努力为4.5。这个路径的最小延迟是什么？晶体管的大小应该如何设计才能实现最小延迟？}
+
+\img[0.4\linewidth]{images/image-2026-01-08-16-50-36.png}
+
+\entry{启示意义}{这道题涉及分支努力，是不可多得的经典例题。}
+
+\entry{最后正确时间}{\green{2026-01-08-17-00}}
+
+\entry{解}{
+\begin{enumerate}[label=\textbf{步骤\arabic*:},leftmargin=*]
+\item \textbf{提取参数}：
+    \begin{itemize}
+        \item 逻辑努力 ($G$)：路径上有 3 个 NAND2 门。$g_{\mathrm{NAND2}}=4/3$，$G=(4/3)^3\approx2.37$。
+        \item 电气努力 ($F$)：$F=C_L/C_{in}=4.5C/C=4.5$。
+        \item 分支努力 ($B$)：逐级计算：
+            \begin{itemize}
+                \item 第1级：驱动 2 个相同门，$b_1=(y+y)/y=2$。
+                \item 第2级：驱动 3 个相同门，$b_2=(z+z+z)/z=3$。
+                \item 第3级：无旁路，$b_3=1$。
+            \end{itemize}
+            总分支努力 $B=b_1 b_2 b_3=2\times3\times1=6$。
+        \item 路径总努力 ($H$)：$H=G\cdot F\cdot B=(64/27)\times4.5\times6=64$。
+    \end{itemize}
+\item \textbf{最优级努力}：
+    \begin{itemize}
+        \item 级数 $N=3$。
+        \item 最优单级努力 $h=H^{1/N}=64^{1/3}=4$。
+    \end{itemize}
+\item \textbf{最小归一化延时}：
+    \begin{itemize}
+        \item 努力延时部分：$N\cdot h=3\times4=12$。
+        \item 本征延时部分：$p_{\mathrm{NAND2}}=2$，总本征延时 $3\times2=6$。
+        \item 总延时：$D=12+6=18.0\ (\tau\ \text{或}\ t_{p0})$。
+    \end{itemize}
+\item \textbf{尺寸反推（计算各级输入电容 $C_{in}$）}：公式 $C_{in}=\dfrac{g\cdot C_{\mathrm{load}}}{h}$。
+    \begin{itemize}
+        \item \textbf{第3级 ($z$)}：
+            \begin{itemize}
+                \item 负载为 $4.5C$（无旁路）。
+                \item $C_{in3}=\dfrac{(4/3)\cdot4.5C}{4}=1.5C$。
+            \end{itemize}
+        \item \textbf{第2级 ($y$)}：
+            \begin{itemize}
+                \item \red{驱动 3 个 $z$，$C_{\mathrm{load2}}=3\times C_{in3}=3\times1.5C=4.5C$。}
+                \item $C_{in2}=\dfrac{(4/3)\cdot4.5C}{4}=1.5C$。
+            \end{itemize}
+        \item \textbf{第1级}：
+            \begin{itemize}
+                \item \red{驱动 2 个 $y$，$C_{\mathrm{load1}}=2\times C_{in2}=2\times1.5C=3C$。}
+                \item $C_{in1}=\dfrac{(4/3)\cdot3C}{4}=C$，与题目给定一致。
+            \end{itemize}
+    \end{itemize}
+\end{enumerate}
+\textbf{结论}：第一级输入电容 $C$，第二级输入电容 $1.5C$，第三级输入电容 $1.5C$。
+}
+
+\subsubsection{作业题}
+
+\entry{作业 2-1}{请画出以下三个复合门的晶体管级电路图，注意标注尺寸使得每个门的等效驱动电阻与参考反相器相同；并且分别计算每个门的归一化本征延时p、每个端口对应的逻辑努力g。}
+
+\img[0.5\linewidth]{images/image-2026-01-08-17-04-41.png}
+
+\entry{最后正确时间}{\green{2026-01-08-17-20}}
+
+\entry{解}{这题是基础中的基础，留给自己练习，务必要全对，其中的第三个电路有意思，按照常理我们是按照 4-4 的方式串联，但是这个电路是 3-6 串联的，理由是让最长的串联通路的等效电阻等于参考反相器的电阻，而且要保证这三个串联电阻相等，所以是 6-6-6 串联，而非 8-8-4 串联，从而保证最坏情况的延时最小。}
+
+\entry{作业 2-2}{请画出一个实现 $X=((\overline{A}+\overline{B})(\overline{C}+\overline{D}+\overline{E})+\overline{F})\overline{G}$ 运算的静态互补 CMOS 逻辑门的晶体管级电路（复合门），调整器件大小，使得输出电阻与 NMOS W/L = 2 和 PMOS W/L = 6 的反相器的输出电阻相同。回答哪种输入模式会产生最差和最好的等效上拉或下拉电阻？}
+
+\entry{最后正确时间}{2026-01-08-17-31}
+
+\entry{解}{图就不画了，主要看看最好/最差上下拉电阻通路：\par
+最好情况都是让所有晶体管导通，这是普适的策略。\par
+最差情况就是仅一条通路导通，而且要是串联最长的通路，即有最多的内部节点电容的情况。}
+
+
+
+
+\section{第三章\ 数字集成电路的功耗}
+
+\subsection{动态功耗}
+
+CMOS功耗主要分为两大类：
+
+\concepttable{
+    \conrow{动态功耗}{电路逻辑状态\red{翻转过程中产生的功耗}，分为充放电功耗和短路功耗。}
+    \conrow{静态功耗}{\red{电路处于稳态时}，由漏电流引起的功耗。}
+}
+
+动态功耗又可细分为：
+
+\concepttable{
+    \conrow{充放电功耗}{对负载电容进行充电和放电所消耗的能量。}
+    \conrow{短路功耗}{输入翻转瞬间 PMOS 和 NMOS 同时导通，形成 $V_{dd}$ 到 GND 的瞬时通路。}
+}
+
+\subsubsection{充放电功耗}
+
+CMOS 逻辑门的输出端可以等效为一个一阶 RC 电路。$V_{in}$ 代表逻辑切换，向负载电容 $C_L$ 充电。
+
+\imgleft[0.4]{images/image-2025-12-29-16-42-55.png}{
+
+    \concepttable{
+        \conrow{总能耗 $E_{0 \to 1}$}{输出从 0 翻转到 1 时，电源 $V_{dd}$ 提供的总能量为 $C_L V_{dd}^2$。}
+        \conrow{存储能量 $E_{cap}$}{电容 $C_L$ 最终存储的电能为 $\frac{1}{2} C_L V_{dd}^2$。}
+        \conrow{能量损耗 $E_{res}$}{充电路径电阻上以热能形式耗散 $\frac{1}{2} C_L V_{dd}^2$。}
+    }
+
+    \red{结论}：在一个完整的翻转周期 ($0 \to 1 \to 0$) 中，\red{电源消耗}的总能量为 $C_L V_{dd}^2$。
+}
+
+\concepttable{
+        \conrow{充电 ($0 \to 1$)}{PMOS 导通，电源提供能量。一半存于电容，一半消耗在 PMOS 网络电阻上。}
+        \conrow{放电 ($1 \to 0$)}{NMOS 导通，电源不供能。电容存储能量全部在 NMOS 网络电阻上消耗。}
+}
+
+\subsubsection{短路功耗}
+
+\entry{定义}{输入翻转瞬间，当 $V_{Tn} < V_{in} < V_{DD} - |V_{Tp}|$ 时，PMOS 和 NMOS 同时导通，形成 $V_{dd}$ 到 GND 的瞬时通路。}
+
+\imgleft[0.5]{images/image-2025-12-29-19-16-01.png}{
+    \entry{负载电容 $C_L$ 的影响}{
+    \concepttable{
+        \conrow{负载较大}{输出 $V_{out}$ 变化慢，管子漏源压差小，短路电流 \red{$I_{sc} \approx 0$}。}
+        \conrow{\red{负载较小}}{输出 $V_{out}$ 变化快，管子进入饱和区，短路电流达到最大值 \red{$I_{MAX}$}。}
+        }
+    }
+
+    \entry{定量计算}{
+        \concepttable{
+            \conrow{积分公式}{$V_{DD} \cdot \int_{t(V_T)}^{t(V_{DD}-V_T)} I(t)dt \cdot f$}
+            \conrow{近似公式}{$P_{sc} = V_{DD} I_{peak} t_{sc} f$，其中 $I_{peak}$ 为峰值，$t_{sc}$ 为等效持续时间。}
+        }
+    }
+}
+
+\entry{核心影响因素}{
+        \concepttable{
+            \conrow{翻转速率}{与输入/输出 \red{翻转速率} 有关。输入斜率越慢，导通时间 $t_{sc}$ 越长。设计中通常控制短路功耗在总动态功耗的 10\%-15\%。}
+            \conrow{器件尺寸}{$I_{peak}$ 与 \red{$W/L$} 成正比。\red{增加逻辑门驱动强度（增大尺寸）会直接导致短路功耗上升。}}
+}}
+
+\subsection{逻辑门的能耗}
+
+能耗与功耗：
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \concepttable{
+        \conrow{能耗}{从电源取得的总能量}
+        \conrow{全摆幅}{$E_{0 \to 1} = C_L V_{dd}^2$}
+        \conrow{周期}{一个翻转周期 $0\to1\to0$}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \concepttable{
+        \conrow{功耗}{单位时间内的能量消耗}
+        \conrow{公式}{$P = \frac{E}{\Delta T} = C_L V_{dd}^2 f_{0 \to 1}$}
+        \conrow{频率}{$f_{0 \to 1}$ 为开关频率}
+    }
+\end{minipage}
+
+
+\subsection{开关活动性}
+
+动态功耗的核心统计学指标：
+
+\concepttable{
+    \conrow{定义}{开关活动性 $\alpha_{0 \to 1}$（翻转概率）指逻辑门在一个时钟周期内发生 $0 \to 1$ \red{翻转的概率}。}
+    \conrow{计算公式}{$\alpha_{0 \to 1} = p_0 \cdot p_1$，其中 $p_0, p_1$ 分别为输出为 0 和 1 的概率。}
+    \conrow{静态门分布}{对于 $N$ 输入逻辑门，$\alpha_{0 \to 1} = \frac{N_0}{2^N} \cdot \frac{N_1}{2^N}$，其中 $N_0, N_1$ 为输出 0 和 1 的状态数。}
+}
+
+\entry{等效电容}{$\boxed{C_{EFF} = \alpha_{0 \to 1} C_L}$，则动态功耗 $\boxed{P = C_{EFF} V_{dd}^2 f_{0 \to 1}}$。}
+
+\entry{实例计算}{计算 $\alpha_{0 \to 1}$（假设输入信号为 1 的概率均为 $1/2$）：}
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \entry{示例 1-2输入 NOR}{\concepttable{
+        \conrow{真值表}{仅 $A=B=0$ 时输出为 1}
+        \conrow{概率}{$p_1 = 1/4, p_0 = 3/4$}
+        \conrow{翻转率}{$\alpha_{0 \to 1} = 3/4 \times 1/4 = 3/16$}
+    }}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{示例 2-2输入 XOR}{\concepttable{
+        \conrow{真值表}{$A \neq B$ 时输出为 1}
+        \conrow{概率}{$p_1 = 1/2, p_0 = 1/2$}
+        \conrow{翻转率}{$\alpha_{0 \to 1} = 1/2 \times 1/2 = 1/4$}
+    }}
+\end{minipage}
+
+\entry{常用逻辑门翻转概率}{
+    \concepttable{
+        \conrow{AND 门}{输出为 1 的概率 $p_1 = p_A p_B$，则 \red{$\alpha_{0 \to 1} = (1 - p_A p_B) p_A p_B$}}
+        \conrow{OR 门}{输出为 1 的概率 $p_1 = 1 - (1-p_A)(1-p_B)$，则 \red{$\alpha_{0 \to 1} = (1-p_1)p_1$}}
+        \conrow{XOR 门}{输出为 1 的概率 $p_1 = p_A(1-p_B) + p_B(1-p_A)$，则 \red{$\alpha_{0 \to 1} = (1-p_1)p_1$}}
+    }
+}
+
+\subsection{信号间的相关性}
+
+当电路中存在\red{重聚扇出}结构时，逻辑门输入端信号不再相互独立。
+
+\imgleft[0.4]{images/image-2025-12-29-17-05-17.png}{
+    \concepttable{
+        \conrow{无重聚扇出}{信号 $B, C$ 独立，$P(B=1, C=1) = P(B=1)P(C=1)$，概率可直接相乘。}
+        \conrow{有重聚扇出}{信号 $B, C$ 源自同一信号 $A$，受逻辑约束（如 $P(B=1, C=1) = 0$）。}
+    }
+    \entry{结论}{简单概率乘法不再适用，需利用\red{条件概率}建模或使用 CAD 工具进行仿真分析。}
+}
+
+
+\subsection{影响静态功耗的因素}
+
+\entry{定义}{电路在稳态（无信号翻转）下，由\red{静态漏电流} 引起的功耗。}
+
+\imgleft[0.15]{images/image-2025-12-29-19-29-40.png}{
+    \concepttable{
+        \conrow{亚阈值漏电 $I_{SUB}$}{\red{占比最大}。即使 $V_{GS} < V_T$，源漏间仍存在由载流子扩散运动形成的微弱电流。}
+        \conrow{栅极漏电 $I_{GS}, I_{GD}$}{栅氧化层极薄，载流子通过\red{量子隧穿效应}穿过绝缘层形成的电流。}
+        \conrow{结泄漏电流 $I_{LEAK}$}{源/漏扩散区与衬底间 PN 结反偏电流，包含\red{带间隧穿 (BTBT) }成分。}
+    }
+    \entry{核心影响因素}{\red{阈值电压 $V_T$}（指数级影响，后面的效应也都是影响这个因素）、\red{温度}、\red{电源电压 $V_{DD}$}。}
+}
+
+\subsubsection{体效应}
+
+\entry{定义}{又称\red{衬偏调制效应}。当源极电位高于衬底电位（$V_{SB}$ 上升）时，耗尽层电荷增加，导致开启晶体管所需的阈值电压 $V_T$ 上升。}
+
+\concepttable{
+    \conrow{计算公式}{$V_T = V_{T0} + \gamma (\sqrt{V_{SB} + |2\phi_F|} - \sqrt{|2\phi_F|})$}
+    \conrow{参数说明}{$\gamma$ 为衬偏效应系数，与氧化层电容 $C_{ox}$ 和衬底掺杂浓度 $N_A$ 有关。}
+    \conrow{结论}{在堆叠结构中，由于 $V_x > 0$ 导致 $V_{SB} > 0$，使 \red{$V_T$ 增大}，从而有效减小漏电流。}
+}
+
+\subsubsection{DIBL 效应}
+
+\entry{定义}{\red{漏端感应势垒降低效应}。当 $V_{DS}$ 较高时，漏端电场渗透至源端降低势垒高度，导致电子易注入沟道，从而降低阈值电压。}
+
+\concepttable{
+    \conrow{公式}{$V_{T0}' = V_{T0} - \eta V_{DS}$。即 $V_{DS}$ 越大，有效 $V_T$ 越低，漏电流越大。}
+    \conrow{堆叠关联}{堆叠结构中上方管 $V_{DS}$ 减小（$V_{DD} \to V_{DD}-V_x$），使 $V_T$ 保持较高，抑制漏电。}
+    \conrow{严重后果}{若 $V_{DS}$ 过大可能发生\red{源漏穿通 (Punch-through)}，电流不再受栅压控制。}
+}
+
+\subsubsection{高阈值器件位置}
+
+\red{阈值电压高的晶体管放在外层（远离输出端）}，其它堆叠管的源端电位更高。
+
+\subsubsection{堆叠效应（降低静态功耗的手段）}
+
+\entry{定义}{当两个或多个晶体管串联（堆叠）且同时截止时，其总漏电流显著小于单管截止时的漏电流。}
+
+\entry{物理模型}{
+    在堆叠结构中，中间节点 $x$ 会由微小漏电流充电达到稳态电压 $V_x > 0$。
+    \red{亚阈值电流公式：}
+    \vspace{-0.3cm}
+    $$I = I_{ds0} e^{\frac{V_{gs}-V_{th}}{nkT/q}}(1 - e^{\frac{-V_{ds}}{kT/q}})$$
+}
+
+\vspace{-0.3cm}
+
+\imgleft[0.2]{images/image-2025-12-29-19-35-10.png}{
+
+    \entry{核心物理机制}{
+        \concepttable{
+            \conrow{负 $V_{GS}$}{对于上管 M1，$V_{GS1} = 0 - V_x = -V_x$。由于亚阈值电流随 $V_{GS}$ 呈指数下降，负的栅源电压极大地抑制了漏电流。}
+            \conrow{体效应}{源极电位 $V_x$ 升高导致 $V_{SB} > 0$。根据体效应，M1 的阈值电压 $V_T$ 升高，进一步减小漏电流。}
+            \conrow{DIBL 减弱}{漏源电压 $V_{DS1} = V_{DD} - V_x$ 减小，削弱了漏致势垒降低效应（DIBL），使 $V_T$ 相对保持在较高水平。}
+        }
+    }
+
+}
+
+\subsection{习题解析}
+
+\subsubsection{课堂练习}
+
+\entry{例题 1}{当逻辑门电容以外部负载电容为主时，尺寸放大 2 倍以减小延时，其平均功耗变为 \red{2} 倍，一次翻转能耗变为 \red{1} 倍。}
+
+\concepttable{
+    \conrow{能耗分析}{一次翻转能耗 $E = \frac{1}{2} C_{total} V_{DD}^2$。因 $C_{load}$ 占据主导且保持不变，$C_{total} \approx C_{load}$，故\red{单次翻转做功总量不变}。}
+    \conrow{功耗分析}{平均功耗 $P \propto I$。尺寸放大 2 倍使驱动电流 $I$ 变为 2 倍，单位时间内从电源汲取的能量（功率）随之变为 \red{2} 倍。}
+    \conrow{延时分析}{传播延时 $t_p \propto \frac{C_{total} V_{DD}}{I}$。由于 $C_{total}$ 近似不变而 $I$ 翻倍，延时 $t_p$ 缩小为原来的 1/2。}
+    \conrow{PDP 验证}{$PDP = P_{avg} \times t_p = (2P) \times (0.5t_p) = E$。功耗延时积（即能耗）在尺寸放大后保持一致。}
+}
+\entry{例题 2}{已知 $C_{ext}/C_{g1}=4$，调节 $V_{DD}$ 使总延时 $D \le D(f=1, V_{DD\_nom})$，求 $f=1.2$ 与 $f=1.4$ 谁的最优能耗更低？}
+
+\entry{延时计算分析}{
+    \concepttable{
+        \conrow{延时模型}{单级延时 $d = p + g \cdot h$，反相器 $p=1, g=1$}
+        \conrow{第一级}{负载 $f C_{g1}$，输入 $C_{g1} \implies h_1 = f, d_1 = 1 + f$}
+        \conrow{第二级}{负载 $4 C_{g1}$，输入 $f C_{g1} \implies h_2 = 4/f, d_2 = 1 + 4/f$}
+    }
+}
+
+\concepttable{
+        \conrow{延时模型}{总延时 $D = d_1 + d_2 = (1+f) + (1+4/f) = 2+f+4/f$ (单位 $t_p$)}
+        \conrow{基准约束}{$f=1$ 时，$D_0 = 2+1+4 = 7t_p$。此为设计必须满足的延时上限}
+        \conrow{延时计算}{$D(1.2) = 2+1.2+3.33 = 6.53t_p$；$D(1.4) = 2+1.4+2.86 = 6.26t_p$}
+}
+
+\entry{电压缩放原理}{延时 $t_p \propto \frac{V_{DD}}{(V_{DD}-V_t)^\alpha}$，降低 $V_{DD}$ 会使电路变慢；能耗 $E \propto C V_{DD}^2$，降低 $V_{DD}$ 显著降低能耗。}
+
+\entry{优化策略}{若电路速度快于设计要求，可\red{通过降低 $V_{DD}$ 牺牲速度冗余来换取能耗下降}。}
+
+
+\entry{分析}{
+    由于 $D(1.4) = 6.26$ 且 $D(1.2) = 6.53$，两者均小于基准 $D_0 = 7$。
+    $f=1.4$ 方案的速度冗余更大，意味着其电源电压 $V_{DD}$ 具有更大的下降空间。
+}
+
+\entry{结论}{\red{$f=1.4$ 的最优能耗更低}。根据 $E \propto V_{DD}^2$，允许电压降幅越大，最终能耗越小。}
+
+\subsubsection{作业题}
+
+\entry{作业 3-1}{已知 $C_{ext}/C_{g1}=4$，调节 $V_{DD}$ 使总延时 $D \le D(f=1, V_{DD\_nom})$，求 $f=1.2$、$f=1.4$、$f=2.2$、$f=2.4$ 谁的最优能耗更低？}
+
+\green{这个题有一个固定的解题思路，但是为了更深入的理解，我还需要好好复习一下前面速度部分的内容（2026-01-02-20-30）}
+
+\section{第四章\ 数字集成电路的鲁棒性}
+
+\subsection{信号完整性}
+
+\entry{定义}{信号在传播过程中保持原始形状的能力。本质是研究\red{数字信号的模拟特性}（即电压或电流随时间变化的波形物理退化）。}
+
+\concepttable{
+    \conrow{幅度}{电压\red{电平是否足够高}（逻辑 $1$）或足够低（逻辑 $0$），防止因衰减导致识别错误。}
+    \conrow{时序}{信号边缘跳变是否在预定窗口内到达，防止延迟或抖动导致时序违例。}
+}
+
+\entry{判定标准}{信号必须以\red{要求的时序}和\red{要求的电压幅度}到达接收端。}
+
+\entry{工程目标}{研究电路在存在噪声的情况下如何保持正确的功能。}
+
+\subsubsection{噪声模型}
+
+\entry{数学模型}{$\overline{V_{no}^2} = f(\overline{V_{ni}^2}) + g(\overline{V_{ngate}^2})$。}
+
+\imgleft[0.3]{images/image-2025-12-29-20-58-11.png}{
+    \concepttable{
+        \conrow{输入噪声}{前一级输出噪声成为当前级输入。}
+        \conrow{电路噪声}{包含电源噪声和耦合噪声（如串扰等）。}
+        \conrow{输出噪声}{上述所有噪声在输出端的总和。}
+    }
+    \entry{信号再生}{为防止噪声在多级传输中累积淹没信号，数字电路必须具备将受扰动的信号恢复至标准电平的能力。}
+}
+
+\subsubsection{信号再生}
+
+ \entry{信号再生性}{当第一级输入偏离额定电平时，后面各级仍能恢复其正确值。}
+
+\imgleft[0.4]{images/image-2025-12-29-21-02-55.png}{
+\entry{反相器链}{
+    观察 $V_0 \to V_1 \to V_2 \dots$ 的瞬态响应：
+    \concepttable{
+        \conrow{输入 $V_0$}{波形质量差，边缘缓慢且电平有偏差。}
+        \conrow{中间 $V_1$}{波形反相，但仍存在畸变。}
+        \conrow{恢复 $V_2$}{波形变得陡峭，电平接近理想值。}
+    }
+}
+
+\entry{再生性 (Regenerative)}{
+    \concepttable{
+        \conrow{定义}{当第一级输入偏离额定电平时，后面各级仍能恢复其正确值。}
+        \conrow{本质}{具备\red{去噪}与\red{阈值判决}能力，将输出拉回标准 $V_{DD}$ 或 $GND$。}
+    }
+}
+}
+
+\subsection{噪声容限}
+
+\subsubsection{开关阈值与单级噪声容限}
+
+\entry{物理意义}{若噪声使输入进入高增益过渡区，输出将产生逻辑错误。$V_{IH}$ 需高于 $V_M$ 一定程度，$V_{IL}$ 需低于 $V_M$ 一定程度。}
+
+\imgleft[0.3]{images/image-2025-12-29-21-07-35.png}{
+    \entry{VTC 曲线与再生性}{
+        \concepttable{
+            \conrow{再生性}{过渡区陡峭（$|Gain| > 1$），输入偏差经 $f(v)$ 映射后收敛至稳态（Rail-to-Rail）。}
+            \conrow{不可再生}{过渡区平缓，输入偏差无法修正，甚至因多次迭代发散或停留在中间态。}
+        }
+    }
+    \entry{关键概念}{
+        \concepttable{
+            \conrow{开关阈值 $V_M$}{$V_{in} = V_{out}$ 的交点。逻辑判断的中间分界点，电路处于亚稳态。}
+            \conrow{斜率 $= -1$}{噪声容限的边界判定标准。界定逻辑稳态区（增益 $< 1$）与过渡区。}
+            \conrow{单级噪声容限}{输入最大偏差不能超过 $(V_{OH} - V_M)$ 和 $(V_M - V_{OL})$。}
+        }
+    }
+}
+
+\subsubsection{多级噪声容限}
+
+\entry{核心观点}{噪声容限不仅是单级电路的问题，而是为了保证在多级级联传输中噪声能够被\red{衰减}而非\red{放大}。若每一级都放大噪声，经过若干级后信号将被噪声淹没，数字再生性丧失。}
+
+\concepttable{
+    \conrow{多级传输衰减模型}{设每级的小信号电压增益为 $A$，经过 $k$ 级后噪声近似按几何级数传播：$v_{out}\approx A^k v_n$。因此要求 \red{$|A|<1$} 才能保证多级级联时\red{噪声逐级减小}。}
+    \conrow{泰勒展开}{对含噪输入 $V_{in}+v_n$ 的传输函数做一阶泰勒展开，得\par
+    $V_{out}' \approx f(V_{in}) + v_n\cdot\frac{\partial V_{out}}{\partial V_{in}}$。\par
+    其中第一项为理想无噪输出，第二项给出\red{噪声在输出端的线性响应}。}
+    \conrow{小信号电压增益}{小信号增益 $A_v=\dfrac{\partial V_{out}}{\partial V_{in}}$。物理结论：当 $\lvert A_v\rvert<1$ 时噪声被削弱；当 $\lvert A_v\rvert>1$ 时噪声会被放大，可能导致失稳。}
+    \conrow{物理逻辑衔接}{上述结论要求在 VTC 曲线上找到增益临界点 $\lvert \partial V_{out}/\partial V_{in}\rvert=1$，以此划分“稳定区”（噪声衰减）与“非稳定/再生区”（噪声可能放大）。}
+}
+
+只有当逻辑门工作在增益绝对值小于1的区域时，输入端的噪声 $v_n$ 传递到输出端后才会变小。
+
+\imgleft[0.4]{images/image-2026-01-08-11-02-20.png}{
+
+    \entry{斜率临界点}{在 VTC 曲线上找到两点，使局部斜率满足 $\dfrac{dV_{out}}{dV_{in}} = -1$。这两点将曲线分为两类区域：}
+    \concepttable{
+        \conrow{稳态区)}{曲线两端的平坦区；输入小扰动被衰减，电路具有再生性和噪声抑制能力。}
+        \conrow{过渡区}{曲线中间的陡峭区；小扰动会被放大，电路处于高增益、不稳定或不确定状态。}
+    }
+
+    \entry{映射规则与不确定区}{直观映射（输入→逻辑判定）：}
+    \concepttable{
+        \conrow{合法逻辑 0}{输入 $V_{in}\in[0,\,V_{IL}]$ 被视为逻辑“0”。}
+        \conrow{合法逻辑 1}{输入 $V_{in}\in[V_{IH},\,V_{DD}]$ 被视为逻辑“1”。}
+        \conrow{不确定区}{输入落在 $(V_{IL},\,V_{IH})$（灰色区域）时为不确定区：门不能保证输出正确，且噪声可能被放大。}
+    }
+}
+
+\entry{四个关键电压的定义}{利用上述两个斜率为 $-1$ 的点在输入/输出坐标上定义：}
+\concepttable{
+    \conrow{$V_{IL}$}{输入被认为仍为逻辑“0”的最大输入电压（对应\red{低侧斜率 $=-1$ 的点}）。}
+    \conrow{$V_{IH}$}{输入被认为为逻辑“1”的最小输入电压（对应\red{高侧斜率 $=-1$ 的点}）。}
+    \conrow{$V_{OL}$}{输出为逻辑“0”时的标称输出电压。}
+    \conrow{$V_{OH}$}{输出为逻辑“1”时的标称输出电压。}
+}
+
+\entry{\red{噪声裕度}}{衡量门对输入噪声容忍性的实用指标：}
+\concepttable{
+    \conrow{$NM_L$}{$NM_L = V_{IL} - V_{OL}$，表示低电平对噪声的容忍度。}
+    \conrow{$NM_H$}{$NM_H = V_{OH} - V_{IH}$，表示高电平对噪声的容忍度。}
+}
+
+\imgleft[0.4]{images/image-2026-01-08-11-09-23.png}{
+
+    \entry{多级噪声容限}{
+        \concepttable{
+            \conrow{级联模型}{前一级的输出（理想为 $V_{OH},V_{OL}$）驱动后一级的输入判决阈值（$V_{IH},V_{IL}$）。噪声容限即为\red{前级输出电平与后级判阈之间的缓冲带}。}
+            \conrow{公式}{$NM_H = V_{OH} - V_{IH}$，$NM_L = V_{IL} - V_{OL}$}
+        }
+    }
+
+}
+
+\section{第五章\ 互联线与互联技术}
+
+\subsection{互联线模型}
+
+互连线的电气特性建模，重点在于从物理结构到电路模型的抽象，以及对\red{寄生电容}特别是\red{对地电容}的精确计算。
+
+\imgleft[0.3]{images/image-2025-12-31-11-05-22.png}{
+
+\entry{分布参数模型}{基于物理结构抽象出的电路模型。}
+
+\concepttable{
+    \conrow{寄生电阻 $R$}{代表\red{导线自身电阻}。由于有限电导率和横截面积，电流流过时产生压降和功耗。}
+    \conrow{寄生电感 $L$}{代表\red{导线自感}。\red{高频下}变化的电流产生磁场并感应出电动势，影响信号完整性（低频常忽略）。}
+    \conrow{寄生电容 $C$}{分为两类：\par
+    1. \red{对地/衬底电容}：导线与底部半导体衬底 (GND) 间形成的电容。\par
+    2. \red{线间电容} ：相邻导线间因电位差形成的耦合电容 (Coupling)。}
+}
+
+}
+
+\subsection{互联线的寄生效应}
+
+下图展示了互连线在物理上最完整的电气模型，称为\red{传输线模型}。
+
+\img[0.8\linewidth]{images/image-2025-12-31-11-55-37.png}
+
+\subsubsection{寄生电容}
+
+寄生电容主要包括对地电容和线间电容：
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \img[0.9\linewidth]{images/image-2025-12-31-11-22-18.png}
+    \entry{对地电容 }{单根导线与下方衬底（交流地）间的电容。}
+    \concepttable{
+        \conrow{平行板模型}{假设仅存在垂直均匀电场。\par
+        $C_{pp} = (\varepsilon_{di} / t_{di}) WL$\par
+        其中 $L, W$ 为长宽，$t_{di}$ 为绝缘层厚度。}
+        \conrow{边缘电容}{考虑导线厚度 $H$，侧壁发出的边缘场形成的附加电容 $C_{fringe}$。}
+        \conrow{总对地电容}{$C_{wire} = C_{pp} + C_{fringe}$。}
+    }
+    \entry{几何比例影响}{大 $W/H$ 时 $C_{pp}$ 主导；小 $W/H$（窄高导线）时边缘场效应显著，$C_{fringe}$ 占主要部分。}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \img[0.5\linewidth]{images/image-2025-12-31-11-25-02.png}
+    \entry{线间电容}{密集布线环境下相邻导线间的相互作用。}
+    \concepttable{
+        \conrow{耦合电容}{\red{随导线间距减小而显著增加}，存在于左右相邻或上下相邻的导线之间。}
+        \conrow{多导体系统}{由平板电容、边缘电容及线间耦合电容共同构成的复杂电容网络。}
+        \conrow{物理意义}{导线寄生电容不仅取决于对衬底电容，更\red{受周围邻近导线电位的相互影响}。}
+        \conrow{模型演变}{在密集布线中，单纯的平行板模型因忽略了复杂的侧向耦合和边缘效应而失效。}
+    }
+\end{minipage}
+
+\entry{“三明治”结构模型}{关注 Layer $n$ 的中间导线（受害线）及其周围物理环境：}
+
+\concepttable{
+        \conrow{垂直环境}{Layer $n+1$（上层金属板/布线层）与 Layer $n-1$（下层金属板/衬底）。}
+        \conrow{水平环境}{Layer $n$ 同层左右两侧的相邻导线。}
+}
+
+\imgleft[0.3]{images/image-2025-12-31-11-12-43.png}{
+
+    \entry{电容分量分解}{受害导线（Victim Wire）的寄生电容可分解为：}
+    \concepttable{
+        \conrow{底板电容 $C_{bot}$}{导线底面与下层间的平行板电容，主要由介质厚度 $t_1$ 决定。}
+        \conrow{顶板电容 $C_{top}$}{导线顶面与上层间的平行板电容，主要由介质厚度 $t_2$ 决定。}
+        \conrow{侧壁电容 $C_{adj}$}{与同层左右相邻导线间的耦合电容，由间距 $S$ 和导线厚度 $h$ 决定。}
+    }
+
+}
+
+\entry{总对地电容计算}{前提：若周围导线均连接至固定电位（即视为交流地）。}
+\concepttable{
+        \conrow{计算公式}{$\boxed{C_{total} = C_{top} + C_{bot} + 2 \times C_{adj}}$}
+        \conrow{设计意义}{定义了该节点驱动的总容性负载，对计算互连线延时和功耗至关重要。}
+}
+
+\subsubsection{寄生电阻}
+
+\entry{物理电阻公式}{基于电阻定律：$R = \frac{\rho L}{A} = \frac{\rho}{H} \frac{L}{W}$。其中 $\rho$ 为电阻率，$H$ 为导线厚度，$W$ 为宽度，$L$ 为长度。}
+
+\entry{\red{方块电阻}}{在集成电路中，厚度 $H$ 由工艺固定。定义 \red{$R_{\square} = \rho / H$}（单位：$\Omega/\square$）。}
+
+\imgleft[0.3]{images/image-2025-12-31-11-38-34.png}{
+    \concepttable{
+        \conrow{计算公式}{$\boxed{R = R_{\square} \frac{L}{W}}$，其中 $L/W$ 代表\red{导线包含的正方形（方块）数量}。}
+        \conrow{几何意义}{电阻值仅取决于长宽比。只要 $L=W$，无论绝对尺寸大小，电阻均等于 $R_{\square}$。}
+        \conrow{计算规则}{导线总电阻 = 串联的方块数 $\times$ 材料方块电阻值。}
+    }
+}
+
+\entry{典型材料特性}{反映了不同层导电性能的巨大差异：}
+\concepttable{
+    \conrow{金属 (Al, Cu)}{$0.05 \Omega/\square$。极低，适合长距离信号传输。}
+    \conrow{多晶硅 (Poly)}{$10 \sim 15 \Omega/\square$。较高，常用于短距离连接或栅极。}
+    \conrow{扩散区 (Diff)}{$20 \sim 30 \Omega/\square$。最高，主要存在于有源区。}
+}
+
+\subsubsection{接触电阻 (了解即可)}
+
+\entry{定义}{层与层之间的电气连接（接触孔和通孔）引入的额外电阻。}
+
+\concepttable{
+    \conrow{物理结构}{多层金属或金属与半导体间的垂直连接。}
+    \conrow{设计原则}{\red{应尽可能减少接触孔和通孔的数量}，以降低压降和信号延迟。}
+}
+
+\entry{尺寸与电阻关系}{
+    \concepttable{
+        \conrow{基本规律}{接触电阻与接触面积成反比。理论上增大尺寸可减小电阻。}
+        \conrow{物理局限}{受限于\red{电流集聚效应}，单纯增大单个孔径效率较低。}
+    }
+}
+
+\entry{电流集聚效应}{
+    \concepttable{
+        \conrow{现象描述}{电流从高导电率层流入高电阻率层时，流线分布不均匀。}
+        \conrow{分布特征}{电流集中在接触孔的\red{周边}，中心区域电流密度极小。}
+        \conrow{后果}{中心面积未被充分利用，大尺寸接触孔的电阻效率很低。}
+    }
+}
+
+\entry{工程解决方案}{
+    \concepttable{
+        \conrow{核心结论}{\red{采用多个小尺寸接触孔并联}以减小接触电阻。}
+        \conrow{原理解析}{利用并联电阻公式 $R_{total} = R/n$ 降低总阻值，并通过增加总周边长度减轻集聚效应，使电流分布更均匀。}
+    }
+}
+
+\subsubsection{寄生电感}
+
+\entry{计算原理}{利用电磁场理论中电感与电容的内在物理联系，通过已知的电容参数来推导电感参数。}
+
+\concepttable{
+    \conrow{L-C 耦合关系}{对于处于均匀介质中的传输线，单位长度电容 $c$ 与电感 $l$ 满足：\par
+    \red{$cl = \varepsilon \mu$}}
+    \conrow{参数解析}{$\varepsilon$ 为介电常数，$\mu$ 为磁导率。}
+    \conrow{物理意义}{在均匀介质中，\red{一旦计算出寄生电容 $c$，即可直接推导出寄生电感 $l$}，无需进行复杂的磁场分布计算。}
+}
+
+\entry{电磁波传播速度}{信号（电磁波）在互连线中的传播速度 $v$ 由 $l$ 和 $c$ 决定：}
+
+\concepttable{
+    \conrow{基础公式}{$v = 1/\sqrt{lc}$}
+    \conrow{介质参数表示}{$v = 1/\sqrt{\varepsilon \mu}$}
+    \conrow{相对参数表示}{$v = c_0 / \sqrt{\varepsilon_r \mu_r}$，其中 $c_0$ 为真空光速，$\varepsilon_r$ 为相对介电常数，$\mu_r$ 为相对磁导率。}
+    \conrow{核心结论}{互连线中的信号传播速度主要受\red{周围绝缘介质的材料特性（$\varepsilon_r$）}限制。}
+}
+
+\entry{忽略电感的前提}{集成电路芯片内部导线寄生电感通常极小，可忽略。}
+\concepttable{
+    \conrow{物理机制}{在低速或高阻抗电路中，$R$ 和 $C$ 效应占主导，感抗 $j\omega L$ 远小于电阻 $R$。}
+    \conrow{建模简化}{\red{通常将导线建模为 $RC$ 电路而不是 $RLC$ 电路。}}
+}
+
+\entry{\red{考虑电感的必要条件}}{必须引入电感建模的两个关键条件：}
+\concepttable{
+    \conrow{低电阻}{使用铜 (Cu) 等低电阻率金属且导线截面较大，使电阻 $R$ 降低，感抗占比提升。}
+    \conrow{高开关频率}{感抗 $X_L = 2\pi f L$ 与频率成正比。高频下即使 $L$ 很小，感抗也会显著影响性能。}
+}
+
+\entry{寄生电感引发的电路现象}{高频电路中由电感主导的负面效应：}
+\concepttable{
+    \conrow{振荡}{RLC 电路二阶阶跃响应特征。若阻尼不足，电压会在稳定值附近谐振摆动。}
+    \conrow{过冲}{伴随振荡产生，电压瞬间超过 $V_{DD}$ 或低于 $GND$，可能导致击穿或误触发。}
+    \conrow{信号反射}{高频下视为传输线。若特性阻抗 $Z_0 = \sqrt{L/C}$ 与端点不匹配，信号在终端反射。}
+    \conrow{线间互感}{相邻导线间的磁场耦合产生感应电动势（互感），是产生串扰的磁性分量（对应容性串扰）。}
+}
+
+\entry{Elmore 延时}{工程近似方法。通用公式：$\tau_{DN} = \sum_{i=1}^{N} C_i (\sum_{j=1}^{i} R_j)$。即各节点电容与其到源端路径电阻之积的加权和。}
+\entry{均匀线推导}{将 $L$ 分为 $N$ 段，每段 $r\Delta L, c\Delta L$。取 $N \to \infty$ 极限，求和系数 $\frac{N(N+1)}{2N^2} \to \frac{1}{2}$。}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+
+\subsection{集总模型}
+
+\entry{适用条件}{\red{导线很短}，其自身寄生电阻 $r$ 远小于驱动门的输出电阻，且高频电感 $l$ 在高频下的阻抗可忽略时。}
+
+\img[0.9\linewidth]{images/image-2025-12-31-12-02-32.png}
+
+\concepttable{
+    \conrow{物理特性}{导线可被视为一个\red{等电位体}（理想导线）。}
+    \conrow{\red{延时计算}}{$\boxed{\tau = RC = rcL^2}$。}
+    \conrow{参数说明}{$r, c$：单位长度的电阻和电容}
+    \conrow{模型简化}{整根导线被简化为一个\red{单一的集总电容}，作为驱动门的负载负载。}
+}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\subsection{分布模型}
+
+\entry{适用条件}{\red{导线较长}，电阻效应显著，信号沿线存在电压梯度，不能视为等电位体。}
+
+\img[0.9\linewidth]{images/image-2025-12-31-12-45-41.png}
+\vspace{4pt}
+\concepttable{
+    \conrow{\red{延时计算}}{$\boxed{\tau = \frac{RC}{2} = \frac{rcL^2}{2}}$。}
+    \conrow{物理意义}{电容均匀分布，平均电流仅需流过一半电阻。延时为集总模型的 \red{1/2}。}
+}
+
+\end{minipage}
+
+\imgleft[0.3]{images/image-2025-12-31-12-47-11.png}{
+\entry{曲线分析}{图中曲线代表导线不同位置 $x$ 的电压响应：}
+\concepttable{
+    \conrow{$x=L/10$}{响应极快，上升沿陡峭，波形接近输入阶跃信号。}
+    \conrow{$x=L$}{响应最慢，上升沿变得非常平缓，延迟最大。}
+    \conrow{中间位置}{随着距离 $x$ 的增加，波形的\red{上升时间} 显著变长。}
+}
+\entry{物理特性分析}{
+    \concepttable{
+        \conrow{扩散效应}{由于分布电阻和电容的存在，信号能量被“平摊”。高频分量（对应陡峭上升沿）衰减比低频分量快。}
+        \conrow{信号延迟}{信号到达末端不仅幅值上升缓慢，且存在明显的传输延时。}
+    }
+}
+
+}
+
+\subsubsection{阶跃响应对比 (集总 vs 分布)}
+
+量化集总模型和分布模型在响应速度上的差异：
+
+\concepttable{
+    \conrow{传播延时 $t_p$ (50\%)}{集总：$t_p = 0.69 RC$ \par 分布：$t_p \approx 0.38 RC$}
+    \conrow{时间常数 $\tau$ (63\%)}{集总：$\tau = 1 RC$ \par 分布：$\tau = 0.5 RC$}
+    \conrow{上升时间 $t_r$ (10\%-90\%)}{集总：$t_r = 2.2 RC$ \par 分布：$t_r = 0.9 RC$}
+}
+
+\imgleft[0.4]{images/image-2025-12-31-13-06-57.png}{
+    \entry{波形分析}{
+        \concepttable{
+            \conrow{集总模型}{上升沿较缓。电流必须流经完整电阻 $R$ 才能为总电容 $C$ 充电。}
+            \conrow{分布模型}{上升沿较陡。靠近驱动端的电容路径阻抗极低，可迅速建立电压。}
+        }   
+    }
+    \entry{工程结论}{\red{集总 RC 模型是分布模型的保守估计}。若电路在集总模型下满足时序要求，则在实际分布环境下必有性能余量。}
+}
+
+\subsubsection{考虑驱动器内阻的分布模型}
+
+实际的CMOS反相器或逻辑门是有输出电阻的：
+
+\imgleft[0.4]{images/image-2025-12-31-13-09-33.png}{
+
+    \entry{电路模型}{驱动器建模为理想电压源串联内阻 $R_s$。}
+    \concepttable{
+        \conrow{电阻叠加}{首个节点充电路径包含 $R_s$，即 $R_1 = R_s + r\Delta l$。后续所有节点路径均包含 $R_s$。}
+        \conrow{Elmore 延时}{将 $R_s$ 影响与导线自阻分离：$\tau_D = R_s C_w + \frac{RC}{2} = R_s (cL) + \frac{rcL^2}{2}$。}
+    }
+
+}
+
+\entry{传播延时 $t_p$}{结合集总与分布特性的系数修正，将时间常数转化为 50\% 延时：}
+
+\entry{计算公式}{$$\boxed{
+t_{p} = \underbrace{\textcolor{blue}{0.69 R_{s} \cdot cL}}_{\text{逻辑门延时}} + \underbrace{\textcolor{red}{0.38 r c L^{2}}}_{\text{互连线延时}}
+}$$}
+
+\vspace{-10pt}
+
+\subsection{长导线的延时优化}
+
+\subsubsection{方法一：插入中继器}
+
+为简化分析，假设中继器（反相器或缓冲器）是理想的
+
+\imgleft[0.3]{images/image-2025-12-31-13-21-58.png}{
+    \concepttable{
+        \conrow{物理原理}{将长度为 $L$ 的长导线等分为 $M$ 段，段间插入中继器以\red{打破 $L^2$ 延时增长}。}
+        \conrow{分段策略}{长导线变为 $M$ 个独立段，每段长度为 $L/M$。}
+    }
+}
+
+\concepttable{
+    \conrow{延时推导}{$t_{p,total} = (t_{p,wire} + t_{p,buf}) \times M$。}
+    \conrow{\red{延时计算}}{$t_{p,total} = 0.38rcL^2/M + M t_{p,buf}$。}
+    \conrow{参数说明}{$t_{p,wire} = 0.38rc(L/M)^2$，$t_{p,buf}$ 为\red{中继器固有延时}。}
+}
+
+\entry{优化结论}{选取最优 $M$ 可使总延时由 $L^2$ 增长转变为与 $L$ \red{线性增长}。}
+
+\entry{\red{延时总公式}}{$$\boxed{t_p = M [ 0.38rc(L/M)^2 + t_{p,buf} ] = \boxed{0.38rcL^2/M + M t_{p,buf}}}$$}
+
+\vspace{-6pt}
+
+\entry{最优解计算 ($M_{opt}$)}{寻找总延时最小的段数：}
+\concepttable{
+    \conrow{求导推导}{令 $\frac{dt_p}{dM} = 0$，得最优段数 $\boxed{M = L \sqrt{0.38rc / t_{pbuf}}}$。}
+    \conrow{设计依据}{分段数取决于导线物理参数 ($r, c$) 和中继器速度 ($t_{pbuf}$)。}
+}
+
+\entry{优化特性}{
+    \concepttable{
+        \conrow{线性化}{经过优化，总延时 $t_{p,opt}$ 与总长度 $L$ 呈\red{线性关系}。}
+        \conrow{性能指标}{$t_{p,opt} \propto \sqrt{t_{pwire} t_{pbuf}}$，成功打破了 $L^2$ 的限制。}
+    }
+}
+
+\hlblue{\textbf{考虑负载}}
+将理想模型修正为包含输出电阻 $R_d$、输入电容 $C_d$ 及尺寸因子 $s$ 的实际模型。
+
+\concepttable{
+    \conrow{驱动电阻}{$R_{drv} = R_d/s$，尺寸 $s$ 越大，驱动电阻越小。}
+    \conrow{负载电容}{$C_{gate} = sC_d$，尺寸 $s$ 越大，下一级门电容负载越大。}
+    \conrow{自负载因子}{$\gamma = C_{p}/C_{g}$，反映中继器自身寄生电容比例。}
+}
+
+\entry{延时分解}{总延时 $t_p$ 由驱动器延时、负载充电延时及导线分布延时组成：}
+\entry{公式}{$t_p = M \left[ \underbrace{0.69 \frac{R_d}{s} (s\gamma C_d + \frac{cL}{M} + sC_d)}_{\text{驱动器延时部分}} + \underbrace{0.69 \frac{rL/M}{M} (sC_d)}_{\text{上一级驱动下一级输入}} + \underbrace{0.38rc (\frac{L}{M})^2}_{\text{导线自身分布延时}} \right]$}
+
+\entry{双重优化}{同时优化分段数 $M$ 与尺寸 $s$ 以达到阻抗匹配：}
+
+\concepttable{
+    \conrow{最优尺寸}{$\boxed{s_{opt} = \sqrt{R_d c / r C_d}}$，平衡驱动能力与负载效应。}
+    \conrow{最小延时}{$\boxed{t_{p,min} = (1.38 + 1.02\sqrt{\gamma+1}) L \sqrt{R_d C_d rc}}$}
+    \conrow{核心结论}{经过优化，长导线总延时与长度 $L$ 呈\red{线性正比}，消除了 $L^2$ 效应。}
+}
+
+\subsubsection{方法二：导线流水线}
+
+
+
+\green{互联线知识点总结结束（2026-01-04）}
+
+\section{第六章\ 组合逻辑}
+
+\subsection{静态互补 CMOS 逻辑}
+
+这里主要就是回顾一下静态互补电路的特点，具体细节主要还在第二章：
+
+\imgleft[0.3]{images/image-2026-01-05-21-09-32.png}{
+
+    \concepttable{
+        \conrow{全摆幅电路}{$V_{OH}=V_{DD}$、$V_{OL}=0$。结合陡峭的 VTC，得到较大的 $NM_H$ 和 $NM_L$ 噪声容限。}
+        \conrow{无比逻辑}{逻辑电平由 PUN/PDN 的\red{导通拓扑决定}，与晶体管相对尺寸 $W/L$ 无关（只要能导通/截止）。}
+        \conrow{低输出阻抗}{在稳态输出总通过导通晶体管（低电阻通道）连接到 $V_{DD}$ 或 $GND$，输出阻抗低，驱动能力强，抗扰能力好。}
+        \conrow{高输入阻抗}{输入连接到 MOS 的栅极，栅氧化层为绝缘体（$SiO_2$），直流输入电流几乎为零，输入阻抗极高，减小前级驱动负担。}
+    }
+}
+
+\subsection{有比逻辑}
+
+\subsubsection{概述}
+
+\entry{有比逻辑}{为节省晶体管数目，将标准 CMOS 的上拉网络（PUN，$N$ 个 PMOS）替换为\red{单一负载器件}，从而实现一种\red{比例逻辑}实现方式。标准 CMOS 需 $2N$ 个器件（$N$ NMOS + $N$ PMOS），有比逻辑可将器件数降至约 $N+1$。}
+
+\entry{电路结构}{有比逻辑由两部分组成：}
+\concepttable{
+    \conrow{下拉网络}{由受输入控制的 NMOS 器件构成，实现实际逻辑功能（如 NAND、NOR 等）。}
+    \conrow{负载}{连接在 $V_{DD}$ 与输出 $F$ 之间，提供上拉作用，形式有多种（见下）。}
+}
+
+\imgleft[0.3]{images/image-2026-01-07-20-30-30.png}{
+
+    \entry{三类负载}{}
+    \concepttable{
+        \conrow{电阻负载}{使用简单电阻 $R_L$ 作为上拉。电路概念直观，但在集成工艺中实现\red{大阻值占用面积大}且工艺难以精确控制，现已较少使用。}
+        \conrow{耗尽型 NMOS 负载}{使用耗尽型 NMOS，栅极与源极连接，器件常导通，作为弱上拉。}
+        \conrow{\red{伪 NMOS}}{用一个栅极接地的 PMOS 作为负载，恒导通形成\red{弱上拉}。}
+    }
+
+}
+
+\subsubsection{伪 NMOS 逻辑}
+
+\entry{伪 NMOS（Pseudo-NMOS）}{用一个常导通的 PMOS 代替上拉电阻，构成有源负载的静态逻辑实现。该 PMOS 的栅极接地 ($V_{SS}$)，因 $V_{GS,p}=-V_{DD}<V_{Tp}$ 恒导通，起弱上拉作用。}
+
+\imgleft[0.25]{images/image-2026-01-07-20-43-20.png}{
+
+    \entry{电路结构}{
+        \concepttable{
+            \conrow{上拉配置}{PMOS 栅极接地、恒导通，作为尺寸受控的弱上拉（有源负载）。}
+            \conrow{$V_{OL}$ 依赖}{输出低电平 $V_{OL}$ 与上/下拉等效电阻相关，电阻与 $W/L$ 成反比。为获得较低的 $V_{OL}$，需使 PMOS 相对较弱。}
+            \conrow{器件计数}{$N+1$ 规则：$N$ 个 NMOS（实现逻辑） + 1 个 PMOS（有源负载）。}
+        }
+    }
+
+    \entry{设计结论}{
+        \concepttable{
+            \conrow{典型取值}{常令 PMOS 驱动强度为 NMOS 的 $\sim 1/3\!-\!1/6$。}
+            \conrow{尺寸建议}{由于 $\mu_n \approx 2\mu_p$，为满足上述驱动比可取 $W_p \approx W_n/2$（这与无比互补反相器的 $W_p \approx 2W_n$ 相反）。}
+        }
+    }
+
+}
+
+\imgleft[0.3]{images/image-2026-01-07-20-49-22.png}{
+
+    \entry{VTC 曲线随 PMOS 尺寸变化影响}{\concepttable{
+        \conrow{趋势}{随 PMOS 尺寸 $(W/L)_p$ 增大（PMOS 变强，同时电阻变小），VTC 曲线整体向右上方移动，导致\red{$V_{OL}$ 升高}。}
+        \conrow{结论}{当下拉网络（PDN）等效电阻最大时，$V_{OL}$ 达到最高，为最不利情形；若多个 NMOS 并联，$R_{NMOS\_PDN}$ 减小，$V_{OL}$ 反而更有利。}
+        \conrow{设计思路}{应针对“单一 NMOS 导通”这类最坏情况来确定 PMOS 强度，保证 $V_{OL}$ 满足噪声容限设计需求。}
+    }}
+
+}
+
+\green{伪 NMOS 的逻辑努力部分标星号了，所以我把它放在最后再看（2026-01-07-20-58）}
+
+\hlblue{\textbf{静态功耗}}
+
+\concepttable{
+    \conrow{物理成因}{在伪 NMOS 中，当输出为低电平时，PDN 导通，而负载 PMOS 始终导通（栅极接地）。此时，从电源 $V_{DD}$ 经由 PMOS 负载、NMOS 驱动管到地（GND）形成了一条直通的电流路径。}
+    \conrow{公式}{$P_{low} = V_{DD} \cdot I_{low}$，$I_{low}$ 是输出低电平时流经 PMOS 的电流。这个公式给的比较笼统。}
+    \conrow{级联影响}{将较高的 $V_{OL}$ 信号连接到下一级逻辑门的 NMOS 栅极，则下一级 NMOS 的 $V_{GS}$ 就等于 $V_{OL}$。\red{即使 $V_{OL}$ 小于下一级 NMOS 的阈值电压 $V_{Tn}$，但只要它大于 0，就会指数级地增加下一级 NMOS 的亚阈值漏电流。}这意味着伪 NMOS 不仅自身消耗功耗，还会恶化后级电路的静态功耗特性。}
+}
+
+\entry{改进方案：\red{门控伪 NMOS}}{为了解决静态功耗限制其在大规模电路中应用的问题。}
+
+\concepttable{
+    \conrow{方法}{不再将负载 PMOS 的栅极直接接地，而是连接到一个\red{使能信号}（Enable, $\overline{en}$）。}
+    \conrow{工作模式}{当 $\overline{en} = 0$ 时，PMOS 导通，电路作为标准的伪 NMOS 工作。}
+    \conrow{待机模式}{当 $\overline{en} = 1$ 时，PMOS 截止。此时电源到地的通路被切断，消除了静态功耗。}
+}
+
+\hlblue{\textbf{特性总结}}
+
+\entry{伪 NMOS 特性总结}{%
+    \concepttable{
+        \conrow{基本结构}{$N$ 个 NMOS（实现逻辑）+ 1 个常导 PMOS（弱上拉），\red{晶体管数约为 $N+1$（对比静态 CMOS 的 $2N$）。}}
+        \conrow{优势}{面积与\red{输入电容小（因为需要连接的栅极变少了）}，适合大扇入的或非/或阵列场景，实现简单且 $t_{pLH}$ 可短。}
+        \conrow{缺点}{属于有比电路：$V_{OL}$ 随 $W_p$ 变化，输出低电平非零导致静态直流功耗与下级亚阈泄漏增加。}
+        \conrow{设计权衡}{增大 $W_p$：$t_{pLH}$ 降低，但 $V_{OL}$ 升高、静态功耗上升且 $t_{pHL}$ 变慢（不利于全方向性能）。}
+        \conrow{电平与功耗约束}{需保证 $V_{OL}<V_{IL}$（功能正确）并建议 $V_{OL}<V_T$ 以抑制下级亚阈泄漏；静态功耗可通过门控（使能）或弱 PMOS 设计降低。}
+        \conrow{工程经验}{常令 PMOS 比较弱（驱动能力约为 NMOS 的 $1/3\sim1/6$），必要时使用门控伪 NMOS（$\overline{en}$ 控制）以在待机时切断静态通路。}
+    }
+}
+
+\subsection{传输门逻辑}
+
+\subsection{CPL 逻辑}
+
+\subsection{动态逻辑}
+
+\subsubsection{串联动态门}
+
+\subsubsection{动态逻辑的速度和功耗}
+
+\section{第七章\ 时序逻辑}
+
+\subsection{双稳态原理}
+
+我们以最简单的双稳态电路——两个交叉耦合的反相器为例，来分析其工作原理，这种结构构成了\red{正反馈}。如果 $V_{i1}$ 发生微小正向偏移，经过两次反相（负负得正），反馈回来的信号会进一步加强该偏移，直到达到电源电压（信号的再生性）。
+
+\imgleft[0.4]{images/image-2026-01-03-21-45-53.png}{
+    
+    \entry{触发翻转的方法}{
+
+        \concepttable{
+            \conrow{切断反馈环}{
+                \red{原理}：暂时断开反馈回路。\par
+                \red{实现}：采用 MUX 结构：写入模式下，Mux 断开反馈路径、接通输入数据路径；保持模式下，Mux 接通反馈路径。
+            }
+            \conrow{强制驱动}{
+                \red{原理}：通过驱动能力更强的外部信号，强制将内部节点拉高或拉低，压倒内部弱反馈反相器的输出。\par
+                \red{实现}：需要正确设计尺寸。写入管的驱动能力（宽长比 $W/L$）必须显著大于内部反馈反相器的驱动能力，以确保在信号争夺中取胜。
+            }
+        }
+
+    }
+
+}
+
+\entry{双稳态锁存器特性}{
+    \concepttable{
+        \conrow{静态特性}{信号可无限保持：只要电源 $V_{DD}$ 不断电且无外部强驱动改变状态，\red{正反馈}会利用电源能量\red{不断刷新节点电平}以对抗漏电流，从而长期保存数据。与依赖电容电荷、需周期性刷新的\red{动态逻辑}相对。}
+        \conrow{鲁棒性}{对扰动不敏感：在 VTC 曲线平坦区域，即便输入叠加噪声，只要未越过翻转阈值，电路最终仍会恢复到原稳态，即具有良好的\red{噪声容限}。}
+        \conrow{触发脉冲宽度}{\red{触发脉冲宽度需略大于环路总传播时间}，即约为两个反相器平均延时的两倍：\red{$t_{pulse} \gtrsim 2t_{pd}$}。\par
+        否则脉冲过窄时，反馈尚未完成一次再生循环，扰动消失后可能回到旧状态，导致写入失败。}
+        \conrow{增益}{为保证正确翻转并产生再生效应，过渡区环路增益应满足 \red{$|A_{loop}|>1$}；若增益不足，则无法形成强正反馈，难以实现稳定的双稳态存储。}
+        \conrow{面积}{静态锁存器通常需 $4\sim6$ 个晶体管（如 SRAM），且为保证驱动与反馈强度，器件尺寸可能偏大，因此版图面积更大。}
+    }
+}
+\subsection{锁存器}
+
+即上面提到的多路开关与强制驱动两种方法实现的锁存器：
+
+\subsubsection{多路开关锁存器}
+
+\entry{结构}{基于\red{传输门}的动态多路开关锁存器（这里假设为理想的 CMOS 传输门），在 CLK 为 0 时进行写入，CLK 为 1 时保持数据。}
+
+\imgleft[0.3]{images/image-2026-01-04-09-26-27.png}{
+
+    \entry{特性总结}{}
+    \concepttable{
+        \conrow{\red{尺寸设计}}{这是一个\red{无争用}结构：输入路径与反馈路径通过传输门\red{互斥导通}，不存在电平冲突，因此对晶体管尺寸（如 $W/L$）没有特殊要求，只要能正常驱动即可。}
+        \conrow{\red{晶体管数目多}}{需要两个反相器（4 管）+ 两个传输门（4 管），共约 \red{8} 个晶体管（甚至更多，取决于是否额外加入反相器缓冲）。}
+        \conrow{\red{时钟负载大}}{CLK 信号需要驱动两个传输门的 NMOS 与 PMOS 栅极，负载电容较大，会增加时钟树功耗。（为减小时钟负载，可改为单 MOS 管的传输门电路，但也面临高电平阈值损失的问题）}
+        \conrow{\red{时钟重叠}}{在实际电路中，反相生成的时钟信号可能会有延迟，导致在某一瞬间，CLK 和 $\overline{\text{CLK}}$ 同时为有效电平，这样两个开关同时导通，就\red{又变成了强制写入锁存器}，但是我们没有好好设计尺寸，就可能出现写入失败的问题。}
+    }
+}
+
+\subsubsection{强制写入锁存器}
+
+\entry{结构}{写入阶段由输入端直接“压倒”反馈回路的状态，实现翻转。}
+
+\entry{弱反相器}{反馈回路中的反相器被设计为\red{弱驱动}（高等效输出电阻），以便输入信号 $D$ 更容易覆盖其反馈维持能力。}
+
+\imgleft[0.3]{images/image-2026-01-04-09-33-28.png}{
+
+    \entry{特性总结}{
+        \concepttable{
+            \conrow{\red{有比逻辑}}{晶体管尺寸需精心设计：为保证可写入，输入驱动器（经传输门）必须\red{强于}反馈弱反相器；比例不当会导致无法写入或写入极慢。}
+            \conrow{晶体管数目少}{省去反馈路径的一个传输门，面积更小。}
+            \conrow{时钟负载小}{时钟仅需控制输入端的传输门，时钟电容负载更低。}
+        }
+    }
+
+}
+
+\hlblue{\textbf{尺寸设计}}
+
+这类题目的核心逻辑永远是：\red{强弱之争}。我们需要通过设计晶体管的尺寸（即导通电阻 $R_{on}$），确保外部驱动信号能够压倒内部反馈信号，从而迫使节点 S 的电压越过逻辑翻转阈值 $V_M$。
+
+\imgleft[0.3]{images/image-2026-01-04-10-40-02.png}{
+
+\entry{情况 A}{“\red{写 1}”。初始状态：S 点原为 0（低电平），反馈回路中的 NMOS（M2）导通，将其拉向 GND。}
+
+\entry{电路等效模型}{信号路径为 $V_{DD}\xrightarrow{\text{M1上拉+传输门}} S \xrightarrow{\text{M2}} GND$。}
+
+\entry{分压公式}{S 点电压为
+$V_S = V_{DD}\cdot \frac{R_{M2}}{R_{M1+TG}+R_{M2}}$。}
+
+\concepttable{
+    \conrow{$R_{M1+TG}$}{包含输入反相器 PMOS 的等效电阻与传输门 M1 的等效电阻（串联等效）。}
+    \conrow{$R_{M2}$}{反馈 NMOS（M2）的等效导通电阻。}
+}
+
+\entry{翻转条件}{为成功写入“1”，S 点电压必须高于后续反相器的阈值（翻转点）$V_M$，即 $V_S > V_M$。代入得
+$V_{DD}\cdot \frac{R_{M2}}{R_{M1+TG}+R_{M2}} > V_M$}
+
+}
+
+\imgleft[0.3]{images/image-2026-01-04-10-40-02.png}{
+    \entry{情况 B}{“\red{写 0}”。初始状态：S 点原为 1（高电平），反馈回路中的 PMOS（M1）导通，将其拉向 $V_{DD}$。}
+
+    \entry{电路等效模型}{信号路径为 $V_{DD}\xrightarrow{\text{M2}} S \xrightarrow{\text{TG+M1下拉}} GND$。}
+
+    \entry{分压公式}{S 点电压为
+    $V_S = V_{DD}\cdot \frac{R_{M1+TG}}{R_{M1+TG}+R_{M2}}$。}
+
+    \entry{翻转条件}{为成功写入“0”，S 点电压必须低于后续反相器的阈值（翻转点）$V_M$，即 $V_S < V_M$。代入得
+    $V_{DD}\cdot \frac{R_{M1+TG}}{R_{M1+TG}+R_{M2}} < V_M$}
+
+}
+
+\subsection{主从边沿触发寄存器}
+
+\entry{概述}{由两个\red{互补时钟控制}的锁存器串联（Master \& Slave），用于将电平敏感的透明特性转化为边沿触发行为。}
+
+\img[0.7\linewidth]{images/image-2026-01-04-11-44-59.png}
+
+\concepttable{
+    \conrow{主锁存器}{在时钟低电平（$CLK=0$）时透明，在高电平（$CLK=1$）时保持。即负电平敏感。}
+    \conrow{从锁存器}{\red{与主锁存器互补}：在时钟低电平（$CLK=0$）时保持，在高电平（$CLK=1$）时透明。即正电平敏感。}
+    \conrow{时序原理}{两者互补工作：当 Master 透明且 Slave 保持时，输入被采入 Master；当 Master 保持且 Slave 透明时，Master 的数据传递到 Slave 并锁存输出，从而在时钟边沿实现采样。}
+}
+
+\entry{工作阶段}{
+    \concepttable{
+        \conrow{阶段 1（CLK = 0）}{Master 透明，Slave 保持。$Q_M$ 跟随 $D$，输出 $Q$ 保持先前值。}
+        \conrow{阶段 2（CLK = 1）}{Master 保持，Slave 透明（读取到的稳定 $Q_M$ 传至 $Q$）。}
+    }
+}
+\entry{关键时序约束}{
+    \concepttable{
+        \conrow{时钟脉冲与传播延时}{主/从锁存器的\red{时钟脉冲宽度应分别大于对应 latch 的传播延时}，即上文中提到过的：$t_{pulse}\gtrsim 2t_{pd}$，必须保证输入在采样边沿前有\red{足够的建立时间}并在采样后保持。}
+        \conrow{边沿触发本质}{边沿触发寄存器实质上由两个互补的\red{电平敏感锁存器}组成，内部存在宽度为采样窗口的有效时间段，而非理想的瞬时采样。所以仍然会被毛刺影响}
+    }
+}
+
+\subsubsection{基于多路选择器的设计}
+
+和前面提到的\red{多路开关锁存器}类似的结构，直接串联两个传输门锁存器（但控制时钟信号相反）：
+
+\concepttable{
+    \conrow{Master（左半部分）}{由传输门 $T_1$（输入开关）与 $T_2$（保持开关）以及反相器 $I_2, I_3$ 组成。$I_3$ 的输出记为中间节点 $Q_M$。}
+    \conrow{Slave（右半部分）}{由传输门 $T_3$（输入开关）与 $T_4$（保持开关）以及反相器 $I_5, I_6$ 组成。$I_6$ 的输出为最终输出 $Q$。}
+}
+
+\img[0.7\linewidth]{images/image-2026-01-04-11-59-56.png}
+
+优点是结构简单，即连即用，缺点是之前说的那些问题：\red{时钟负载大、时钟重叠、晶体管数目多}等。
+
+\subsubsection{基于强制写入的设计}
+
+和作业 5-3 一样的结构，单纯串联了两个强制写入锁存器，只不过时钟控制相反，可以有效减小时钟信号的负载，计算方法见后面的习题解析。
+
+\img[0.7\linewidth]{images/image-2026-01-04-12-04-32.png}
+
+\hlblue{\textbf{避免时钟重叠}}
+
+以上升沿为例，也就是中间会出现一个 $CLK=1$ 和$\overline{CLK} = 1$ 的重叠区间，导致两个锁存器同时透明，成为一个电平敏感的锁存器，从而引入毛刺。
+
+
+
+\subsection{时序参数}
+
+\subsubsection{常见参数定义}
+
+\entry{核心定义}{时序参数是时序分析的理论基础，通常出现在填空或计算题的已知条件中。}
+
+\vspace{-2pt}
+\img[0.7\linewidth]{images/image-2026-01-05-13-31-19.png}
+\vspace{-2pt}
+
+\concepttable{
+    \conrow{$t_{su}$}{\blue{建立时间}，即在时钟有效沿到来\red{之前}，输入数据 $D$ 必须\red{保持稳定的最小时间}。}
+    \conrow{$t_{hold}$}{\blue{保持时间}，即在时钟有效沿到来\red{之后}，输入数据 $D$ 必须\red{继续保持稳定的最小时间}。}
+    \conrow{$t_{clk-q}$}{\blue{时钟至输出延时}，即从时钟有效沿（50\%点）到输出 $Q$ 稳定输出（50\%点）的时间间隔。\par
+    \red{传播延时 (Max)：}最慢情况，决定系统时钟周期 $T$ 的瓶颈。\par
+    \red{污染延时 (Min)：}最快情况，用于检查保持时间。}
+    \conrow{$t_{d-q}$}{\blue{输入至输出延时}，数据 $D$ 变化导致输出 $Q$ 变化的总延时。主要用于\red{锁存器}处于透明状态时或组合逻辑电路。}
+    \conrow{时钟周期 $T$}{时钟信号重复一次所需的时间，$f = 1/T$。}  
+}
+
+输出 $Q$ 的变化是\red{由时钟触发的}，而不是由 $D$ 直接触发的（除非是透明锁存器）。
+
+\subsubsection{寄存器延时机制}
+
+深入晶体管级电路（基于多路选择器的寄存器），分析 $t_{su}, t_{hold}, t_{clk-q}$ 到底是由电路中哪些部分决定
+
+\img[0.7\linewidth]{images/image-2026-01-05-13-36-33.png}
+
+\concepttable{
+    \conrow{\red{建立时间 $t_{su}$}}{在时钟上升沿前，数据 $D$ 必须穿过 $I_1 \to T_1 \to I_3 \to I_2$ \red{到达反馈管 $T_2$ 的两端}。若数据未及时到达，反馈环路闭合时将锁存错误值。\par
+    故 \red{$t_{su} = t_{pd,I1} + t_{pd,T1} + t_{pd,I3} + t_{pd,I2}$}。}
+    \conrow{\blue{保持时间 $t_{hold}$}}{时钟上升后，输入传输门 $T_1$ 完全关断需要时间。若 $D$ 在 $T_1$ 彻底关断前改变，新数据会污染内部节点。\par
+    故 $t_{hold}$ 取决于 \red{时钟信号到达 $T_1$ 的延时} 与 \red{$T_1$ 的关断速度}。}
+    \conrow{\green{时钟至输出 $t_{clk-q}$}}{时钟上升沿触发从锁存器变为透明，数据从中间节点 $Q_M$ 经 $T_3 \to I_6$ 传播至输出 $Q$。\par
+    故 \red{$t_{clk-q} = t_{pd,T3} + t_{pd,I6}$}。}
+}
+
+\subsubsection{\red{时序参数约束}}
+
+\hlblue{\textbf{建立时间约束}}
+
+\entry{概述}{允许的\red{最高时钟频率（或最小时钟周期）}由建立时间约束决定。研究数据从发起触发器（FF1）出发，经组合逻辑到达捕获触发器（FF2）并在下一次时钟沿被采样的时序关系。}
+
+\imgleft[0.4]{images/image-2026-01-05-13-56-48.png}{
+
+    \entry{分析要点}{
+    \begin{enumerate}[label=(\arabic*)]
+        \item \textbf{场景}：在 $t_1$ 时钟沿，FF1 更新输出；在 $t_2=t_1+T$ 时钟沿，FF2 采样输入数据；
+        \item \textbf{路径延时}：包括 $t_{clk-Q}$（时钟到 FF1 输出的传播延时，取最大值）、$t_{p,comb}(max)$（组合逻辑最大传播延时）和 $t_{setup}$（FF2 的建立时间）；
+        \item \textbf{要求}：数据必须在采样沿到来之前稳定，\red{即三个过程（FF1 完成输出 - 组合逻辑完成处理 - FF2 完成数据加载）必须在一个时钟周期内完成}，故 $t_{clk-Q} + t_{p,comb}(max) \le T - t_{setup}$。
+    \end{enumerate}
+    }
+
+}
+
+\entry{约束公式}{$t_{clk-Q} + t_{p,comb}(max) + t_{setup} \le T$}
+
+由此得到最小时钟周期 $T_{min}$，最大频率 $f_{max} = 1/T_{min}$
+
+\entry{物理意义}{触发器延时 + 组合逻辑延时 + 捕获端建立时间的总和不能超过一个时钟周期，否则会发生建立时间违例，导致时序错误。}
+
+\hlblue{\textbf{保持时间约束}}
+
+\entry{概述}{保持时间约束用于避免竞争冒险（Race），即防止来自前级的新数据在捕获触发器尚未完成对旧数据的保持前篡改其输入。旧数据还没处理完，新数据就来了，导致采样错误。}
+
+\imgleft[0.4]{images/image-2026-01-05-14-04-49.png}{
+
+    \entry{分析场景}{
+        \concepttable{
+            \conrow{问题背景}{在时钟沿 $t_1$ 到来时，FF2 正在采样“旧数据”，同时 FF1 在同一时刻驱出“新数据”。若新数据通过组合逻辑传播得太快，会在 FF2 的保持窗口内覆盖旧数据，导致采样错误（竞争）。}
+        }
+    }
+
+    \entry{最小延时路径（污染延时分析）}{
+        \concepttable{
+            \conrow{$t_{cdreg}$}{前级寄存器的污染延时（FF1 的最短$t_{clk-q}$）。}
+            \conrow{$t_{cdlogic}$}{组合逻辑的污染延时（数据通过组合逻辑的最短时间）。}
+            \conrow{$t_{hold}$}{接收寄存器的保持时间（FF2 需要输入保持的最短时间）。}
+        }
+    }
+
+}
+
+\entry{约束公式}{
+    \concepttable{
+        \conrow{公式}{\red{$t_{cdreg} + t_{cdlogic} \ge t_{hold}$}}
+        \conrow{物理意义}{新数据的最短到达时间必须不早于接收端的保持窗口结束，保证旧数据被安全捕获。}
+    }
+}
+
+\entry{特性与修复方法}{
+    \concepttable{
+        \conrow{与周期无关}{保持违例与时钟周期 $T$ 无关，降低频率无法修复。}
+        \conrow{常见解决办法}{\red{增加路径最小延时}（插入缓冲器 / 延长连线），工程上优先用插缓冲或时钟偏差来修复。}
+    }
+}
+
+\hlblue{\textbf{时序约束总结-01}}
+
+\entry{核心结论}{一条合法的时序路径必须同时满足“不跑太快（Min）”与“不跑太慢（Max）”两类约束，统一写作：}
+
+\red{$t_{hold2} \le t_{clk\text{-}Q1} + t_{p,comb} \le T - t_{setup2}$}
+
+\concepttable{
+    \conrow{左端（Min / 保持）}{对应保持时间约束，计算时应代入\red{最短延时（污染/Min）}，即 $t_{hold2} \le t_{cdreg} + t_{cdlogic}$.}
+    \conrow{右端（Max / 建立）}{对应建立时间约束，计算时应代入\red{最长延时（传播/Max）}，即 $t_{pdreg} + t_{pdlogic} \le T - t_{setup2}$.}
+}
+
+\subsubsection{时钟偏差和时钟抖动}
+
+\hlblue{\textbf{时钟偏差}}
+
+\entry{定义}{空间上\red{两个不同点处时钟沿到达时间的偏差}。数学表示：$\delta(i,j)=t_i - t_j$。}
+
+\vspace{-2pt}
+\img[0.7\linewidth]{images/image-2026-01-05-14-24-53.png}
+\vspace{-2pt}
+
+\entry{物理成因}{\concepttable{
+    \conrow{路径失配}{时钟信号从 PLL/时钟源到芯片各寄存器的走线长度和经过的缓冲器数量不同，导致传播延时差异。}
+    \conrow{负载差别}{不同时钟节点驱动的寄存器数量不同，电容负载 $C_L$ 不同，进而产生不同延时。}
+}}
+
+\entry{特性}{
+    \concepttable{
+        \conrow{\red{确定性}}{在工艺完成并在给定 PVT 条件下，偏差基本固定（周期间不变），这与随时间变化的抖动不同。}
+        \conrow{与抖动区别}{抖动为随机、随时间变化的相位噪声；偏差为空间上的确定性相位差。}
+        \conrow{仅影响相位，不影响周期}{Skew 只是使某些时钟沿整体提前或滞后，时钟频率（周期）本身保持不变。}
+    }
+}
+
+全芯片中，时钟到达最早的寄存器和到达最晚的寄存器之间的时间差，就是\textbf{最大时钟偏差}。
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \entry{正时钟偏差 (Positive Skew)}{%
+    \img{images/image-2026-01-05-14-35-16.png}
+    \concepttable{
+        \conrow{定义}{\red{时钟传播方向与数据传输方向相同}：时钟先经过发送端 R1，再到接收端 R2，导致接收端时钟 $t_{CLK2}$ 晚于发送端 $t_{CLK1}$ 到达。}
+        \conrow{图示说明}{CLK 从发送端向接收端传播（R1 → R2），接收端“迟到”。}
+        \conrow{物理意义}{接收端比预期更晚地进行采样；通常对建立时间约束有\red{放宽}作用，但可能使保持时间约束更紧。}
+    }%
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{负时钟偏差 (Negative Skew)}{%
+    \img{images/image-2026-01-05-14-35-39.png}
+    \concepttable{
+        \conrow{定义}{\red{时钟传播方向与数据传输方向相反}：CLK 先到达接收端 R3，再到发送端 R2，导致接收端时钟 $t_{CLK3}$ 早于发送端 $t_{CLK2}$ 到达。}
+        \conrow{图示说明}{CLK 从接收端向发送端传播（R3 ← R2），接收端“早退”。}
+        \conrow{物理意义}{接收端比预期更早地进行采样；通常对建立时间约束有\red{收紧}作用，但有利于满足保持时间约束。}
+    }%
+    }
+\end{minipage}
+
+\hlblue{\textbf{对时序约束的影响}}
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \entry{Setup 约束}{}
+    \concepttable{
+        \conrow{定量公式}{$t_{c-q} + t_{logic} + t_{su} \le T + \delta$}
+        \conrow{最小周期}{$T_{\min} = t_{c-q} + t_{logic} + t_{su} - \delta$}
+        \conrow{物理理解}{若接收端时钟晚到 $\delta$（$\delta>0$），相当于周期 $T$ 变长；若早到（$\delta<0$），有效周期缩短，要求更严。}
+        \conrow{最坏情况}{\red{负时钟偏差} ($\delta<0$) 是 Setup 的最坏情况，会增大 $T_{\min}$，迫使系统降频。}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{Hold 约束}{}
+    \concepttable{
+        \conrow{定量公式}{$t_{(c-q,cd)} + t_{(logic,cd)} \ge t_{hold} + \delta$}
+        \conrow{物理理解}{若接收端时钟晚到 $\delta$，则保持窗口相当于被延长了 $\delta$（右端变大），最短路径更容易违例。}
+        \conrow{最坏情况}{\red{正时钟偏差} ($\delta>0$) 是 Hold 的最坏情况，会使右侧增大，增加发生保持违例的风险。}
+    }
+\end{minipage}
+
+一般电路中，正时钟偏差和负时钟偏差是\red{同时存在}的。
+
+\hlblue{\textbf{时钟抖动}}
+
+\entry{定义}{须与 Skew（偏差）严格区分：Skew 为\red{空间}概念（同一时刻时钟到达不同点的时间差）；Jitter 为\red{时间}概念（同一点处时钟随时间的随机周期变化）。}
+
+\concepttable{
+    \conrow{统计特性}{抖动通常被视为\red{均值为零}的随机变量。}
+    \conrow{绝对抖动}{$t_{jitter}$：某一具体时钟边沿相对于理想参考边沿的最大偏差（按绝对值计）。}
+    \conrow{周期至周期抖动}{$T_{jitter}$：单个时钟周期相对于理想周期的偏差。}
+    \conrow{最坏情况 / 工程处理}{在最坏情况下，前一边沿晚到 $t_{jitter}$，后一边沿早到 $t_{jitter}$，\red{使周期被压缩 $2t_{jitter}$}。因此在时序分析中常将周期保守地视为 $T - 2t_{jitter}$。}
+}
+
+\entry{对建立时间 (Setup) 的影响}{仅考虑 Jitter 时对建立时间约束的影响。图示中虚线框表示时
+钟沿的不确定性窗口。}
+
+
+\vspace{-2pt}
+\img{images/image-2026-01-05-15-06-03.png}
+\vspace{-2pt}
+
+
+\concepttable{
+    \conrow{波形最坏情形}{Launch 边沿最坏为\red{晚触发}，推迟 $t_{jitter}$；Capture 边沿最坏为\red{早触发}，提前 $t_{jitter}$。}
+    \conrow{有效周期}{由于“晚发、早收”，可用的逻辑传播时间被两端抖动“吃掉”，有效周期为 $T_{effective}=T_{CLK}-2t_{jitter}$。}
+    \conrow{约束公式}{建立时间约束变为 $T_{CLK}-2t_{jitter} > t_{c-q} + t_{logic} + t_{su}$。}
+    \conrow{结论}{\red{抖动总是降低性能}：需增大物理周期 $T_{CLK}$ 以满足约束，从而降低系统最大频率。}
+}
+
+\subsubsection{时序约束（最终版）}
+
+考虑时钟偏差与抖动后的完整时序：
+
+\concepttable{
+    \conrow{Jitter ($2t_{jitter}$)}{\red{永远是破坏者}。为保证最坏情况：\par
+    • 在 setup 约束时，假设周期被压缩：$T \to T - 2t_{jitter}$；\par
+    • 在 hold 约束时，假设保持窗口被放宽：$t_{hold} \to t_{hold} + 2t_{jitter}$.}
+    \conrow{Skew ($\delta$)}{\red{亦正亦邪}：\par
+    • 正偏差 ($\delta>0$)：接收端时钟晚到，有利于 Setup（放宽），不利于 Hold（收紧）；\par
+    • 负偏差 ($\delta<0$)：接收端时钟早到，不利于 Setup（收紧），有利于 Hold（放宽）。}
+}
+
+\concepttable{
+    \conrow{\red{建立时间（Setup）约束}}{$t_{clk\text{-}Q} + t_{p,comb} + t_{su} \le T - 2t_{jitter} + \delta_{\text{setup}}$ \par（其中对 Setup 最不利时取 $\delta_{\text{setup}}=\min\{\delta\}$）}
+    \conrow{\red{保持时间（Hold）约束}}{$t_{cd,reg} + t_{cd,logic} \ge t_{hold} + \delta_{\text{hold}} + 2t_{jitter}$ \par（其中对 Hold 最不利时取 $\delta_{\text{hold}}=\max\{\delta\}$）}
+}
+
+\entry{注}{在时序分析中分别用最坏情形代入：Setup 用周期缩短 ($-2t_{jitter}$) 与最不利的偏差，Hold 用保持窗口放大 ($+2t_{jitter}$) 与最不利的偏差以保证安全性。}
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{\textbf{建立时间约束（Setup）}}
+    \entry{情况 A：正偏差 + Jitter}{（接收端晚到，部分有利）}
+    \concepttable{
+        \conrow{场景}{$\delta>0$（接收端晚到），但存在抖动 $t_{jitter}$}
+        \conrow{有效时间}{$T_{CLK}$ $+\delta$ $-2t_{jitter}$ $-t_{su}$}
+        \conrow{约束不等式}{$T_{CLK} + \delta - 2t_{jitter} - t_{su} > t_{clk-q} + t_{logic}$}
+        \conrow{结论}{正 Skew 可放宽要求，但 Jitter 会抵消部分优势}
+    }
+    \entry{情况 B：负偏差 + Jitter}{（接收端早到，为 Setup 的最坏情形）}
+    \concepttable{
+        \conrow{场景}{$\delta<0$（记为 $-|\delta|$），再加上抖动 $t_{jitter}$}
+        \conrow{有效时间}{$T_{CLK} - |\delta| - 2t_{jitter} - t_{su}$}
+        \conrow{约束不等式}{$T_{CLK} - |\delta| - 2t_{jitter} \ge t_{clk-q} + t_{logic} + t_{su}$}
+        \conrow{最小周期}{$T_{min} = t_{clk-q} + t_{logic} + t_{su} + |\delta| + 2t_{jitter}$}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{\textbf{保持时间约束（Hold）}}
+    \entry{要点}{关注数据跑得太快（Min Delay）是否在保持窗口内覆盖旧数据。Hold 与周期无关，检测最短路径。}
+    \entry{最坏情况：正偏差 + Jitter}{（接收端晚到是 Hold 的最坏情形）}
+    \concepttable{
+        \conrow{场景}{$\delta>0$（接收端晚到），存在抖动 $t_{jitter}$}
+        \conrow{最短数据延时}{前级最短路径 $t_{clk-q,cd} + t_{logic,cd}$}
+        \conrow{保持窗口}{$t_{hold} + \delta + 2t_{jitter}$}
+        \conrow{约束不等式}{$t_{clk-q,cd} + t_{logic,cd} > t_{hold} + \delta + 2t_{jitter}$}
+    }
+    \entry{结论}{若此最坏情形满足，则负偏差情形必然满足；工程上通过增加最小延时（插缓冲）或调整时钟偏差来修复保持违例。}
+\end{minipage}
+
+\subsection{习题解析}
+
+\subsubsection{作业题}
+
+这里主要是计算题：\red{强制写入锁存器的尺寸设计}和\red{时序常数的约束条件}。
+
+\entry{作业 5-2}{对于下图静态寄存器，假设原始状态Q=1，时钟上升沿到之前D=0。为了使得时钟上升沿到达之后，Q的状态正确改变，I1、T2、I4的晶体管尺寸应该满足什么条件？请列出相应晶体管尺寸系数的关系不等式。\par
+假设单位尺寸NMOS管的等效导通电阻等于R，单位尺寸PMOS管的等效导通电阻等于2R（粗略估计，可以认为的传输管的导通电阻与反相器中的相同尺寸晶体管一致），近似认为I3的输出只有在输入电压超过Vdd/2时(理想阈值电压)才翻转。（注：CMOS传输门中NMOS和PMOS尺寸相等，整体的并联导通电阻可以用NMOS的电阻近似）}
+
+\entry{启发意义}{此题就是标准的写 1 的串联思路，主要需要注意\red{电阻和尺寸系数的关系}。}
+
+\entry{进攻方电阻（上拉 $R_{pull\text{-}up}$）}{
+    \concepttable{
+        \conrow{$I_1$ 的电阻}{此时 $I_1$ 工作在 PMOS 上拉状态。虽然题目说单位 PMOS 为 $2R$，\red{$I_1$ 在设计时 PMOS 宽度已取 NMOS 的 2 倍}，从而抵消 $2R$ 的劣势，使等效电阻统一按 $R$ 计。\par
+        \red{阻值}：$R_{I1}=R/s1$。}
+        \conrow{$T_2$ 的电阻}{题目说明可近似为 NMOS 的导通电阻。\par
+        \red{阻值}：$R_{T2}=R/s2$。}
+        \conrow{总上拉电阻}{串联相加：$R_{up}=R_{I1}+R_{T2}=R/s1+R/s2$。}
+    }
+}
+
+\entry{防守方电阻（下拉 $R_{pull\text{-}down}$）}{
+    \concepttable{
+        \conrow{$I_4$ 的电阻}{$I_4$ 此时工作在 NMOS 下拉状态。\par
+        \red{阻值}：$R_{I4}=R/s4$。}
+    }
+}
+
+\imgleft[0.4]{images/image-2026-01-04-11-23-55.png}{
+    
+    \entry{分压不等式}{为了让中间节点电压 $V_X > \frac{V_{DD}}{2}$，下拉电阻必须大于总电阻的一半}
+
+    \concepttable{
+        \conrow{基本条件}{$R_{pull\text{-}down} > R_{pull\text{-}up}$}
+        \conrow{代入阻值}{$\frac{R}{s4} > \frac{R}{s1} + \frac{R}{s2}$}
+        \conrow{化简结果}{两边同时消去 $R$（并调整位置以匹配 PPT 写法）：$\frac{R}{s1} + \frac{R}{s2} < \frac{R}{s4}$，即 \red{$\frac{1}{s1} + \frac{1}{s2} < \frac{1}{s4}$}}
+    }
+
+}
+
+\section{第八章\ 加法器}
+
+\subsection{二进制加法器}
+
+这里主要是全加器的特性分析以及一些节省晶体管数的加法器结构，重点在进位而非求和。
+
+\imgleft[0.3]{images/image-2026-01-02-09-48-02.png}{
+    \entry{全加器逻辑}{
+        \concepttable{
+            \conrow{和 ($Sum$)}{$Sum = A \oplus B \oplus C_{in}$。$Sum$ 是 $A, B, C_{in}$ 三者的\red{异或 (XOR)} 和，逻辑上等同于\red{奇偶校验}，即当输入中有奇数个"1"时，结果为 1。}
+            \conrow{进位输出 ($C_{out}$)}{$C_{out} = AB + C_{in}(A + B)$。这是\red{多数表决函数}。只要 $A, B, C_{in}$ 这三个变量中有两个或两个以上为 1，则 $C_{out}$ 为 1。这与真值表的逻辑严格对应。}
+        }
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+    
+    \subsubsection{复合CMOS门实现}
+
+    \entry{定义}{基于布尔逻辑表达式的直接实现（常规静态 CMOS 逻辑）。}
+
+    \img[0.7\linewidth]{images/image-2026-01-02-10-12-52.png}
+
+    \entry{逻辑表达式推导}{
+        \concepttable{
+            \conrow{和位 $S$}{$S = A \oplus B \oplus C_i$\par
+            $= ABC_i + \overline{A}\overline{B}C_i + \overline{A}B\overline{C}_i + A\overline{B}\overline{C}_i$}
+            \conrow{进位 $C_o$}{$C_o = AB + C_i(A+B)$。}
+        }
+    }
+
+    \entry{晶体管数量计算(从这里就是\red{镜像上下拉结构})}{
+        \concepttable{
+            \conrow{总计}{$16 + 10 + 6 = \red{32}$ 个晶体管}
+        }
+    }
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+
+    \subsubsection{无XOR复合门实现}
+
+    利用逻辑共享进行优化。
+
+    \img[0.8\linewidth]{images/image-2026-01-02-10-36-13.png}
+
+    \entry{逻辑表达式推导}{
+        \concepttable{
+            \conrow{和位 $S$}{$S = ABC_i + \overline{C_o}(A+B+C_i)$}
+            \conrow{进位 $C_o$}{$C_o = AB + C_i(A+B)$。}
+        }
+    }
+
+    \entry{晶体管数量计算}{
+        \concepttable{
+            \conrow{注}{这里的输入不再需要反相器，但是不知为何把镜像结构也取消了}
+            \conrow{总计}{$14 + 10 + 2 + 2 = \red{28}$ 个晶体管}
+        }
+    }
+
+\end{minipage}
+
+\entry{复合 CMOS 实现电路结构分析}{
+    \concepttable{
+        \conrow{结构缺点}{$S$ 和 $C_o$ 的生成电路\red{完全分离}，没有共享逻辑资源，导致晶体管数量多、占用面积大。}
+    }
+}
+
+\entry{无 XOR 复合门实现电路结构分析}{
+    \concepttable{
+        \conrow{关键信号}{将最关键的进位输入 $C_i$连接到最靠近输出节点。这样可以\red{减小该节点对地的寄生电容放电路径的电阻}，从而减小延时（Elmore模型）。}
+        \conrow{负载}{级联使用的$C_{out}$ 连到下一级的 $C_{in}$，在电路中可以看到，$C_{in}$ 连接了 6 个管子的栅极，因此输入电容较大。}
+        \conrow{优化目标}{$SUM$ 只是本地计算，不参与级联传播。因此，优化 $C_{in} \to C_{out}$ 的速度是提升加法器整体性能的关键}
+    }
+}
+
+\subsubsection{进位产生、进位取消、进位传播信号}
+
+是理解后续所有高速加法器的理论基础
+
+\entry{信号定义（利用进位信号属于多数表决逻辑，2 个已知输入信号就决定了当前的进位情况）}{
+    \concepttable{
+        \conrow{进位产生信号 $G$}{$G = AB$。}
+        \conrow{进位消除信号 $K$}{$K = \overline{A} \cdot \overline{B} = \overline{A+B}$。}
+        \conrow{进位传播信号 $P$}{严格定义：$P = A \oplus B$；宽松定义：$P = A+B$。}
+    }
+}
+
+\entry{为什么可以取 $A+B$？}{
+    当 $G=1$ 或 $K=1$ 时，$P$ 值不影响 $C_o$；仅当一个输入为 1 另一个为 0 时 $P$ 才起作用，此时 $A \oplus B = A+B = 1$。因此用 $A+B$ 替代 $A \oplus B$ 逻辑等价且电路更简单（OR 门 vs XOR 门）。
+}
+
+\entry{逻辑重写}{利用 $G$ 和 $P$ 重写全加器方程：}
+\concepttable{
+    \conrow{和位}{$S(G, P) = P \oplus C_i$}
+    \conrow{进位输出}{\red{$C_o(G, P) = G + P C_i$}。将进位输出分解为"\red{本地产生}"和"\red{低位传播}"两部分。}
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+
+\subsubsection{\red{镜像加法器}}
+
+\entry{镜像结构优势}{利用全加器的\red{反相特性}与 CMOS 管导通特性的互补性，实现结构复用：}
+
+\img[0.8\linewidth]{images/image-2026-01-02-11-11-06.png}
+
+    \entry{逻辑表达式推导}{
+        \concepttable{
+            \conrow{和位 $S$}{$S = ABC_i + \overline{C_o}(A+B+C_i)$}
+            \conrow{进位 $C_o$}{$C_o = AB + C_i(A+B)$。}
+        }
+    }
+
+    \entry{晶体管数量计算}{
+        \concepttable{
+            \conrow{注}{这里输出的全是反相信号}
+            \conrow{总计}{$14 + 10 = \red{24}$ 个晶体管}
+        }
+    }
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+
+\subsubsection{传输门实现全加器}
+
+利用传输门作为开关来选择信号，类似于多路选择器（MUX）的逻辑。
+
+\img[0.8\linewidth]{images/image-2026-01-02-11-31-54.png}
+
+    \entry{逻辑表达式推导}{
+        \concepttable{
+            \conrow{传播信号}{$P = A \oplus B$}
+            \conrow{和位}{$S = P \oplus C_{in}$}
+            \conrow{进位输出}{$C_{out} = G + P C_{in}$}
+        }
+    }
+
+    \vspace{8pt}
+
+    \entry{晶体管数量计算}{
+        \concepttable{
+            \conrow{总计}{$12 + 8 + 2 + 2 = \red{24}$ 个晶体管}
+        }
+    }
+
+\end{minipage}
+
+\entry{传输门加法器电路特性分析}{
+    \concepttable{
+        \conrow{延时特性}{$SUM$ 和 $C_{out}$ \red{延时基本相同}。由于 $S$ 和 $C_o$ 都通过 $P$ 信号控制的传输门\red{并行产生}，无明显级联关系。}
+        \conrow{无阈值损失}{使用\red{互补传输门}，实现全摆幅传输。}
+        \conrow{驱动能力}{传输门逻辑主要依赖前级信号驱动。若级联过多，信号会衰减，通常需插入\red{缓冲器 (Buffer)} 增强驱动。若速度要求不高，可用反相器生成 $\bar{P}$。}
+    }
+}
+
+\subsubsection{进位产生电路优化：曼彻斯特进位门}
+
+\entry{控制原理}{利用控制信号直接决定进位输出 $C_o$ 连接到哪一个电位或信号源。}
+
+\imgleft[0.2]{images/image-2026-01-02-11-49-55.png}{
+    
+    \entry{约束条件}{
+        \concepttable{
+            \conrow{进位传播}{$P_i = a_i \oplus b_i$}
+            \conrow{进位产生}{$G_i = a_i b_i$}
+            \conrow{\red{互斥约束}}{$P_i G_i \neq 1$。对于一位加法器，$A$ 和 $B$ 不可能同时满足"既相等（用于 $G$）又不相等（用于 $P$）"。}
+        }
+    }
+
+    \entry{物理意义}{传播路径和产生路径在逻辑上是\red{互斥}的，不会发生竞争冲突。}
+
+}
+
+\imgleft[0.4]{images/image-2026-01-02-11-53-44.png}{
+
+    \entry{曼彻斯特进位链}{
+        \concepttable{
+            \conrow{传输管只用 N 管}{NMOS 的电子迁移率比 PMOS 的空穴迁移率高，导通电阻更小，信号传输速度快。}
+            \conrow{节点电容很小}{进位链上的每个中间节点（例如 $\overline{C_1}$）只连接极少器件，寄生电容极小。具体包含\red{四个扩散电容：本级传输管源/漏区、下一级传输管源/漏区、本级生成管漏区、本级预充 PMOS 管漏区。}}
+            \conrow{延时特性}{每一个导通的 NMOS 传输管被等效为一个电阻 $R$，每一个中间节点被等效为一个对地电容 $C$：等效为一个 RC 链结构：$t_p = 0.69 \frac{N(N+1)}{2} RC$}
+        }
+    }
+
+}
+
+
+\subsection{行波进位加法器}
+
+\entry{最坏情况分析}{以从 $A_0$ 到 $S_{N-1}$ 的进位传播路径为例：}
+
+\imgleft[0.3]{images/image-2026-01-02-09-54-17.png}{
+    
+    \concepttable{
+        \conrow{总延时公式}{$t_{adder} = (N-1)t_{carry} + t_{sum}$}
+        \conrow{参数说明}{$t_{carry}$ 为单级进位延时（$C_{in} \to C_{out}$），$t_{sum}$ 为求和逻辑延时（$A, B, C_{in} \to Sum$）。}
+    }
+
+}
+
+\entry{性能瓶颈}{
+    \concepttable{
+        \conrow{线性增长}{延时与位数 $N$ 成\red{线性正比}关系，即 $t_d = O(N)$。}
+        \conrow{设计矛盾}{结构简单、面积小，但速度是\red{最慢的加法器架构}，不适用于高性能场景。}
+    }
+}
+
+\subsubsection{单级加法器的反相特性}
+
+\entry{自对偶性质}{全加器逻辑函数具有\red{反相保持性}：}
+
+\concepttable{
+    \conrow{数学表达}{$\bar{S}(A,B,C_i) = S(\bar{A},\bar{B},\bar{C_i})$\par
+    $\overline{C_o}(A,B,C_i) = C_o(\bar{A},\bar{B},\bar{C_i})$}
+    \conrow{物理意义}{输入全部取反时，输出恰好也是原输出的反码。}
+}
+
+\entry{电路优化价值}{CMOS 基本门（NAND/NOR）天然产生反相输出。利用此性质可\red{省略级间反相器}，接受反相输入直接得到反相输出，从而减少延时与面积。}
+
+\subsubsection{优化行波级联结构}
+
+\entry{优化思路}{
+    \concepttable{
+        \conrow{优化思路}{利用全加器的\red{自对偶性}，通过交替改变输入极性，使级联信号在"正-负-正-负"间跳变，\red{省去级间反相器（能省一点是一点）}，但是输入需要配合反相的进位信号而增加输入反相器。}
+    }
+}
+
+\imgleft[0.4]{images/image-2026-01-02-11-03-12.png}{
+
+\entry{偶数级 (Stage 0, 2...)}{
+    \concepttable{
+        \conrow{输入}{$A_0, B_0$（正相）}
+        \conrow{输出}{去掉输出端反相器，直接输出\red{反相进位信号} $\overline{C_{o0}}$。}
+        \conrow{传递}{$\overline{C_{o0}}$ 直接连接到下一级作为反相进位输入。}
+    }
+}
+
+\entry{奇数级 (Stage 1, 3...)}{
+    \concepttable{
+        \conrow{输入变换}{为配合接收到的反相进位输入 $\overline{C_{in}}$，本级加数输入也取反，即输入 $\bar{A_1}, \bar{B_1}$（增加输入反相器）。}
+        \conrow{逻辑运算}{根据自对偶性，当输入为 $(\bar{A}, \bar{B}, \bar{C})$ 时，输出为 $\overline{S}$ 和 $\overline{C_{out}}$。}
+        \conrow{极性恢复}{利用 CMOS 门电路本身的反相特性，本级输出的进位信号 $C_{o1}$ \red{恢复为正相}。}
+    }
+}
+
+\entry{核心结论}{通过交替改变输入极性，实现正负极性交替，从而\red{移除级间反相器}，减少关键路径延时。}
+
+}
+
+\subsection{进位选择加法器}
+
+\entry{核心设计思想}{打破行波进位的串行依赖，采用\red{预测与并行计算}策略。}
+
+\concepttable{
+    \conrow{优化策略}{本级模块（一般不止一位运算，这里设定为 \red{N 个 M 位加法模块级联}）的进位输入 $C_{in}$ 只有 \red{0 或 1} 两种可能，采用双路并行计算：\par
+    • 使用两套相同的加法器硬件；\par
+    • 分别假定 $C_{in}=0$ 和 $C_{in}=1$ 同时进行计算；\par
+    • 当真正的进位信号 $C_{o,k-1}$ 到达时，通过\red{多路选择器 (MUX)} 从两组预计算结果中选择正确的一组。}
+    \conrow{物理意义}{用\red{空间换时间}：增加一倍硬件开销，换取进位传播延时的显著降低。}
+}
+
+\subsubsection{关键路径分析}
+
+\entry{电路结构}{图中有 4 个块（Bit 0-3, Bit 4-7, Bit 8-11, Bit 12-15，\red{N = 4}）。每个块（运算 4 位加法，\red{M=4}）都包含了上述的"两路并行计算 + MUX"结构。进位信号不再穿过每个块内部的加法器链，而是穿过\red{各级的MUX}。}
+
+\entry{\red{关键路径延时公式}}{
+    $t_{add} = t_{setup} + M t_{carry} + \left( \frac{N}{M} \right) t_{mux} + t_{sum}$
+}
+
+\imgleft[0.4]{images/image-2026-01-02-12-12-59.png}{
+
+    \entry{各项解释}{
+        \concepttable{
+            \conrow{$t_{setup}$}{初始化产生 $P, G$ 信号的时间。}
+            \conrow{$M t_{carry}$}{各块内部串行进位延时，所有块在此期间完成\red{并行计算}，等待 MUX 选通。}
+            \conrow{$\left( \frac{N}{M} \right) t_{mux}$}{新的\red{进位传播路径}。信号要穿过 $N/M$ 个 MUX 级。}
+            \conrow{$t_{sum}$}{最后一级 MUX 选好后，通过异或门产生最终 Sum 的时间。}
+        }
+    }
+
+}
+
+\entry{性能对比}{
+    \concepttable{
+        \conrow{速度比较}{进位传播时间仍然与 $N$ 成正比（\red{线性关系），但是斜率变小了}。因为 $t_{mux}$ 通常远小于 $M$ 个全加器的串行延时。所以它比逐位进位（行波进位）加法器快。}
+        \conrow{硬件开销}{因为它复制了进位链（双份硬件）并增加了 MUX。\red{硬件开销大约增加 30\%}。这是一个典型的 Trade-off（权衡）：\red{用 30\% 的面积换取速度提升}。}
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+
+\subsubsection{线性架构}
+
+    \entry{固定块大小（线性分组）}{
+        \img[\linewidth]{images/image-2026-01-02-12-01-35.png}
+    }
+
+    \entry{时间浪费}{所有块计算时间相同但 MUX 信号需串行传播，导致\red{高位块过早完成计算后空等低位进位信号}。}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+
+\subsubsection{平方根架构}
+
+    调整模块位宽来实现计算与传播的\red{时序匹配}。
+
+    \img[\linewidth]{images/image-2026-01-02-12-26-35.png}
+
+    \entry{优化思路}{后面的块增加位宽，使其计算时间恰好匹配前面块的 MUX 延时累积，避免空等。}
+
+\end{minipage}
+
+\entry{平方根延时推导}{设定总位数 $N$，分成 $P$ 个模块，第一级位数为 $M$。}
+
+\concepttable{
+    \conrow{级数构成}{后续每一级都比前一级多 1 位。}
+    \conrow{总位数}{$N = M + (M+1) + (M+2) + \dots = M \cdot P + \frac{P^2}{2} - \frac{P}{2}$}
+}
+
+\entry{平方根关系推导}{假设初始位数 $M \ll N$ 且 $P$ 较大，忽略低次项和常数项，则$N \approx \frac{P^2}{2}$，即$P \approx \sqrt{2N}$，此为平方根名称由来}
+
+\entry{\red{延时公式}}{\red{$t_{add} = t_{setup} + M t_{carry} + \sqrt{2N} t_{mux} + t_{sum}$}}
+
+\entry{性能对比}{
+    \concepttable{
+        \conrow{线性架构}{MUX 级数项为 $\frac{N}{M} t_{mux}$，与 $N$ 成\red{线性关系}。}
+        \conrow{平方根架构}{MUX 级数项为 $P t_{mux} \approx \sqrt{2N} t_{mux}$，与 $\sqrt{N}$ 成正比，属于\red{亚线性关系}。}
+    }
+}
+
+\imgleft[0.25]{images/image-2026-01-02-12-41-03.png}{
+    \entry{性能对比图}{
+        \concepttable{
+            \conrow{行波进位}{延时呈\red{线性增长} $O(N)$，斜率最陡。随位数增加，延时迅速飙升，高位宽场景性能不可接受。}
+            \conrow{线性选择}{延时仍为\red{线性增长} $O(N)$，但斜率较小。通过双路并行计算减少等待时间，但块大小固定导致级数 $P \propto N/M$，本质仍是线性关系。}
+            \conrow{平方根选择}{延时呈\red{亚线性增长} $O(\sqrt{N})$。低位宽时因额外开销略慢，但 $N > 16$ 后优势显著，延时增长极其平缓。}
+        }
+    }
+}
+
+\subsection{进位旁路加法器}
+
+检测本组内所有位是否都满足“进位传播”条件。
+
+\imgleft[0.4]{images/image-2026-01-02-12-43-21.png}{
+    \entry{最坏情况}{$P_0=0, P_1 \sim P_3=1$。}
+
+    \concepttable{
+        \conrow{条件解释}{此时旁路不开启，进位链必须在第 0 位产生或者消除，然后依次穿过第 1、2、3 位。}
+        \conrow{延时结论}{在单个模块内部，最坏情况下的延时并没有改善，依然是 $4 \times t_{carry}$。}
+    }
+
+    \entry{核心优势}{进位旁路加法器的真正优势在于多模块级联时，进位信号可以\red{连续跳过中间的多个模块}。}
+}
+
+\entry{延时公式}{\red{$t_{adder} = t_{setup} + M t_{carry} + (N/M - 1) t_{bypass} + (M-1) t_{carry} + t_{sum}$}}
+
+\entry{各项解释}{
+    \concepttable{
+        \conrow{$t_{setup}$}{\red{初始化时间}，并行计算所有位的 $P_i, G_i$ 信号。}
+        \conrow{$M t_{carry}$}{\red{首块延时}。假设进位是由第 0 位产生的（最坏情况），经过 $M$ 级到达第一个 MUX}
+        \conrow{$(N/M - 1) t_{bypass}$}{\red{中间旁路延时}。进位信号出了第一个块，在后续 MUX 中快速传输。}
+        \conrow{$(M-1) t_{carry}$}{\red{末块延时}。进位信号参与最后一个块内部的运算。为了得到最高位的 $Sum$，进位信号需要穿过该块内部的前 $M-1$ 级全加器。}
+        \conrow{$t_{sum}$}{最终一级全加器产生和位输出的逻辑延时。}
+    }
+}
+
+\imgleft[0.3]{images/image-2026-01-02-13-03-13.png}{
+
+    \entry{面积开销}{
+        相比行波进位，增加 \red{10\% 至 20\%}。
+    }
+
+    \entry{延时特性}{
+        旁路加法器延时（下方平缓曲线）与位数 $N$ 依然呈\red{线性关系}。旁路加法器斜率主要由 $t_{bypass}$ 决定。因 MUX 延时远小于 $M$ 个全加器串行延时，故\red{斜率显著降低}。
+    }
+
+    \entry{适用范围}{
+        \concepttable{
+            \conrow{交叉点}{图中两条曲线在约 $N \approx 4.8$ 处交叉。}
+            \conrow{$N$ 较小时}{旁路加法器反而\red{更慢}。因 Setup 电路与 MUX 的固定开销在位数少时成为累赘，无法体现跳跃优势。}
+            \conrow{设计结论}{当 $N$ 在 \red{4 至 8 位}或更大时，采用进位旁路才有收益。对于极短加法器，行波进位是最优解。}
+        }
+    }
+
+}
+
+\subsection{超前进位加法器}
+
+通过递归公式的展开，证明进位产生可以与位数 $N$ 无关。
+
+\entry{进位公式}{$C_{o,k} = G_k + P_k G_{k-1} + P_k P_{k-1} G_{k-2} + \dots + (P_k P_{k-1} \dots P_1)G_0 + (P_k P_{k-1} \dots P_0)C_{i,0}$}
+
+\imgleft[0.3]{images/image-2026-01-02-13-10-09.png}{
+    \entry{依赖关系改变}{观察展开后的长公式，$C_{o,k}$ 的表达式右边只包含：}
+    \concepttable{
+        \conrow{Setup 信号}{$G_i, P_i$。本级产生的信号，所有位\red{并行同时产生}。}
+        \conrow{原始进位}{$C_{i,0}$。整个加法器的最原始进位输入。}
+        \conrow{关键特性}{\red{不再依赖上一级}。公式中不再出现 $C_{o,k-1}$、$C_{o,k-2}$ 等中间进位量。}
+    }
+
+    \entry{最终结论}{"\red{加法时间与位数 $N$ 无关}"。}
+    \concepttable{
+        \conrow{理论性能}{无论 $N$ 是 4 还是 64，只要逻辑门能瞬间完成上述公式运算，进位就是\red{同时产生}的。}
+        \conrow{延时特性}{延时恒定为 $O(1)$，打破了行波进位的 $O(N)$ 限制。}
+    }
+
+}
+
+\entry{物理限制}{当位数 $N$ 较大时，CLA 面临三个致命问题：}
+
+\concepttable{
+    \conrow{大扇入}{随着 $N$ 增加，逻辑表达式项数急剧增加。例如计算 $C_{o,31}$ 需要一个有 32 个输入的巨大逻辑门。在 CMOS 中，多输入意味着串联晶体管变多，串联电阻增大，导致 $RC$ 延时急剧恶化。}
+    \conrow{大扇出}{低位的信号（如 $P_0, G_0$）会出现在所有高位进位的公式中。$G_0$ 需要驱动后面所有位的逻辑门，负载电容极大，导致 $G_0$ 信号本身的翻转变得极慢。}
+    \conrow{面积爆炸}{实现面积随位数 $N$ 的增加而增加。晶体管数量和连线复杂度呈几何级数增长。}
+}
+
+\entry{适用范围}{
+    \concepttable{
+        \conrow{位数限制}{一般超前进位只对小 $N$ 值（\red{$N \le 4$}）有效。}
+        \conrow{工程实现}{将加法器分成 4 位一组。\red{组内使用 CLA 结构}。\red{组间可以使用行波进位}，或者再套用一层 CLA（即分层超前进位加法器），或者使用旁路/选择逻辑。}
+    }
+}
+
+\section{第九章\ 乘法器}
+
+\subsection{二进制乘法}
+
+\subsubsection{无符号数的二进制乘法}
+
+\entry{核心概念}{这一页展示了最基础的乘法原理，是后续有符号乘法的基础。}
+
+\imgleft[0.3]{images/image-2026-01-03-17-22-26.png}{
+
+    \entry{多项式表示}{对于 $M$ 位被乘数 $X$ 和 $N$ 位乘数 $Y$，其数值可以表示为权展开式：}
+
+    \concepttable{
+        \conrow{被乘数}{$X = \sum_{i=0}^{M-1} x_i 2^i$}
+        \conrow{乘数}{$Y = \sum_{j=0}^{N-1} y_j 2^j$}
+    }
+
+    \entry{乘积定义}{乘积 $Z = X \times Y$ 实际上是两重求和的过程：}
+
+}
+
+\concepttable{
+    \conrow{展开公式}{$Z = \sum_{i=0}^{M-1} \sum_{j=0}^{N-1} x_i y_j 2^{i+j}$}
+    \conrow{硬件实现}{$x_i y_j$ 在硬件上对应逻辑\red{与门} 的操作。如果 $x_i$ 和 $y_j$ 均为 1，则该位部分积为 1，否则为 0。}
+}
+
+\entry{关键结论}{
+    \concepttable{
+        \conrow{硬件本质}{无符号乘法在硬件上对应的是简单的"\red{移位-相加}"逻辑。}
+        \conrow{结果位宽}{最终乘积的位宽为 \red{$M+N$ 位}。}
+    }
+}
+
+\subsubsection{有符号数的二进制乘法}
+
+\entry{补码数学定义}{有符号数采用\red{二进制补码} 表示：}
+
+\concepttable{
+    \conrow{公式}{$X = -x_{M-1}2^{M-1} + \sum_{i=0}^{M-2} x_i 2^i$}
+    \conrow{关键特性}{最高位（MSB，符号位）具有\red{负权重} $-2^{M-1}$，其余位具有正权重。}
+}
+
+\entry{直接展开的问题}{两个补码数 $X$ 和 $Y$ 相乘时，公式展开后会非常复杂：}
+
+$XY = x_{M-1}y_{N-1}2^{M+N-2} + \sum \sum x_i y_j 2^{i+j} - \left( x_{M-1} \sum y_j 2^{M+j-1} + y_{N-1} \sum x_i 2^{N+i-1} \right)$
+
+\concepttable{
+    \conrow{正项部分}{包含数值位与数值位的乘积，以及符号位与符号位的乘积（负负得正），这些可以直接相加。}
+    \conrow{负项部分}{当 $X$ 或 $Y$ 是负数时，会出现\red{减法项}。在硬件中做减法比做加法复杂。}
+}
+
+\entry{优化目标}{将减法操作转化为加法操作，以便使用全加器阵列进行统一处理。}
+
+\subsubsection{Baugh-Wooley 算法(感觉可能不会考)}
+
+就是负责把上面的减法项转化为加法项的一种方法，名字看起来很屌罢了。
+
+\imgleft[0.4]{images/image-2026-01-03-17-25-28.png}{
+
+    \entry{核心思想}{利用补码性质 $-A = \bar{A} + 1$（即取反加一）进行变换。}
+
+    \concepttable{
+        \conrow{变换原理}{公式中的减去某一项（例如 $-x_{M-1} \sum y_i ...$），可以通过加上该项的反码并进行必要的常数修正来实现。}
+        \conrow{符号位处理}{$x_{M-1} y_{N-1}$（符号位乘积）保持正权重。}
+        \conrow{交叉项处理}{$x_{M-2} y_{N-1}$ 等涉及一个符号位的交叉项，原本应该做减法，但在矩阵中被替换成了 $\overline{x_{M-2} y_{N-1}}$（取反）。}
+        \conrow{修正常数}{同时引入额外的"1"进行修正。}
+    }
+
+}
+
+\subsubsection{阵列乘法器结构}
+
+\entry{数据流向}{
+    \concepttable{
+        \conrow{部分积产生}{输入 $X$ 和 $Y$ 的各位信号通过与门阵列\red{并行产生}所有的部分积。}
+        \conrow{部分积累加}{每一行的部分积与上一行的累加结果（Sum）及进位（Carry）进行相加。信号是从上到下，从右向左（进位传播）流动的。}
+        \conrow{最终相加}{最底部的点阵。所有中间结果最终汇聚，形成最终的乘积 $P_{2N-1} \dots P_0$。通常最后一行会使用一个\red{超前进位加法器（CLA）}来加速最终结果的生成。}
+    }
+}
+
+\subsection{部分积产生}
+
+\subsubsection{部分积产生（基础单元逻辑）}
+
+\entry{核心定义}{对于 $M \times N$ 位的乘法，需要产生 $N$ 行部分积。}
+
+\entry{基本产生逻辑}{
+    \concepttable{
+        \conrow{逻辑本质}{部分积 = 被乘数 $X$ 与乘数某一位 $Y_i$ 的乘积。}
+        \conrow{二进制特性}{乘数位 $Y_i$ 只有 0 或 1 两种状态：\par
+        • 若 $Y_i = 1$，则该行部分积等于被乘数 $X$。\par
+        • 若 $Y_i = 0$，则该行部分积全为 0。}
+        \conrow{硬件实现}{完全符合\red{与门}的真值表特性。}
+    }
+}
+
+\entry{硬件阵列规模}{
+    \concepttable{
+        \conrow{部分积行数}{$N$ 位乘数需要产生 $N$ 个部分积行。}
+        \conrow{每行位宽}{每一行包含 $M$ 位（对应被乘数位宽）。}
+        \conrow{总逻辑门数}{需要 $M \times N$ 个逻辑门来\red{并行生成}所有的部分积位。}
+    }
+}
+
+
+\entry{电路图解析}{图中展示了其中一行部分积的生成电路：}
+\concepttable{
+    \conrow{输入信号}{公共端：乘数的第 $i$ 位 $Y_i$，连接到所有门的一个输入端。\par
+    分别连接被乘数的各位 $X_0$ 到 $X_7$。}
+    \conrow{输出信号}{$PP_0$ 到 $PP_7$ 即为该行的部分积结果。}
+}
+
+
+\entry{\red{工程实现特殊性：NAND 门的应用}}{
+    \concepttable{
+        \conrow{电路选择}{实际电路中使用\red{与非门（NAND）}，而非理论上的与门（AND）。}
+        \conrow{面积优化}{在 CMOS 工艺中，NAND 门比 AND 门\red{结构更简单、速度更快、面积更小}。\par
+        AND 门实际上由"NAND + 反相器"构成。}
+        \conrow{延时优化}{利用全加器的\red{反相输入特性}，可直接接受 NAND 输出，省去 NAND 到 AND 的转换反相器。}
+        \conrow{设计结论}{通过负逻辑设计或利用后续电路的反相特性，优化了整体的\red{延时和面积}。}
+    }
+}
+
+\subsection{部分积累加}
+
+\subsubsection{波兹编码 (Booth Encoding)}
+
+\entry{问题背景}{在生成部分积后，加法成为新的瓶颈。}
+
+\concepttable{
+    \conrow{行数爆炸}{32位或64位乘数会产生32或64行部分积，导致加法树深度大、延时高。}
+    \conrow{优化目标}{\red{减少部分积的行数}，降低累加复杂度。}
+}
+
+\entry{核心思想}{通过处理乘数中\red{连续的 1} 来压缩部分积行数。}
+
+\concepttable{
+    \conrow{零位优势}{乘数为 0 的位对应全 0 部分积，不产生运算负担。}
+    \conrow{连续 1 问题}{连续的非零位会产生多行非零部分积，成为性能瓶颈。}
+}
+
+\entry{数学原理}{利用二进制连续权重的等价变换：}
+
+\concepttable{
+    \conrow{公式}{$2^{i+k-1} + 2^{i+k-2} + \dots + 2^i = 2^i(2^k - 1) = 2^{i+k} - 2^i$}
+    \conrow{物理意义}{一段连续的 $k$ 个 1（如 $0011100$）在数值上等同于高位加 1 减去低位（如 $0100000 - 0000100$）。}
+    \conrow{核心结论}{将一串连续加法转换为\red{一次加法和一次减法}。无论连续 1 有多长，只需处理序列的"头"和"尾"两个非零操作，中间所有 1 被跳过。}
+}
+
+\entry{编码方法与演进}{
+    \concepttable{
+        \conrow{原始波兹编码}{每次从乘数中取 $k$ 位与被乘数相乘。}
+        \conrow{$k=2$ 编码}{可能的组合为 $00, 01, 10, 11$，对应不同的操作（加0、加1倍、加2倍或减操作）。}
+    }
+}
+
+\subsubsection{改进的 Booth 编码}
+
+\hlblue{\textbf{基本原理}}
+
+\entry{核心跨越}{一次观察更多的位数(针对有符号数)}
+
+$Y = -y_{n-1}2^{n-1} + \sum_{j=0}^{n-2} y_j 2^j$
+
+$= \sum_{i=0}^{i=n/2-1} (y_{2i-1} + y_{2i} - 2y_{2i+1})2^{2i} \quad y_{-1} = 0$
+
+\entry{观察窗口的变化}{
+    \concepttable{
+        \conrow{普通 Booth}{一次观察 2 位（$y_i, y_{i-1}$），每次移动 1 位。}
+        \conrow{改进 Booth}{一次观察 3 位（$y_{i+1}, y_i, y_{i-1}$）。其中 $y_{i-1}$ 是低一组的最高位，被称为\red{考察位}或\red{重叠位}。}
+        \conrow{步长}{虽然观察 3 位，但\red{每次向左移动 2 位}。这意味着相邻两次观察会重叠 1 位（$y_{i+1}$ 在下一轮会变成 $y_{i-1}$）。}
+    }
+}
+
+\entry{编码公式}{
+
+    \concepttable{
+        \conrow{\red{权值公式}}{\red{$\text{Val} = y_{i-1} + y_i - 2y_{i+1}$}}
+        \conrow{结果集合}{该公式的结果集合是 $\{-2, -1, 0, 1, 2\}$。}
+    }
+
+}
+
+\hlblue{\textbf{操作表与实例}}
+
+\entry{编码真值表}{输入是 3 个位 $(y_{i+1}, y_i, y_{i-1})$，输出是对被乘数 $X$ 的操作。}
+
+\vspace{2pt}
+
+{\setlength{\tabcolsep}{3pt}
+\begin{tabular}{ccc|l|l}
+\hline
+\blue{$y_{i+1}$} & \blue{$y_i$} & \blue{$y_{i-1}$} & \blue{操作} & \blue{解释（依据 $y_{i-1}+y_i-2y_{i+1}$）} \\ \hline
+0 & 0 & 0 & 0 & $0+0-0=0$ \\
+0 & 0 & 1 & $+X$ & $1+0-0=1$ \\
+0 & 1 & 0 & $+X$ & $0+1-0=1$ \\
+0 & 1 & 1 & $+2X$ & $1+1-0=2$（$X$ 左移 1 位）\\
+1 & 0 & 0 & $-2X$ & $0+0-2=-2$（$X$ 左移 1 位，求补）\\
+1 & 0 & 1 & $-X$ & $1+0-2=-1$（$X$ 求补）\\
+1 & 1 & 0 & $-X$ & $0+1-2=-1$（$X$ 求补）\\
+1 & 1 & 1 & 0 & $1+1-2=0$ \\ \hline
+\end{tabular}}
+
+\hlblue{\textbf{标准计算流程}}
+
+\entry{第一阶段：预处理}{\red{核心差异点}：这是有符号数与无符号数最大的区别。输入：被乘数 $X$，乘数 $Y$。}
+
+\entry{1) 判定乘数 $Y$ 的类型}{}
+\concepttable{
+    \conrow{情况 A：$Y$ 为无符号数}{\textbf{操作}：在 $Y$ 的最高位（MSB）前\red{补零扩展}，且位数需满足分组要求（通常补 $2$ 个 $0$）；同时在最低位后补辅助位 $y_{-1}=0$。\par
+    \textbf{目的：}防止 Booth 将最高位误读为符号位（负权重）。\par
+    \textbf{示例：}$Y=1011$（无符号）$\rightarrow$ $Y_{ext}=\mathbf{00}1011\mathbf{0}$.}
+    \conrow{情况 B：$Y$ 为有符号补码}{\textbf{操作：}通常不改变数值；若需匹配硬件位宽则进行\red{符号扩展}；同样在最低位后补 $y_{-1}=0$。\par
+    \textbf{示例：}$Y=1011$（有符号 $-5$）$\rightarrow$ $Y_{ext}=1011\mathbf{0}$；若匹配 6 位：$111011\mathbf{0}$.}
+}
+
+\entry{2) 判定被乘数 $X$ 的类型（用于后续 $-X,-2X$）}{}
+\concepttable{
+    \conrow{$X$ 为无符号数}{在计算 $-X$ 或 $-2X$ 时，需先将 $X$ 视为正数（高位补 $0$）再求补。}
+    \conrow{$X$ 为有符号数}{直接使用补码运算规则。}
+}
+
+\entry{第二阶段：分组与编码}{有符号/无符号在此阶段\red{流程完全一致}。}
+\concepttable{
+    \conrow{窗口规则}{从低位到高位，每次取 3 位：$(y_{i+1}, y_i, y_{i-1})$。}
+    \conrow{步长}{每次向左移动 2 位（即 $i$ 每次增加 $2$），相邻分组重叠 1 位。}
+    \conrow{对齐关系}{第 $k$ 组对应权重 $4^k$，等效为该组部分积左移 $2k$ 位。}
+}
+
+\entry{编码映射（依据 $\text{Val}=y_{i-1}+y_i-2y_{i+1}$）}{}
+
+按照上面的真值表进行映射，生成每组对应的操作指令（$+X, +2X, -X, -2X, 0$）。
+
+\entry{第三阶段：部分积生成}{按上一步操作指令生成每一行部分积（重点在 $-X,-2X$ 与扩展）。}
+
+\concepttable{
+    \conrow{$+X$}{照抄 $X$。}
+    \conrow{$+2X$}{$X$ 算术左移 1 位（低位补 $0$）。}
+    \conrow{$-X$}{对 $X$ 按位取反后末位加 $1$（即 $[-X]_{\text{补}}$）。}
+    \conrow{$-2X$}{先将 $X$ 左移 1 位，再对结果按位取反后末位加 $1$。}
+    \conrow{$0$}{全 $0$。}
+}
+
+\entry{\red{扩展规则（生成部分积时必须扩到最终位宽，通常 $2N$ 位）}}{}
+\concepttable{
+    \conrow{$X$ 为无符号数}{生成的 $+X,+2X$ 高位补 $0$；生成的 $-X,-2X$ 高位补 $1$（符号扩展）。}
+    \conrow{$X$ 为有符号数}{生成的 $+X,+2X$ 高位补符号位；生成的 $-X,-2X$ 高位补结果符号位。}
+}
+
+\entry{第四阶段：移位累加}{对齐并用补码加法累加：第 $0$ 组不移位；第 $1$ 组\red{左移 $2$ 位}；第 $2$ 组\red{左移 $4$ 位}；依此类推（左移 $2k$ 位）。累加时忽略最高位进位 $2^n$）。}
+
+\entry{总结：有符号 vs 无符号 Booth 区别}{\red{差异几乎全部发生在第一阶段的 $Y$ 扩展（补零 vs 符号扩展）与第三阶段的部分积扩展规则。}}
+
+\subsection{阵列乘法器}
+
+这个就是我们在 VLSI 实验中设计的那个最终的加法阵列（最占地方的部分）。
+
+\imgleft[0.4]{images/image-2026-01-03-21-00-14.png}{
+
+    \entry{阵列乘法器规模（$M\times N$）}{
+    $M$ 位被乘数、$N$ 位乘数：\red{行数}通常需要 $N-1$ 行加法器；\red{每行宽度}使用 $M$ 位加法器。
+    }
+
+    \entry{关键路径分析}{阵列乘法器存在\red{多条长度相同的关键路径}，且 $t_{sum}$ 与 $t_{carry}$ 的延时\red{同等重要}。}
+
+    \entry{先说结论}{总延迟与 $M,N$ 呈\red{线性关系}；位数增加会使延迟显著增加。}
+
+    传统加法器中通常 $Carry$ 路径很快、$Sum$ 路径较慢；但在阵列乘法器中关键路径同时包含大量 $Carry$ 级联与 $Sum$ 级联，因此必须\red{优化加法器单元}，使 $Sum$ 与 $Carry$ 的生成速度\red{都很快且均衡}。
+
+}
+
+\entry{延迟公式}{
+    $t_{mult} = [(M-1) + (N-2)]t_{carry} + (N-1)t_{sum} + t_{and}$
+}
+
+\concepttable{
+    \conrow{$t_{and}$}{部分积生成时间。所有与门并行发生，但这是一切运算的起点，计入一次延迟。}
+    \conrow{$(N-1)t_{sum}$}{纵向求和延迟。乘法器有 $N-1$ 行加法器，最终结果必须经过所有行的 $Sum$ 路径\red{垂直向下}传播到底部。}
+    \conrow{$[...]t_{carry}$}{进位链传播延迟。RCA 结构中进位需从最低位传到最高位；系数 $(M-1)+(N-2)$ 反映信号在阵列中\red{“横跨”和“斜跨”的总级数}。}
+}
+
+\entry{延时瓶颈与优化思路}{为解决阵列乘法器的延时问题，加法器单元通常采用\red{传输门全加器}。}
+
+\entry{为什么用传输门加法器？}{
+不是为了省电，也不是为了简单的“快”，核心目的是\red{平衡 $Sum$ 与 $Carry$ 的延迟}。因为在 RCA 阵列乘法器的关键路径延迟公式中，$t_{sum}$ 与 $t_{carry}$ 的系数都很大，任何一个成为短板都会显著拖累整体性能。
+}
+
+\subsection{进位保留乘法器}
+
+\entry{RCA 局限性}{
+    \concepttable{
+        \conrow{晶体管调整的局限性}{在 RCA 阵列中存在\red{大量几乎相同长度的关键路径}（既有横向进位又有纵向求和），因此单纯通过晶体管尺寸调整提升性能的效果非常有限。}
+        \conrow{拓扑结构的瓶颈}{根本问题在于进位信号的\red{横向传播}：每一行中加法器必须等待右侧进位到达才能计算，导致延迟巨大。}
+    }
+}
+
+\imgleft[0.4]{images/image-2026-01-03-21-19-46.png}{
+
+    \entry{架构分析}{结构分为三个阶段：}
+
+    \concepttable{
+        \conrow{部分积产生}{最顶部的\red{并行}操作。所有 $x_i y_j$ 同时生成\red{延迟$t_{and}$}}
+
+        \conrow{进位保留阵列}{$N-1$ 行加法器构成（对应乘数位宽 $N$）。\red{没有水平连接}，每一行内部不需要等待左右，只需等待上一行数据，行内计算是完全并行的。阵列结束后\red{并未得到最终乘积}，而是得到两组向量：\par
+        • \red{Sum Vector（和向量）}：所有加法器的 Sum 输出集合；\par
+        • \red{Carry Vector（进位向量）}：所有加法器的 Carry 输出集合。}
+
+        \conrow{向量合并}{将 Sum 向量与 Carry 向量相加，转化为唯一二进制结果。使用常规加法器（例如超前进位加法器等）。在该加法器内部，进位信号必须水平传播（或通过超前逻辑生成），因此这里会产生与位宽 $M$ 相关的延迟。}
+    }
+
+}
+
+\entry{延迟公式}{$t_{mult} = t_{and} + (N-1)t_{carry} + t_{merge}$。}
+
+\entry{逐项解释}{
+
+    \concepttable{
+        \conrow{$t_{and}$}{首项延迟：部分积生成的固定开销。}
+        \conrow{$(N-1)t_{carry}$}{阵列传输延迟（阵列内部\red{从上到下的数据穿透}）。}
+        \conrow{$t_{merge}$}{合并延迟：最后向量合并加法器的延迟(根据最后选用的加法器而定)。}
+    }
+
+}
+
+\entry{\red{结论}}{这部分延迟只与乘数位数 $N$（深度）有关，而与被乘数位数 $M$（宽度）无关，相比 RCA 有巨大优势。}
+
+\subsection{最终相加}
+
+\entry{核心功能}{将压缩阵列（CSA）输出的两向量 \blue{Sum} 与 \blue{Carry} 相加：$Z = S + C$，把“冗余表示”转化为常规二进制补码表示。该步骤需要\red{水平方向进位传播}，因此所用加法器称为 \red{Carry Propagate Adder (CPA)}，其延时记为 $t_{merge}$。}
+
+\entry{硬件选择策略}{CPA 的选择与输入位的到达时间有关：}
+
+\concepttable{
+    \conrow{情况 A：所有输入同时到达}{典型于规则 CSA 阵列或流水线结构：$S$ 与 $C$ 的各位几乎同时准备好。\par
+    \blue{选择：}超前进位加法器 (CLA)。\par
+    \blue{原因：}数据已齐备时瓶颈完全在 CPA 内部的进位生成速度；CLA 并行生成进位，最能压缩 $t_{merge}$，避免最终相加成为乘法器短板。}
+    \conrow{情况 B：输入到达时间不同}{典型于 Wallace Tree 等树形压缩：低位更早到达，高位更晚到达，输入端到达时间参差。\par
+    \blue{选择：}进位选择加法器 (Carry Select Adder, CSL)。\par
+    \blue{原因：}利用等待高位到达的空档，提前并行预计算 $C_{in}=0/1$ 两种结果；当真实进位到达后用 MUX 选通，从而\red{隐藏部分等待时间}。\par
+    \blue{面积解释：}相较“全宽度 CLA”，CSL 在满足时序的前提下通常能以更小代价实现所需性能（针对到达特性做权衡设计）。}
+}
+
+\section{第十章\ 移位器}
+
+\subsection{移位器设计}
+
+\entry{移位种类}{三种常见的数字逻辑移位操作：}
+
+\concepttable{
+    \conrow{逻辑移位}{空位统一填充 \red{$0$}。常用于无符号数乘除（左移 $\times 2$，右移 $\div 2$）或位操作。}
+    \conrow{算术移位}{针对带符号数。右移需进行\red{符号扩展}（MSB 保持不变，空位补符号位）；左移通常低位补 $0$，需注意溢出。}
+    \conrow{循环移位}{数据视为环形，移出的位重新填入另一端空位，不丢失信息。}
+}
+
+\subsection{漏斗型移位器}
+
+只介绍了移位的实现方法，并未介绍其具体电路结构。
+
+\imgleft[0.35]{images/image-2025-12-30-20-09-04.png}{
+
+\entry{核心架构}{通过构建宽窗口统一处理逻辑、算术和循环移位。}
+
+    \concepttable{
+        \conrow{基本原理}{构建一个 $2N-1$ 到 $0$ 的宽数据输入域（总位宽 $2N$），输出 $Y$ 为其中的 $N$ 位滑动窗口。}
+        \conrow{输入构成}{由两个 $N$ 位向量 $B$（高位 $2N-1 \dots N$）和 $C$（低位 $N-1 \dots 0$）拼接而成。}
+        \conrow{偏移量}{决定输出窗口起始位置，输出 $Y$ 对应输入域的 $[offset + N - 1 : offset]$ 区间。}
+    }
+
+}
+
+\entry{操作映射表}{设定原始 $N$ 位数据为 $A$，移位量为 $k$：}
+
+\img[0.6\linewidth]{images/image-2025-12-30-20-14-01.png}
+
+\concepttable{
+        \conrow{逻辑右移}{配置 $B=0, C=A$，Offset=$k$。高位滑入 $B$ 区的 $0$，实现高位补 $0$。}
+        \conrow{逻辑左移}{配置 $B=A, C=0$，Offset=$N-k$。从高位“回退”截取，低位引入 $C$ 中的 $0$。}
+        \conrow{算术右移}{配置 $B=A_{N-1}\dots A_{N-1}$（符号位）, $C=A$，Offset=$k$。高位填充符号位。}
+        \conrow{算术左移}{配置 $B=A, C=0$，Offset=$N-k$。通路同逻辑左移，区别在于溢出判断。}
+        \conrow{循环右移}{配置 $B=A, C=A$，Offset=$k$。$[A, A]$ 结构使移出的低位在高位出现。}
+        \conrow{循环左移}{配置 $B=A, C=A$，Offset=$N-k$。利用偏移量实现反向的循环移动。}
+}
+\entry{核心逻辑}{漏斗移位器本质是“截取”结构，通过调整 $B, C$ 内容与 $N-k$ 偏移量将左移转化为右移截取。}
+
+\subsubsection{一位左右移位器}
+
+这个感觉像是学生根据自己学习传输管逻辑的理解设计出来的，从设计的角度来看稍显稚嫩，了解即可。
+
+\imgleft[0.4]{images/image-2025-12-30-20-20-34.png}{
+
+\concepttable{
+    \conrow{输入/输出}{$A_i, A_{i-1}$ 为输入，$B_i, B_{i-1}$ 为输出。}
+    \conrow{控制信号}{\blue{Right}, \blue{nop}, \blue{Left}。三者在同一时刻应当\red{互斥}，以避免信号竞争。}
+    \conrow{Bit-Slice}{模块化设计，通过重复堆叠 $N$ 次该模块实现 $N$ 位移位，本质是相邻位间的数据路由。}
+}
+
+\entry{工作模式}{
+    \concepttable{
+        \conrow{右移 (Right)}{Right=1，$A_i \to B_{i-1}$。高位数据流向低位。}
+        \conrow{左移 (Left)}{Left=1，$A_{i-1} \to B_i$。低位数据流向高位。}
+        \conrow{保持 (nop)}{nop=1，$A_i \to B_i$。数据位置不发生改变。}
+    }
+}
+
+}
+
+\entry{输出缓冲}{ NMOS 传输管逻辑存在高电平阈值损失（输出最高为 $V_{DD} - V_{th}$），需接缓冲器进行\red{电平恢复}并提供驱动能力。}
+
+\subsection{桶型移位器}
+
+\entry{系统架构}{定义输入 $A$ ($A_3 \dots A_0$)，输出 $B$ ($B_3 \dots B_0$)，控制信号 $Sh$ ($Sh0 \dots Sh3$)。信号最多通过一个传输门，理论上移位延时不依赖于移位器的大小和移位位数。}
+
+\imgleft[0.4]{images/image-2025-12-30-20-28-49.png}{
+    MOS 管阵列的\red{行数等于数据的字长}，\red{列数等于可支持的移位数}。
+
+    \concepttable{
+        \conrow{独热编码}{控制线采用 \red{One-hot} 编码，仅一根为高电平，决定移位位数。}
+        \conrow{物理结构}{由 NMOS \red{传输管} 构成的 $4 \times 4$ \red{交叉开关阵列}。}
+    }
+    \entry{算术右移实现}{核心要求是空出的高位用\red{符号位 $A_3$} 填充（符号扩展）。}
+    $\boxed{B_3B_2B_1B_0 = A_3A_2A_1A_0 \gg Sh_3Sh_2Sh_1Sh_0}$
+}
+
+\concepttable{
+        \conrow{$Sh0$ (不移位)}{$A_3 \to B_3, A_2 \to B_2, A_1 \to B_1, A_0 \to B_0$。}
+        \conrow{$Sh1$ (右移 1 位)}{$A_3 \to B_2, A_2 \to B_1, A_1 \to B_0$，且 $B_3 = A_3$。}
+        \conrow{$Sh2$ (右移 2 位)}{$A_3 \to B_1, A_2 \to B_0$，且 $B_3 = B_2 = A_3$。}
+        \conrow{$Sh3$ (右移 3 位)}{$A_3 \to B_0$，且 $B_3 = B_2 = B_1 = A_3$。}
+}
+
+\subsection{对数移位器}
+
+\entry{核心设计理念}{采用\red{分级控制}，将总移位值分解为二进制权重的组合。}
+
+\imgleft[0.4]{images/image-2025-12-30-21-05-25.png}{
+
+\concepttable{
+    \conrow{二进制分解}{移位量 $K$ 基于\red{“2 的指数位”} ($2^k$) 进行分解。每一级硬件只负责移动固定的 $2^k$ 位。}
+    \conrow{级联结构}{级联多个移位级，每一级由 $Sh_k$ 控制。若 $Sh_k$ 有效则移位，否则信号直通。}
+}
+
+\entry{电路结构分析}{以 0-7 位对数移位器为例：}
+\concepttable{
+    \conrow{第一级}{控制信号 $Sh1$，负责右移 $2^0 = 1$ 位。}
+    \conrow{第二级}{控制信号 $Sh2$，负责右移 $2^1 = 2$ 位。}
+    \conrow{第三级}{控制信号 $Sh4$，负责右移 $2^2 = 4$ 位。}
+    \conrow{输出缓冲}{最后一级经过 Buffer 输出最终结果 $B_3, B_2, B_1, B_0$。}
+}
+
+}
+
+\entry{移位范围}{对于 $N$ 位数据，通常级联 $\log_2 N$ 级。图中三级结构支持最大 $1+2+4=7$ 位的移位量，适用于大范围移位场景。}
+\subsubsection{对数移位器原理与特性}
+
+\entry{单元逻辑}{本质为并行的 \red{2 选 1 多路复用器 (2-to-1 MUX)}。}
+\concepttable{
+    \conrow{结构}{每一级节点由两个 NMOS 传输管组成：一个负责直通路径，一个负责移位路径。}
+    \conrow{控制逻辑}{每一级根据二进制控制位决定是“直传”还是“跳跃” $2^k$ 位。}
+}
+
+\entry{性能分析与设计权衡}{
+    \concepttable{
+        \conrow{速度特性}{延迟与移位宽度 $M$ 呈\red{对数关系}，即具有 $\log_2 M$ 级延迟。}
+        \conrow{RC 延时}{信号必须穿过每一级传输管，串联电阻导致 $RC$ 延时随级数累积。}
+        \conrow{优化手段}{在级与级之间插入\red{中间缓冲器 (Buffer)}，以打断长 $RC$ 链并恢复信号驱动能力。}
+        \conrow{控制编码}{无需译码器。控制信号直接对应二进制权值（如移位 3 位即 $Sh1=1, Sh2=1, Sh4=0$）。}
+    }
+}
+
+\entry{适用场景对比}{
+    \concepttable{
+        \conrow{桶型移位器}{适用于\red{较小位宽}。仅一级传输管延迟，速度极快，但面积代价随位宽增加迅速上升。}
+        \conrow{对数移位器}{适用于\red{大位宽}（如 64 位以上）。结构易于参数化和 EDA 自动生成，面积效率更高。}
+    }
+}
+
+\subsection{习题解析}
+
+\subsubsection{作业题}
+
+\entry{作业6-2}{画出一个支持循环右移的 4-bit 桶型移位器的电路结构图}
+
+这里牢王应该是让这个移位器只支持循环移位，桶型移位器就像 Mask ROM 一样，设好就改不了了。
+
+\green{移位器复习完毕（2026-01-04）}
+
+\section{第十一章\ MOS 存储器}
+
+\subsection{MOS 存储器分类}
+
+\entry{顶层分类}{基于数据存储的\red{易失性}与\red{读写特性}划分：}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{只读存储器 (ROM)}{
+        \concepttable{
+            \conrow{核心特性}{\red{非易失性}。断电后数据不丢失。}
+            \conrow{固化ROM}{Mask ROM。数据在制造时通过光刻掩模固化，出厂即定型。}
+            \conrow{可改写ROM}{EPROM（紫外线擦除）、EEPROM（电擦除，按字节）、FLASH（电擦除，按块）。}
+        }
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{随机存取存储器 (RAM)}{
+        \concepttable{
+            \conrow{核心特性}{\red{易失性}。断电后数据立即丢失。}
+            \conrow{SRAM}{利用\red{双稳态触发器}存储。静态保持，速度快，面积大（6T结构）。用作Cache。}
+            \conrow{DRAM}{利用\red{栅极电容}存储。需周期性刷新，集成度高（1T1C），用作主存。}
+        }
+    }
+\end{minipage}
+
+\entry{特殊用途存储器}{
+    \concepttable{
+        \conrow{FIFO}{先进先出。队列结构，用于跨时钟域缓冲。}
+        \conrow{LIFO}{后进先出。栈结构，用于堆栈操作。}
+        \conrow{CAM}{内容寻址。给数据找地址，并行比较，用于路由表查找。}
+        \conrow{多端口}{多组独立读写端口，支持并行访问，提高吞吐率。}
+    }
+}
+
+\subsection{存储器结构}
+
+\entry{通用结构}{尽管不同存储器（SRAM/DRAM/ROM）各有特点，但其总体结构是一致的：}
+
+\imgleft[0.3]{images/image-2026-01-02-16-03-48.png}{
+
+    \concepttable{
+        \conrow{存储体}{位于核心，由 $N \times M$ 个单元组成，负责实际的数据存储。}
+        \conrow{地址译码驱动}{
+            \red{行译码器}：接收 $n$ 位行地址，负责选中特定的"行"。\par
+            \red{列译码器}：接收 $m$ 位列地址，负责控制列选开关。}
+        \conrow{列选开关}{根据列译码器的信号，从阵列中选出特定的数据列（MUX）。}
+        \conrow{读写控制电路}{接收片选和读写信号（WE/OE），控制数据的流向和时序。}
+        \conrow{输入/输出电路}{数据缓冲，连接外部数据总线。}
+    }
+
+    \entry{地址空间分割}{地址线被分为 $n$ 位\red{行地址}和 $m$ 位\red{列地址}。}
+    \concepttable{
+        \conrow{设计目的}{减少译码器复杂度并优化芯片版图形状（使其接近方形）。}
+        \conrow{地址关系}{\red{地址总位数 $= n + m$。}}
+    }
+}
+
+\subsubsection{存储体}
+
+\entry{逻辑容量}{
+    \concepttable{
+        \conrow{字数 ($N$)}{存储器的\red{"深度"}，即有多少个\red{独立的存储单元}地址。}
+        \conrow{位数 ($M$)}{每个字的\red{"宽度"}，即一次读写操作涉及多少个二进制位。}
+        \conrow{总容量}{为 $N \times M$。}
+    }
+}
+
+\entry{注}{$N$ 和 $M$ 通常是 2 的整数次幂。例如 $128 \times 8$ 表示有 128 个地址，每个地址存储 8 位数据。}
+
+\entry{物理实现差异}{$N$、$M$ 与物理行数、列数可能不同：}
+
+\concepttable{
+    \conrow{行数 $\le N$}{物理上的行数可能小于逻辑上的字数。}
+    \conrow{列数 $\ge M$}{物理上的列数通常大于或等于字长。}
+    \conrow{守恒定律}{物理行数 $\times$ 物理列数 = 逻辑字数 $N \times$ 逻辑字长 $M$。}
+}
+
+\entry{物理布局优化原因}{如果一个存储器是 $1024 \times 1$（细长型），直接做成 1024 行、1 列在硅片上极难布线，通常会做成 $32 \times 32$ 的方阵以\red{优化版图}。}
+
+\entry{存储单元}{所有存储器的共同点是：每个单元有两个相对稳定的状态，分别代表二进制的 \red{"0"} 和 \red{"1"}。}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{行选择机制 (Row Selection)}
+    
+    \entry{字线 (Word Line, WL)}{
+        \concepttable{
+            \conrow{定义}{同一行中每个单元的选择控制端连接在一起的导线，称为字线。}
+            \conrow{连接关系}{字线直接与\red{行译码器}相连。}
+            \conrow{工作原理}{当 $n$ 位行地址输入到行译码器时，译码器会使\red{唯一的一条字线}变为有效电平。}
+            \conrow{选中效果}{一旦某条字线被激活，该行上\red{所有的存储单元}都会被选中，准备与位线进行电荷或信号交换。}
+        }
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{列选择机制 (Column Selection)}
+    
+    \entry{位线 (Bit Line, BL)}{
+        \concepttable{
+            \conrow{定义}{同一列中每个单元的数据输入/输出端连接在一起的导线，称为位线。}
+            \conrow{连接关系}{位线连接到\red{列选开关}（由列译码器控制）。}
+            \conrow{数据通路}{当某一行被字线 (WL) 选中后，该行所有单元的数据都会放到各自的位线 (BL) 上。}
+            \conrow{选择效果}{列译码器输出信号控制列选开关，只接通\red{需要的那几条位线}，将其连接到数据总线，完成读写。}
+        }
+    }
+\end{minipage}
+
+\entry{多字存储与物理布局}{物理行较长,一行中包含多个字。}
+
+\concepttable{
+    \conrow{结构示例}{逻辑上是 $256 \times 8$(256个字),物理上可能设计成 $64 \times 32$ 的阵列。这意味着每一行物理行实际包含了 4 个逻辑字($32 \div 8 = 4$)。}
+    \conrow{插排方式}{这些字的存储单元通常是\red{按位的顺序分插排放(实际情况是把一行所有字的某一位放在一起)}的。列选开关不仅要选"列",还要从这一行的多个字中选出目标字。}
+    \conrow{地址映射}{行地址用于选中物理行,而\red{列地址(部分低位地址)}用于在列选开关中从这一行里选出具体的那个字。}
+}
+
+\entry{物理布局示例}{以 $256 \times 8$ 存储器（物理实现为 $64 \times 32$）为例：}
+\vspace{-10pt}
+\begin{center}
+\begin{tikzpicture}[scale=0.5, every node/.style={font=\tiny, inner sep=1pt}]
+    % 绘制一行的32个存储单元
+    \foreach \i in {0,...,31} {
+        \draw (\i*0.6,0) rectangle ++(0.6,0.8);
+    }
+    
+    % 标注4个字的分组（每个字8位）
+    % Word 0: bits 0-7
+    \draw [decorate,decoration={brace,amplitude=3pt,mirror},thick,blue] 
+        (0,-0.15) -- (4.8,-0.15) node[midway,below=3pt] {\blue{Word 0}};
+    
+    % Word 1: bits 8-15
+    \draw [decorate,decoration={brace,amplitude=3pt,mirror},thick,blue] 
+        (4.8,-0.15) -- (9.6,-0.15) node[midway,below=3pt] {\blue{Word 1}};
+    
+    % Word 2: bits 16-23
+    \draw [decorate,decoration={brace,amplitude=3pt,mirror},thick,blue] 
+        (9.6,-0.15) -- (14.4,-0.15) node[midway,below=3pt] {\blue{Word 2}};
+    
+    % Word 3: bits 24-31
+    \draw [decorate,decoration={brace,amplitude=3pt,mirror},thick,blue] 
+        (14.4,-0.15) -- (19.2,-0.15) node[midway,below=3pt] {\blue{Word 3}};
+    
+    % 标注位编号（每个字内的位序号）
+    \foreach \i/\bit in {0/7,1/6,2/5,3/4,4/3,5/2,6/1,7/0} {
+        \node at (\i*0.6+0.3,0.4) {b\bit};
+    }
+    \foreach \i/\bit in {8/7,9/6,10/5,11/4,12/3,13/2,14/1,15/0} {
+        \node at (\i*0.6+0.3,0.4) {b\bit};
+    }
+    \foreach \i/\bit in {16/7,17/6,18/5,19/4,20/3,21/2,22/1,23/0} {
+        \node at (\i*0.6+0.3,0.4) {b\bit};
+    }
+    \foreach \i/\bit in {24/7,25/6,26/5,27/4,28/3,29/2,30/1,31/0} {
+        \node at (\i*0.6+0.3,0.4) {b\bit};
+    }
+    
+    % 顶部标注
+    \draw [decorate,decoration={brace,amplitude=4pt},thick,red] 
+        (0,0.95) -- (19.2,0.95) node[midway,above=4pt] {\red{物理行（64行之一），包含4个逻辑字}};
+    
+    % 列选标注
+    \node[font=\tiny] at (2.4,-1.2) {列选开关};
+    \node[font=\tiny] at (7.2,-1.2) {选择其中};
+    \node[font=\tiny] at (12,-1.2) {一个字};
+    \node[font=\tiny] at (16.8,-1.2) {输出};
+    
+\end{tikzpicture}
+\end{center}
+
+\vspace{-8pt}
+
+\subsubsection{地址译码器}
+
+分为行地址译码器和列地址译码器两部分
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{行译码器 (Row Decoder)}
+
+\entry{基础译码器结构}{
+
+    \concepttable{
+        \conrow{互补信号}{缓冲器产生地址的\red{正相（原码）}和\red{反相（反码）}信号。}
+    }
+
+}
+
+\entry{编码电路（与非门阵列）}{
+    \concepttable{
+        \conrow{逻辑结构}{使用\red{与非门 (NAND)} 阵列实现。}
+        \conrow{\red{唯一选中性}}{在任何时刻，对于一组确定的输入地址，\red{只有一条字线}会被置为有效电平。}
+    }
+}
+
+\entry{多级译码}{当存储器容量增大，\red{地址线太多}时，直接使用单级译码会遇到瓶颈：}
+
+\concepttable{
+    \conrow{扇入过大}{如果地址线有 20 根，那么每个与非门就需要 20 个输入端。}
+}
+
+\entry{二级译码方案}{将高位地址和低位地址分开处理：}
+
+\concepttable{
+    \conrow{分组译码}{5 位地址 ($A_0 \sim A_4$) 被分为两组：\par
+    • 低 3 位进入 3-8 译码器，产生 8 个输出 ($L_0 \sim L_7$)。\par
+    • 高 2 位进入 2-4 译码器，产生 4 个输出 ($H_0 \sim H_3$)。}
+    \conrow{再次组合}{最后的字线驱动电路只需要简单的逻辑门（接收一个 $H$ 信号和一个 $L$ 信号）即可完成最终选通。}
+}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \hlblue{列译码器 (Column Decoder)}
+
+    \entry{基础译码器结构}{
+
+        \concepttable{
+            \conrow{互补信号}{缓冲器产生地址的\red{正相（原码）}和\red{反相（反码）}信号。}
+        }
+
+    }
+
+    \entry{编码电路（传输门开关阵列）}{
+        \concepttable{
+            \conrow{逻辑结构}{使用\red{多级开关树} 阵列实现。}
+            \conrow{\red{唯一选中性}}{在任何时刻，对于一组确定的输入地址，\red{只有一条位线}会被置为有效电平。}
+        }
+    }
+
+    \entry{开关树设计}{当存储器容量增大，\red{地址线太多}时，直接使用单级译码会遇到瓶颈：}
+
+    \concepttable{
+        \conrow{串联过多}{如果列地址有10位（即 $m=10$），每一位地址控制一层开关，数据从位线传到I/O端需要经过10个串联的晶体管。}
+    }
+
+    \entry{解决方案}{
+        \concepttable{
+            \conrow{分组译码}{我们使用 2位地址 去控制一个 2-4 译码器，产生4个控制信号。这4个信号去控制一组并联的4个开关（四选一）。}
+            \conrow{优势}{原本需要 \red{2 层串联晶体管（每层由1位地址控制），现在合并成了 1 层}（由经过译码后的信号控制）。}
+        }
+    }
+
+
+\end{minipage}
+
+\subsubsection{地址同步控制（电路实现）}
+
+深入到晶体管级（CMOS）设计细节，解释如何让同步控制更高效。
+
+\imgleft[0.25]{images/image-2026-01-02-17-06-17.png}{
+
+    \entry{优化策略1：快速下翻控制}{
+        \concepttable{
+            \conrow{实现方法}{将同步使能控制 ($En$) 晶体管放置在靠近与非门输出端}
+            \conrow{优化原理}{最关键的信号放在最靠近输出的位置，\red{在其他的信号把中间节点电容充或放电之后}，关键信号到达即可让输出翻转，减少不必要的等待时间。}
+        }
+    }
+    \entry{优化策略2：反相器阈值电压设计}{
+        \concepttable{
+            \conrow{实现方法}{调整反相器中 PMOS 和 NMOS 的宽长比，将转折电压 ($V_M$) 设计得较高。}
+            \conrow{阈值移动}{普通逻辑门阈值通常在 $V_{DD}/2$。将 $V_M$ 移向右侧（较高电压），意味着输入信号只要稍微下降一点点，反相器就会发生翻转。}
+        }
+    }
+
+}
+
+\subsection{读写控制及输入输出电路（认识）}
+
+\subsubsection{读写控制电路}
+
+\entry{定义}{对存储器读操作和写操作进行\red{时序控制}的电路模块。}
+
+\entry{核心职责}{存储器操作是动态的，需要精确的时序配合。控制电路通过发出一系列控制信号，协调各部分电路的工作节奏。}
+
+\entry{控制对象}{
+    \concepttable{
+        \conrow{地址译码器}{控制电路发出\red{片选信号 (CS/CE)} 或\red{地址锁存/使能信号 (En)}。}
+        \conrow{地址同步控制}{$En$ 信号通常由读写控制电路产生，确保\red{地址信号稳定}后译码器才开始工作，防止选错单元。}
+        \conrow{数据输入输出电路}{通过\red{写使能 (WE)} 或\red{输出使能 (OE)} 信号，控制数据方向：\par
+        • WE 有效时，数据"吸入"存储器（\red{写操作}）。\par
+        • OE 有效时，数据"推向"总线（\red{读操作}）。}
+    }
+}
+
+\entry{设计要点}{
+    \concepttable{
+        \conrow{信号流向}{控制信号（$WE, OE, CS$）作为\red{输入}进入控制模块，模块输出\red{内部控制信号}指挥译码器和 I/O 电路。}
+        \conrow{时序关系}{控制电路需保证地址、数据、使能信号之间的\red{建立时间} 和\red{保持时间} 满足要求。}
+    }
+}
+
+\subsubsection{输入输出电路}
+
+\entry{定义}{存储器与外部数据总线之间的\red{接口电路}，负责数据的双向传输。}
+
+\entry{核心职责}{在控制电路的控制下，实现数据的读取和写入操作。}
+
+\entry{数据通路方向性}{
+    \concepttable{
+        \conrow{写操作}{\red{数据流向}：外部数据总线 $\to$ 输入电路 $\to$ 列选开关 $\to$ 位线 $\to$ 选中的存储单元。\par
+        \red{功能}：输入电路起\red{缓冲 (Buffer)} 和\red{驱动}作用，将外部电平写入内部电容或触发器。}
+        \conrow{读操作}{\red{数据流向}：选中的存储单元 $\to$ 位线 $\to$ 列选开关 $\to$ 输出电路 $\to$ 外部数据总线。\par
+        \red{功能}：输出电路包含\red{读出放大器 (Sense Amplifier)}，将微弱信号放大为标准逻辑电平并驱动外部总线。}
+    }
+}
+
+\entry{关键电路模块}{
+    \concepttable{
+        \conrow{输入缓冲}{提供足够的驱动能力，确保外部数据能够可靠地传输到位线。}
+        \conrow{输出缓冲}{增强驱动能力，使存储器能够驱动外部总线负载。}
+        \conrow{读出放大器}{特别对于 DRAM，存储单元内部信号极其微弱（mV 级别），必须通过灵敏放大器将其放大至标准 CMOS 电平（0V 或 $V_{DD}$）。}
+    }
+}
+
+\subsection{Mask ROM}
+
+\entry{基本定义}{Mask ROM 掩膜只读存储器，其内容在制造过程中就被\red{物理固化}。}
+
+\concepttable{
+    \conrow{定制流程}{用户提供码点数据 $\rightarrow$ 设计者设计版图 $\rightarrow$ 生产厂家制版、流片。数据作为光刻掩膜版（Mask）的一部分存在。}
+}
+
+\entry{核心特性}{具有物理固化、不可更改的特点：}
+
+\concepttable{
+    \conrow{不可更改性}{制造完成后，信息由物理结构（晶体管的有无）决定，无法再修改。}
+    \conrow{只读性}{用户在使用过程中只能读取，不能写入。}
+    \conrow{非易失性}{\red{非易失性}。断电后信息不丢失，由硬件结构决定，而非电荷或双稳态电路维持。}
+}
+
+\entry{典型应用}{用于存储固定信息，如系统的引导代码（Bootloader）、固件或查找表。}
+
+\subsubsection{伪 NMOS NOR 阵列}
+
+\entry{逻辑本质}{实质为静态伪 NMOS 或非门 (NOR) 组合，图中的每一列都是一个或非逻辑，可能拓扑不是很好看，但是稍微扩张一下就能看出来。}
+\concepttable{
+    \conrow{运算逻辑}{任一选中字线处有管子，位线即变低。符合 $Output = \overline{A + B + \dots}$。}
+}
+
+\imgleft[0.4]{images/image-2026-01-05-10-55-03.png}{
+
+    \concepttable{
+        \conrow{电路架构}{水平方向为字线 ($WL$) 输入，垂直方向为位线 ($BL$) 输出。}
+        \conrow{负载管}{顶部 PMOS 栅极接地常导通，提供上拉电流\red{将位线默认拉高}。}
+        \conrow{存储原理}{通过交叉点\red{“有”或“无”} NMOS 晶体管来物理存储数据。}
+    }
+
+    \entry{工作原理}{当某行\red{字线被选中（$WL=1$）}时：}
+    \concepttable{
+        \conrow{存 0}{有管子。NMOS 导通将 $BL$ 拉低至 $GND$，输出为 \red{“0”}。}
+        \conrow{存 1}{无管子。$BL$ 维持高电平，输出为 \red{“1”}。}
+        \conrow{结论}{\red{有管 $= 0$，无管 $= 1$}。}
+    }
+
+}
+
+\entry{逻辑表达式推导示例}{
+    \concepttable{
+        \conrow{$BL[0]$}{仅在 $WL[1]$ 处有晶体管，表达式为 $BL[0] = \overline{WL[1]}$}
+        \conrow{$BL[1]$}{在 $WL[0]$ 和 $WL[2]$ 处有晶体管，表达式为 $BL[1] = \overline{WL[0] + WL[2]}$}
+        \conrow{$BL[2]$}{整条位线都没有晶体管，表达式为 $BL[2] = \overline{0} = 1$}
+        \conrow{$BL[3]$}{在 $WL[1]$ 和 $WL[2]$ 处有晶体管，表达式为 $BL[3] = \overline{WL[1] + WL[2]}$} 
+    }
+}
+
+在正常工作情况下，只有一条字线变高，因此最多只有一个下拉器件导通
+
+\hlblue{\textbf{尺寸问题}}
+
+\entry{尺寸与面积优化}{为减小单元尺寸和位线电容，下拉器件应尽可能小且紧凑排列。}
+
+\entry{电阻比例约束}{
+    \concepttable{
+        \conrow{电平要求}{上拉电阻必须大于下拉电阻以保证输出低电平。}
+        \conrow{比例因子}{对于伪 NMOS 门，比例因子通常 \red{$\ge 4$}。}
+        \conrow{性能瓶颈}{较大的上拉电阻限制了位线从低到高的翻转速度。}
+        \conrow{负载特性}{位线电容包含所有相连器件电容，大容量存储器可达 \red{pF} 级别。}
+    }
+}
+
+\hlblue{\textbf{预充电或非阵列（动态）}}
+
+只是把持续上拉的PMOS的栅极从地改成了时钟信号。
+
+\imgleft[0.3]{images/image-2026-01-05-11-11-23.png}{
+
+    \concepttable{
+        \conrow{静态 伪 NMOS 缺点}{\red{有比逻辑}的通病，输出为 “0” 时负载管和下拉管同时导通，产生直流通路，导致静态功耗大且 $V_{OL}$ 无法达到 $0V$。，而且还需要像上文一样设计较大的比例因子。}
+        \conrow{电路改进}{将顶部静态负载管替换为由时钟信号 $\phi$ 控制的 PMOS 预充管，采用动态逻辑设计。}
+    }
+
+    \entry{工作时序}{电路分为两个阶段工作，依靠时钟 $\phi$ 同步：}
+
+    \concepttable{
+        \conrow{阶段 1：预充电 ($\phi = 0$)}{顶部 PMOS 预充管导通，位线被强行拉高并充至 $V_{CC}$ (逻辑 “1”)。此阶段不进行读取。}
+        \conrow{阶段 2：求值/读取 ($\phi = 1$)}{顶部预充管截止，字线 ($WL$) 变为有效信号进行逻辑判断：\par
+        \red{有管：}位线电荷通过 NMOS 管泄放，电压降为 $0V$ (输出 “0”)。\par
+        \red{无管：}位线电荷保持，维持高电平 (输出 “1”)。}
+    }
+}
+
+\entry{优势总结}{
+    \concepttable{
+        \conrow{消除静态功耗}{输出 “0” 时位线放电后切断电源通路，稳态下电源和地之间没有直流通路。}
+        \conrow{优良电平特性}{放电时上方无负载管拉电流，位线可以彻底放电到 $0V$ (地电位)，噪声容限更好。}
+    }
+}
+
+\subsubsection{伪 NMOS NAND 阵列}
+
+\entry{电路架构}{采用串联堆叠结构：}
+    \concepttable{
+        \conrow{串联堆叠}{每一列位线 ($BL$) 下方的 NMOS 存储晶体管源漏首尾相连。}
+        \conrow{电流路径}{电流必须\red{流经该列所有晶体管}才能到达地 ($GND$)。若任一管截止，通路即切断。}
+    }
+
+\imgleft[0.4]{images/image-2026-01-05-11-22-16.png}{
+
+    \entry{寻址控制逻辑}{采用\red{反相逻辑}，与 NOR 阵列完全相反：}
+    \concepttable{
+        \conrow{未选中字线}{置为高电平 \red{$1$} ($V_{DD}$)。使非目标单元全部导通充当传输管，不阻碍检测。}
+        \conrow{选中字线}{置为低电平 \red{$0$} ($GND$)。试图关断目标位置的增强型 NMOS 管以检测通路。}
+    }
+
+    \entry{存储逻辑推导}{基于通路连通性判断输出：}
+    \concepttable{
+        \conrow{存 1 (有管)}{\red{选中处有管子。因栅极为 $0$ 而截止}，切断串联通路，位线维持高电平。}
+        \conrow{存 0 (无管)}{选中处无管子（或被短接）。通路保持导通，位线放电至地电平。}
+        \conrow{结论}{\red{有管 $= 1$，无管 $= 0$}（与 NOR 阵列逻辑相反）。}
+    }
+
+}
+
+\entry{缺点}{NAND 阵列的主要局限性：}
+\concepttable{
+    \conrow{静态功耗}{当输出为 \red{$0$} 时（通路导通），\red{电源通过负载管直通地}，产生持续的静态功耗。}
+    \conrow{延迟}{字线不宜过多。\red{串联的晶体管越多，总电阻越大}，放电速度及输出低电平的质量会严重恶化。}
+}
+\entry{逻辑表达式推导示例}{基于串联通路的连通性判断：}
+
+\concepttable{
+    \conrow{第一列 ($BL_0$)}{连接情况：$WL_1$ 有管；$BL_0 = \overline{WL_1}$}
+    \conrow{第二列 ($BL_1$)}{连接情况：$WL_0, WL_2$ 有管；$BL_1 = \overline{WL_0 \cdot WL_2}$}
+    \conrow{第三列 ($BL_2$)}{连接情况：整列都没有管；$BL_2 = \overline{0} = 1$}
+    \conrow{第四列 ($BL_3$)}{连接情况：$WL_1, WL_2$ 有管；$BL_3 = \overline{WL_1 \cdot WL_2}$}
+}
+
+\entry{逻辑总结}{对于 NAND 存储阵列，任意位线 $BL_n$ 的逻辑表达式为：}
+\concepttable{
+    \conrow{计算公式}{\red{$BL_n = \overline{ \prod (\text{在该列上存在晶体管的所有 } WL) }$}}
+    \conrow{物理意义}{输出等于该列所有有管子的字线信号\red{相与后取非}。}
+}
+
+\hlblue{\textbf{预充电与非阵列}}
+
+\imgleft[0.27]{images/image-2026-01-05-11-47-19.png}{
+
+    \concepttable{
+        \conrow{电路改进}{引入\red{预充电-求值机制}。顶部为 $\phi$ 控制的 PMOS，底部新增 $\phi$ 控制的 NMOS \red{求值管}。}
+    }
+
+    \entry{工作时序}{依靠时钟 $\phi$ 同步：}
+    \concepttable{
+        \conrow{预充 ($\phi = 0$)}{PMOS 导通，位线拉高至 $V_{CC}$。此时 \red{求值管截止}，切断通地路径，消除预充时的直通功耗。}
+        \conrow{求值 ($\phi = 1$)}{PMOS 截止，求值管导通。行为取决于存储单元串联状态：通路导通放 0，通路断开保 1。}
+    }
+
+    \entry{求值管的必要性}{\red{必须存在}，否则不能消除静态功耗。若无此管，当存储数据为 “0”（全导通）时，预充阶段电源会通过预充管直通地，形成短路电流。}
+
+}
+
+\subsubsection{伪 NMOS 与或非阵列}
+
+作业 6-3 中需要\red{求解逻辑表达式}的电路。
+
+\imgleft[0.4]{images/image-2026-01-05-11-57-31.png}{
+        
+    \entry{结构分析}{混合 NAND 与 NOR 拓扑：}
+    \concepttable{
+        \conrow{组内逻辑}{串联（NAND）。仅当组内所有存在的管子导通时，该路径连通。}
+        \conrow{组间逻辑}{并联（NOR）。任一路径导通，位线 $BL$ 即放电。}
+    }
+
+    \entry{逻辑推导}{以 $BL_0$ 为例，利用德·摩根定律：}
+    \concepttable{
+        \conrow{下拉条件}{$(WL_0 \cdot WL_2) + (WL_4 \cdot WL_6)$}
+        \conrow{输出表达式}{$BL_0 = \overline{(WL_0 \cdot WL_2) + (WL_4 \cdot WL_6)}$}
+        \conrow{化简形式}{$BL_0 = (\overline{WL_0} + \overline{WL_2})(\overline{WL_4} + \overline{WL_6})$}
+    }
+}
+
+\entry{操作原则}{为防止并联组间干扰，需遵循\red{互斥原则}：}
+\concepttable{
+    \conrow{读取规则}{读取某一组时，必须彻底关断另一组。}
+    \conrow{实现方法}{将非目标组的所有字线 $WL$ 置为 \red{$0$}，确保其串联通路处于高阻态。}
+}
+
+\subsection{SRAM}
+
+\entry{标准化与兼容性}{SRAM 是数字系统的标准电路器件，意味着其设计与接口高度规范化，便于不同系统复用，并适合\red{大规模集成}，是 CPU \red{缓存（Cache）}的主要载体。}
+
+\entry{存取特性}{SRAM 属于 RAM：系统可以在工作过程中随时对存储信息进行\red{读取}与\red{写入}（随机存取）。}
+
+\entry{结构与易失性}{
+
+    \concepttable{
+        \conrow{本质电路}{双稳态触发器（正反馈锁存）存储 0/1}
+        \conrow{易失性}{断电 $\Rightarrow$ 状态无法维持 $\Rightarrow$ 数据丢失}
+    
+    
+        \conrow{应用场景}{高速但易失：用于存储\red{临时缓存数据}（如 Cache）}
+    }
+
+}
+
+\imgleft[0.2]{images/image-2026-01-04-19-34-27.png}{
+
+    \entry{逻辑本质（RS 双稳态）}{两个反相器首尾交叉耦合形成锁存器，构成\red{正反馈}：一个节点为“1”$\Rightarrow$ 另一个节点为“0”，反馈后维持原状态。}
+
+    说实话有点像前面的寄存器电路，不过是有两个强制写入传输门。
+
+}
+
+\imgleft[0.4]{images/image-2026-01-04-19-30-40.png}{
+
+    \entry{SRAM 6T 单元}{
+
+        \entry{晶体管级结构}{
+            \concepttable{
+                \conrow{存储核心 (4T)}{两对 CMOS 交叉耦合，形成双稳态存储节点 $Q$ 与 $\overline{Q}$。}
+                \conrow{访问管 (2T)}{两侧 Pass Transistor 受字线 $W$ 控制，将内部节点与位线 $B,\overline{B}$ 接通/断开。}
+            }
+        }
+
+        \entry{关键信号线}{}
+        \concepttable{
+            \conrow{字线 $W$}{选择控制端；当 $W=1$ 时，该单元与位线连通；当 $W=0$ 时单元保持（与位线隔离）。}
+            \conrow{位线 $B,\overline{B}$}{两条位线承载\red{互补电平}，提高抗干扰与读写速度。}
+        }
+    }
+}
+
+\subsubsection{工作原理（读/写周期）}
+
+\entry{读写方式}{
+    \concepttable{
+        \conrow{选中阶段}{无论读还是写，第一步都要将字线置有效：$W=1$。访问管导通后，内部存储节点 $(Q,\overline{Q})$ 与位线 $(B,\overline{B})$ 建立电气连接，单元进入可读/可写状态。}
+        \conrow{写操作}{外部写驱动器将目标数据与其反码分别施加到 $B$ 与 $\overline{B}$，并在 $W=1$ 期间保持足够时间。位线驱动器被设计为\red{足够强}，能克服交叉耦合反相器的保持能力，将双稳态电路\red{强制翻转}到新的稳态。}
+
+        \conrow{读操作}{先对 $(B,\overline{B})$ 做\red{预充电}，再令 $W=1$。存储单元会使其中一根位线更快放电，从而在 $B$ 与 $\overline{B}$ 上形成\red{差分电压}，由\red{灵敏放大器}放大并判决为标准逻辑电平输出。（课件上只是说根据两根位线读数据，这段话了解即可）}
+
+        \conrow{结束/保持}{字线恢复为 $W=0$，访问管关断，位线与单元隔离；内部交叉耦合反相器依靠电源继续保持当前稳态，读写周期结束。}
+    }
+}
+
+\subsubsection{尺寸约束}
+
+\entry{读扰动机理（以 $Q=0$ 为例）}{
+    \concepttable{
+        \conrow{初始状态}{假设存储为 $Q=0$、$\overline{Q}=1$；位线 $B$ 常被\red{预充}到高电平（可视为 $B=1$）。}
+        \conrow{读操作触发}{字线有效：$W=1$，访问管导通，存储节点与位线建立电气连接。}
+        \conrow{导通路径}{此时访问管 $M_6$ 与下拉管 $M_3$ 同时导通，形成 $B \rightarrow M_6 \rightarrow Q \rightarrow M_3 \rightarrow GND$ 的通路。}
+        \conrow{分压效应}{$Q$ 位于 $M_6$ 与 $M_3$ 之间，会因电阻分压而\red{从理想 $0V$ 上升}，其大小取决于 $M_6$ 与 $M_3$ 的导通能力（等效电阻）对比。}
+        \conrow{翻转触发条件}{若 $M_6$ \red{过强}（电阻过小）或 $M_3$ \red{过弱}（电阻过大），导致 $V_Q$ 上升过多；当 $V_Q$ 超过左侧反相器中驱动管 $M_1$ 的阈值时（记为 $V_Q > V_{th}$），$M_1$ 导通。}
+        \conrow{正反馈锁定}{$M_1$ 导通会拉低 $\overline{Q}$，触发交叉耦合反相器的\red{正反馈再生}，最终将 $Q$ 锁定为高电平，发生 $0 \rightarrow 1$ 的\red{错写}。}
+    }
+}
+
+\entry{尺寸约束结论（$\beta$ ratio）}{为避免读扰动，必须保证\red{下拉管 $M_3$ 的驱动能力显著强于访问管 $M_6$}（等价表述：$R_{on}(M_3)$ 应显著小于 $R_{on}(M_6)$），从而将 $Q$ 点电压钳制在低电平，确保读操作稳定。该约束称为\red{$\beta$ Ratio}约束。}
+
+\entry{可靠尺寸设计}{
+
+    \concepttable{
+        \conrow{$\beta$ Ratio}{定义为下拉管与访问管的驱动能力比值（常写作 $\beta = \beta_{driver}/\beta_{access}$）。\red{$\beta$ 越大，读稳定性越好}。}
+        \conrow{读稳定性目标}{使读取期间 $V_Q$ 不超过触发翻转的临界电压}
+        \conrow{工程实践}{通常将访问管 $M_5,M_6$ 与上拉管（负载管）取\red{最小尺寸}以省面积；仅将下拉管 $M_2,M_3$ 适当\red{加宽}以提高读稳定性。}
+        \conrow{经验比例}{下拉管宽度常取访问管的约 \red{$1.2 \sim 3$} 倍（工艺/电压/目标 SNM 不同会变化）。}
+    }
+
+}
+
+\subsubsection{输入输出电路}
+
+\entry{核心问题}{位线 $(B,\overline{B})$ 是\red{双向端口}：既要被写入驱动器强驱动（写），又要把单元的微弱差分送到外部（读）。因此需要\red{三态缓冲器}实现\red{通路选择与隔离}，避免总线竞争}
+
+\imgleft[0.35]{images/image-2026-01-04-20-04-42.png}{
+    
+    \entry{控制信号}{用 $W/\overline{R}$ 区分读写：$W/\overline{R}=1$ 表示\red{写}，$W/\overline{R}=0$ 表示\red{读}。}
+
+    \concepttable{
+        \conrow{$W/\overline{R}=1$}{打开输入侧三态缓冲器（buf1、buf2），将外部数据 $D_{in}$ 及其反码强驱动到位线：$B \leftarrow D_{in}$，$\overline{B} \leftarrow \overline{D_{in}}$；同时\red{关闭输出侧三态缓冲器}（高阻态），防止读写冲突。}
+        \conrow{$W/\overline{R}=0$}{打开输出侧三态缓冲器，将位线差分/判决后的信号送出形成 $D_{out}$，完成\red{从阵列到总线}的数据传输。}
+    }
+}
+
+\entry{位线共享机制、列结构}{
+    \concepttable{
+        \conrow{结构}{上图中两个 SRAM 存储单元（由字线 $W_1$ 与 $W_2$ 控制）挂载在同一对位线 $B$ 与 $\overline{B}$ 上，这是 SRAM 阵列的\red{列}结构：无论该列有多少个存储单元，它们都共享顶部同一套输入/输出（IO）电路。}
+        \conrow{工作逻辑}{\red{任意时刻 $W_1$ 与 $W_2$ 最多只有一个为高电平}（由行译码器保证）。被选中的单元\red{独占}位线资源，与顶部 IO 电路进行数据交换。}
+    }
+}
+
+\subsubsection{读出放大电路}
+
+\entry{背景与动机}{
+    \concepttable{
+        \conrow{驱动能力弱}{为追求高密度，SRAM \red{单元尺寸很小}，导致可提供的驱动电流很小。}
+        \conrow{负载大}{位线上挂载大量单元，位线寄生电容很大。}
+        \conrow{不放大后果}{单元在位线上产生的电压\red{摆幅很小}且\red{建立很慢}；若等待位线达到全摆幅（$0$ 或 $V_{DD}$），读出会极慢。}
+        \conrow{放大器作用}{检测 $B$ 与 $\overline{B}$ 的\red{微小差分电压}并迅速放大为标准逻辑电平，实现高速读出。}
+    }
+}
+
+\imgleft[0.3]{images/image-2026-01-04-20-10-09.png}{
+
+\entry{电路组成}{
+    \concepttable{
+        \conrow{结构}{上部为\red{预充平衡电路}，下部为\red{放大器电路}。}
+        \conrow{控制信号 $\phi$}{作为时序控制信号，决定“预充/平衡”与“读出/放大”两个阶段。}
+    }
+}
+
+\entry{预充阶段（$\phi = 0$）}{
+    \concepttable{
+        \conrow{放大器状态}{放大器与地断开，不工作，用于降低功耗。}
+        \conrow{预充与平衡}{顶部预充管导通：将 $B$ 与 $\overline{B}$ 同时拉高到 $V_{DD}$，并将二者短接以保证严格平衡。}
+        \conrow{初始条件}{为差分读出提供\red{统一初态}，并消除上一次读写残留电荷影响。}
+    }
+}
+
+\entry{读出/工作阶段（$\phi = 1$）}{
+    \concepttable{
+        \conrow{预充网络}{预充平衡电路关闭。}
+        \conrow{差分建立}{字线打开后，存储单元开始轻微拉低其中一根位线电压，在 $B$ 与 $\overline{B}$ 上形成微小压差。}
+        \conrow{放大机制}{放大器接地通路导通开始工作；依靠\red{正反馈}迅速判决哪边更低，并将微小压差放大为标准逻辑电平（$0/1$）。}
+    }
+}
+
+}
+
+\subsubsection{整体 SRAM 电路架构}
+
+最后就是把存储单元核心，地址译码器，读写控制电路，输入输出电路等模块整合在一起，形成完整的 SRAM 存储器。
+
+\imgleft[0.3]{images/image-2026-01-04-20-21-12.png}{
+
+    \entry{三大核心模块}{
+    \concepttable{
+        \conrow{存储阵列 (核心区)}{由大量 6T 存储单元组成矩阵：\red{横向为字线 (WL)}，\red{纵向为位线 (BL/$\overline{BL}$)}。}
+        \conrow{行控制 (左侧)}{包含\red{行译码器}。输入：使能信号 $En$ 与地址信号。功能：根据地址译码，在众多字线中\red{仅选中一行}（置高电平）。}
+        \conrow{列控制 (顶部)}{包含\red{列 IO 电路}（读写驱动 + 灵敏放大器 + 三态输出缓冲）。每一列（或每几列）配置对应电路，控制数据的 $D_{in}$ 输入与 $D_{out}$ 输出。}
+    }}
+
+}
+
+\subsubsection{单、多端口 SRAM}
+
+\entry{单端口 SRAM 的局限性}{由于\red{读写共享同一套访问通路}，会带来性能瓶颈与尺寸折中。}
+
+\imgleft[0.16]{images/image-2026-01-04-20-31-58.png}{
+
+    \concepttable{
+        \conrow{资源共享后果}{访问通路唯一，\red{同一时刻只能执行一次访问}（一次读或一次写），在共享存储场景（如多核共享）下：核心 A 读时核心 B 只能等待，导致流水线停顿、系统吞吐下降。}
+        \conrow{读写矛盾（尺寸折中）}{访问管既要满足\red{读稳定性}，又要满足\red{写入能力}：\par
+        • \red{读稳定}：为避免读扰动，需下拉管（如 $M2$）比访问管更强（等效 $R_{on}(M2)$ 更小）。\par
+        • \red{写容易}：为保证可写入，访问管又应足够强以压倒负载/上拉管。}
+    }
+
+}
+
+\hlblue{\red{一读一写两端口 SRAM}}（作业6-5中考察的电路结构）
+
+\imgleft[0.4]{images/image-2026-01-04-20-34-35.png}{
+    \entry{工作原理}{
+        \concepttable{
+            \conrow{核心存储节点}{中间仍是 4T 交叉耦合反相器，正反馈保持数据。}
+            \conrow{Port A（差分端口）}{和单端口相同的读写线，通常用于\red{写入}（\red{差分强驱动更容易压倒反馈环}），也可用于读取。}
+            \conrow{Port B（单端口）}{独立字线 $W_b$，单端位线 $B_b$（缺少 $\overline{B_b}$ 以节省面积）。用于\red{读取}。（从分析看来读取的应该是$\overline{Q}$，它是使用Q 作为输出传输管的控制信号的，而且还是用的NMOS 传输管。）}
+            \conrow{并行访问}{为 $Q/\overline{Q}$ 提供两套独立访问路径；$W_a$ 与 $W_b$ 由两套独立行译码器控制，因此\red{可同时向两个端口发送不同地址}。}
+            \conrow{限制}{需避免读写冲突；工程上通常通过\red{仲裁/时序约束}确保同一时刻只有一个端口对同一地址执行写操作。}
+        }
+    }
+}
+
+\hlblue{二读一写三端口 SRAM}
+
+就是在前面两端口 SRAM 基础上增加一个对称的读端口，毫无新意。
+
+\imgleft[0.4]{images/image-2026-01-04-20-43-34.png}{
+        
+    \entry{结构说明}{
+        \concepttable{
+            \conrow{Port A(读写)}{差分读写端口：字线 $W_a$，位线 $B_a,\overline{B_a}$。\par
+            通常用于\red{写入}（差分强驱动更容易压倒正反馈锁存），也可用于读取。}
+            \conrow{Port B}{单端读端口：字线 $W_b$，位线 $B_b$。}
+            \conrow{Port C}{单端读端口：字线 $W_c$，位线 $\overline{B_c}$。}
+        }
+    }
+
+    \entry{注}{多端口结构需避免端口间\red{同址写冲突}；实际系统仍需通过仲裁与时序约束保证同一地址同一时刻最多一个写操作。}
+}
+
+\hlblue{二读二写四端口 SRAM}
+
+\imgleft[0.4]{images/image-2026-01-04-20-50-40.png}{
+
+    \entry{代价分析}{}
+    \concepttable{
+        \conrow{电路复杂度爆发}{晶体管数量剧增（从标准的 $6$ 个增加到了 $10$ 个甚至更多）。}
+        \conrow{控制线密集}{图中有 $4$ 根字线（A-WL 到 D-WL）和对应的 $4$ 组位线。}
+        \conrow{面积代价}{每一个新增端口不仅意味着多了晶体管，更意味着多了横向和纵向的金属连线。在芯片设计中，\red{连线资源往往比晶体管更宝贵}。}
+    }
+
+}
+
+\hlblue{\textbf{多端口 SRAM 的特点}}
+
+\entry{优势}{可为系统多项任务同时提供读/写访问，是多端口结构存在的根本意义。}
+
+\concepttable{
+    \conrow{实现方式}{通过\red{多套地址译码电路}与\red{多套数据位线/端口}实现硬件冗余，从而支持并行访问。}
+}
+
+\entry{约束条件}{硬件支持并行，但必须遵守以下规则：}
+
+\concepttable{
+    \conrow{\red{禁止同址多写}}{绝不允许对同一存储单元同时进行多个写操作，否则位线电流冲突导致写入数据不确定，严重时可能损坏电路。}
+    \conrow{\red{禁止同址读写}}{不允许对同一存储单元\red{同时读和写}，否则读出数据是旧数据还是新数据不确定（竞争冒险），且写入大电流干扰可能导致读出错误。}
+    \conrow{\green{允许不同址并行}}{对\red{不同地址}的存储单元同时读写是允许且鼓励的（并行性的实际收益来源）。}
+}
+
+\entry{解耦优势}{由于读写位线分离，可避免读写对单元尺寸要求的矛盾。}
+\concepttable{
+    \conrow{多端口改进}{在多端口结构中，可分别优化：\par
+    • 写端口尺寸 $\rightarrow$ 增强写入能力；\par
+    • 读端口尺寸 $\rightarrow$ 增强读取稳定性；\par
+    读写不再共用同一个访问管（如 $M5$），从而减少痛苦的尺寸妥协。}
+}
+
+\subsection{DRAM}
+
+\entry{存储介质对比}{
+    \concepttable{
+        \conrow{存储方式区分}{SRAM 存的是电路的“状态”（双稳态），而 \red{DRAM 存的是实实在在的电荷}}
+        \conrow{物理机制}{信息以电荷形式存储在 MOS 器件的\red{栅电容}或节点的\red{节点电容}上。}
+    }
+}
+
+DRAM 典型单元为 \red{1T1C}（一个晶体管 + 一个电容）。
+
+\entry{动态特性}{
+    \concepttable{
+        \conrow{名称来源}{DRAM 的“动态”来自其\red{电荷随时间变化（会流失）}的存储机制。}
+        \conrow{漏电现象}{由于节点\red{漏电}，电容上的电荷无法永久保持，会逐渐泄漏消失。}
+        \conrow{刷新/再生}{为防止数据丢失，必须在电荷漏光之前周期性地\red{读取并重新写入}（恢复电荷），称为 \red{刷新} 或再生。}
+        \conrow{易失性}{与 SRAM 一样：掉电后不再刷新，也无电源维持，信息将全部丢失。}
+    }
+}
+
+\subsubsection{单元结构}
+
+\entry{1T1C 单元结构}{由一个门控管和一个存储电容组成。}
+
+\imgleft[0.16]{images/image-2026-01-05-10-09-59.png}{
+
+    \concepttable{
+        \conrow{门控 MOS 管}{由字线 $W$ 控制栅极。作为开关，接通或切断存储电容与位线 $B$ 之间的通路。}
+        \conrow{存储电容 $C_S$}{物理上由\red{栅电容}（主要部分）和 PN 结电容两部分构成。}
+    }
+
+    \entry{MOS 电容物理实现}{主要就是第一章说的$C_{GB}$电容}
+
+    \concepttable{
+        \conrow{上电极}{多晶硅端，连接到 $V_{DD}$。}
+        \conrow{下电极}{由于上电极接 $V_{DD}$，在 P 衬底表面感应出电子形成\red{反型层}，充当电容下极板。}
+        \conrow{存取路径}{感应出的反型层与门控管的源极物理相连，从而实现电荷的存取路径。}
+    }
+
+}
+
+\hlblue{\textbf{存储阵列}}
+
+
+阵列化排布、高密度物理实现：
+
+\imgleft[0.16]{images/image-2026-01-05-10-22-05.png}{
+
+    \concepttable{
+        \conrow{逻辑结构}{DRAM 单元通过行列交叉的方式组成阵列。}
+        \conrow{$W_{0-3}$}{横向的字线，用于选通一行单元。}
+        \conrow{$B_{0-3}$}{纵向的位线，用于数据的传输（读/写）。}
+    }
+
+    \entry{注意}{图中每个交点处放置一个 1T1C 单元，这种高密度的排布是 DRAM 相比 SRAM 最大的优势，具体可见前文中所谓 SRAM 的“阵列“，这种不需要冗余存储，冗余读写晶体管的设计让面积利用率大大增加。}
+
+}
+
+\subsubsection{工作原理}
+
+\entry{破坏性读出}{读出过程会改变 $C_S$ 原有电荷状态，属于\red{破坏性读取}，故读出后必须紧跟\red{重写（刷新）}操作。}
+
+\noindent\begin{minipage}[t]{0.48\linewidth}
+    \entry{写入操作 (Write)}{
+        \concepttable{
+            \conrow{准备}{数据（高/低电平）由输入电路加载到位线 $B$。}
+            \conrow{选通}{字线 $W$ 置高电平，门控 MOS 管导通。}
+            \conrow{充放电}{写“1”时 $B$ 为高，向 $C_S$ 充电；写“0”时 $B$ 为低，$C_S$ 放电。}
+            \conrow{保持}{字线 $W$ 恢复低电平，门控管截止，电荷封锁在 $C_S$。}
+        }
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{读出操作 (Read)}{
+        \concepttable{
+            \conrow{选通}{字线 $W$ 置高电平，门控 MOS 管导通。}
+            \conrow{电荷共享}{$C_S$ 与位线 $B$ 建立通路，发生\red{电荷共享}}
+            \conrow{电压波动}{若 $C_S$ 存“1”，位线电压微升；若存“0”，位线电压微降。}
+            \conrow{判决放大}{由\red{灵敏放大器}检测微小压差并放大为标准逻辑电平。}
+        }
+    }
+\end{minipage}
+
+两个 RAM 的直接读出信号都很微弱，需要灵敏放大器放大。
+
+\hlblue{\textbf{读出问题}}
+
+\concepttable{
+    \conrow{电容比率问题}{存储电容 $C_S$ 极小，位线寄生电容 $C_B$ 很大（通常 $C_B \approx 10 \sim 20 C_S$）。}
+    \conrow{读出影响}{1. \red{速度慢}：无源驱动，依靠微弱电荷驱动大电容；\par 2. \red{信号微弱}：电荷再分配产生的电压变化量 $\Delta V$ 极小（仅几十毫伏），判别困难。}
+    \conrow{破坏性读取}{电荷从 $C_S$ 流向位线导致原信息丢失，读出后必须立即执行\red{重写（再生）}。}
+    \conrow{电荷漏电}{由于节点漏电，电荷无法永久保持，需周期性\red{刷新}以防止数据丢失。}
+}
+
+\entry{1.\ 虚拟单元}{解决 DRAM \red{读出信号微弱问题}的设计}
+
+\vspace{-2pt}
+\img[0.7\linewidth]{images/image-2026-01-05-10-36-59.png}
+\vspace{-2pt}
+
+\concepttable{
+    \conrow{设计动机}{灵敏放大器为差分结构，需要两个输入端进行比较；而 DRAM 单元是单端结构（仅一根位线），需人为引入\red{参考信号}。}
+    \conrow{参考电平 $V_R$}{虚拟单元被设计为\red{产生一个中间电平（通常为 $V_{DD}/2$）}，作为逻辑 “1” 和 “0” 的判决界限。}
+    \conrow{差分转换}{读取时，实际单元的电平（略高于或低于 $V_R$）与虚拟单元提供的 $V_R$ 进行比较。}
+    \conrow{物理意义}{将“单端绝对值测量”转化为“双端相对值比较”，显著提升了检测精度与抗干扰能力。}
+}
+
+\entry{2.\ 灵敏放大器}{
+    为使灵敏放大器工作在最佳状态，电路物理布局必须高度对称。
+}
+
+\vspace{-2pt}
+\img[0.7\linewidth]{images/image-2026-01-05-10-38-22.png}
+\vspace{-2pt}
+
+\entry{布局与组件}{
+    \concepttable{
+        \conrow{中央放大器}{核心为中间的交叉耦合锁存器。}
+        \conrow{位线分割}{位线分为左半段 $B_i$ 和右半段 $\overline{B_i}$，两侧各挂载一半存储单元。}
+        \conrow{虚拟单元配置}{左侧位线读取时对应右侧的虚拟单元 $W_{v2}$，右侧位线读取时对应左侧的虚拟单元 $W_{v1}$。}
+        \conrow{自平衡电路}{放大器包含受 $\phi$ 信号控制的预充/平衡电路（顶部 MOS 管），用于在工作前消除左右位线的电压差异。}
+    }
+}
+
+\entry{预充阶段（$\phi = 1$）}{读写周期的准备阶段，旨在建立 \red{$V_{DD}/2$} 预充体系。}
+
+\concepttable{
+    \conrow{自平衡}{放大器不工作，短路管导通将位线 $B_i$ 和 $\overline{B_i}$ 短接。}
+    \conrow{电平设定}{位线平衡至 $V_{DD}/2$。该设计可\red{减小电压摆幅}，从而\red{降低功耗}并加快读出速度。}
+    \conrow{虚拟单元准备}{提升虚拟字线 ($W_{v1}, W_{v2}$)，将 $V_{DD}/2$ 写入虚拟单元，使其能提供稳定的参考电压。}
+}
+
+\entry{读出与再生阶段（$\phi = 0$）}{核心工作阶段，涉及信号感测、正反馈放大及破坏性读取后的电荷恢复。}
+
+\concepttable{
+    \conrow{读出}{选中字线 $W_k$ 及对侧虚拟字线 $W_{v2}$。$B_i$ 电压变为 $V_{DD}/2 \pm \Delta V$，$\overline{B_i}$ 维持 $V_{DD}/2$。}
+    \conrow{放大}{灵敏放大器检测到微小压差后触发正反馈，迅速将位线驱动至全摆幅（$V_{DD}$ 或 $GND$）。}
+    \conrow{再生}{在字线 $W_k$ 开启期间，\red{位线全摆幅电压倒灌回存储电容 $C_S$}，恢复因电荷共享而损失的电荷。}
+}
+
+\green{存储器初步复习完毕（2026-01-05-12-19}）
+
+\section{第十二章\ Verilog 硬件设计}
+
+\entry{核心定义}{Verilog 程序的基本单元是 \blue{module}。每个模块必须以 \blue{\texttt{module}} 开头，以 \blue{\texttt{endmodule}} 结尾。}
+
+\concepttable{
+    \conrow{三要素}{\textbf{端口定义}（port list）+ \textbf{I/O 说明}（input/output/inout）+ \textbf{功能定义}（\texttt{assign}/\texttt{always}）。}
+    \conrow{端口方向}{\blue{\texttt{input}}：输入；\blue{\texttt{output}}：输出；\blue{\texttt{inout}}：双向端口。}
+    \conrow{信号类型}{组合连线常用 \blue{\texttt{wire}}；时序变量常用 \blue{\texttt{reg}}（SystemVerilog 可用 \texttt{logic} 统一）。}
+    \conrow{语法细节}{除 \texttt{endmodule} 等关键字外，语句行末必须有分号 \texttt{;}。}
+    \conrow{注释}{支持 \texttt{//} 单行注释与 \texttt{/*...*/} 多行注释。}
+}
+
+\subsubsection{组合逻辑举例：AOI 门（Slide 4）}
+
+\entry{逻辑表达式}{AOI（与-或-非）示例：$f=\sim((a \& b)\ |\ (\sim(c \& d)))$。运算符：\texttt{\&}（AND）、\texttt{|}（OR）、\texttt{\~}（NOT）。}
+
+\entry{编码要点}{
+\concepttable{
+    \conrow{\texttt{wire} 声明}{输入端口默认是 \texttt{wire}，但显式声明内部连线是好习惯。}
+    \conrow{\texttt{assign}}{\texttt{assign} 用于\red{连续赋值}，描述组合逻辑（无时钟、无触发）。}
+}}
+
+\subsubsection{模块例化（重点）}
+
+\entry{例化语法}{在一个模块中调用另一个模块：\blue{模块名} + \blue{实例名} + \blue{端口映射}。}
+
+\concepttable{
+    \conrow{模块名 vs 实例名}{\blue{\texttt{aoi}}：被调用模块名；\blue{\texttt{u\_aoi}}：实例名（同一层级内必须唯一）。}
+    \conrow{命名关联（推荐）}{端口映射写法：\texttt{.port(signal)}，例如 \texttt{.a(in\_a)} 表示将上层信号 \texttt{in\_a} 连接到子模块端口 \texttt{a}。}
+    \conrow{对比顺序关联}{顺序关联依赖端口顺序，易出错；考试与工程均优先使用\red{命名关联}。}
+}
+
+\subsection{组合逻辑}
+
+\subsection{时序逻辑}
+
+\subsection{状态机}
+\entry{基本组成}{状态机由三个核心模块构成：}
+
+\concepttable{
+    \conrow{次态逻辑}{\red{组合逻辑}模块。负责根据“输入”和“现态”计算出下一个时钟周期应该跳转到的“次态”。}
+    \conrow{时序逻辑}{\red{存储模块}（通常由 $DFF$ 构成）。负责存储“现态”，在时钟边沿到来时，将“次态”更新为新的“现态”。}
+    \conrow{输出逻辑}{\red{组合逻辑}模块。负责产生系统的最终“输出”。}
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+  \img[0.9\linewidth]{images/image-2025-12-30-21-26-07.png}
+  \vspace{2pt}
+  \entry{摩尔型 (Moore) 状态机}{输出仅取决于\red{现态}。}
+
+    \concepttable{
+        \conrow{信号流向}{输入信号与反馈的“现态”共同决定“次态”；“时序逻辑”在时钟驱动下更新“现态”。}
+        \conrow{核心特征}{\red{输出逻辑的输入}仅来自于寄存器的输出 $Q$ 端（即现态）。}
+        \conrow{同步特性}{输出严格同步于状态变化。输入信号的改变必须先触发状态翻转，才能传递至输出。}
+        \conrow{工程意义}{输出通常比输入滞后一个周期，但具有良好的\red{抗毛刺 (Glitch)} 能力。}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+
+\img[0.9\linewidth]{images/image-2025-12-30-21-32-44.png}
+
+\entry{米里型 (Mealy) 状态机}{输出由\red{现态与输入}共同决定。}
+
+\concepttable{
+    \conrow{信号流向}{次态逻辑与时序逻辑部分与 Moore 型基本一致。}
+    \conrow{关键特征}{输出逻辑模块同时接收来自寄存器的“现态”与直接来自外部的“输入”信号。}
+    \conrow{响应特性}{输出可对输入变化做出\red{异步响应}。在同一时钟周期内，输入改变输出即可随之改变，无需等待时钟边沿。}
+    \conrow{工程对比}{实现相同功能时状态数通常更少，响应速度更快；但输入端的噪声或毛刺容易直接传递至输出端。}
+}
+\end{minipage}
+
+\subsubsection{状态机设计描述方式}
+
+\entry{核心概念}{根据现态 (CS)、次态 (NS) 和输出逻辑 (OL) 在 \blue{always} 块中的分配，分为三种经典描述方式：}
+
+\entry{1. 三段式 (Three-process)}{将三个逻辑环节完全解耦，与硬件框图一一对应。}
+\concepttable{
+    \conrow{现态 (CS)}{时序逻辑 \red{always} 块，由时钟驱动更新状态寄存器。}
+    \conrow{次态 (NS)}{组合逻辑 \red{always} 块，根据输入和 $CS$ 计算 $NS$。}
+    \conrow{输出逻辑 (OL)}{独立组合逻辑 \red{always} 块，描述输出信号。}
+    \conrow{优点}{结构最清晰，可读性最高，利于综合工具进行时序分析和优化。}
+}
+
+\entry{2. 两段式 (Two-process)}{将逻辑环节进行合并，是工业界常用的写法。}
+\concepttable{
+    \conrow{策略一：(CS+NS) + (OL)}{第一个过程块描述现态更新与次态计算；第二个描述输出。}
+    \conrow{策略二：(CS) + (NS+OL)}{第一个过程块描述寄存器更新；第二个合并次态与输出逻辑。}
+    \conrow{特性}{明确分离了时序逻辑与组合逻辑，但需注意复杂 OL 可能导致关键路径过长。}
+}
+
+\entry{3. 一段式 (Single-process)}{将 $CS, NS, OL$ 全部放入同一个时序 \blue{always} 块中。}
+\concepttable{
+    \conrow{实现方式}{通常基于时钟边沿触发，代码量最少，结构简洁。}
+    \conrow{输出特性}{输出信号被综合为\red{寄存器输出} (Registered Output)，天然无毛刺。}
+    \conrow{局限性}{输出信号会比状态变化\red{滞后一个时钟周期}；复杂 Mealy 机描述臃肿。}
+}
+
+\subsubsection{三段式状态机}
+
+这里放一个基于 三段式描述的有限状态机（FSM）设计实例，具体功能为 “101序列检测器”。
+
+\imgleft[0.3]{images/image-2025-12-30-21-51-35.png}{
+\entry{状态转移图分析}{该设计为 \red{Moore 型}状态机，输出 $z$ 仅取决于当前状态（节点内标记为 $S_n/z$）。}
+
+\concepttable{
+    \conrow{$S0/0$}{初始状态 (Idle)，表示未检测到有效序列。}
+    \conrow{$S1/0$}{检测到了“1”，即序列的第一位。}
+    \conrow{$S2/0$}{检测到了“10”，即序列的前两位。}
+    \conrow{$S3/1$}{检测到了“101”，序列匹配成功，输出 \red{$z=1$}。}
+}
+
+\entry{转移逻辑 (重叠检测)}{
+    \concepttable{
+        \conrow{从 $S0$}{输入 $1 \to S1$；输入 $0 \to S0$。}
+        \conrow{从 $S1$}{输入 $0 \to S2$；输入 $1 \to S1$（最新的“1”可作为新序列开头）。}
+        \conrow{从 $S2$}{输入 $1 \to S3$；输入 $0 \to S0$（序列中断，需重新检测）。}
+        \conrow{从 $S3$}{输入 $1 \to S1$；输入 $0 \to S2$（最后的“1”或“10”作为下一序列前缀）。}
+    }
+}
+}
+
+% --- 手动换栏命令（如果需要强制换列）---
+% \columnbreak 
+
+\end{multicols*}
+
+\end{document}
