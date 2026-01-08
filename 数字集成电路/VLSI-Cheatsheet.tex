@@ -456,13 +456,302 @@ $W/L$。忽略体效应，阈值电压恒定。}
     \entry{考试指导}{若题目给出 $E_{sat}$ 或 $v_{sat}$ 等参数，需套用短沟道模型；否则通常按长沟道模型分析。}
 }
 
-\subsection{开关阈值（对称反相器）}
+\subsection{阈值电压}
+
+\entry{定义}{$V_M$ 为 VTC 上满足 $V_{in}=V_{out}$ 的点，即输入输出相等的平衡电压。此时 PMOS 与 NMOS \red{同时导通}，\red{电流大小相等（绝对值相等）}。}
+
+\subsubsection{定义式解析解}
+
+以最经典的互补反相器为例：
+
+\entry{电流平衡求解（KCL）}{在 $V_M$ 点有
+$\,I_{DSn} = -I_{DSp}\,$（或 $|I_{DSn}| = |I_{DSp}|$），代入速度饱和近似的简化电流模型得：
+$k_n V_{DSATn}\big(V_M - V_{Tn} - \tfrac{V_{DSATn}}{2}\big)
++ k_p V_{DSATp}\big(V_M - V_{DD} - V_{Tp} - \tfrac{V_{DSATp}}{2}\big) = 0$.}
+
+\entry{解析解}{\red{$V_M = \dfrac{\big(V_{Tn} + \tfrac{V_{DSATn}}{2}\big) + r\big(V_{DD} + V_{Tp} + \tfrac{V_{DSATp}}{2}\big)}{1 + r}$}，其中 $r$ 为驱动能力比。}
+
+\concepttable{
+    \conrow{比值 $r$}{$r = \dfrac{k_p |V_{DSATp}|}{k_n V_{DSATn}}
+    = \dfrac{W_p \mu_p C_{ox} |V_{DSATp}| / L}{W_n \mu_n C_{ox} V_{DSATn} / L}
+    \approx \dfrac{v_{sat,p} W_p}{v_{sat,n} W_n}$.}
+    \conrow{\red{物理意义}}{$r$ 表征 \red{PMOS 相对 NMOS 的驱动能力}。$r$ 增大时 $V_M$ 向 $V_{DD}$ 方向移动（PMOS 更强）；$r$ 减小时 $V_M$ 向 $0$ 靠近（NMOS 更强）。}
+}
+
+\entry{结论}{由此可知，PMOS 上拉越强，$V_M$ 越高；NMOS 下拉越强，$V_M$ 越低。}
+
+\imgleft[0.4]{images/image-2026-01-07-18-58-01.png}{
+
+    \entry{器件尺寸比敏感度分析}{}
+    \concepttable{
+        \conrow{趋势}{曲线随 $\frac{W_p}{W_n}$ 缓慢单调上升。}
+        \conrow{不敏感性}{即便 $\frac{W_p}{W_n}$ 变化较大，$V_M$ 的变化幅度相对较小（横纵轴的刻度不同）}
+    }
+
+    \entry{设计目标}{使反相器的翻转点 $V_M$ 接近电源中点 $V_{DD}/2$，从而平衡上/下噪声容限，获得最大整体噪声裕度。}
+
+    \entry{常用尺寸比}{\red{$W_p = 2 W_n$（尺寸设计约束 01）}}
+    \concepttable{
+        \conrow{迁移率差异}{电子迁移率 $\mu_n$ 明显大于空穴迁移率 $\mu_p$，因此为追求驱动平衡需放大 PMOS 宽度；工程常用比例约为 $2\!:\!1$。}
+    }
+
+}
 
 \subsection{CMOS 逻辑门的延时特性}
 
-\subsection{本征延时、努力延时}
+\subsubsection{最简延时模型}
 
-\subsection{逻辑努力（含义、计算）}
+\entry{等效电路}{输入信号相当于经过一个 RC 电路。}
+
+\imgleft[0.3]{images/image-2026-01-07-19-20-55.png}{
+
+    \concepttable{
+        \conrow{负载电容}{负载以电容为主：下一级栅极电容及互连寄生电容，\red{CMOS数字电路中的逻辑门负载在绝大多数情况下是容性的}。}
+        \conrow{电阻}{MOS 管导通时近似为电阻 $R$}
+        \conrow{时间常数}{$\tau = R\times C$}
+    }
+
+}
+
+\subsubsection{常用时间常数}
+
+\entry{系统响应模型}{$V_{out}(t)=V_{DD}\big(1-e^{-t/\tau}\big)$，时间常数 $\tau=RC$。}
+
+\imgleft[0.3]{images/image-2026-01-08-11-12-46.png}{
+
+    \concepttable{    
+        \conrow{\red{传播延时 $t_p$}}{输入从 50\% 处跳变到输出达到 50\% 的时间。}
+        \conrow{推导}{令 $V_{out}=0.5V_{DD}$：$0.5=1-e^{-t_p/\tau}\Rightarrow t_p=\ln(2)\tau\approx0.69RC$.}
+        \conrow{结论}{\red{$t_p\approx0.69RC$}}
+    }
+
+    \concepttable{
+        \conrow{\red{翻转时间 $t_r$}}{输出从 10\% 上升到 90\% 的时间（本 PPT 取 10\%-90\%）。}
+        \conrow{推导}{$t_{10}=\tau\ln\!\tfrac{10}{9}$，$t_{90}=\tau\ln(10)$，故 $t_r=t_{90}-t_{10}=\tau\ln(9)\approx2.2RC$.}
+        \conrow{结论}{\red{$t_r\approx2.2RC$}}
+    }
+
+}
+
+\red{后面我们基本上只关心传播延时 $t_p$ 的分析。}
+
+\subsection{传播延时 $t_p$}
+
+\subsubsection{基本物理模型}
+
+\entry{延时模型构建}{两种常用的物理视角：}
+
+\imgleft[0.2]{images/image-2026-01-08-11-20-06.png}{
+
+    \entry{延时估计模型 1 —— 恒流源充放电模型}{
+        \concepttable{
+            \conrow{物理模型}{在输出从 $V_{DD}$ 放电到 $0$ 的过程中，\red{NMOS 在较大时间段近似处于饱和区}，可视为受控电流源。}
+            \conrow{模型抽象}{将晶体管近似为恒定平均电流源 $I_{av}$，利用电荷守恒 $Q=C\Delta V=I\Delta t$ 估算延时。}
+            \conrow{传播延时公式}{$t_{pHL} = \dfrac{C_L\,V_{swing}/2}{I_{av}}$，其中 $V_{swing}/2$ 对应 50\% 传播点。}
+            \conrow{注释}{该模型直接说明：\red{减小 $C_L$ 或增大 $I_{av}$ 都能缩短延时}；可用器件饱和电流或电流积分近似 $I_{av}$。}
+        }
+    }
+
+}
+
+\imgleft[0.2]{images/image-2026-01-08-11-22-48.png}{
+
+    \entry{延时估计模型 2 —— \red{RC 充放电模型}}{
+        \concepttable{
+            \conrow{物理模型}{为简化计算，将 MOS 等效为一个线性电阻 $R_{on}$，电容 $C_L$ 通过 $R_{on}$ 充放电。}
+            \conrow{模型抽象}{开关 + 等效电阻 $R_{on}$ + 负载电容 $C_L$，形成一阶 RC 回路。}
+            \conrow{传播延时公式}{$t_{pHL} = 0.69\,R_{on} C_L$，这是 50\% 延时的常用近似。}
+            \conrow{驱动能力解释}{“驱动能力”本质上是 $I_{av}$ 的大小或 $R_{on}^{-1}$；$R_{on}$ 越小（或 $I_{av}$ 越大），延时越短。}
+        }
+    }
+
+}
+
+\entry{综上所述}{优化延时的两大方向：\red{减小负载电容}（主要是栅极电容）和\red{增大驱动能力}（减小等效电阻）。}
+
+\subsubsection{容抗参数估算}
+
+\hlblue{\textbf{等效电阻估算}}
+
+\imgleft[0.3]{images/image-2026-01-08-11-30-09.png}{
+
+    \entry{背景}{MOS 管\red{不是理想电阻}，瞬时等效电阻可写为 $R_{on}(t)=V_{DS}(t)/I_D(t)$，随 $V_{DS},V_{GS}$ 及工作区而显著变化。直接用瞬时 $R_{on}$ 做 RC 分析会导致误差，需要用等效电阻 $R_{eq}$ 代替。}
+
+    \entry{等效电阻近似}{翻转区间 $[t_1,t_2]$ 上的时间平均电阻（积分形式），常用近似：\par
+    \red{$R_{eq}\approx\frac{1}{2}\big(R_{on}(t_1)+R_{on}(t_2)\big)$}\par
+    取 $t_1$ 对应输出刚开始放电（$V_{out}=V_{DD}$），$t_2$ 取输出达到 50\%（$V_{DD}/2$）}
+}
+
+\entry{传播延时与等效电阻}{单级反相器的传播延时取上升与下降平均：\par
+\red{$t_p=\frac{t_{pHL}+t_{pLH}}{2}=0.69\,C_L\cdot\frac{R_{eqn}+R_{eqp}}{2}$},需\red{分别求出 NMOS 的 $R_{eqn}$ 与 PMOS 的 $R_{eqp}$}并求平均。}
+
+\hlblue{\textbf{负载电容估算}}
+
+\imgleft[0.13]{images/image-2026-01-08-11-35-48.png}{
+    \entry{电容组成分析}{}
+    \concepttable{
+        \conrow{本征电容}{驱动门本身的寄生：漏极扩散电容（$C_{db1}+C_{db2}$）、栅漏覆盖电容 $C_{gd12}$（驱动器内）等。}
+        \conrow{连线电容}{互连产生的对地电容 $C_w$（与长度成正比）。}
+        \conrow{外部负载}{下一级门的栅极电容，即扇出栅电容 $C_{g3}+C_{g4}$。}
+    }
+
+}
+
+\imgleft[0.2]{images/image-2026-01-08-11-39-32.png}{
+    \entry{漏电容估算}{}
+    \concepttable{
+        \conrow{漏源沟道电容}{近似为 0：晶体管仅处于饱和或截止状态}
+        \conrow{覆盖（栅-漏）电容}{$C_{gd}=C_{GD0}\,W$，栅与漏的几何重叠电容}
+        \conrow{密勒效应}{当输入 $V_{in}$ 上升 $\Delta V$ 时，输出 $V_{out}$ 通常下降约 $\Delta V$（方向相反），因此栅-漏两端的电压变化约为 $2\Delta V$，因此，$C_{gd}$ 在输入/输出端被放大 2 倍：\red{$C_{gd,eff}=2C_{gd}=2C_{GD0}W$}}
+    }
+}
+
+\entry{扇出栅电容估算}{}
+
+\concepttable{
+    \conrow{假设}{在计算第一级延时时，假设下一级尚未开始翻转（下一级输出 $V_{out2}$ 短时保持不变）。因此不存在对输入端的密勒放大。此时，\red{下一级对第一级的等效负载为纯栅极电容之和}，不包含 $C_{gd}$ 的密勒效应放大。}
+    \conrow{组成}{每个栅极电容由两部分构成：\red{覆盖寄生电容} $(C_{GSO}+C_{GDO})\times W$ 与\red{栅氧化层电容} $W\times L\times C_{ox}$。}
+    \conrow{计算公式}{$C_{\text{fanout}}=C_{\text{gate,n}}+C_{\text{gate,p}}$ \par
+    $= \big((C_{GSO_n}+C_{GDO_n})W_n + W_nL_nC_{ox}\big) + \big((C_{GSO_p}+C_{GDO_p})W_p + W_pL_pC_{ox}\big)$}
+}
+
+\entry{\red{总负载电容 $C_L$}}{}
+
+\vspace{-5pt}
+$$C_L = \underbrace{C_{gd1} + C_{gd2}}_{\text{密勒电容, } \times 2} + \underbrace{C_{db1} + C_{db2}}_{\text{扩散电容}} + \underbrace{C_{g3} + C_{g4}}_{\text{扇出电容}} + \underbrace{C_w}_{\text{连线}}$$
+\vspace{-5pt}
+
+\entry{延时受输入图形的影响}{
+
+    \imgleft[0.3]{images/image-2026-01-08-14-30-29.png}{
+
+        以 2 输入 NAND 门为例，输入信号有多种可能的变化方式（设在 PDN 串联中，A 管更靠近输出端口）：
+
+        \concepttable{
+            \conrow{放电过程}{以 B=1 ，A 从 0 变到 1 为最快，也是给后面铺垫了，B 先给中间节点电容放电，这样 A 到了之后只需要给负载电容放电即可。这样是最快的。}
+            \conrow{充电过程}{A和B 管同时上拉最快，理由很简单，两个管子的驱动能力叠加肯定最强\par
+            第二快的是 B=1，A 从 0 变到 1 ，B 先给中间节点电容充电，这样 A 到了之后只需要给负载电容充电即可。}
+        }
+
+        \entry{结论}{最慢的信号应该被放在最靠近输出端的管子上，这样它到达的时候，前面的管子已经把中间节点电容放电/充电完毕了，只需要给负载电容放电/充电即可。}
+
+    }
+
+}
+
+\subsubsection{本征延时、努力延时}
+
+\hlblue{\textbf{延时组成}}
+
+\entry{门延时的组成}{总延时分为两部分：\par
+$t_p = 0.69 R_{eq} (C_{int} + C_{ext}) = \underbrace{0.69 R_{eq} C_{int}}_{t_{p0}} + \underbrace{0.69 R_{eq} C_{ext}}_{t_{effort}}.$ 其中 $C_{int}$ 为本征电容，$C_{ext}$ 为外部负载电容。}
+
+\concepttable{
+    \conrow{本征电容 $C_{int}$}{反相器自身寄生电容：主要为扩散电容 $C_{db}$ 与栅-漏覆盖电容（含密勒效应部分）。}
+    \conrow{外部电容 $C_{ext}$}{由连线电容、下一级栅电容等外部负载决定，与驱动门尺寸无关。}
+}
+
+\hlblue{\textbf{本征延时 $t_{p0}$}}
+
+\concepttable{
+    \conrow{定义}{ $t_{p0}=0.69 R_{eq} C_{int}$。}
+    \conrow{物理关系}{$R_{eq}\propto 1/W$，且 $C_{int}\propto W$，二者关于晶体管宽度 $W$ 近似互相抵消。}
+    \conrow{结论}{因此 $t_{p0}$ 对尺寸 $W$ 近似不敏感，即增大晶体管尺寸不能显著降低本征延时。}
+}
+
+\entry{本征延时受扇入的影响}{
+
+N 输入逻辑门在保持等效驱动能力时，其本征延时随输入数 $n$ 的增长近似呈 $O(n^2)$（过多串联 MOS 管会导致引入大量节点电容）。以 N 输入 NAND 门为例：
+
+    \imgleft[0.3]{images/image-2026-01-08-14-21-48.png}{
+
+        \concepttable{
+            \conrow{下拉延时}{\red{$t_{pHL} = 0.69\,R\big(\tfrac{n^2}{2} + \tfrac{5}{2}n\big)C$}。其中\red{平方项来自内部节点的寄生电容累加}，线性项主要来自输出负载 $C_L$ 的贡献。}
+            \conrow{上拉延时}{\red{$t_{pLH} = 0.69nRC$}。主要就是本征电容（这里是本征延时，不考虑外部电容）扩大为 $nC$，无平方项。}
+        }
+
+    }
+
+    图中最后的传播延时是两个延时的折中处理，一边是平方项，一边是线性项，注意\red{单逻辑门扇入应控制在合理范围内（通常不超过 4）}。
+
+}
+
+\hlblue{\textbf{努力延时 $t_{effort}$}}
+
+\concepttable{
+    \conrow{定义}{ $t_{effort}=0.69 R_{eq} C_{ext}$。}
+    \conrow{物理关系}{$C_{ext}$ 由外部决定（与 $W$ 无关），而 $R_{eq}\propto 1/W$。}
+    \conrow{结论}{因此 $t_{effort}\propto 1/W$，增大驱动晶体管尺寸可显著降低努力延时（改善本级电阻优化延时）。}
+}
+
+\subsubsection{\red{复杂逻辑门器件尺寸设计}}
+
+\hlblue{\textbf{并联 MOS 等效电阻}}
+
+\entry{概述}{并联 NMOS/PMOS 的等效导通电阻取决于\red{同时导通的晶体管数目}，影响门的驱动能力与延时。}
+
+\imgleft[0.3]{images/image-2026-01-08-12-09-14.png}{
+    \entry{以 NAND 为例}{并联结构的有效电阻随导通管数变化}
+    \concepttable{
+        \conrow{情况 A（单管导通）}{$A=1, B=0$ 或 $A=0, B=1$：仅一个 PMOS 导通，等效电阻 $R_{eq}=R_p$. \red{为最坏情况}，电阻最大，延时最长。}
+        \conrow{情况 B（双管导通）}{$A=0, B=0$：两个 PMOS 同时导通，等效电阻 $R_{eq}=R_p \parallel R_p = R_p/2$. \red{是最好情况}，电阻最小，延时最短。}
+    }
+    在传播延时或器件尺寸设计时通常以\red{最坏情况}为准（即仅有一个管子导通）。目标是确保即使在最坏情况下，该单管的驱动能力仍能满足参考反相器的要求。\red{$t_{pLH}=0.69\,R_p\,C_L$}
+}
+
+\hlblue{\textbf{串联 MOS 等效电阻}}
+
+\imgleft[0.3]{images/image-2026-01-08-12-12-07.png}{
+
+    \entry{堆叠效应}{
+        当两个管子的等效电阻均为 $R_n$ 串联时，总等效电阻为 $R_{eq}=R_n+R_n=2R_n$。
+    }
+
+    \entry{\red{尺寸补偿策略}}{
+        \concepttable{
+            \conrow{目标}{希望串联结构的总电阻满足 $R_{total}=R_{ref}$，与单个参考管相同，从而保证驱动能力不变。}
+            \conrow{计算}{对 $N$ 个串联管，总电阻需为 $R_{ref}$，故每个管的电阻应为 $R_{ref}/N$。}
+            \conrow{手段}{由于电阻与宽度 $W$ 成反比（$R\propto 1/W$），要使电阻变为原来的 $1/N$，则应将每个管的宽度增大 $N$ 倍。}
+            \conrow{结论}{因此：对于 $N$ 个串联的 MOS 管，为使等效电阻等同于单个参考管，每个管的宽度需约增大 $N$ 倍。例：两个串联时，NMOS 宽度应加倍。}
+        }
+    }
+
+}
+
+\hlblue{\textbf{复杂门的电容估算}}
+
+\imgleft[0.2]{images/image-2026-01-08-12-26-21.png}{
+
+\entry{输出端负载电容 $C_L$}{
+    \concepttable{
+        \conrow{计算公式}{$C_{L}=C_{db2}+C_{db3}+C_{db4}+2C_{gd2}+2C_{gd3}+2C_{gd4}+C_{ext}$}
+    }
+}
+
+\entry{内部节点电容 $C_{int}$}{
+    \concepttable{
+        \conrow{定义}{指串联晶体管之间中间节点（例如 M1 与 M2 之间节点）对地/对相邻节点的电容总和，影响堆叠结构的等效负载和延时分布。}
+        \conrow{计算公式}{$C_{int} = C_{db1} + C_{s2} + 2C_{gd1} + 2C_{gs2}$}
+    }
+}
+
+\entry{结论}{当串联堆叠晶体管数目较少（例如 2 输入门）时，内部节点电容对总延时影响可近似忽略；但当\red{堆叠数增加（3 输入、4 输入 NAND 等）时，内部分布电容不再可忽略}，必须在延时与尺寸优化中显式考虑。}
+}
+
+\imgleft[0.25]{images/image-2026-01-08-12-36-13.png}{
+    \entry{多堆叠晶体管延时计算示例（Elmore 模型）}{
+        $t_{pHL} = 0.69[$
+
+        \hspace{1em} $R_1 C_1$ \\
+        \hspace{1em} $+ (R_1 + R_2) C_2$ \\
+        \hspace{1em} $+ (R_1 + R_2 + R_3) C_3$ \\
+        \hspace{1em} $+ (R_1 + R_2 + R_3 + R_4) C_L]$\\ 
+        $= 0.69R_{eqn}(C_1 + 2C_2 + 3C_3 + 4C_L)$
+    }
+    其中的多级内部节点电容 $C_1,C_2,C_3$ 会显著增加延时。
+}
+
+\subsubsection{逻辑努力（含义、计算）}
 
 \subsection{关键路径的计算}
 
@@ -773,19 +1062,75 @@ CMOS 逻辑门的输出端可以等效为一个一阶 RC 电路。$V_{in}$ 代�
 \entry{物理意义}{若噪声使输入进入高增益过渡区，输出将产生逻辑错误。$V_{IH}$ 需高于 $V_M$ 一定程度，$V_{IL}$ 需低于 $V_M$ 一定程度。}
 
 \imgleft[0.3]{images/image-2025-12-29-21-07-35.png}{
-\entry{VTC 曲线与再生性}{
-    \concepttable{
-        \conrow{再生性}{过渡区陡峭（$|Gain| > 1$），输入偏差经 $f(v)$ 映射后收敛至稳态（Rail-to-Rail）。}
-        \conrow{不可再生}{过渡区平缓，输入偏差无法修正，甚至因多次迭代发散或停留在中间态。}
+    \entry{VTC 曲线与再生性}{
+        \concepttable{
+            \conrow{再生性}{过渡区陡峭（$|Gain| > 1$），输入偏差经 $f(v)$ 映射后收敛至稳态（Rail-to-Rail）。}
+            \conrow{不可再生}{过渡区平缓，输入偏差无法修正，甚至因多次迭代发散或停留在中间态。}
+        }
+    }
+    \entry{关键概念}{
+        \concepttable{
+            \conrow{开关阈值 $V_M$}{$V_{in} = V_{out}$ 的交点。逻辑判断的中间分界点，电路处于亚稳态。}
+            \conrow{斜率 $= -1$}{噪声容限的边界判定标准。界定逻辑稳态区（增益 $< 1$）与过渡区。}
+            \conrow{单级噪声容限}{输入最大偏差不能超过 $(V_{OH} - V_M)$ 和 $(V_M - V_{OL})$。}
+        }
     }
 }
-\entry{关键概念}{
+
+\subsubsection{多级噪声容限}
+
+\entry{核心观点}{噪声容限不仅是单级电路的问题，而是为了保证在多级级联传输中噪声能够被\red{衰减}而非\red{放大}。若每一级都放大噪声，经过若干级后信号将被噪声淹没，数字再生性丧失。}
+
+\concepttable{
+    \conrow{多级传输衰减模型}{设每级的小信号电压增益为 $A$，经过 $k$ 级后噪声近似按几何级数传播：$v_{out}\approx A^k v_n$。因此要求 \red{$|A|<1$} 才能保证多级级联时\red{噪声逐级减小}。}
+    \conrow{泰勒展开}{对含噪输入 $V_{in}+v_n$ 的传输函数做一阶泰勒展开，得\par
+    $V_{out}' \approx f(V_{in}) + v_n\cdot\frac{\partial V_{out}}{\partial V_{in}}$。\par
+    其中第一项为理想无噪输出，第二项给出\red{噪声在输出端的线性响应}。}
+    \conrow{小信号电压增益}{小信号增益 $A_v=\dfrac{\partial V_{out}}{\partial V_{in}}$。物理结论：当 $\lvert A_v\rvert<1$ 时噪声被削弱；当 $\lvert A_v\rvert>1$ 时噪声会被放大，可能导致失稳。}
+    \conrow{物理逻辑衔接}{上述结论要求在 VTC 曲线上找到增益临界点 $\lvert \partial V_{out}/\partial V_{in}\rvert=1$，以此划分“稳定区”（噪声衰减）与“非稳定/再生区”（噪声可能放大）。}
+}
+
+只有当逻辑门工作在增益绝对值小于1的区域时，输入端的噪声 $v_n$ 传递到输出端后才会变小。
+
+\imgleft[0.4]{images/image-2026-01-08-11-02-20.png}{
+
+    \entry{斜率临界点}{在 VTC 曲线上找到两点，使局部斜率满足 $\dfrac{dV_{out}}{dV_{in}} = -1$。这两点将曲线分为两类区域：}
     \concepttable{
-        \conrow{开关阈值 $V_M$}{$V_{in} = V_{out}$ 的交点。逻辑判断的中间分界点，电路处于亚稳态。}
-        \conrow{斜率 $= -1$}{噪声容限的边界判定标准。界定逻辑稳态区（增益 $< 1$）与过渡区。}
-        \conrow{单级噪声容限}{输入最大偏差不能超过 $(V_{OH} - V_M)$ 和 $(V_M - V_{OL})$。}
+        \conrow{稳态区)}{曲线两端的平坦区；输入小扰动被衰减，电路具有再生性和噪声抑制能力。}
+        \conrow{过渡区}{曲线中间的陡峭区；小扰动会被放大，电路处于高增益、不稳定或不确定状态。}
+    }
+
+    \entry{映射规则与不确定区}{直观映射（输入→逻辑判定）：}
+    \concepttable{
+        \conrow{合法逻辑 0}{输入 $V_{in}\in[0,\,V_{IL}]$ 被视为逻辑“0”。}
+        \conrow{合法逻辑 1}{输入 $V_{in}\in[V_{IH},\,V_{DD}]$ 被视为逻辑“1”。}
+        \conrow{不确定区}{输入落在 $(V_{IL},\,V_{IH})$（灰色区域）时为不确定区：门不能保证输出正确，且噪声可能被放大。}
     }
 }
+
+\entry{四个关键电压的定义}{利用上述两个斜率为 $-1$ 的点在输入/输出坐标上定义：}
+\concepttable{
+    \conrow{$V_{IL}$}{输入被认为仍为逻辑“0”的最大输入电压（对应\red{低侧斜率 $=-1$ 的点}）。}
+    \conrow{$V_{IH}$}{输入被认为为逻辑“1”的最小输入电压（对应\red{高侧斜率 $=-1$ 的点}）。}
+    \conrow{$V_{OL}$}{输出为逻辑“0”时的标称输出电压。}
+    \conrow{$V_{OH}$}{输出为逻辑“1”时的标称输出电压。}
+}
+
+\entry{\red{噪声裕度}}{衡量门对输入噪声容忍性的实用指标：}
+\concepttable{
+    \conrow{$NM_L$}{$NM_L = V_{IL} - V_{OL}$，表示低电平对噪声的容忍度。}
+    \conrow{$NM_H$}{$NM_H = V_{OH} - V_{IH}$，表示高电平对噪声的容忍度。}
+}
+
+\imgleft[0.4]{images/image-2026-01-08-11-09-23.png}{
+
+    \entry{多级噪声容限}{
+        \concepttable{
+            \conrow{级联模型}{前一级的输出（理想为 $V_{OH},V_{OL}$）驱动后一级的输入判决阈值（$V_{IH},V_{IL}$）。噪声容限即为\red{前级输出电平与后级判阈之间的缓冲带}。}
+            \conrow{公式}{$NM_H = V_{OH} - V_{IH}$，$NM_L = V_{IL} - V_{OL}$}
+        }
+    }
+
 }
 
 \section{第五章\ 互联线与互联技术}
@@ -1133,15 +1478,100 @@ t_{p} = \underbrace{\textcolor{blue}{0.69 R_{s} \cdot cL}}_{\text{逻辑门延�
 
 \subsection{有比逻辑}
 
+\subsubsection{概述}
+
+\entry{有比逻辑}{为节省晶体管数目，将标准 CMOS 的上拉网络（PUN，$N$ 个 PMOS）替换为\red{单一负载器件}，从而实现一种\red{比例逻辑}实现方式。标准 CMOS 需 $2N$ 个器件（$N$ NMOS + $N$ PMOS），有比逻辑可将器件数降至约 $N+1$。}
+
+\entry{电路结构}{有比逻辑由两部分组成：}
+\concepttable{
+    \conrow{下拉网络}{由受输入控制的 NMOS 器件构成，实现实际逻辑功能（如 NAND、NOR 等）。}
+    \conrow{负载}{连接在 $V_{DD}$ 与输出 $F$ 之间，提供上拉作用，形式有多种（见下）。}
+}
+
+\imgleft[0.3]{images/image-2026-01-07-20-30-30.png}{
+
+    \entry{三类负载}{}
+    \concepttable{
+        \conrow{电阻负载}{使用简单电阻 $R_L$ 作为上拉。电路概念直观，但在集成工艺中实现\red{大阻值占用面积大}且工艺难以精确控制，现已较少使用。}
+        \conrow{耗尽型 NMOS 负载}{使用耗尽型 NMOS，栅极与源极连接，器件常导通，作为弱上拉。}
+        \conrow{\red{伪 NMOS}}{用一个栅极接地的 PMOS 作为负载，恒导通形成\red{弱上拉}。}
+    }
+
+}
+
+\subsubsection{伪 NMOS 逻辑}
+
+\entry{伪 NMOS（Pseudo-NMOS）}{用一个常导通的 PMOS 代替上拉电阻，构成有源负载的静态逻辑实现。该 PMOS 的栅极接地 ($V_{SS}$)，因 $V_{GS,p}=-V_{DD}<V_{Tp}$ 恒导通，起弱上拉作用。}
+
+\imgleft[0.25]{images/image-2026-01-07-20-43-20.png}{
+
+    \entry{电路结构}{
+        \concepttable{
+            \conrow{上拉配置}{PMOS 栅极接地、恒导通，作为尺寸受控的弱上拉（有源负载）。}
+            \conrow{$V_{OL}$ 依赖}{输出低电平 $V_{OL}$ 与上/下拉等效电阻相关，电阻与 $W/L$ 成反比。为获得较低的 $V_{OL}$，需使 PMOS 相对较弱。}
+            \conrow{器件计数}{$N+1$ 规则：$N$ 个 NMOS（实现逻辑） + 1 个 PMOS（有源负载）。}
+        }
+    }
+
+    \entry{设计结论}{
+        \concepttable{
+            \conrow{典型取值}{常令 PMOS 驱动强度为 NMOS 的 $\sim 1/3\!-\!1/6$。}
+            \conrow{尺寸建议}{由于 $\mu_n \approx 2\mu_p$，为满足上述驱动比可取 $W_p \approx W_n/2$（这与无比互补反相器的 $W_p \approx 2W_n$ 相反）。}
+        }
+    }
+
+}
+
+\imgleft[0.3]{images/image-2026-01-07-20-49-22.png}{
+
+    \entry{VTC 曲线随 PMOS 尺寸变化影响}{\concepttable{
+        \conrow{趋势}{随 PMOS 尺寸 $(W/L)_p$ 增大（PMOS 变强，同时电阻变小），VTC 曲线整体向右上方移动，导致\red{$V_{OL}$ 升高}。}
+        \conrow{结论}{当下拉网络（PDN）等效电阻最大时，$V_{OL}$ 达到最高，为最不利情形；若多个 NMOS 并联，$R_{NMOS\_PDN}$ 减小，$V_{OL}$ 反而更有利。}
+        \conrow{设计思路}{应针对“单一 NMOS 导通”这类最坏情况来确定 PMOS 强度，保证 $V_{OL}$ 满足噪声容限设计需求。}
+    }}
+
+}
+
+\green{伪 NMOS 的逻辑努力部分标星号了，所以我把它放在最后再看（2026-01-07-20-58）}
+
+\hlblue{\textbf{静态功耗}}
+
+\concepttable{
+    \conrow{物理成因}{在伪 NMOS 中，当输出为低电平时，PDN 导通，而负载 PMOS 始终导通（栅极接地）。此时，从电源 $V_{DD}$ 经由 PMOS 负载、NMOS 驱动管到地（GND）形成了一条直通的电流路径。}
+    \conrow{公式}{$P_{low} = V_{DD} \cdot I_{low}$，$I_{low}$ 是输出低电平时流经 PMOS 的电流。这个公式给的比较笼统。}
+    \conrow{级联影响}{将较高的 $V_{OL}$ 信号连接到下一级逻辑门的 NMOS 栅极，则下一级 NMOS 的 $V_{GS}$ 就等于 $V_{OL}$。\red{即使 $V_{OL}$ 小于下一级 NMOS 的阈值电压 $V_{Tn}$，但只要它大于 0，就会指数级地增加下一级 NMOS 的亚阈值漏电流。}这意味着伪 NMOS 不仅自身消耗功耗，还会恶化后级电路的静态功耗特性。}
+}
+
+\entry{改进方案：\red{门控伪 NMOS}}{为了解决静态功耗限制其在大规模电路中应用的问题。}
+
+\concepttable{
+    \conrow{方法}{不再将负载 PMOS 的栅极直接接地，而是连接到一个\red{使能信号}（Enable, $\overline{en}$）。}
+    \conrow{工作模式}{当 $\overline{en} = 0$ 时，PMOS 导通，电路作为标准的伪 NMOS 工作。}
+    \conrow{待机模式}{当 $\overline{en} = 1$ 时，PMOS 截止。此时电源到地的通路被切断，消除了静态功耗。}
+}
+
+\hlblue{\textbf{特性总结}}
+
+\entry{伪 NMOS 特性总结}{%
+    \concepttable{
+        \conrow{基本结构}{$N$ 个 NMOS（实现逻辑）+ 1 个常导 PMOS（弱上拉），\red{晶体管数约为 $N+1$（对比静态 CMOS 的 $2N$）。}}
+        \conrow{优势}{面积与\red{输入电容小（因为需要连接的栅极变少了）}，适合大扇入的或非/或阵列场景，实现简单且 $t_{pLH}$ 可短。}
+        \conrow{缺点}{属于有比电路：$V_{OL}$ 随 $W_p$ 变化，输出低电平非零导致静态直流功耗与下级亚阈泄漏增加。}
+        \conrow{设计权衡}{增大 $W_p$：$t_{pLH}$ 降低，但 $V_{OL}$ 升高、静态功耗上升且 $t_{pHL}$ 变慢（不利于全方向性能）。}
+        \conrow{电平与功耗约束}{需保证 $V_{OL}<V_{IL}$（功能正确）并建议 $V_{OL}<V_T$ 以抑制下级亚阈泄漏；静态功耗可通过门控（使能）或弱 PMOS 设计降低。}
+        \conrow{工程经验}{常令 PMOS 比较弱（驱动能力约为 NMOS 的 $1/3\sim1/6$），必要时使用门控伪 NMOS（$\overline{en}$ 控制）以在待机时切断静态通路。}
+    }
+}
+
 \subsection{传输门逻辑}
 
 \subsection{CPL 逻辑}
 
 \subsection{动态逻辑}
 
-\subsection{串联动态门}
+\subsubsection{串联动态门}
 
-\subsection{动态逻辑的速度和功耗}
+\subsubsection{动态逻辑的速度和功耗}
 
 \section{第七章\ 时序逻辑}
 
