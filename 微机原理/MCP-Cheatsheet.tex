@@ -1345,6 +1345,972 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
 
 \subsection{指令系统}
 
+\subsubsection{数据传送类指令}
+
+
+
+\subsubsection{算术运算类指令}
+
+\hlblue{\textbf{概述}}
+
+算术指令按语义可分为：\red{加法类}、\red{减法类}、\red{乘除法}与\red{类型转换}。
+
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{加法类}}
+    \concepttable{
+        \conrow{\texttt{ADD}}{普通加法}
+        \conrow{\texttt{ADC}}{带进位加法：\red{将 $CF$ 作为输入}，常用于多字连加。}
+        \conrow{\texttt{INC}}{自增 1，\red{不影响 CF}，但会修改其它状态标志。}
+    }
+    \blue{\textbf{乘除法}}
+    \concepttable{
+        \conrow{\texttt{MUL} / \texttt{IMUL}}{\texttt{MUL} 为无符号乘，\texttt{IMUL} 为有符号乘。\red{结果宽度为操作数宽度的两倍}（放不下的高 8 位放 DX 里面）。}
+        \conrow{\texttt{DIV} / \texttt{IDIV}}{\texttt{DIV} 无符号，\texttt{IDIV} 有符号。被除数隐含在累加器：8 位除法被除数在 \texttt{AX}；16 位除法被除数在 \texttt{DX:AX} 等。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{减法类}}
+    \concepttable{
+        \conrow{\texttt{SUB}}{普通减法}
+        \conrow{\texttt{SBB}}{带借位减法：\red{从上次借位（$CF$）出发}，常用于多字连减。}
+        \conrow{\texttt{CMP}}{比较，本质为减法但\red{不保存结果}，仅更新标志位以供条件跳转判断。}
+        \conrow{\texttt{DEC}}{自减 1。不影响 CF，但会影响其它状态标志。}
+    }
+    \blue{\textbf{类型转换 / 符号扩展}}
+    \concepttable{
+        \conrow{\texttt{CBW}}{\texttt{AL} → \texttt{AX}，符号扩展（Byte → Word）。}
+        \conrow{\texttt{CWD}}{\texttt{AX} → \texttt{DX:AX}，符号扩展（Word → Double Word）。}
+    }
+\end{minipage}
+
+\hlblue{\textbf{加法指令}}
+
+\green{\texttt{ADD}: 普通加法}
+
+\concepttable{
+    \conrow{指令格式}{\texttt{ADD Destination, Source} \quad 功能：$Destination \leftarrow Destination + Source$.}
+}
+
+
+\entry{操作数规则}{
+    \textbf{存储器限制}：\textbf{两个操作数不能同时为存储器}（例如不能写 \texttt{ADD [AX],[BX]}，\red{需寄存器中转}）。
+    \par
+    \textbf{立即数限制}：目的操作数不能是立即数（不能写 \texttt{ADD 5, AX}，算完了你也没地写入啊）。\par
+    \textbf{段寄存器限制}：段寄存器（\texttt{CS}, \texttt{DS} 等）通常不作为算术操作数。
+}
+
+\entry{标志判定示例}{
+    
+}
+
+\noindent
+\begin{minipage}[t]{0.50\linewidth}\vspace{0pt}
+    \blue{二进制加法}
+    \par
+    \texttt{AL = 01100011B} \\
+    \texttt{BL = 00111000B} \\
+    \[
+        \begin{array}{r}
+        01100011 \\
+        + 00111000 \\
+        \hline
+        10011011
+        \end{array}
+    \]
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{标志位逐项判定}
+    \concepttable{
+        \conrow{\texttt{CF}}{0(155<255)}
+        \conrow{\texttt{SF}}{1}
+        \conrow{\texttt{ZF}}{0}
+        \conrow{\texttt{PF}}{0}
+        \conrow{\texttt{OF}}{1(155>127)}
+        \conrow{\texttt{AF}}{0}
+    }
+\end{minipage}
+
+\green{\texttt{ADC}: 带进位加法}
+
+用于实现\red{多字节/多精度加法}（例如在 16 位环境下做 32 位相加），将低位运算产生的进位加到高位。
+
+\concepttable{
+        \conrow{指令格式}{\texttt{ADC Destination, Source}。功能：$Destination \leftarrow Destination + Source + CF$.}
+}
+
+\entry{应用举例 — 32 位加法}{
+
+    \img[0.7\linewidth]{images/image-2026-01-11-16-17-26.png}
+
+    \concepttable{
+        \conrow{场景}{将 \texttt{DATA1} + \texttt{DATA2} 存入 \texttt{RESULT}。\par
+        \texttt{DATA1} = 1357\ 9BDFh（高 16 位 1357h，低 16 位 9BDFh）。\par
+        \texttt{DATA2} = 0246\ 8ACEh（高 16 位 0246h，低 16 位 8ACEh）。}
+    }
+    \vspace{3pt}
+    \noindent\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+        \concepttable{
+            \conrow{低 16 位（使用 \texttt{ADD}）}{
+                \texttt{MOV AX, WORD PTR DATA1} \par
+                \texttt{ADD AX, WORD PTR DATA2} \par
+                \texttt{MOV WORD PTR RESULT, AX}
+            }
+            \conrow{解析}{最低位相加不需事先的进位。本例：\texttt{9BDFh + 8ACEh} 产生进位，置 \red{\texttt{CF}=1}。}
+        }
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+        \concepttable{
+            \conrow{高 16 位（使用 \texttt{ADC}）}{
+                \texttt{MOV AX, WORD PTR DATA1+2} \par
+                \texttt{ADC AX, WORD PTR DATA2+2} \par
+                \texttt{MOV WORD PTR RESULT+2, AX}
+            }
+            \conrow{解析}{高位运算将低位进位纳入计算：\texttt{1357h + 0246h + CF(=1)} = \texttt{159Eh}.}
+        }
+    \end{minipage}
+}
+
+\green{\texttt{INC}： 自增指令}
+
+\concepttable{
+    \conrow{指令格式}{\texttt{INC Destination} \quad 功能：$Destination \leftarrow Destination + 1$.}
+    \conrow{操作数}{寄存器或存储器单元（8/16/32 位）。\quad 不能为段寄存器或立即数。}
+}
+
+% 标志影响（对称展示）
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{影响的标志}{\red{OF}, \red{SF}, \red{ZF}, \red{AF}, \red{PF}（按运算结果更新）。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{不影响的标志}{\red{CF} \textbf{不受} \texttt{INC} 影响。}
+    }
+\end{minipage}
+
+\hlblue{\textbf{减法指令}}
+
+\green{\texttt{SUB}: 普通减法}
+
+\concepttable{
+    \conrow{指令格式}{\texttt{SUB Destination, Source} \quad 功能：$Destination \leftarrow Destination - Source$.}
+}
+
+\noindent
+\begin{minipage}[t]{0.50\linewidth}\vspace{0pt}
+    \blue{二进制减法示例} \\
+    \texttt{AL = 00100000B (32)} \\
+    \texttt{BL = 01000000B (64)} \\
+    \[
+        \begin{array}{r}
+        00100000 \\
+        -\;01000000 \\
+        \hline
+        11100000
+        \end{array}
+    \]
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{标志位判定}
+    \concepttable{
+        \conrow{\texttt{CF}}{1（发生借位，即无符号下 $AL<BL$）。}
+        \conrow{\texttt{SF}}{1（结果为负，最高位为 1）。}
+        \conrow{\texttt{ZF}}{0（结果非零）。}
+        \conrow{\texttt{PF}}{0（结果低 8 位中 1 的个数为奇数）。}
+        \conrow{\texttt{OF}}{0（本例无有符号溢出）。}
+        \conrow{\texttt{AF}}{按半字借位规则判定（本例为 0）。}
+    }
+\end{minipage}
+
+\green{\texttt{SBB}：带借位减法}
+
+\concepttable{
+    \conrow{指令格式}{\texttt{SBB Destination, Source} \quad 功能：$Destination \leftarrow Destination - Source - CF$.}
+    \conrow{关键点}{在减去源操作数的同时，还要减去来自上一条运算的借位标志 \texttt{CF}。}
+}
+
+\green{\texttt{CMP}：比较指令}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{指令格式}{\texttt{CMP Destination, Source} \quad 执行 $Destination - Source$，但\textbf{不保存结果}。}
+        \conrow{作用}{仅更新标志寄存器以供条件转移/判断使用（常与 \texttt{Jcc} 配合）。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{判定要点}{
+            $ZF=1$：相等。\quad $CF=1$：无符号下 $Destination < Source$。\quad $SF\oplus OF =1$：有符号下 $Destination < Source$。
+        }
+        \conrow{注意}{执行 \texttt{CMP AX, BX} 后 \texttt{AX}, \texttt{BX} 不变，只关心标志位。}
+    }
+\end{minipage}
+
+\green{\texttt{DEC}：自减指令}
+
+\concepttable{
+    \conrow{指令格式}{\texttt{DEC Destination} \quad 功能：$Destination \leftarrow Destination - 1$.}
+    \conrow{标志影响}{更新 \texttt{OF}, \texttt{SF}, \texttt{ZF}, \texttt{AF}, \texttt{PF}。}
+    \conrow{注}{\texttt{DEC} \textbf{不影响} \texttt{CF}（进位/借位标志），需注意多字/带借位连减场景。}
+}
+
+\green{\texttt{NEG}：求补指令}
+
+\entry{功能}{
+    \texttt{NEG Destination}：求目的操作数的相反数（即 $0 - X$）。
+}
+
+\entry{操作原理}{
+    按位取反再加 $1$（即“全位取反，加 $1$”），等价于 $0 - \text{目的操作数}$。
+}
+
+\entry{标志位影响}{
+    \texttt{CF} 在 \texttt{NEG} 指令中表示是否产生借位：\red{仅当操作数非 0 时置 1}；\texttt{CF}=0 的唯一情况是操作数为 0。
+}
+
+\concepttable{
+    \conrow{操作数 = 0}{
+        结果仍为 0；标志：\texttt{CF} = 0，\texttt{OF} = 0。
+    }
+}
+
+\concepttable{
+    \conrow{操作数 = -128}{
+        说明：8 位带符号范围为 $-128\sim+127$，对 $-128$ 求相反数得到 $+128$，超出表示范围。\par
+        标志：\texttt{CF} = 1（非零运算产生借位），\texttt{OF} = 1（有符号溢出）。结果在机器表示下保持 \texttt{80H}（溢出）。
+    }
+}
+
+\concepttable{
+    \conrow{其它非零操作数}{
+        说明：对任意非零且非极值的操作数，求补结果在合法范围内。\par
+        标志：\texttt{CF} = 1，\texttt{OF} = 0。其它标志位（\texttt{SF}, \texttt{ZF}, \texttt{PF}）按结果正常设置。
+    }
+}
+
+\hlblue{\textbf{乘除法指令}}
+
+\entry{\green{\texttt{MUL}： 无符号乘法}}{
+    \concepttable{
+        \conrow{说明}{无符号乘法，指令格式：\texttt{MUL SRC}。乘法只写一个源操作数，\red{隐含被乘数由操作数宽度决定}。}
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{字节乘法（8 位）}{
+            \textbf{隐含被乘数}：\texttt{AL}。\par
+            \textbf{运算}：$\texttt{AL}\times\text{8 位操作数}$。\par
+            \textbf{结果寄存}：\texttt{AX}（16 位），高 8 位为 \texttt{AH}，低 8 位为 \texttt{AL}。
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{字乘法（16 位）}{
+            \textbf{隐含被乘数}：\texttt{AX}。\par
+            \textbf{运算}：$\texttt{AX}\times\text{16 位操作数}$。\par
+            \textbf{结果寄存}：\texttt{DX:AX}（32 位），高 16 位为 \texttt{DX}，低 16 位为 \texttt{AX}。
+        }
+    }
+\end{minipage}
+
+\concepttable{
+    \conrow{CF/OF 判定（无符号）}{
+        判断原则：检查结果的高半部分是否非零；\red{若非零则 \texttt{CF}=1，\texttt{OF}=1；否则两标志清 0。}
+    }
+    \conrow{具体实现}{
+        检查 \texttt{AH} 是否 $\neq 0$；\quad 字乘法：检查 \texttt{DX} 是否 $\neq 0$。
+    }
+}
+
+\concepttable{
+    \conrow{标志位细节}{
+        \texttt{MUL} 仅定义并修改 \texttt{CF} 与 \texttt{OF}。\par
+        \texttt{SF}, \texttt{ZF}, \texttt{AF}, \texttt{PF} 为未定义状态，\textbf{不可}用于判断乘法后的结果（例如不要用 \texttt{JZ} 判断是否为 0）。
+    }
+}
+
+\entry{示例}{
+    \concepttable{
+        \conrow{指令}{\texttt{MUL BL}（假设 \texttt{AL}=12H，\texttt{BL}=20H）}
+        \conrow{计算}{$12\text{H}\times20\text{H}=240\text{H}$，结果存入 \texttt{AX}：\texttt{AH}=02H，\texttt{AL}=40H。}
+        \conrow{标志}{因 \texttt{AH}=02H $\neq0$，故 \texttt{CF}=1，\texttt{OF}=1。}
+    }
+}
+
+\entry{\green{\texttt{IMUL}：有符号乘法}}{
+    \concepttable{
+        \conrow{概述}{
+            \texttt{IMUL} 处理补码（有符号）数据。寄存器使用规则与 \texttt{MUL} 完全一致，但标志位（尤其 \texttt{CF}/\texttt{OF}）的判定规则不同。
+        }
+    }
+}
+
+\red{若结果的高半部分（AH 或 DX）不是低半部分（AL 或 AX）的符号扩展，则 $CF=1, OF=1$。若是符号扩展，则 $CF=0, OF=0$。}
+
+\img[0.7\linewidth]{images/image-2026-01-11-16-51-19.png}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{\green{\texttt{DIV}：无符号除法}}{
+        \concepttable{
+            \conrow{隐含操作数}{指令格式：\texttt{DIV SRC}（SRC 为除数）。\red{被除数宽度 = 除数宽度的两倍。}}
+            \conrow{字节除法}{被除数：\texttt{AX}（16 位）；运算：$(AX)\div\text{8-bit}$；结果：商 $\to\texttt{AL}$，余数 $\to\texttt{AH}$.}
+            \conrow{字除法}{被除数：\texttt{DX:AX}（32 位）；运算：$(DX:AX)\div\text{16-bit}$；结果：商 $\to\texttt{AX}$，余数 $\to\texttt{DX}$.}
+            \conrow{被除数准备}{若被除数实际位宽不够，须先扩展：无符号置 \texttt{DX=0}；有符号用 \texttt{CWD}（或 32 位时用 \texttt{CDQ}）做符号扩展，以防商溢出或错误。}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{异常与限制}{
+        \concepttable{
+            \conrow{除法错}{
+                一种优先级很高的\red{内部中断}，\red{除数 = 0 或 商不能容纳}（商溢出）。CPU 产生异常（中断）。
+            }
+            \conrow{标志位状态}{执行后 \textbf{所有}状态标志（OF, SF, ZF, AF, PF, CF）均\textbf{未定义}。切勿依赖这些标志}
+        }
+    }
+\end{minipage}
+
+\entry{\green{\texttt{IDIV}：有符号除法}}{
+    \concepttable{
+        \conrow{功能}{对补码（有符号）数据进行除法，指令格式同 \texttt{DIV}：\texttt{IDIV SRC}。位宽要求与 \texttt{DIV} 相同（被除数为除数两倍位宽）。}
+        \conrow{异常与标志}{异常条件与 \texttt{DIV} 一致（除数为 0 或 商溢出会触发除法错）；执行后标志位同样\textbf{未定义}。}
+    }
+}
+
+\hlblue{\textbf{类型转换指令}}
+
+\entry{\green{\texttt{CBW} / \texttt{CWD} — 符号扩展}}{
+    将窄位的有符号数符号扩展为更宽位以便后续有符号运算。
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{\textbf{指令}}{\texttt{CBW} (Convert to Word)}
+        \conrow{操作对象}{隐含：\texttt{AL}}
+        \conrow{功能}{将 \texttt{AL} 中的 8 位带符号数符号扩展为 16 位，结果放入 \texttt{AX}。}
+        \conrow{规则}{检查 \texttt{AL} 的最高位 (D7)：若为 1 则 \texttt{AH} := \texttt{FFH}，否则 \texttt{AH} := \texttt{00H}。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{\textbf{指令}}{\texttt{CWD} (Convert to Doubleword)}
+        \conrow{操作对象}{隐含：\texttt{AX}}
+        \conrow{功能}{将 \texttt{AX} 中的 16 位带符号数符号扩展为 32 位，结果放入寄存器对 $DX:AX$（$DX$ 为高 16 位）。}
+        \conrow{规则}{检查 \texttt{AX} 的最高位 (D15)：若为 1 则 \texttt{DX} := \texttt{FFFFH}，否则 \texttt{DX} := \texttt{0000H}。}
+    }
+\end{minipage}
+
+\entry{对标志位的影响}{
+    \texttt{CBW} 与 \texttt{CWD} 不修改任何标志位（ZF/CF/OF/... 均不变）。
+}
+
+\subsubsection{逻辑操作类指令}
+
+
+
+\subsubsection{字符串操作类指令}
+
+不同于普通 \texttt{MOV} 指令可以随意指定寄存器，字符串指令对源地址、目的地址、使用的寄存器有着严格的规定。
+
+\hlblue{\textbf{概述}}
+
+\concepttable{
+    \conrow{传送类}{\texttt{MOVS}（Move String）}
+    \conrow{存取类}{\texttt{LODS}（Load String），\ \texttt{STOS}（Store String）}
+    \conrow{比较/扫描类}{\texttt{CMPS}（Compare String），\ \texttt{SCAS}（Scan String）}
+    \conrow{I/O 类}{\texttt{INS},\ \texttt{OUTS}}
+}
+
+\entry{共性}{
+    字符串指令执行时，CPU 自动从特定寄存器读取地址并可自动更新索引寄存器。以下左右并列展示源/目的的对称规则。
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{角色}{源字符串（Source）}
+        \conrow{默认段基址}{\texttt{DS}}
+        \conrow{偏移寄存器}{\texttt{SI}（或 \texttt{ESI}）}
+        \conrow{特殊性}{允许段超越（可用段前缀覆盖，例：\texttt{CS:}, \texttt{SS:}, \texttt{ES:}）}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{角色}{目的字符串（Destination）}
+        \conrow{默认段基址}{\texttt{ES}}
+        \conrow{偏移寄存器}{\texttt{DI}（或 \texttt{EDI}）}
+        \conrow{特殊性}{不允许段超越：目的串必须位于 \texttt{ES} 段（硬件规定）}
+    }
+\end{minipage}
+
+\entry{地址自动修改机制}{
+    \concepttable{
+        \conrow{自动更新}{执行一次字符串指令后，\texttt{SI} 与 \texttt{DI} 自动更新，指向下一单元。}
+        \conrow{\red{方向控制}}{由方向标志 \texttt{DF} 控制：\texttt{DF}=0（由 \texttt{CLD} 设）→ 增量；\ \texttt{DF}=1（由 \texttt{STD} 设）→ 减量。}
+        \conrow{步长控制}{与操作宽度相关：字节：$\pm 1$；字（Word）：$\pm 2$；双字（Dword）：$\pm 4$.}
+    }
+}
+
+\entry{字符串指令格式与后缀}{
+    \concepttable{
+        \conrow{格式一（带操作数）}{
+            例如：\texttt{MOVS dest, src}。此类书写只是供汇编器识别，\textbf{实际寻址由 SI/DI 锁定}，操作数字段不改变寻址寄存器。
+        }
+        \conrow{格式二（助记符后缀）}{
+            使用后缀指明操作宽度：\texttt{MOVSB}, \texttt{MOVSW}, \texttt{MOVSD}。更直观且常用。
+        }
+    }
+}
+
+
+\concepttable{
+    \conrow{后缀含义}{\texttt{B}：字节；\ \texttt{W}：字（Word）；\ \texttt{D}：双字（Dword，80386+）。}
+    \conrow{自动步长}{根据操作宽度自动更新索引寄存器：字节 \(\pm1\)、字 \(\pm2\)、双字 \(\pm4\)。}
+}
+
+\entry{重复前缀（\texttt{REP} 系列）}{
+    \concepttable{
+        \conrow{\texttt{REP}}{先判后执：\texttt{REP} 执行前检查 \texttt{CX}（或 \texttt{ECX}），若 \texttt{CX}=0 则不执行；否则重复字符串指令并在每次后递减计数器直至 \texttt{CX}=0。}
+        \conrow{\texttt{REPE}/\texttt{REPZ}, \texttt{REPNE}/\texttt{REPNZ}}{结合 \texttt{ZF} 条件停止：在计数耗尽前若条件不满足则提前退出。}
+    }
+}
+
+\hlblue{\textbf{\texttt{MOVS}}}
+
+\entry{概述}{
+    \concepttable{
+        \conrow{功能}{将内存中一单位的数据从源复制到目的：\(\;ES:[DI/EDI]\gets DS:[SI/ESI]\;\)}
+        \conrow{要点}{\texttt{MOVS} 是\red{内存→内存专用的搬运指令}；普通 \texttt{MOV} 无法写成 \texttt{MOV [DI],[SI]}.}
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+    \entry{后缀（操作宽度）}{
+        \concepttable{
+            \conrow{\texttt{MOVSB}}{传送 1 字节}
+            \conrow{\texttt{MOVSW}}{传送 1 字（2 字节）}
+            \conrow{\texttt{MOVSD}}{传送 1 双字（4 字节）}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+    \entry{指针（SI/DI）自动更新}{
+        \concepttable{
+            \conrow{DF = 0}{\texttt{SI},\ \texttt{DI} 分别加上 1/2/4（与后缀对应）}
+            \conrow{DF = 1}{\texttt{SI},\ \texttt{DI} 分别减去 1/2/4}
+        }
+    }
+\end{minipage}
+
+\entry{执行细节（微操作）}{
+    执行一条 \texttt{MOVS} 的典型步骤：
+    \concepttable{
+        \conrow{读}{从 \(\texttt{DS}:\texttt{SI}\) 读取 1 单位数据}
+        \conrow{写}{将该数据写入 \(\texttt{ES}:\texttt{DI}\)}
+        \conrow{指针更新}{根据 DF 与操作宽度调整 \texttt{SI}/\texttt{DI}}
+    }
+}
+
+\entry{与 REP 配合}{
+    \concepttable{
+        \conrow{步骤 1}{检查 \(\texttt{CX}=0\)。若为 0，立即不执行串操作并跳到下一条指令。}
+        \conrow{步骤 2}{若 \(\texttt{CX}\neq0\)，执行 \(\texttt{CX}\gets\texttt{CX}-1\)。}
+        \conrow{步骤 3}{执行一次串操作指令（例如 \texttt{MOVSB}）。}
+        \conrow{步骤 4}{返回步骤 1，直至 \(\texttt{CX}=0\)。}
+    }
+}
+
+
+\concepttable{
+    \conrow{\red{示例（作业 2-3 答案）}}{
+        \texttt{LEA SI, SOURCE} \par \texttt{LEA DI, DEST} \par \texttt{MOV CX, 100} \par \texttt{REP MOVSB}
+    }
+}
+
+\hlblue{\textbf{存取类指令：\texttt{LODS} / \texttt{STOS}}}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{\textbf{\texttt{LODS} — Load String}}{
+        \concepttable{
+            \conrow{功能}{将内存中源字符串的当前元素\red{装入累加器}。}
+            \conrow{指令形式}{
+                \texttt{LODSB}: \texttt{AL} \(\gets\) \texttt{DS}:[\texttt{SI}] \par
+                \texttt{LODSW}: \texttt{AX} \(\gets\) \texttt{DS}:[\texttt{SI}]
+            }
+            \conrow{指针更新}{\texttt{SI} 根据操作宽度自动加/减：$1/2/4$（字节/字/双字）。}
+            \conrow{考试注意}{\texttt{REP LODS} \red{很少使用——每次一味覆盖累加器}}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{\textbf{\texttt{STOS} — Store String}}{
+        \concepttable{
+            \conrow{功能}{将累加器中的值写入目的内存单元。}
+            \conrow{指令形式}{
+                \texttt{STOSB}: \texttt{ES}:[\texttt{DI}] \(\gets\) \texttt{AL} \par
+                \texttt{STOSW}: \texttt{ES}:[\texttt{DI}] \(\gets\) \texttt{AX}
+            }
+            \conrow{指针更新}{\texttt{DI} 根据操作宽度自动加/减：$1/2/4$（字节/字/双字）。}
+            \conrow{典型用途}{常与 \texttt{REP} 前缀配合用于内存初始化（高频考点）。}
+        }
+    }
+\end{minipage}\par\vspace{2pt}
+\concepttable{
+    \conrow{示例（内存清零）}{
+        \texttt{MOV AL, 0} \quad \texttt{MOV CX, 100} \quad \texttt{REP STOSB} \par
+        \textbf{作用：}将 \texttt{ES}:[\texttt{DI}] 起始的 100 个字节全部置零。
+    }
+}
+
+\hlblue{\textbf{比较类指令：\texttt{CMPS}}}
+
+\concepttable{
+    \conrow{操作}{对两字符串单元做减法比较，通常记作 \texttt{CMP ES:[DI], DS:[SI]} 即“\red{目的 - 源}”。}
+    \conrow{结果}{仅更新标志位：\texttt{AF}, \texttt{CF}, \texttt{OF}, \texttt{PF}, \texttt{SF}, \texttt{ZF}。内存内容保持不变。}
+    \conrow{指针更新}{\texttt{SI} 与 \texttt{DI} 同步按操作宽度（B/W/D）自动增/减；\texttt{CMPS} 是唯一同时修改两指针的字符串指令。}
+}
+
+
+\entry{与 \texttt{REPE}/\texttt{REPZ} 的配合}{
+    \concepttable{
+        \conrow{循环条件}{\texttt{REPE}/\texttt{REPZ} 在执行 \texttt{CMPSB/W/D} 时重复的条件为：$CX\neq0$ 且 $ZF=1$（即“未比完且当前字符相等”）。}
+        \conrow{应用}{常用 \texttt{REPE CMPSB} 或 \texttt{REPE CMPSW} 来判定两字符串是否相等。}
+    }
+}
+
+\hlblue{\textbf{字符串扫描指令：\texttt{SCAS}}}
+
+\entry{概述}{
+    \concepttable{
+        \conrow{比较对象}{\red{\texttt{AL}/\texttt{AX}/\texttt{EAX} 与目的字符串} \(\texttt{ES}:[\texttt{DI}]\)。}
+        \conrow{操作}{执行 \(\texttt{AL}/\texttt{AX}/\texttt{EAX} - \texttt{ES}:[\texttt{DI}]\)。}
+        \conrow{结果}{不保存被比较的数据，\red{仅影响标志位（ZF/CF/OF 等）。}}
+        \conrow{指针更新}{仅修改 \texttt{DI}（按操作宽度自动增/减，受方向标志 \texttt{DF} 控制：字节 \(\pm1\)、字 \(\pm2\)、双字 \(\pm4\)）。}
+    }
+}
+
+\entry{与 \texttt{REPNE}/\texttt{REPNZ} 的配合}{
+
+}
+
+在内存中搜索与累加器寄存器中匹配或者不匹配的字符串。
+
+\noindent\begin{minipage}[t]{0.50\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{\texttt{REPNE}/\texttt{REPNZ} 语义}{
+            重复扫描，\textbf{先判后执}：在每次迭代前检查 $CX\neq0$；若 $CX=0$ 则结束循环，否则执行一次 \texttt{SCASx} 并根据 $ZF$ 决定是否继续。
+        }
+        \conrow{循环条件}{
+            在循环继续时同时满足： $CX\neq0$ 且 $ZF=0$（当前字节/字与累加器不等）。含义：只要未找到匹配项就继续扫描。
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{使用要点}{
+            使用前应将搜索关键字置入 \texttt{AL}/\texttt{AX} 并初始化 $CX$（为需扫描的长度）。扫描结束后用 $ZF$ 判定是否因匹配而退出；\texttt{DI} 若找到则指向匹配字符的\textbf{下一}字节（位置为目标后继）。
+        }
+    }
+\end{minipage}
+
+\entry{示例}{
+    假设已将字符串长度置入 $CX$，关键字置入 \texttt{AL}：
+    \concepttable{
+        \conrow{示例代码}{\texttt{MOV AL,0FFH} \quad \texttt{REPNE SCASB}}
+        \conrow{结果判定}{随后执行 \texttt{JNE ERR}：如果 \texttt{ZF}=0（\texttt{JNE} 成立）则表示循环因 $CX=0$ 而结束（未找到）；若 \texttt{ZF}=1 则表示找到匹配项（\texttt{JNE} 不跳转）。}
+        \conrow{指针位置}{若找到，\texttt{DI} 指向目标字符的\textbf{下一}位；若未找到，\texttt{DI} 通常指向扫描末尾后的下一位（取决于初始 $DI/CX$）。}
+    }
+}
+
+\hlblue{\textbf{重复前缀（REP 系列）总结}}
+
+\noindent
+\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
+    \blue{\texttt{REP} (无条件重复)}
+    \concepttable{
+        \conrow{适用指令}{\texttt{MOVS}, \texttt{STOS}（内存搬运/初始化）。}
+        \conrow{循环逻辑}{继续条件：$CX \neq 0$.}
+        \conrow{退出条件}{仅当 $CX = 0$。}
+        \conrow{典型用途}{内存拷贝或填充：\texttt{REP MOVSB}, \texttt{REP STOSB}。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
+    \blue{\texttt{REPE / REPZ} (相等/为零)} 
+    \concepttable{
+        \conrow{适用指令}{\texttt{CMPS}（比较类）。}
+        \conrow{循环逻辑}{继续条件（与关系）： $CX \neq 0$ 且 $ZF = 1$.}
+        \conrow{退出条件}{任一满足即退出： $CX = 0$ 或 $ZF = 0$.}
+        \conrow{典型用途}{判断两个字符串是否完全相同：\texttt{REPE CMPSB}。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
+    \blue{\texttt{REPNE / REPNZ} (不相等/不为零)} 
+    \concepttable{
+        \conrow{适用指令}{\texttt{SCAS}（扫描/搜索）。}
+        \conrow{循环逻辑}{继续条件（与关系）： $CX \neq 0$ 且 $ZF = 0$.}
+        \conrow{退出条件}{任一满足即退出： $CX = 0$ 或 $ZF = 1$.}
+        \conrow{典型用途}{在内存中搜索某值：\texttt{REPNE SCASB}（未找到或找到即停）。}
+    }
+\end{minipage}
+
+\subsubsection{控制转移类指令}
+
+\hlblue{\textbf{分类}}
+
+\entry{概述}{
+    CPU 在正常情况下顺序执行指令（\texttt{CS:IP} 自动增加）。控制转移指令通过\red{修改 \texttt{IP}/\texttt{EIP}（必要时并修改 \texttt{CS}）来改变执行流}。改变控制流会\red{导致指令队列清空}，需注意流水线重建开销。
+}
+
+\concepttable{
+    \conrow{无条件转移 (\texttt{JMP})}{不检查标志，执行即跳转。可为短/近/远跳转（相对或绝对寻址）。}
+    \conrow{条件转移 (\texttt{Jcc})}{根据标志位（如 \texttt{ZF}, \texttt{CF}, \texttt{OF}, \texttt{SF}）决定是否跳转。（例：\texttt{JE/JZ}, \texttt{JNE/JNZ}, \texttt{JC/JB}, \texttt{JO}, \texttt{JS}）。}
+    \conrow{循环指令（LOOP 系列）}{以 \texttt{CX}/\texttt{ECX} 作为计数器（例：\texttt{LOOP}, \texttt{LOOPE}/\texttt{LOOPZ}, \texttt{LOOPNE}/\texttt{LOOPNZ}），\red{每次执行时计数器减 1}，按计数和（可选的）标志决定是否跳转。}
+    \conrow{调用/返回指令}{\texttt{CALL} 将返回地址压栈（\red{近调用仅压 \texttt{IP/EIP}，远调用压 \texttt{CS:IP}}）；\texttt{RET} 从栈弹出返回地址并返回（\texttt{RET n} 可顺带清栈）；远返回使用 \texttt{RETF}。}
+    \conrow{中断指令（系统级控制）}{\texttt{INT n} 为\red{软件中断}（系统调用/异常触发，CPU 将保存 FLAGS/CS/IP 并跳转到向量表）；\texttt{IRET} 恢复 \texttt{IP/CS/FLAGS} 以返回中断前状态。}
+}
+
+\hlblue{\textbf{无条件跳转指令\texttt{JMP}}}
+
+% 维度一：跳转距离（段内 / 段间）——对称展示
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{段内转移}{
+            \textbf{定义}：目标在当前代码段内。\par
+            \textbf{机制}：\texttt{CS} 保持不变，仅修改 \texttt{IP}/\texttt{EIP}。\par
+            \textbf{要点}：通常不需段前缀或段更改说明符。
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{段间转移}{
+            \textbf{定义}：目标在另一个代码段。\par
+            \textbf{机制}：同时修改 \texttt{CS} 与 \texttt{IP}/\texttt{EIP}（赋 \texttt{CS:IP}）。\par
+            \textbf{要点}：必须更新 \texttt{CS} 指向新段（远跳/跨段）。
+        }
+    }
+\end{minipage}
+
+% 维度二：寻址方式（直接 / 间接）
+\concepttable{
+    \conrow{直接转移（Direct）}{
+        \red{目标地址（标号或立即数）直接编码在指令中}，如 \texttt{JMP label}。段内直接只写 \texttt{IP}；段间直接写 \texttt{CS:IP}（近/远跳区分）。
+    }
+    \conrow{间接转移（Indirect）}{
+        \red{目标地址存于寄存器或存储器}（例如 \texttt{JMP [mem]} / \texttt{JMP reg}）。可用于段内或段间跳转；若从存储器读取 \texttt{CS:IP}，需明确数据宽度（见下）。
+    }
+}
+
+\entry{\blue{段内转移 — SHORT / NEAR}}
+
+把标签（\texttt{label}）的 \texttt{IP} 赋值给 \texttt{IP}。
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+\concepttable{
+    \conrow{SHORT（短程）}{
+        \textbf{格式：}\texttt{JMP SHORT label}。\par
+        8 位带符号位移；范围：$-128\sim+127$。
+    }
+}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+\concepttable{
+    \conrow{NEAR（近程）}{
+        \textbf{格式：}\texttt{JMP NEAR label}。\par
+        16 位位移；范围：$-2^{15}\sim 2^{15}-1$。
+    }
+}
+\end{minipage}
+
+\img[0.7\linewidth]{images/image-2026-01-11-10-46-30.png}
+\vspace{-3pt}
+\entry{示例}{
+    \texttt{JMP SHORT NEXT} \quad \texttt{JMP NEAR NEXT}
+}
+
+\concepttable{
+    \conrow{间接转移（Indirect）}{
+        格式示例：\texttt{JMP reg}、\texttt{JMP [mem]}。\par
+        操作数宽度（8086）：16 位（从寄存器或内存取出的 16 位作为新的 \texttt{IP}）。\par
+        注意：若为内存操作数（如 \texttt{JMP [BX]}），则内存中取出的 16 位仅赋给 \texttt{IP}，\texttt{CS} 保持不变。
+    }
+}
+
+\img[0.7\linewidth]{images/image-2026-01-11-10-48-18.png}
+\vspace{-3pt}
+\entry{示例}{
+    \texttt{JMP BX} \quad \texttt{JMP [BX]}
+}
+
+\entry{\blue{段间直接转移（Far Jump）}}{
+
+    \img[0.7\linewidth]{images/image-2026-01-11-10-57-43.png}
+
+    \concepttable{
+        \conrow{格式}{\texttt{JMP FAR PTR 标号}。\quad \texttt{FAR PTR} 为关键字，强制跨段。}
+        \conrow{机制}{同时修改段寄存器和值：\(\texttt{CS}\gets\) 目标段，\(\texttt{IP/EIP}\gets\) 目标偏移。例：当前 \(\texttt{1000H:0100H}\)，目标 \(\texttt{2000H:0130H}\)，执行后 \(\texttt{CS}=2000H,\ \texttt{IP}=0130H\)。}
+    }
+}
+
+\entry{段间间接转移}{
+
+\img[0.7\linewidth]{images/image-2026-01-11-10-58-08.png}
+
+}
+
+\concepttable{
+    \conrow{存储器操作数}{内存中必须\red{连续存放目标指针}（低地址处为偏移/低位，随后为段/高位）。}
+    \conrow{8086}{操作数长度为 4 字节（\texttt{DWORD}）：低 16 位 → \(\texttt{IP}\)，高 16 位 → \(\texttt{CS}\)。}
+    \conrow{类型说明}{\red{必须使用 \texttt{DWORD PTR}（8086）}，因为每个地址都是 2 字节长，段间跳转需 4 字节，所以要从 BX 读 IP，BX+2 读 CS。}
+}
+
+\hlblue{\textbf{条件跳转指令 \texttt{Jcc}}}
+
+\entry{概述}{
+    指令格式：\texttt{Jcc label}（cc 为具体条件）。满足条件时修改 \texttt{IP/EIP} 跳转到标号处执行，否则继续顺序执行。\par
+    判断依据通常来自 \texttt{CMP}（本质为减法）的结果；条件转移指令本身\red{不修改} 标志寄存器，因而\red{可连续依据同一次比较使用多个 \texttt{Jcc}}。
+}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+    \blue{无符号数比较（Unsigned）}
+    \concepttable{
+        \conrow{\texttt{JA} / \texttt{JNBE}}{条件 $CF=0$ 且 $ZF=0$（严格大于）。}
+        \conrow{\texttt{JAE} / \texttt{JNB} / \texttt{JNC}}{条件 $CF=0$（不产生借位，$\ge$）。}
+        \conrow{\texttt{JB} / \texttt{JNAE} / \texttt{JC}}{条件 $CF=1$（产生借位，$<$）。}
+        \conrow{\texttt{JBE} / \texttt{JNA}}{条件 $CF=1$ 或 $ZF=1$（$\le$）。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+    \blue{有符号数比较（Signed）}
+    \concepttable{
+        \conrow{\texttt{JG} / \texttt{JNLE}}{条件 $(SF\oplus OF)=0$ 且 $ZF=0$（严格大于）。}
+        \conrow{\texttt{JGE} / \texttt{JNL}}{条件 $(SF\oplus OF)=0$（$\ge$）。}
+        \conrow{\texttt{JL} / \texttt{JNGE}}{条件 $(SF\oplus OF)=1$（$<$）。}
+        \conrow{\texttt{JLE} / \texttt{JNG}}{条件 $(SF\oplus OF)=1$ 或 $ZF=1$（$\le$）。}
+    }
+\end{minipage}
+
+\concepttable{
+    \conrow{相等/零}{\texttt{JE} / \texttt{JZ}：$ZF=1$；\quad \texttt{JNE} / \texttt{JNZ}：$ZF=0$.}
+    \conrow{溢出}{\texttt{JO}：$OF=1$；\quad \texttt{JNO}：$OF=0$.}
+    \conrow{奇偶}{\texttt{JP} / \texttt{JPE}：$PF=1$（偶校验）；\quad \texttt{JNP} / \texttt{JPO}：$PF=0$.}
+    \conrow{符号}{\texttt{JS}：$SF=1$（负）；\quad \texttt{JNS}：$SF=0$（非负）。}
+}
+
+\concepttable{
+    \conrow{计数器判断（特殊指令）}{\texttt{JCXZ}：当 $CX=0$ 时跳转；\quad \texttt{JECXZ}（80386+）：当 $ECX=0$ 时跳转。\red{这类指令不检查 FLAGS}。}
+    \conrow{跳转范围}{8086：条件跳转通常为短程（Short，8 位有符号位移}
+}
+
+\hlblue{\textbf{循环指令 \texttt{LOOP}}}
+
+\img[0.7\linewidth]{images/image-2026-01-11-11-12-37.png}
+
+\entry{\green{要点整理}}{
+    \concepttable{
+        \conrow{跳转距离}{\red{短程转移}（\texttt{SHORT}，8 位带符号位移，范围 $-128\sim+127$）。}
+        \conrow{基本语义}{执行到 \texttt{LOOP label} 时：先 \texttt{CX} ← \texttt{CX} - 1，再判断 \texttt{CX} 是否为 $0$；若 $\texttt{CX}\neq0$ 则跳转到 label，否则顺序执行。}
+        \conrow{标志影响}{\texttt{LOOP} \red{本身不修改任何标志位}（ZF/SF/OF/CF 等保持原状）。}
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{\texttt{LOOP}（行为）}{
+            \red{先执行循环体}，至 \texttt{LOOP} 指令处再做 \texttt{CX--} 与判断；适合已至少执行一次的循环（类似 do-while）。}
+        \conrow{边界情况}{
+            若初始 \texttt{CX}=0，则执行到第一次 \texttt{LOOP} 时 \texttt{CX} 变为 \texttt{FFFFH}（$-1$），非零，\red{故会跳转——循环将执行 $65536$ 次}。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{\texttt{REP} 系列（区别）}{
+            \texttt{REP} 是“先判后执”：\red{先检查 \texttt{CX} 是否为 $0$}，\red{若为 $0$ 则不执行字符串指令}。与 \texttt{LOOP} 的先减后判本质不同。}
+        \conrow{等价性注意}{
+            逻辑上 \texttt{LOOP} 等价于 \texttt{DEC CX; JNZ label}，但不同点在于 \texttt{DEC} 会影响标志位（如 \texttt{ZF}），而 \texttt{LOOP} 不改变标志。}
+    }
+\end{minipage}
+
+\concepttable{
+    \conrow{\texttt{LOOPE}/\texttt{LOOPZ}}{执行：\texttt{CX}←\texttt{CX}-1；若 \texttt{CX}=0 或 \texttt{ZF}=0 则退出（即“\red{要么计数耗尽，要么找到了不相等}”）。}
+    \conrow{\texttt{LOOPNE}/\texttt{LOOPNZ}}{执行：\texttt{CX}←\texttt{CX}-1；若 \texttt{CX}=0 或 \texttt{ZF}=1 则跳转（即“\red{要么计数耗尽，要么找到了相等}”）。}
+}
+
+\hlblue{\textbf{调用返回指令 \texttt{CALL、RET、RETF}}}
+
+\entry{概述}{
+    子程序调用的基本框架。调用/返回通过修改 \texttt{IP/EIP}（必要时并修改 \texttt{CS}）改变执行流
+}
+
+\concepttable{
+    \conrow{\texttt{CALL}（调用）}{跳转到子程序入口，同时\red{保存返回地址}（即调用指令的下一条指令地址，通常压入栈）。}
+    \conrow{\texttt{RET}（返回）}{从栈中取出返回地址并跳回，继续执行 \texttt{CALL} 之后的下一条指令。}
+}
+
+\entry{注}{
+    \texttt{RET} 始终返回到 \texttt{CALL} 指令的\red{下一条指令}处；调用/返回可为段内（只修改 \texttt{IP}）或段间（同时修改 \texttt{CS} 与 \texttt{IP}）。
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{段内调用（Intra-segment）}
+    \concepttable{
+        \conrow{段内直接}{目标在当前代码段内，目标地址直接编码在指令中（如 \texttt{CALL NEAR label}）；仅修改 \texttt{IP}。}
+        \conrow{段内间接}{目标由寄存器或存储器提供（如 \texttt{CALL reg} / \texttt{CALL [mem]}），取出的 16/32 位偏移赋给 \texttt{IP}（\texttt{CS} 不变）。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{段间调用（Inter-segment）}
+    \concepttable{
+        \conrow{段间直接}{目标段:偏移 作为立即数编码在指令中（如 \texttt{CALL FAR ptr}），执行时同时修改 \texttt{CS} 与 \texttt{IP}。}
+        \conrow{段间间接}{目标地址存于内存或寄存器（在 8086 为 4 字节：低位偏移先存，随后为段），执行时先读出偏移与段并赋给 \texttt{IP}/\texttt{CS}。}
+    }
+\end{minipage}
+
+\entry{段内直接调用（Near Call）}{
+
+    \noindent
+    \begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+        \entry{\red{CALL 的微操作}}{
+            \concepttable{
+                \conrow{压栈}{将当前的 \texttt{IP/EIP}（即下一条指令）压入堆栈。栈指针变化：$SP\gets SP-2$}
+                \conrow{跳转}{将 \texttt{IP/EIP} 设为目标过程的偏移地址，完成控制流转移。}
+            }
+        }
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+        \entry{\red{RET 的微操作}}{
+            \concepttable{
+                \conrow{出栈}{从栈顶弹出返回地址并送入 \texttt{IP/EIP}。}
+                \conrow{恢复执行}{栈指针变化：$SP\gets SP+2$，按新的 \texttt{IP/EIP} 继续取指执行。}
+            }
+        }
+    \end{minipage}
+}
+
+\entry{执行流程实例（主程序调用子程序）}{
+
+    \imgleft[0.3]{images/image-2026-01-11-11-39-34.png}{
+
+        \concepttable{
+            \conrow{初始状态}{主程序地址：\texttt{1000H:0100H}；指令：\texttt{CALL NEAR PTR DELAY}；指令长度 $=3$ 字节，故下一条指令地址为 $0103\mathrm{H}$.}
+            \conrow{CALL 执行瞬间}{将 $0103\mathrm{H}$ 压入堆栈（$SP\gets SP-2$），然后 $IP\gets 0200\mathrm{H}$（子程序入口）。}
+            \conrow{子程序内部（保护现场）}{例如执行 \texttt{PUSH CX} 保存寄存器，业务逻辑结束前用 \texttt{POP CX} 恢复。\red{进入子程序时压入了多少数据，返回前必须弹出相同数量，保证堆栈平衡}，否则 \texttt{RET} 会把错误的值当作返回地址弹出，导致异常。}
+            \conrow{返回（示例）}{子程序执行至 \texttt{RET}（示例中为 $0207\mathrm{H}$ 处），执行出栈：弹出 $0103\mathrm{H}$ 进入 \texttt{IP}，$SP\gets SP+2$，程序继续在 \texttt{1000H:0103H} 执行。}
+        }
+
+    }
+
+    \entry{提示}{栈顶（Top）为低地址，栈向低地址生长（\texttt{SP} 减小）。}
+}
+\blue{段间调用（Far Call）}
+
+\entry{概述}{
+    段间调用用于跳转到\red{另一个代码段}中的子程序；与段内调用不同，需同时保存/恢复 \texttt{CS} 与 \texttt{IP}。
+}
+
+主要就是堆栈操作的不同：
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{调用过程（\texttt{CALL}）}{
+            \begin{itemize}
+                \item 将当前 \texttt{CS} 压入堆栈（$SP\gets SP-2$）。
+                \item 将当前 \texttt{IP} 压入堆栈（$SP\gets SP-2$）；栈顶（$SP$）处存放 \texttt{IP}，$SP+2$ 处存放 \texttt{CS}。
+                \item 更新 \texttt{CS:IP} 为目标地址并跳转。
+            \end{itemize}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{返回过程（\texttt{RET}/\texttt{RETF}）}{
+            \begin{itemize}
+                \item 弹出栈顶字送入 \texttt{IP}，$SP\gets SP+2$。
+                \item 继续弹出字送入 \texttt{CS}，$SP\gets SP+2$。
+            \end{itemize}
+        }
+    }
+\end{minipage}
+
+\hlblue{\textbf{中断指令 \texttt{INT} / \texttt{IRET}}}
+
+\entry{概述}{
+    中断是一种“被动”的系统级调用机制，用于在运行时转入中断服务程序（ISR）以处理外部/内部事件。执行 \texttt{INT n} 会\red{自动保存现场并跳转到向量表指定的处理程序}；返回须用 \texttt{IRET} 恢复现场。
+}
+
+\concepttable{
+    \conrow{中断向量表（IVT）}{
+        系统内存中共有 \red{256} 个向量，每个向量占 \red{4} 字节，共 1KB，向量地址为 $n\times4$。
+    }
+    \conrow{向量结构}{
+        低 2 字节：偏移地址（\texttt{IP}）；高 2 字节：段地址（\texttt{CS}）。
+    }
+}
+
+\entry{\texttt{INT n} 的执行步骤}{}
+
+\concepttable{
+    \conrow{步骤 1 - PUSHF}{将标志寄存器 \texttt{FLAGS} 压入堆栈（保存状态）。}
+    \conrow{步骤 2 - 清标志}{自动将 \texttt{IF}=0、\texttt{TF}=0（屏蔽可屏蔽中断并禁止单步），防止中断嵌套/单步干扰。}
+    \conrow{步骤 3 - PUSH CS}{将当前代码段 \texttt{CS} 压入堆栈。}
+    \conrow{步骤 4 - PUSH IP}{将当前指令指针 \texttt{IP}（返回地址）压入堆栈。}
+    \conrow{步骤 5 - 查表跳转}{以 $n\times4$ 为向量地址，取出新的 \texttt{IP}（低字）和 \texttt{CS}（高字），装入寄存器并跳转。}
+}
+
+\entry{\texttt{IRET} — 中断返回（微操作）}{
+    中断服务程序必须用 \texttt{IRET} 返回，以恢复 \texttt{IP}/\texttt{CS}/\texttt{FLAGS}，保持栈平衡与状态一致。
+}
+
+\concepttable{
+    \conrow{微操作（顺序）}{\texttt{POP IP}；\quad \texttt{POP CS}；\quad \texttt{POP FLAGS}（每次 \texttt{SP}\(\gets\)\texttt{SP}+2）}
+}
+
+\hlblue{\textbf{控制转移指令总结}}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{短/长转移限制}{
+        \concepttable{
+            \conrow{短程限制}{\red{条件转移（\texttt{Jcc}）与循环指令（\texttt{LOOP}）为短程}：位移为 8 位，范围 $-128\sim+127$.}
+            \conrow{无限制}{无条件跳转（\texttt{JMP}）、调用（\texttt{CALL}）、中断（\texttt{INT}）不受此短程限制。}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{核心指令堆栈行为对比}{
+        \concepttable{
+            \conrow{\texttt{JMP}}{不压栈；直接转移（最“干净”）。}
+            \conrow{\texttt{CALL}}{压入返回地址：段内压 \texttt{IP}，段间压 \texttt{CS}+\texttt{IP}。}
+            \conrow{\texttt{INT}}{压入 \texttt{FLAGS}，\texttt{CS}，\texttt{IP}（现场保护），随后查表跳转。}
+        }
+    }
+\end{minipage}
+
+\entry{返回指令对比}{
+    \concepttable{
+        \conrow{\texttt{RET}}{与 \texttt{CALL} 配对：弹出 \texttt{IP}（近返）或 \texttt{IP/CS}（远返）。}
+        \conrow{\texttt{IRET}}{与 \texttt{INT} 配对：弹出 \texttt{IP}, \texttt{CS}, \texttt{FLAGS}（三字恢复）。}
+    }
+}
+
 \subsubsection{处理器控制类指令}
 \entry{\hlblue{标志操作指令}}{
     \img[0.9\linewidth]{images/image-2026-01-01-04-02-42.png}
@@ -1401,21 +2367,164 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
 
 \subsubsection{汇编程序结构}
 
+\entry{指令性语句 vs 指示性语句}{
+    \concepttable{
+        \conrow{指令性语句}{如 \texttt{MOV/LEA/INT}：会被汇编为机器指令执行。}
+        \conrow{指示性语句（伪指令）}{如 \texttt{SEGMENT/ENDS/ASSUME/DB}：用于组织与描述程序，不直接生成可执行指令。}
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+
+\img{images/image-2026-01-11-10-19-28.png}
+\vspace{5pt}
+\entry{段定义结构：数据段}{
+\concepttable{
+    \conrow{\texttt{DATA SEGMENT}}{定义全局变量/常量。}
+    \conrow{\texttt{DB}}{\texttt{Define Byte}：定义字节数据。}
+}
+\concepttable{
+    \conrow{\texttt{0DH, 0AH}}{ASCII 的回车 \texttt{CR} 与换行 \texttt{LF}，用于控制输出格式。}
+    \conrow{\texttt{\$}}{\texttt{INT 21H} 的 \texttt{09H} 功能以 \texttt{\$} 作为字符串结束标志（必掌握）。}
+}
+}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+
+\img{images/image-2026-01-11-10-19-57.png}
+
+\entry{段定义结构：代码段}{
+\concepttable{
+    \conrow{\texttt{CODE SEGMENT}}{存放指令与控制流程。}
+    \conrow{\texttt{ASSUME}}{伪指令：\red{将逻辑段名与段寄存器关联}，便于汇编器进行地址计算。}
+}
+}
+\end{minipage}
+
+\subsection{汇编语言语句组成元素}
+
+\subsubsection{字符集}
+
+\subsubsection{保留字与标识符}
+
+\subsubsection{常量、变量与标号}
+
+\subsubsection{表达式与运算符}
+
 \subsection{汇编语言的语句}
 
-\subsection{宏汇编指令}
+\subsubsection{指示性语句}
+
+\subsubsection{指令性语句}
 
 \subsection{完整的汇编程序}
 
+\subsubsection{汇编程序开发流程}
+
+一共分为四个阶段：
+
+\concepttable{
+    \conrow{编辑（Edit）}{用文本编辑器编写源代码。产物：\texttt{.asm}（源程序文件）。}
+    \conrow{汇编（Assemble）}{用汇编器（如 \texttt{MASM}）将 \texttt{.asm} 翻译为目标文件。产物：\texttt{.obj}（目标文件，符号/地址尚未定）。}
+    \conrow{连接（Link）}{用链接器（如 \texttt{LINK}）将一个或多个 \texttt{.obj} 与库文件合并并进行地址定位。产物：\red{\texttt{.exe}（可执行文件）}。}
+    \conrow{调试（Debug）}{用调试器（如 \texttt{DEBUG}）在 \texttt{.exe} 上单步执行、查看寄存器/内存，定位并修正缺陷。}
+}
+
+\entry{要点}{
+    \concepttable{
+        \conrow{不可直接运行}{\texttt{.obj} 不能直接执行，需链接生成 \texttt{.exe}。}
+        \conrow{职责划分}{汇编器负责机器码生成，\red{链接器负责符号解析与地址重定位}，调试器负责运行时检查。}
+    }
+}
+
+\subsubsection{程序分段设计}
+
+\hlblue{\textbf{数据段与堆栈段}}
+
+\img[0.7\linewidth]{images/image-2026-01-11-17-22-18.png}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{数据段 — 功能}{
+        \concepttable{
+            \conrow{作用}{\red{存放全局变量、常量、字符串}与 I/O 缓冲区（这个没怎么见过）。}
+            \conrow{特性}{程序可含多个数据段；小程序可仅用寄存器/立即数。}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{数据段 — 实现（伪指令）}{
+        \concepttable{
+            \conrow{段定义}{\texttt{<name> SEGMENT} \quad … \quad \texttt{<name> ENDS}.}
+            \conrow{数据声明}{使用伪指令如 \texttt{DB}, \texttt{DW}（例：\texttt{MSG DB 'OK',0}）。}
+        }
+    }
+\end{minipage}
+
+\vspace{4pt}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{堆栈段 — 功能}{
+        \concepttable{
+            \conrow{作用}{用于保存临时数据、参数传递、调用/中断时保存返回地址与 FLAGS。}
+            \conrow{关键场景}{子程序调用（\texttt{CALL}/\texttt{RET}）与中断（自动压栈/恢复）。}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{堆栈段 — 实现（伪指令）}{
+        \concepttable{
+            \conrow{段声明}{例如：\texttt{STACK SEGMENT PARA STACK 'STACK'}.}
+            \conrow{空间分配}{\texttt{DB} 与 \texttt{DUP} 分配空间，例如：\texttt{RES DB 1024 DUP (?)}。}
+            \conrow{说明}{\texttt{DUP (?)} 表示申请未初始化空间（\red{仅分配，不设初值}）。}
+        }
+    }
+\end{minipage}
+
+\hlblue{\textbf{代码段}}
+
+这里主要介绍一下段定义与段寄存器初始化。
+
+\entry{ASSUME（伪指令）}{
+    \concepttable{
+        \conrow{作用}{建立\red{逻辑段名与汇编时使用的段寄存器之间的对应关系}，例如 \texttt{ASSUME CS:CODE, DS:DATA}.}
+        \conrow{注}{仅供汇编器做地址计算与符号解析，\textbf{不} 会把段基址装入 CPU 段寄存器}
+    }
+}
+
+\imgleft[0.3]{images/image-2026-01-11-17-25-51.png}{
+
+    \entry{\red{DS / ES 初始化}}{
+        \concepttable{
+            \conrow{标准步骤}{
+                \texttt{MOV AX, DATA} \quad % 先将目标段基址载入通用寄存器
+                \texttt{MOV DS, AX}     % 再由通用寄存器写入段寄存器
+            }
+            \conrow{附加段 ES}{若需使用 \texttt{ES}：\ \texttt{MOV AX, DATA} \; \texttt{MOV ES, AX}.}
+            \conrow{硬件限制}{不能用立即数或段名直接写段寄存器（例如 \texttt{MOV DS, DATA} 为非法指令）；\red{必须经通用寄存器中转}（如 \texttt{AX}）。}
+            \conrow{后果}{若不初始化 DS，后续对内存变量的访存会访问错误段基地址，程序行为错误。}
+        }
+    }
+}
+
+\hlblue{\textbf{模块化设计思想}}
+
+编写规模较大的汇编语言源程序时，可将整个程序划分为几个功能相对独立的模块，每个模块作为一个单独的源程序文件，\red{反正最后都要链接成一个可执行文件}。
+
 \subsection{综合汇编语言程序设计}
 
-% --- 模拟填充内容以展示三栏效果 ---
+
+
+\img[0.7\linewidth]{images/image-2026-01-11-17-31-42.png}
+
 \section{第五章 微机总线技术}
 
-\subsection{概念}
+\subsection{总线概述}
 
 \entry{总线定义}{
-    总线是用来\red{连接各部件的一组通信线}。换言之，总线是一种在多于两个模块（设备或子系统）间传送信息的公共通路。为在各模块之间实现信息共享和交换，总线由传送信息的物理介质以及一套管理信息传输的协议构成。
+    总线是用来\red{连接各部件的一组通信线}。换言之，总线是一种在多于两个模块（设备或子系统）间\red{传送信息的公共通路}。为在各模块之间实现信息共享和交换，总线由传送信息的物理介质以及一套管理信息传输的协议构成。
 }
 \entry{三态逻辑}{除了逻辑 0 和逻辑 1 之外，还有第三种状态——高阻态（Hi-Z）。高阻态相当于断开电路，使得该信号线不对总线产生影响，从而允许其他设备驱动总线。}
 
@@ -1797,7 +2906,7 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
 \entry{寻址端口方法}{先找到端口所在的接口电路芯片（\red{片选}），在该芯片上找到具体要访问的端口（\red{片内地址}）。若接口中仅有一个端口，则找到芯片即找到端口；若接口中有多个端口，则找到芯片后需再找端口。每个端口地址 = \red{片选地址（高位地址）} + \red{片内地址}。}
 \entry{8086/8088 的 I/O 端口编址}{采用 \red{I/O 独立编址方式}；I/O 操作只使用 20 根地址线中的 \red{16 根（A15～A0）}；可寻址的 I/O 端口数为：\red{$2^{16}=64$K (65536) 个}；I/O 地址范围为：\red{0～0FFFFH}。}
 
-\subsection{8259A}
+\subsection{8259A 及其应用}
 \entry{8259A 特性}{\red{功能}：8259A 是一个功能很强的中断扩充和多中断管理芯片，具有\red{中断扩展}、\red{自动提供中断类型码}、\red{中断优先级裁决}等中断管理功能。\red{可编程}：内部有多个寄存器以及功能部件都是可编程的，使用方便。\red{级联扩展}：单片可连接\red{8 个中断请求源}，多片级联可扩展到\red{64 级中断}。通过编程可设置\red{中断触发方式}、\red{中断类型码}、\red{中断屏蔽方式}、\red{中断优先级方式}、\red{中断结束方式}等。}
 
 \imgleft[0.4]{images/image-2025-12-25-20-04-51.png}{
@@ -1812,6 +2921,385 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
     \red{中断服务寄存器（ISR）}：记录 CPU 当前正在服务的中断标志，\red{IRi} 请求响应时 ISR 相应位置 1，复位由中断结束方式决定。
     }
 }
+
+\subsubsection{8259A 工作过程}
+
+\blue{第一阶段 -- 请求登记与优先判别}
+
+\concepttable{
+    \conrow{请求登记与判优}{
+        外设在 \texttt{IR\_0}–\texttt{IR\_7} 上请求，8259A 将对应位登记到 \texttt{IRR}（中断请求寄存器）}
+}
+
+\textbf{例}：\texttt{IRR=00110100} 表示 \texttt{IR\_2}, \texttt{IR\_4}, \texttt{IR\_5} 有请求
+
+\concepttable{
+    \conrow{屏蔽与优先判别}{
+        通过优先判别器选出未屏蔽的最高优先请求（默认\texttt{IR\_0} 最高 $\to$ \texttt{IR\_7} 最低）。
+    }
+}
+
+\textbf{例}：若 \texttt{IMR=00000100}（屏蔽 \texttt{IR\_2}），则在上例中 \texttt{IR\_4} 胜出。
+
+\blue{第二阶段 -- 响应与握手}
+
+\concepttable{
+    \conrow{8259A 发起中断}{
+        选出有效请求后，8259A 在 \texttt{INT} 引脚向 CPU 的 \texttt{INTR} 发出中断请求信号。}
+    \conrow{CPU第一次响应}{
+        CPU 在合适时刻产生第一个 $\overline{\texttt{INTA}}$ 负脉冲作为握手；该周期数据总线为高阻态，\red{仅表示 CPU 已准备响应}。}
+    \conrow{寄存器更新（ISR / IRR）}{
+        在收到第一个 $\overline{\texttt{INTA}}$ 后，8259A 将对应中断位置入 \texttt{ISR}（服务中标志）并清除 \texttt{IRR} 中该位}
+    \conrow{第二次响应与向量传输}{
+        CPU 发第二个 $\overline{\texttt{INTA}}$ 负脉冲；8259A 在此期间把中断类型号放到数据总线 \texttt{D\_7\~D\_0}，CPU 读取该码以查向量表获得 \texttt{CS:IP} 并跳转。
+    }
+}
+
+
+\blue{第三阶段 -- 中断服务与结束}
+
+\concepttable{
+    \conrow{执行中断服务}{
+        CPU 使用类型号查表并跳转执行 ISR；8259A 对应的 \texttt{ISR} 位保持为 1，阻止相同或低优先级中断打断（除非允许嵌套）。}
+    \conrow{EOI（End of Interrupt）}{
+        中断服务结束时软件须向 8259A 发送 \texttt{EOI}（若为非自动 EOI 模式），8259A 清除相应 \texttt{ISR} 位；自动 EOI 模式由硬件完成清位。
+    }
+}
+
+\subsubsection{8259A 的级联}
+
+主从片区分在于 SP/EN 引脚：主片 \texttt{SP/EN=1}，从片 \texttt{SP/EN=0}，主片的 $CAS_0 \sim CAS_2$ 与所有从片的 $CAS_0 \sim CAS_2$ 对应相连：主片输出，从片输入。
+
+当从片的中断请求被响应时，主片利用这三根线广播当前被响应的从片ID号。此时，主片将对应的从片ID发送到CAS总线上。所有从片都会读取CAS总线上的ID，并与自己在初始化时（ICW3）设定的ID进行比较。\red{只有ID匹配的那个从片，才会把中断类型码投放到数据总线上}。
+
+\concepttable{
+    \conrow{第 1 个 \(\overline{\text{INTA}}\)}{CPU 发出第一次握手脉冲，8259A \red{主/从片冻结当前请求并准备应答}}
+    \conrow{第 2 个 \(\overline{\text{INTA}}\) — 主片}{若被选中请求来自从片，主片不在数据总线上驱动数据，而通过 \(CAS_0\sim CAS_2\) \red{广播被选从片的 ID}。}
+    \conrow{第 2 个 \(\overline{\text{INTA}}\) — 从片}{与广播 ID 匹配的从片在此时将其中断类型码置于数据总线上供 CPU 读取；其它从片保持高阻态，不干扰总线。}
+}
+
+\imgleft[0.3]{images/image-2026-01-11-20-00-44.png}{
+    \entry{级联中断数量计算}{
+        \concepttable{
+            \conrow{通用计算公式}{
+                设主片接 $n$ 个从片（$0\le n\le8$），主片剩余可直接使用的 \texttt{IR} 引脚为 $8-n$，从片总供给中断数为 $8n$，则\red{总中断数：$N_{\text{total}}=(8-n)+8n=8+7n$}.
+            }
+        }
+    }
+
+    \entry{级联后的优先级}{
+        \concepttable{
+            \conrow{总体规则}{
+                从片作为整体“嵌入”到主片对应的 \texttt{IR} 引脚处，优先级按主片与从片的组合顺序决定；从片内部按 \texttt{IR0}→\texttt{IR1}→…→\texttt{IR7} 处理。
+            }
+            \conrow{示例}{
+                假设从片接在主片 \texttt{IR3}优先级顺序为：主\ \texttt{IR0} → 主\ \texttt{IR1} → 主\ \texttt{IR2} → （从\ \texttt{IR0} → … → 从\ \texttt{IR7}） → 主\ \texttt{IR4} → … → 主\ \texttt{IR7}。
+            }
+        }
+    }
+}
+
+\subsubsection{8259A 工作方式}
+
+这个在 PPT 上全是了解即可的内容，这里就不过多展示了。
+
+\subsubsection{\red{8259A 的编程}}
+
+\hlblue{\textbf{概述}}
+
+编程分为两个阶段：\red{初始化} 与 \red{操作时}。
+
+\concepttable{
+    \conrow{初始化阶段}{
+        系统加电或复位后\textbf{立即}进行，使用\texttt{ICW}（初始化命令字，ICW1--ICW4）；\par \textbf{目的：}设定芯片基础硬件属性（单片/级联、边沿/电平触发、中断向量起始号等），\red{一旦设定，通常在系统运行期间不再改变}。
+    }
+    \conrow{操作阶段}{
+        初始化完成后的正常工作过程中\textbf{随时}进行，使用\texttt{OCW}（操作命令字，OCW1--OCW3）；\par \textbf{目的：}动态控制 8259A（例如临时屏蔽某个中断、发送中断结束命令 \texttt{EOI}、查询当前优先级状态等）。
+    }
+}
+
+\hlblue{\textbf{初始化编程}}
+
+\entry{ICW 写入顺序}{8259A 对 ICW 的写入顺序有严格规定，必须按 \textbf{ICW1 → ICW2 →（ICW3）→（ICW4）} 的顺序进行。}
+
+\concepttable{
+    \conrow{ICW1}{
+        设定中断请求信号的\red{触发形式}（电平 / 边沿）和\red{级联方式}（单片 / 级联）。
+    }
+    \conrow{ICW2}{
+        设定中断向量的\red{基值（中断类型号基值）}，确定 IR0 对应的中断号，其他 IR 线按序递增。
+    }
+    \conrow{ICW3}{
+        \red{仅在级联时使用}：主片—指定哪些 IR 引脚连接从片；从片—\red{指定本从片的标识号（ID）}。
+    }
+    \conrow{ICW4（了解）}{
+        可选项：设定微处理器类型/模式（如 8086/8088 模式）及中断结束方式（自动 AEOI / 非自动 EOI）。
+    }
+}
+
+\green{\texttt{ICW1}}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
+    % Draw 8 boxes for bits
+    \foreach \i in {0,...,7} {
+        \draw (\i,0) rectangle ++(1,0.6);
+    }
+    % Bit labels (D7...D0)
+    \foreach \i/\b in {0/x,1/x,2/x,3/1,4/LTIM,5/x,6/SNGL,7/IC4} {
+        \node at (\i+0.5,0.3) {\b};
+    }
+    \draw [decorate,decoration={brace,amplitude=4pt,mirror},thick] (0,0) -- (8,0) node[midway,below=4pt, font=\tiny] {ICW1};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+\begin{tabular}{@{}p{0.10\linewidth}p{0.22\linewidth}p{0.62\linewidth}@{}}
+\hline
+位 & 名称 & 含义 / 值 \\
+\hline
+D4 & 特征位 & 标识为 ICW1（启动初始化序列） \\
+D3 & LTIM & 1：电平触发；0：边沿触发（上升沿） \\
+D1 & SNGL & 1：单片工作（无 ICW3）；0：级联（需 ICW3） \\
+D0 & IC4  & 1：需要 ICW4；0：不需要 ICW4 \\
+\hline
+\end{tabular}
+
+ICW1 写入必须通过偶地址端口（$A_0 = 0$）。\red{8259A 物理上只有一根地址线 $A_0$}，因而区分为：
+\begin{itemize}
+    \item \red{偶地址（$A_0=0$）}：接收 ICW1、OCW2、OCW3。
+    \item \red{奇地址（$A_0=1$）}：接收 ICW2、ICW3、ICW4、OCW1。
+\end{itemize}
+
+ICW1 用于启动初始化序列并设定触发与级联等基本模式。
+
+\green{\texttt{ICW2}}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
+    % Draw 8 boxes for bits
+    \foreach \i in {0,...,7} {
+        \draw (\i,0) rectangle ++(1,0.6);
+    }
+    % Bit labels (D7...D0)
+    \foreach \i/\b in {0/T7,1/T6,2/T5,3/T4,4/T3,5/x,6/x,7/x} {
+        \node at (\i+0.5,0.3) {\b};
+    }
+    \draw [decorate,decoration={brace,amplitude=4pt,mirror},thick] (0,0) -- (8,0) node[midway,below=4pt, font=\tiny] {ICW2};
+\end{tikzpicture}
+\end{center}
+
+
+\concepttable{
+    \conrow{作用}{设置\red{外部中断类型号的基值}（对应 IR0 的中断号）。}
+    \conrow{位域}{D7--D3：由用户编程设定（中断向量的高 5 位）；\quad D2--D0：初始化时通常为 \texttt{000}，中断响应时由 8259A 根据 IR 编号 (0--7) 填入。}
+    \conrow{向量计算}{中断向量 =（ICW2 的高 5 位）拼接（IR 的 3 位编号）。即 Vector = T7..T3 : IR2..IR0。}
+    \conrow{示例}{例如 ICW2 = \texttt{08H}（二进制 \texttt{00001 000}）或 \texttt{70H}（\texttt{01110 000}），其高 5 位分别为 \texttt{00001} 和 \texttt{01110}。}
+}
+
+\green{\texttt{ICW3}}
+
+% ICW3：主/从片说明
+\begin{center}
+\begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
+    \foreach \i in {0,...,7} {
+        \draw (\i,0) rectangle ++(1,0.6);
+    }
+    \foreach \i/\b in {0/D7,1/D6,2/D5,3/D4,4/D3,5/D2,6/D1,7/D0} {
+        \node at (\i+0.5,0.3) {\b};
+    }
+    \draw [decorate,decoration={brace,amplitude=4pt,mirror},thick] (0,0) -- (8,0) node[midway,below=4pt, font=\tiny] {ICW3（主片）：位掩码，位 i=1 表示从片连接到主片 IRi};
+\end{tikzpicture}
+\end{center}
+
+当 ICW1 中的 SNGL=0（级联模式）时，主片须在 ICW3 中写入一个 8 位位掩码，位 i（0..7）置 1 表示该位对应的 IRi 引脚上连接有从片；其它位置 0。
+
+\begin{center}
+\begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
+    \foreach \i in {0,...,7} {
+        \draw (\i,0) rectangle ++(1,0.6);
+    }
+    \foreach \i/\b in {0/x,1/x,2/x,3/x,4/x,5/D2,6/D1,7/D0} {
+        \node at (\i+0.5,0.3) {\b};
+    }
+    \draw [decorate,decoration={brace,amplitude=4pt,mirror},thick] (0,0) -- (8,0) node[midway,below=4pt, font=\tiny] {ICW3（从片）：低 3 位存从片 ID（0--7），高位无意义};
+\end{tikzpicture}
+\end{center}
+
+从片的 ICW3 仅使用低 3 位存放该从片在主片上的 ID（0--7），高 5 位通常置 0。
+
+\concepttable{
+    \conrow{示例}{若某从片接在主片的 IR2：主片 ICW3 = 00000100B = 04H；该从片 ICW3 = 00000010B = 02H。}
+}
+
+\green{\texttt{ICW4}}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
+    \foreach \i in {0,...,7} {
+        \draw (\i,0) rectangle ++(1,0.6);
+    }
+    \foreach \i/\b in {0/0,1/0,2/0,3/SFNM,4/BUF,5/MS,6/AEOI,7/$\mu$PM} {
+        \node at (\i+0.5,0.3) {\b};
+    }
+    \draw [decorate,decoration={brace,amplitude=4pt,mirror},thick] (0,0) -- (8,0) node[midway,below=4pt, font=\tiny] {ICW4};
+\end{tikzpicture}
+\end{center}
+
+
+ICW4 为可选命令字（当 ICW1 的 D0=1 时需写入）。在 8086/8088 系统中常用，用于设置缓冲、自动 EOI 与微处理器工作模式(但是我们前面也没有整理这个，所以大抵是不重要的了)等。
+
+\concepttable{
+    \conrow{D4 — SFNM}{1: 特殊全嵌套（用于级联主片）；\quad 0: 正常全嵌套}
+    \conrow{D3 — BUF}{1: 缓冲模式；\quad 0: 非缓冲模式}
+    \conrow{D2 — M/S}{在缓冲模式下有效：1 = 主片；\quad 0 = 从片}
+    \conrow{D1 — AEOI}{1: 自动结束中断；\quad 0: 非自动（需软件发送 EOI）}
+    \conrow{D0 — $\mu$PM}{1: 8086/8088 模式；\quad 0: MCS-80/85 模式}
+}
+
+\entry{\green{初始化编程总结}}{
+    \concepttable{
+        \conrow{单片模式}{
+            写序：ICW1（偶地址 A0=0，启动初始化） → ICW2（奇地址，设定中断向量基值） →（若需要）ICW4（奇地址，设定 CPU 模式 / EOI 等）。
+        }
+        \conrow{级联模式（主片）}{
+            写序：ICW1（偶） → ICW2（奇，基址） → ICW3（奇，标记连接的从片 IR 位） → ICW4（奇，微模式/缓冲/自动 EOI 等）。
+        }
+        \conrow{级联模式（从片）}{
+            写序：ICW1（偶） → ICW2（奇，基址） → ICW3（奇，低 3 位为本从片 ID） → ICW4（奇）。
+        }
+    }
+}
+\entry{注}{
+    主/从片须分别独立初始化：\textbf{仅 ICW1 写入偶地址端口（A0=0）}，ICW2/ICW3/ICW4 均写入奇地址端口（A0=1）。
+}
+
+
+\green{初始化编程示例}
+
+\entry{示例（PC/XT）}{
+    \concepttable{
+        \conrow{系统配置}{单片、边沿触发、向量基址 08H、非缓冲、非自动 EOI；端口 20H/21H。}
+        \conrow{写序}{ICW1（偶地址端口） → ICW2（奇地址端口） → ICW4（奇地址端口）}
+        \conrow{示例代码}{
+            \texttt{MOV AL, 00010011B} \par
+            \texttt{OUT 20H, AL} \par
+            \texttt{MOV AL, 00001000B} \par
+            \texttt{OUT 21H, AL} \par
+            \texttt{MOV AL, 00000111B} \par
+            \texttt{OUT 21H, AL}
+        }
+    }
+}
+
+\hlblue{\textbf{操作编程}}
+
+运行时按需写入 OCW（操作命令字）以动态控制 8259A。
+
+\concepttable{
+    \conrow{OCW1}{用于操作 IMR（中断屏蔽寄存器），设置或修改中断屏蔽位。}
+    \conrow{OCW2}{用于发送 EOI 并可设置/调整优先级循环。}
+    \conrow{OCW3}{用于选择读取内部寄存器状态（IRR/ISR）或设置特殊屏蔽/读寄存器模式。}
+}
+
+\green{\texttt{OCW1}}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
+    \foreach \i in {0,...,7} {
+        \draw (\i,0) rectangle ++(1,0.6);
+    }
+    \foreach \i/\b in {0/D7,1/D6,2/D5,3/D4,4/D3,5/D2,6/D1,7/D0} {
+        \node at (\i+0.5,0.3) {\b};
+    }
+    \draw [decorate,decoration={brace,amplitude=4pt,mirror},thick] (0,0) -- (8,0) node[midway,below=4pt, font=\tiny] {OCW1};
+\end{tikzpicture}
+\end{center}
+
+OCW1 专门用于操作 \textbf{IMR（中断屏蔽寄存器）}，用于设置哪些中断被\red{屏蔽（1）}或\red{允许（0）}。OCW1 必须写入\red{奇地址端口（$A_0 = 1$）}。
+
+\entry{\green{堂练 — 屏蔽单一中断线（IR4）}}{
+    \concepttable{
+        \conrow{题目条件}{
+            在 IBM PC（8259A）系统中，8259A 的端口为 \texttt{20H}/\texttt{21H}，要求仅屏蔽 \texttt{IR4}，不改变其它中断屏蔽位。
+        }
+        \conrow{解题思路}{
+            读出当前 IMR（OCW1），将 IR4 对应位（位 4）置 1，再写回以更新 IMR；为避免读-改-写期间的竞态可短暂禁止中断（\texttt{CLI}）并在完成后恢复（\texttt{STI}）。
+        }
+        \conrow{程序示例}{
+            \texttt{CLI} \par
+            \texttt{IN\ \ AL,\,21h} \par
+            \texttt{OR\ \ AL,\,00010000b\ \ ; 设置位 4 (屏蔽 IR4)} \par
+            \texttt{OUT\ \ 21h,\,AL} \par
+            \texttt{STI}
+        }
+        \conrow{要点}{
+            仅做读-改-写以保证其他位不被改变；在中断处理或多核并发环境下需谨慎处理中断使能状态并保存/恢复原状态。
+        }
+    }
+}
+
+\green{\texttt{OCW2}}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
+    \foreach \i in {0,...,7} {
+        \draw (\i,0) rectangle ++(1,0.6);
+    }
+    \foreach \i/\b in {0/R,1/SL,2/EOI,3/0,4/0,5/L2,6/L1,7/L0} {
+        \node at (\i+0.5,0.3) {\b};
+    }
+    \draw [decorate,decoration={brace,amplitude=4pt,mirror},thick] (0,0) -- (8,0) node[midway,below=4pt, font=\tiny] {OCW2};
+\end{tikzpicture}
+\end{center}
+
+\concepttable{
+    \conrow{D7 — R}{1: 固定优先权；\quad 0: 循环优先权}
+    \conrow{D6 — SL}{1: OCW2 最后 3 位有效；\quad 0: OCW2 最后 3 位无效}
+    \conrow{D5 — EOI}{1: 发出 EOI（清除 ISR 中相应的服务位）；\quad 0: 不发 EOI}
+    \conrow{D4 - D3}{\red{特征位}，均为 0}
+    \conrow{D2 - D0}{与 EOI 一起使用时指定要结束的中断级号（0--7）。}
+}
+
+\green{\texttt{OCW3}}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
+    \foreach \i in {0,...,7} {
+        \draw (\i,0) rectangle ++(1,0.6);
+    }
+    \foreach \i/\b in {0/0,1/ESMM,2/SMM,3/0,4/1,5/P,6/RR,7/RIS} {
+        \node at (\i+0.5,0.3) {\b};
+    }
+    \draw [decorate,decoration={brace,amplitude=4pt,mirror},thick] (0,0) -- (8,0) node[midway,below=4pt, font=\tiny] {OCW3};
+\end{tikzpicture}
+\end{center}
+
+OCW3 用于配置特殊屏蔽方式及查询模式。它与 OCW2 一样写入偶地址端口（$A_0=0$），区分特征位为 $D_4=0,\;D_3=1$，主要功能为\red{切换/启用特殊屏蔽并选择读出内部寄存器（IRR/ISR）或进行查询（Poll）。}
+
+
+\concepttable{
+    \conrow{特殊屏蔽位（ESMM / SMM）}{
+        ESMM：开启后使能 SMM 位效果；ESMM=0 时维持普通屏蔽。\par
+        SMM：SMM=1 进入特殊屏蔽模式（允许低优先级中断中断高优先级，中断行为受限；用途少见）；SMM=0 为普通屏蔽方式。
+    }
+    \conrow{查询命令（P）}{
+        P=1：进入查询（Poll）模式，CPU 以程序查询方式读取状态时，8259A 返回是否有待处理中断的状态字，而不是中断向量号，便于轮询检测中断存在性。
+    }
+    \conrow{读取内部寄存器（RR / RIS）}{
+        RR=1：启用读取内部寄存器功能。\par
+        RIS=0：下一次读偶地址端口时返回 IRR（中断请求寄存器）。\par
+        RIS=1：下一次读偶地址端口时返回 ISR（中断服务寄存器）。\par
+        RR=0：取消读寄存器操作。
+    }
+}
+\entry{查询方式（Poll）}{
+    \concepttable{
+        \conrow{触发条件}{CPU 向 8259A 写入 OCW3，设定 $P=1$，\red{紧接着执行一次 \texttt{IN} 指令}，该 \texttt{IN} 被 8259A 解释为查询。}
+        \conrow{功能}{CPU 主动询问 8259A 是否有待处理的中断请求；若有，8259A 在返回值中指示优先级最高的请求，否则返回“无请求”状态。}
+    }
+}
+
 
 \section{第八章 常用接口技术}
 
@@ -2697,6 +4185,85 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
         \concepttable{
             \conrow{单次计数（不自动重装）}{\red{方式 0、1、4、5}：到达终值并完成 OUT 动作后，\red{内部计数并不停止}，仍会继续减 1（例如 $0\to FFFFH \to FFFEH \to \cdots$），但 OUT 通常保持在该方式规定的终态/后续状态。}
             \conrow{循环计数（自动重装）}{\red{方式 2、3}：当 CE 到达终值后，芯片自动将 CR 中初值\red{再次装入} CE，进入下一周期，是形成连续波形的基础。}
+        }
+    }
+}
+
+\newpage
+
+\green{此页开始收集整理作业题与教材（周杰英版）课后习题答案}
+
+\section{第一章\ 微机概述}
+
+\section{第二章\ 微机结构}
+
+\section{第三章\ 80x86指令系统}
+
+\section{第四章\ 汇编语言程序设计基础}
+
+\newpage
+
+\green{此页开始收集本人另找的习题解析与考研指导的习题}
+
+\section{第一章\ 微机概述}
+
+\section{第二章\ 微机结构}
+
+\section{第三章\ 80x86指令系统}
+
+\subsection{8086 的寻址方式}
+
+\entry{\green{试题 3-1-1}}{(西南交通大学2004年) 判断题：立即数寻址方式的操作数是在代码段中的，因此在执行指令的过程中也要执行总线周期。（ ）}
+
+\entry{分析}{考查立即数寻址方式的特点。}
+
+\entry{解答}{
+    \concepttable{
+        \conrow{定义}{立即数寻址方式下，操作数直接包含在指令中，它是一个 8 位或 16 位的常数，称为立即数。立即数在机器码中紧跟在操作码之后，存放在代码段内。}
+        \conrow{总线周期}{从存储器的代码段取指时，BIU 会执行取指的总线周期并把指令（含随后的立即数字节）送入指令队列。由于立即数是指令的一部分，由 BIU 的指令序列提供，\textbf{不需要另外单独占用总线周期}。}
+        \conrow{结论}{因此该判断命题是 \red{错误} 的。}
+    }
+}
+
+
+\section{第四章\ 汇编语言程序设计基础}
+
+\subsection{汇编语言的执行过程}
+
+\entry{\green{试题 4-1-1}}{(西安理工大学2004年) 说明 ASM 程序的作用。}
+
+\entry{分析}{考查汇编程序的汇编过程。}
+
+\entry{解答}{
+    \concepttable{
+        \conrow{定义与说明}{
+            汇编源程序是按严格的语法规则用汇编语言编写的程序,称为汇编语言源程序,简称为汇编源程序或源程序。8086指令系统中的每条指令都是构成源程序的基本语句。
+        }
+        \conrow{汇编与链接流程}{
+            汇编语言的指令和机器语言的指令之间有一一对应的关系,但机器不能识别源程序,要通过汇编程序翻译成二进制代码的目标程序,然后由连接程序将目标文件与库文件相连,最后得到可执行的程序,才可在机器上直接运行。
+        }
+        \conrow{MASM 与 ASM 的比较}{
+            8086常用的汇编程序有宏汇编程序MASM和小汇编程序ASM。宏汇编程序MASM是能够汇编含有宏指令和大量伪指令源程序的汇编程序,支持标号、表达式等,功能强,但占用更多的内存容量，MASM需96KB以上的内存支持。小汇编程序ASM的汇编能力有限,对于指令中的符号地址都不能汇编,ASM需要64KB的内存支持。
+        }
+    }
+}
+
+\entry{\green{试题 4-1-2}}{(西安理工大学2005年) 说明 LINK 程序的作用。}
+
+\img{images/image-2026-01-11-17-55-35.png}
+
+\entry{分析}{考查汇编程序的汇编过程。}
+
+\entry{解答}{
+    \concepttable{
+        \conrow{汇编产物}{
+            调用宏汇编程序MASM或小汇编程序ASM对源文件进行汇编,汇编程序对源文件进行两遍扫描,汇编后产生二进制目标文件(OBJ文件),但二进制目标文件(OBJ文件)仍然不可执行,必须经过连接,将它转换成EXE文件才可执行。
+        }
+        \conrow{LINK 的功能}{
+            连接程序为 \texttt{LINK.exe}, 它可以把多个模块连接在一起,这些模块可以是库文件或汇编程序产生的目标文件。
+        }
+        \conrow{生成的文件}{
+            执行 LINK 程序后产生两个文件,一个为可执行的 EXE 文件,另一个为 MAP 文件,它是连接映像文件,给出了每个段在存储器中的分配情况。
         }
     }
 }
