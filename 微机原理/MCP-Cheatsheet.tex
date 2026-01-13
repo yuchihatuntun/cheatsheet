@@ -1300,6 +1300,71 @@ $\overline{\texttt{BHE}}=1,\ A_0=1$ & 非法组合（无效） & 两个存储体
 
 \green{第二章知识总结完毕（说实话要不是牢虞的作业我连 386 都懒得看一眼）}
 
+\subsection{习题解析}
+
+\entry{\green{作业 1-1}}{
+    题目：已知乘法指令出现概率为 \red{20\%}，每条乘法指令 $\mathrm{CPI}=3$；其余指令出现概率为 \red{80\%}，每条 $\mathrm{CPI}=1$。求：
+    \begin{enumerate}
+        \item 原始系统的平均 $\mathrm{CPI}$；
+        \item 将乘法指令的 $\mathrm{CPI}$ 降到 \red{2}（其它不变）时的新的平均 $\mathrm{CPI}$，并计算相对于原系统的整体加速比（Speedup）。
+    \end{enumerate}
+}
+
+\entry{解}{
+    根据前文的定义：\(\displaystyle \mathrm{CPI}=\sum_i (\mathrm{CPI}_i\times Frequency_i)\)。
+    \concepttable{
+        \conrow{原始平均 CPI}{
+            \[
+                \mathrm{CPI}_{old}=3\times0.20+1\times0.80=0.60+0.80=\mathbf{\red{1.40}}.
+            \]
+        }
+        \conrow{优化后平均 CPI}{
+            \[
+                \mathrm{CPI}_{new}=2\times0.20+1\times0.80=0.40+0.80=\mathbf{\red{1.20}}.
+            \]
+        }
+        \conrow{整体加速比（基于 CPI）}{
+            CPU 时间与 CPI 成正比，故
+            \[
+                Speedup=\frac{\mathrm{CPI}_{old}}{\mathrm{CPI}_{new}}=\frac{1.40}{1.20}\approx\mathbf{\red{1.17}},
+            \]
+            即约提升 $17\%$。
+        }
+    }
+}
+
+\entry{\green{作业 1-2}}{
+    两个十进制数据 $52$ 和 $116$，用 \textbf{8 位二进制补码} 计算 $52+116$，并判断结果是否正确（有无溢出）。
+}
+
+\entry{解答}{
+    \concepttable{
+        \conrow{二进制表示}{
+            $52_{10}=00110100_2$；\quad $116_{10}=01110100_2$。
+        }
+        \conrow{二进制加法}{
+            \[
+            \begin{array}{r}
+            00110100\\
+            +01110100\\\hline
+            10101000
+            \end{array}
+            \]
+            结果为 \texttt{10101000}\_2 = \texttt{A8H} = $168_{10}$。
+        }
+        \conrow{有符号解释（补码）}{
+            8 位补码范围为 $-128\sim+127$，$168>127$，因此发生\red{有符号溢出}。\par
+            \texttt{10101000}\_2 为负数，按补码表示为 $-(256-168)=-88$，与数学和的 $168$ 不一致。
+        }
+        \conrow{溢出判定（公式）}{
+            按进位法：计算得 $C_6=1,\;C_7=0$，故 $OF=C_7\oplus C_6=1$（溢出）。\quad 逻辑法：正+正得负 $\Rightarrow$ 溢出。
+        }
+        \conrow{无符号解释}{
+            若视为无符号数，结果 $168$ 在 $0\sim255$ 范围内，\textbf{无进位（CF=0）}，对无符号运算则为正确结果。
+        }
+    }
+}
+
 \section{第三章\ 80x86 指令系统}
 
 \subsection{寻址方式}
@@ -1314,19 +1379,23 @@ $\overline{\texttt{BHE}}=1,\ A_0=1$ & 非法组合（无效） & 两个存储体
 }
 
 \entry{存储器寻址}{
-    当执行单元 \red{EU} 需要读/写位于存储器的操作数时，应根据指令给出的寻址方式，由 \red{EU} 先计算出操作数的有效地址 \red{$EA$}(偏移地址)，并将它送给 \red{BIU}；同时请求 \red{BIU} 执行一个总线周期，\red{BIU} 将某个段寄存器的内容左移 4 位，加上 \red{EU} 送来的有效地址 \red{$EA$} 形成 20 位的物理地址，然后执行总线周期，读/写指令所需的操作数。有效地址 \red{$EA$}(偏移地址) 的值要根据指令所采用的寻址方式计算得出。计算 \red{$EA$} 的通式为：
+    当 EU 需要读/写存储器操作数时，根据寻址方式计算有效地址 EA（偏移地址），送给 BIU；BIU 将段寄存器内容左移 4 位加上 EA 形成 20 位物理地址，执行总线周期。EA 的计算通式为：
 }
-\vspace{-8pt}
+\vspace{-6pt}
 {\setlength{\abovedisplayskip}{0pt}
 \setlength{\belowdisplayskip}{0pt}
 \[
-\boxed{%
-EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
-+\;\text{变址值}\begin{cases}SI\\DI\end{cases}
-+\;\text{位移量}\begin{cases}0\\8\\16\end{cases}%
-}
+EA=\text{基址}\begin{cases}BX\\BP\end{cases}
++\text{变址}\begin{cases}SI\\DI\end{cases}
++\text{位移}\begin{cases}0\\8\\16\end{cases}
 \]}
-\vspace{-8pt}
+\vspace{-6pt}
+
+\concepttable{
+    \conrow{BX/BP}{\texttt{BX} 默认 DS 段；\texttt{BP} 默认 SS 段}
+    \conrow{SI/DI}{\texttt{SI}/\texttt{DI} 默认 DS 段；\texttt{DI} 在串操作中默认 ES 段}
+    \conrow{位移量}{0、8 位或 16 位，可选}
+}
 
 \concepttable{
     \conrow{直接寻址}{操作数的 $EA$ 由指令直接给出。段地址默认数据段 \red{DS}，其它数据段应在指令中用段前缀指出。这种寻址方式的指令执行速度较快，主要用于存取位于存储器中的简单变量。例：\red{MOV AX, [1234H]}}
@@ -1337,17 +1406,254 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
 }
 
 \concepttable{
-    \conrow{基址寻址}{操作数的有效地址由基址寄存器 (\red{BX} 或 \red{BP}) 的内容和指令中给出的地址位移量 ($0$ 位或 $8$ 位或 $16$ 位) 之和来确定。$EA = BX/BP + 0 \text{位}/8 \text{位}/16 \text{位移量}$。例：\red{MOV AX, [BX]}，假设 $BX = 1122H, DS = 3000H$，则 $PA = 30000H + 1122H = 31122H, 30000H + 1123H = 31123H$。假设 $[31122H] = 34H, [31123H] = 56H$，则指令执行后，\red{AX = 5634H}。例：假设 $BETA=8, DS=6000H, BX=5000H$，则 \red{MOV AL, [BX+8]} || \red{MOV AL, 8[BX]}；“8”是偏移地址位移量，不是乘的倍数 || \red{MOV AL, [BX+BETA]} || \red{MOV AL, BETA [BX]}。注：上面 4 条指令是等价的。$EA = 5000H+8= 5008H, PA = DS \times 16+5008H= 60000H+5008H= 65008H$。假设 $[65008H]=68H$，执行后，\red{AL=68H}}
-    \conrow{变址寻址}{操作数的有效地址由变址寄存器 (\red{SI} 或 \red{DI}) 的内容与指令中给出的地址位移量 ($0$ 位、$8$ 位或 $16$ 位) 之和来确定。$EA$（偏移地址）$= SI/DI + 0 \text{位}/8 \text{位}/16 \text{位移量}$。例：\red{MOV BETA[DI], AX} || \red{MOV BX, [SI+BETA]}}
-    \conrow{基址加变址}{操作数的有效地址 $EA$ 为以下三部分之和：基址寄存器 (\red{BX} 或 \red{BP}) 的值、变址寄存器 (\red{SI} 或 \red{DI}) 的值、指令中的地址位移量 ($0$ 位、$8$ 位或 $16$ 位)。$EA = [BX/BP] + [SI/DI] + 0/8/16 \text{位偏移量}$。例: \red{MOV BX, [BX+SI]} || \red{MOV [BX][DI], AX} || \red{MOV AX, 8[BX][SI]} || \red{MOV AX, 8[BX+SI]} || \red{MOV AX, [BX+SI+8]} || \red{MOV AX, ES:[BX+SI+10H]} “ES:”---段前缀，指定操作数在附加段，源操作数 $PA = ES \times 16+ BX+SI+10H, ES \times 16+ BX+SI+10H+1$ || \red{MOV AX, [BP+SI+20H]} \red{BP}---操作数在堆栈段，源操作数 $PA = SS \times 16+ BP+SI+20H, SS \times 16+ BP+SI+20H+1$}
+    \conrow{基址寻址}{$EA = BX/BP + \text{位移量}$。例：\red{MOV AX, [BX+BETA]}；若 $BX=5000H, DS=6000H, \text{BETA}=8$，则 $PA = 60000H + 5008H = 65008H$。}
+    \conrow{变址寻址}{$EA = SI/DI + \text{位移量}$。例：\red{MOV [DI+BETA], AX}}
+    \conrow{基址加变址}{$EA = BX/BP + SI/DI + \text{位移量}$。例：\red{MOV AX, [BX+SI+8]}、\red{MOV AX, ES:[BX+SI+10H]}（段超越）、\red{MOV AX, [BP+SI+20H]}（默认 SS 段）。}
 }
-
 
 \subsection{指令系统}
 
 \subsubsection{数据传送类指令}
 
+\hlblue{\textbf{概述}}
 
+\concepttable{
+    \conrow{通用数据传送}{\texttt{MOV}，\texttt{PUSH}/\texttt{POP}，\texttt{XCHG}}
+    \conrow{目标地址传送}{\texttt{LEA}（取有效地址，区别于 \texttt{MOV}）。}
+    \conrow{标志寄存器传送}{\texttt{LAHF}/\texttt{SAHF}，\texttt{PUSHF}/\texttt{POPF}（栈传送）。}
+    \conrow{输入/输出}{\texttt{IN}/\texttt{OUT}（端口读写）。}
+}
+
+\entry{标志位影响}{
+    绝大多数数据传送指令（如 \texttt{MOV}, \texttt{PUSH}, \texttt{POP}, \texttt{XCHG}）\textbf{不影响} FLAGS。\par
+    \textbf{特例}：\texttt{SAHF} 及 \texttt{POPF}/\texttt{POPFD} 会修改标志寄存器。
+}
+
+\hlblue{\textbf{通用数据传送}}
+
+\green{\texttt{MOV} - 数据传送指令}
+
+\entry{定义}{
+    格式：\texttt{MOV Destination, Source}。\quad 语义：将 Source 的值复制到 Destination（Source 不变）。
+}
+
+\imgleft[0.3]{images/image-2026-01-12-11-14-43.png}{
+
+    \concepttable{
+        \conrow{寄存器间}{例：\texttt{MOV AL, BL}。\red{要求位宽一致}（8 位↔8 位，16 位↔16 位）。}
+        \conrow{段寄存器}{可读：\texttt{MOV BX, CS}。可写：\texttt{MOV ES, DX}。\red{但 \red{\texttt{CS} 不能作为目的寄存器}。}}
+        \conrow{存储器与寄存器}{例：\texttt{MOV AX, [BX]}；段寄存器亦可与内存配合：\texttt{MOV DS, [SI]}.}
+        \conrow{立即数}{寄存器可接立即数：\texttt{MOV BX, 34H}。写内存时必须指出宽度：\texttt{MOV BYTE PTR [BX], 12H}（需 \texttt{BYTE/WORD PTR} 指定）。}
+        \conrow{禁止与限制}{
+            \begin{itemize}
+                \item 两个操作数\red{不能同时为存储器}（\texttt{MOV [BX],[SI]} 非法，须用寄存器中转）。
+                \item \red{立即数不能为目的}（如 \texttt{MOV 100H, AX} 非法）。
+                \item \red{不能直接将立即数写入段寄存器}（须经通用寄存器：\texttt{MOV AX, 1000H; MOV DS, AX}）。
+                \item \texttt{IP}、\texttt{FLAGS} 等\red{专用寄存器既不能作源也不能作目的}。
+            \end{itemize}
+        }
+    }
+
+}
+
+\red{堆栈的基本原理}
+
+\imgleft[0.3]{images/image-2026-01-12-11-20-13.png}{
+    \entry{堆栈的基本结构与原理}{
+        \concepttable{
+            \conrow{定义与组织}{遵循 \textbf{LIFO}（后进先出）；堆栈在内存中为连续区域，\textbf{向下生长}。栈底为高地址，栈顶为低地址；\texttt{SP} 指向当前栈顶。}
+            \conrow{寻址}{堆栈位于 \texttt{SS} 段；物理地址：$PA = SS\times16 + SP$.}
+            \conrow{入栈 / 出栈}{入栈（PUSH）：\red{先调整 \texttt{SP}（变小）以开辟空间，再写入数据。}出栈（POP）：先读出栈顶数据，再调整 \texttt{SP}（变大）恢复栈顶。（相反的两个过程）}
+        }
+    }
+}
+
+\green{\texttt{POP/PUSH} - 堆栈操作指令}
+
+\entry{操作宽度}{
+    堆栈以\textbf{字（Word, 16 位）}或\textbf{双字（Double Word, 32 位）}为基本单位。\red{禁止对 8 位数据执行堆栈操作}（如 \texttt{PUSH AL} / \texttt{POP DL} 为非法），因为 \red{\texttt{SP} 的步长固定为 2（16 位）或 4（32 位}）。
+}
+
+\concepttable{
+    \conrow{PUSH 的操作数}{通用寄存器、段寄存器或存储器。注意：在 \texttt{8086} 上 \texttt{PUSH imm} 非法，须先将立即数载入寄存器；\texttt{80286/386} 及以上允许直接 \texttt{PUSH 立即数}。}
+    \conrow{POP 的操作数}{通用寄存器、段寄存器（除了 \texttt{CS}）或存储器。}
+    \conrow{指令语义}{\texttt{PUSH}：先调整 \texttt{SP}（减），再将操作数写入栈顶；\quad \texttt{POP}：先将栈顶数据送至目的操作数，再调整 \texttt{SP}（加）。}
+}
+
+\entry{PUSH AX 示例}{
+    \concepttable{
+        \conrow{初始状态}{\((AX)=1234\mathrm{H},\ (SP)=1000\mathrm{H}\).}
+        \conrow{执行过程}{SP ← SP - 2：\(1000\mathrm{H}-2=0FFEH\). 将 AX 存入 SS:0FFEH（小端）：低字节 AL=34H 存 0FFEH，高字节 AH=12H 存 0FFFH。}
+        \conrow{结果}{\(SP=0FFEH\)，栈顶数据为 1234H。}
+    }
+}
+
+\entry{POP BX 示例}{
+    \concepttable{
+        \conrow{初始状态}{\((SP)=1000\mathrm{H}\)，栈顶假设为 1234H。}
+        \conrow{执行过程}{从 SS:1000H 读出 2 字节送入 BX；随后 SP ← SP + 2：\(1000\mathrm{H}+2=1002\mathrm{H}\)。}
+        \conrow{结果}{\((BX)=1234\mathrm{H},\ SP=1002\mathrm{H}\)。}
+    }
+}
+
+\entry{注}{\red{\texttt{POP CS}是非法的}。允许 \texttt{PUSH CS}。修改 \texttt{CS} 必须通过成对的控制转移指令（如远跳/远调用/IRET/RETF 等）来安全完成。}
+
+\entry{批量进出栈指令}{
+    \concepttable{
+        \conrow{\textbf{\texttt{PUSHA / POPA}（16 位）}}{
+            \texttt{PUSHA}：一次性将 8 个 16 位通用寄存器压入堆栈，顺序为 \texttt{AX} → \texttt{CX} → \texttt{DX} → \texttt{BX} → \texttt{SP} → \texttt{BP} → \texttt{SI} → \texttt{DI}。执行后 \texttt{SP} 减小 16（\red{压入的是 PUSHA 之前的旧 \texttt{SP} 值}）。\par
+            \texttt{POPA}：按\red{反向顺序出栈恢复寄存器}：\texttt{DI} → \texttt{SI} → \texttt{BP} → … → \texttt{AX}。遇到栈中保存的 \texttt{SP} 值时不写回 \texttt{SP}（\red{丢弃该项}），\texttt{SP} 总体仍增加 16。
+        }
+        \conrow{\textbf{\texttt{PUSHAD / POPAD}（32 位）}}{
+            \texttt{PUSHAD}：将 8 个 32 位寄存器压入堆栈，顺序为 \texttt{EAX} → \texttt{ECX} → \texttt{EDX} → \texttt{EBX} → \texttt{ESP} → \texttt{EBP} → \texttt{ESI} → \texttt{EDI}，\texttt{ESP} 减小 32。\par
+            \texttt{POPAD}：按反向顺序出栈恢复：\texttt{EDI} → \texttt{ESI} → \texttt{EBP} → … → \texttt{EAX}，并在遇到栈中保存的 \texttt{ESP} 值时丢弃该项；\texttt{ESP} 最终增加 32。
+        }
+    }
+}
+
+\green{\texttt{XCHG} — 交换指令}
+
+\entry{定义}{
+    格式：\texttt{XCHG Destination, Source}。\quad 语义：将目的操作数与源操作数的值互换，$(Dest)\leftrightarrow(Source)$。
+}
+
+\concepttable{
+    \conrow{使用限制}{
+        \red{禁止存储器与存储器直接交换}（CPU 不支持）；禁止段寄存器（如 \texttt{CS}, \texttt{DS} 等）参与；禁止立即数作为操作数。
+    }
+    \conrow{合法组合}{寄存器和寄存器；寄存器和存储器（仅一方为存储器）。}
+    \conrow{示例}{
+        \texttt{XCHG AX, BX}：若 \texttt{AX}=1000H，\texttt{BX}=2000H，执行后 \texttt{AX}=2000H，\texttt{BX}=1000H。
+    }
+}
+
+\entry{要点}{用于在\red{不借助临时内存的情况下交换寄存器/寄存器—存储器数据，通常比用 MOV 加临时寄存器更高效。}}
+
+\green{\texttt{XLAT} — 表查找指令}
+
+\entry{定义}{
+    \texttt{XLAT} 用于表查找：\red{以 \texttt{AL} 为表内偏移、以 \texttt{BX} 指向表基址}，从 \texttt{DS:[BX+AL]} \red{取出一个字节并存入 \texttt{AL}}（即 \(\texttt{AL}\leftarrow\texttt{DS}:[\texttt{BX}+\texttt{AL}]\)）。
+}
+
+\concepttable{
+    \conrow{指令格式}{\texttt{XLAT}（无显式操作数）}
+    \conrow{隐含寄存器}{\texttt{BX}：表基址（偏移）；\quad \texttt{AL}：索引（偏移）}
+    \conrow{注意事项}{表中按字节存放查值，\texttt{XLAT} \red{只读 1 字节并覆盖 \texttt{AL} 原值}。}
+}
+
+\entry{示例（求 $y=x^2,\;0\le x\le9$）}{
+    在数据段预先定义表：\ \texttt{SQUARE\_TABLE DB 00H,01H,04H,\dots}\par
+    程序要点：\ \texttt{MOV BX, OFFSET SQUARE\_TABLE}（或 \texttt{LEA BX, SQUARE\_TABLE}）\ ;\ \texttt{MOV AL, 4}\ ;\ \texttt{XLAT}\ \(\Rightarrow\) \texttt{AL}=10H（即 $4^2=16$）。
+}
+
+\hlblue{\textbf{目标地址传送指令}}
+
+\green{\texttt{LEA} — 装载有效地址指令}
+
+\entry{定义}{
+    \texttt{LEA reg, mem}：\red{计算存储器操作数的有效地址（EA）并将偏移量装入寄存器}；不访问内存内容。
+}
+
+\concepttable{
+    \conrow{操作数限制}{目的操作数必须是通用寄存器；源操作数必须为\red{存储器寻址表达式}（如 \texttt{[BX+DI+10H]}）。}
+    \conrow{要点}{\texttt{LEA} 返回地址本身；\texttt{MOV reg, [mem]} 则从该地址读取数据。}
+}
+
+\entry{示例}{
+    条件：\texttt{BX}=1000H，\texttt{DI}=0100H。\par
+    指令：\texttt{LEA BX, [BX+DI+0010H]}。\quad 计算：$1000\mathrm{H}+0100\mathrm{H}+0010\mathrm{H}=1110\mathrm{H}$。\par
+    结果：\texttt{BX}=1110H（未访问内存）。
+}
+
+\entry{与 \texttt{OFFSET}/\texttt{MOV} 的比较}{
+    \concepttable{
+        \conrow{\texttt{LEA AX, LABEL}}{等价于 \texttt{MOV AX, OFFSET LABEL}，\red{取得偏移地址（支持动态地址表达式）}。}
+        \conrow{\texttt{MOV AX, LABEL}}{从内存读取字数据（小端），例如若 \texttt{LABEL DB 12H,34H} 且偏移为 2000H，则 \texttt{MOV AX, LABEL} 得 \texttt{3412H}。}
+    }
+}
+
+\green{\texttt{LDS} — 装载远指针}
+
+\entry{定义}{
+    格式：\texttt{LDS reg, mem}。功能：从内存读取 4 字节的远指针，\red{低 16 位装入指定通用寄存器（偏移），高 16 位装入 \texttt{DS}（段基址）}。
+}
+
+\concepttable{
+    \conrow{内存布局}{内存中需连续存放 4 字节：低地址两字节为偏移（低字节在低地址），高地址两字节为段；按小端格式读取。}
+    \conrow{语义公式}{\((\mathrm{Reg}) \leftarrow [\mathrm{Mem}]_{16},\quad (\mathrm{DS}) \leftarrow [\mathrm{Mem}+2]_{16}.\)}
+    \conrow{等效说明}{等同于 \texttt{MOV reg,[mem]}; \texttt{MOV DS,[mem+2]}，但 \texttt{LDS} 为单指令原子操作且更简洁。}
+}
+
+\entry{示例}{
+    内存（偏移 2000H 起）：\texttt{34H, 12H, 00H, 20H}. \quad 指令：\texttt{LDS BX, [2000H]}. \par
+    结果：\((BX)=1234\mathrm{H},\ (DS)=2000\mathrm{H}\)。
+}
+
+\concepttable{
+    \conrow{\texttt{LES}}{
+        从内存读取 4 字节远指针：低 16 位装入指定通用寄存器（偏移），高 16 位装入 \texttt{ES}（段基址）。常用于初始化 \texttt{ES:DI} 目标指针。
+    }
+    \conrow{\texttt{LFS / LGS / LSS}（80386+）}{
+        与 \texttt{LES} 逻辑相同，分别将段基址装入 \texttt{FS}、\texttt{GS}、\texttt{SS}。仅在 80386 及以上可用（8086 无 \texttt{FS}/\texttt{GS}）。
+    }
+}
+\entry{核心}{
+    见到 \texttt{L?S}（如 \texttt{LDS}, \texttt{LES}）即：在 16 位系统下读取 4 字节——低字为偏移装入寄存器，高字为段基址装入相应段寄存器。
+}
+
+\hlblue{\textbf{标志寄存器传送指令}}
+
+\img[0.7\linewidth]{images/image-2026-01-12-12-01-39.png}
+
+\entry{\green{\texttt{LAHF} — 将标志装入 \texttt{AH}}}{
+    \concepttable{
+        \conrow{功能}{把 FLAGS 寄存器低 8 位中的 5 个状态标志\red{复制到 \texttt{AH}}。}
+        \conrow{\red{映射}}{\texttt{SF}, \texttt{ZF}, \texttt{AF}, \texttt{PF}, \texttt{CF} 分别对应 \texttt{AH} 的位 7,6,4,2,0；位 5,3,1 未定义。}
+        \conrow{要点}{执行后 \texttt{AH} 的值反映上述 5 个标志的状态。}
+    }
+}
+
+\entry{\green{\texttt{SAHF} — 将 \texttt{AH} 存回标志}}{
+    \concepttable{
+        \conrow{功能}{将 \texttt{AH} 的第 7,6,4,2,0 位复制回 FLAGS 的 \texttt{SF}, \texttt{ZF}, \texttt{AF}, \texttt{PF}, \texttt{CF}。}
+        \conrow{限制}{只能修改低 8 位中的这 5 个状态标志，\red{无法改变 \texttt{OF}, \texttt{DF}, \texttt{IF}, \texttt{TF} 等控制/高位标志}。}
+    }
+}
+
+\entry{\green{\texttt{PUSHF} / \texttt{POPF} — 堆栈与标志保护}}{
+    \concepttable{
+        \conrow{\texttt{PUSHF}}{将整个 16 位 FLAGS 压入堆栈。栈指针 \texttt{SP} 变化：\(\texttt{SP}\gets\texttt{SP}-2\)。用于保护现场。}
+        \conrow{\texttt{POPF}}{从栈顶弹出 16 位送入 FLAGS。栈指针 \texttt{SP} 变化：\(\texttt{SP}\gets\texttt{SP}+2\)。注意：\texttt{POPF} 会修改包括 \texttt{IF} 在内的标志，可能改变中断响应行为。}
+    }
+}
+
+\hlblue{\textbf{输入输出指令}}
+
+\green{\texttt{IN / OUT} — 端口读写指令}
+
+\entry{要点}{
+    CPU 与外设通过 I/O 端口通信；\red{数据输入/输出必须通过累加器（\texttt{AL} 或 \texttt{AX}）}。
+}
+
+\concepttable{
+    \conrow{端口空间}{I/O 端口地址范围：\texttt{0} ～ \texttt{0FFFFH}。常用的直接寻址端口为 8 位（\texttt{0}～\texttt{0FFH}）。}
+}
+
+\entry{直接寻址（立即数）}{
+    \texttt{IN AL, n}：从端口 \texttt{n} 读 1 字节到 \texttt{AL}。\par
+    \texttt{IN AX, n}：从端口 \texttt{n} 读低字节到 \texttt{AL}，从端口 \texttt{n+1} 读高字节到 \texttt{AH}（合成 16 位）。
+}
+
+\entry{间接寻址（DX）}{
+    当端口号非 8 位或需动态指定时，将端口地址置于 \texttt{DX}，使用：
+    \texttt{IN AL, DX} 或 \texttt{IN AX, DX}。\par
+    注：指令中使用的是 \texttt{DX} 指向的端口号，而非读取 \texttt{DX} 寄存器的值作为数据。
+}
+
+\entry{输出指令（对称）}{
+    \texttt{OUT n, AL} / \texttt{OUT n, AX}（直接寻址，\texttt{n} 为 8 位立即数）；\quad
+    \texttt{OUT DX, AL} / \texttt{OUT DX, AX}（间接寻址，端口在 \texttt{DX}）。
+}
 
 \subsubsection{算术运算类指令}
 
@@ -1716,7 +2022,213 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
 
 \subsubsection{逻辑操作类指令}
 
+\hlblue{\textbf{概述}}
 
+\concepttable{
+    \conrow{逻辑运算指令}{\texttt{AND, TEST, OR, XOR, NOT}：位级布尔运算，常用于掩码、合并与清位。}
+    \conrow{移位运算指令}{逻辑移位（\texttt{SHL/SHR}）、算术移位（\texttt{SAL/SAR}）、循环移位（\texttt{ROL/ROR}）\quad 注：算术移位保留符号位，移位通常影响 CF（被移出的位）。}
+    \conrow{位测试与修改}{BT 系列（\texttt{BT/BTS/BTR/BTC}）：测试并/或修改指定位。}
+    \conrow{位扫描指令}{\texttt{BSF/BSR}：扫描并返回最低/最高置位位号（位索引用途）。}
+}
+
+\entry{逻辑运算指令：格式与操作数约束}{
+    \concepttable{
+        \conrow{指令格式}{
+            \red{双操作数}：\texttt{AND}, \texttt{TEST}, \texttt{OR}, \texttt{XOR} \quad 格式：\texttt{OP Dest, Src}.\par
+            \red{单操作数}：\texttt{NOT} \quad 格式：\texttt{NOT Dest}.
+        }
+        \conrow{位宽一致性}{操作数必须同为 8 / 16 / 32 位，不可混用不同位宽的操作数。}
+        \conrow{寻址约束}{
+            情形 A — Dest 为寄存器：Src 可为 寄存器、存储器 或 立即数。\par
+            情形 B — Dest 为存储器：Src 仅可为 寄存器 或 立即数；\red{禁止存储器→存储器} 直接操作（需经寄存器中转）。
+        }
+    }
+}
+
+\entry{指令语义与标志位影响}{
+    \concepttable{
+        \conrow{AND}{Dest $\leftarrow$ Dest $\land$ Src（常用于清某些位）。}
+        \conrow{OR}{Dest $\leftarrow$ Dest $\lor$ Src（常用于置位）。}
+        \conrow{XOR}{Dest $\leftarrow$ Dest $\oplus$ Src（常用于按位翻转或快速清零）。}
+        \conrow{NOT}{Dest $\leftarrow$ $\neg$ Dest（按位取反，\textbf{不影响任何标志位}）。}
+        \conrow{TEST}{执行 $Dest \land Src$，\red{但不回写结果，仅根据运算结果更新标志（用于检测位）}。}
+        \conrow{标志行为}{
+            对于 \texttt{AND}, \texttt{TEST}, \texttt{OR}, \texttt{XOR}：\quad $\texttt{OF}=0,\ \texttt{CF}=0$；\quad $\texttt{SF},\ \texttt{ZF},\ \texttt{PF}$ 根据结果设置；\quad \texttt{AF} 为未定义（不可依赖）。
+        }
+    }
+}
+
+\hlblue{\textbf{逻辑运算指令应用（掩码技术）}}
+
+\entry{掩码技术}{
+    通过构造特定掩码配合逻辑指令，实现对寄存器特定位的操作。
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{\texttt{AND} — 清零/屏蔽}{
+        \concepttable{
+            \conrow{原理}{$x \land 0 = 0,\ x \land 1 = x$}
+            \conrow{示例}{\texttt{AND AL, 0FH} \quad (0FH = 0000 1111B)}
+            \conrow{效果}{高4位清零，低4位保持}
+        }
+    }
+    
+    \entry{\texttt{TEST} — 状态检测}{
+        \concepttable{
+            \conrow{原理}{执行 AND 但不保存，仅更新 \texttt{ZF}}
+            \conrow{示例}{\texttt{TEST AL, 80H; JNZ NEXT}}
+            \conrow{效果}{检测 AL 最高位：为1则 \texttt{ZF}=0 跳转}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{\texttt{OR} — 置位}{
+        \concepttable{
+            \conrow{原理}{$x \lor 1 = 1,\ x \lor 0 = x$}
+            \conrow{示例}{\texttt{OR AL, 01H}}
+            \conrow{效果}{最低位强制为1，其余位保持}
+        }
+    }
+    
+    \entry{\texttt{XOR} — 取反/清零}{
+        \concepttable{
+            \conrow{取反}{\texttt{XOR AL, 80H} \quad 仅翻转最高位}
+            \conrow{清零}{\texttt{XOR BL, BL} \quad 自身异或必为0}
+            \conrow{优势}{机器码短，执行快，置 \texttt{ZF}=1}
+        }
+    }
+\end{minipage}
+
+\entry{\texttt{NOT} — 全域取反}{
+    \concepttable{
+        \conrow{示例}{\texttt{NOT AL}}
+        \conrow{效果}{每位翻转 (0$\leftrightarrow$1)}
+    }
+}
+
+\hlblue{\textbf{移位指令}}
+
+\entry{指令格式}{
+    格式：\texttt{Mnemonic Destination, Count}。\par
+    Destination：通用寄存器或存储器；\quad Count：立即数 \texttt{n} 或寄存器 \texttt{CL}。
+}
+
+\concepttable{
+    \conrow{8086 移位次数限制}{
+        $n=1$：可直接写立即数（如 \texttt{SHL AL, 1}）。\par
+        $n>1$：必须将次数存入 \texttt{CL}，然后使用 \texttt{CL} 作为操作数（\red{不可直接写立即数或使用其他寄存器}）。
+    }
+    \conrow{80286+ 系统}{
+        解除限制，允许 $n$ 为任意立即数。
+    }
+}
+
+\imgleft[0.1]{images/image-2026-01-12-12-49-38.png}{
+
+    \noindent
+    \begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+        \blue{\textbf{逻辑移位}}
+        \concepttable{
+            \conrow{\texttt{SHL}}{逻辑左移。MSB $\to$ CF，LSB 补 0。}
+            \conrow{\texttt{SHR}}{逻辑右移。LSB $\to$ CF，MSB 补 0（无符号数）。}
+        }
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+        \blue{\textbf{算术移位}}
+        \concepttable{
+            \conrow{\texttt{SAL}}{算术左移。与 \texttt{SHL} 作用相同。}
+            \conrow{\texttt{SAR}}{算术右移。LSB $\to$ CF，MSB 保持原值进行符号扩展（带符号数）。}
+        }
+    \end{minipage}
+
+    \entry{标志位影响}{
+        \texttt{CF}：存放被移出的最后一位。\par
+        \texttt{OF}：仅当移位次数为 1 时定义（\red{检测是否改变符号}），\texttt{n>1} 时未定义。\par
+        \texttt{SF}, \texttt{ZF}, \texttt{PF}：按移位后的结果更新。
+    }
+
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{移位后的标志位}}
+
+    \concepttable{
+        \conrow{CF（进位标志）}{保存最后被移出的一位。无论左移还是右移，被挤出的位都进入 CF。}
+        \conrow{OF（溢出标志）}{\red{仅在移位次数为 1 时有效}。当移位次数 > 1 时，OF 未定义。}
+    }
+
+    \entry{OF 判定规则（移位次数=1）}{
+        $\text{OF} = CF \oplus \text{MSB}_{\text{后}}$（移位后的 CF 与最高位 XOR）。\par
+        对\red{左移（SHL/SAL）}：若符号位改变，则 OF=1（溢出）；否则 OF=0。\par
+        对\red{算术右移（SAR）}：通常 OF=0，符号位不变。\par
+        对\red{逻辑右移（SHR）}：若移位前最高位为 1，则 OF=1。
+    }
+
+    \entry{其他标志}{SF、ZF、PF 按结果正常更新；AF 未定义。}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{移位与算术运算的对应}}
+
+    \concepttable{
+        \conrow{\texttt{无符号数}}{SHL $\times 2$；SHR $\div 2$。}
+        \conrow{\texttt{有符号数}}{SAL $\times 2$；SAR $\div 2$（保持符号）。}
+    }
+
+    \entry{实例 1（正数）}{(AL)=12H；SHL AL,1 → 24H；验证：$18 \times 2 = 36$。}
+
+    \entry{实例 2（负数）}{(AL)=F0H（补码 -16）；SAR AL,1 → F8H（补码 -8）；验证：$-16 \div 2 = -8$。\par \red{警示}：若错用 SHR，结果变 78H（错误为正）。}
+\end{minipage}
+
+\imgleft[0.1]{images/image-2026-01-12-12-50-49.png}{
+
+    \green{\textbf{循环移位指令}}
+
+    \concepttable{
+        \conrow{\texttt{ROL}}{循环左移。被移出的位从另一端补入，同时进入 \texttt{CF}。}
+        \conrow{\texttt{ROR}}{循环右移。被移出的位从另一端补入，同时进入 \texttt{CF}。}
+        \conrow{\texttt{RCL}}{带进位循环左移。移位通过 \texttt{CF} 完成，形成"数据 $+$ \texttt{CF}" 的循环。\red{也就是 CF 此时成为真正的最高位}}
+        \conrow{\texttt{RCR}}{带进位循环右移。同上，反向操作。}
+    }
+
+    \entry{应用场景}{
+        循环移位常用于\red{轮询测试特定位}、\red{数据格式转换}（如 BCD $\leftrightarrow$ Binary）等需要逐位处理的场景。
+    }
+
+}
+
+\entry{标志位特异性}{
+    循环移位指令\textbf{不}影响 \texttt{SF}、\texttt{ZF}、\texttt{AF}、\texttt{PF}，仅修改 \texttt{CF} 和 \texttt{OF}。
+    \concepttable{
+        \conrow{\texttt{CF}}{存放最后被移出的一位。}
+        \conrow{\texttt{OF}}{仅在移位次数为 \red{1} 时定义（判断是否改变符号），移位次数 $>1$ 时未定义。}
+    }
+}
+
+\entry{\red{应用：多字长移位}}{
+    \texttt{RCL}/\texttt{RCR} 的主要用途是实现跨越多个寄存器的整体移位。例如对 32 位数据（存放在 \texttt{DX:AX}，\texttt{DX} 为高位）进行左移：
+}
+
+\noindent
+\begin{minipage}[t]{0.55\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{\texttt{SHL AX, 1}}{
+            低 16 位左移，\texttt{AX} 最高位移出进入 \texttt{CF}，最低位补 0。
+        }
+        \conrow{\texttt{RCL DX, 1}}{
+            高 16 位带进位左移。\texttt{CF}（即前面从 \texttt{AX} 移出的位）移入 \texttt{DX} 最低位，\texttt{DX} 最高位移出进入 \texttt{CF}。
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.43\linewidth}\vspace{0pt}
+    \entry{结果}{
+        实现了 \texttt{DX:AX} 作为一个整体的 32 位左移，数据通过 \texttt{CF} 在两个寄存器间实现无缝传递。
+    }
+    \entry{原理}{
+        \texttt{CF} 充当"中间渡口"，将低位寄存器的溢出位精确传递至高位寄存器的低端，确保数据连续性。
+    }
+\end{minipage}
 
 \subsubsection{字符串操作类指令}
 
@@ -2326,7 +2838,9 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
         \conrow{STI}{设置中断允许标志，\red{IF=1}（允许中断）。}
     }
 }
-% --- 第3部分：图表占位 ---
+
+\green{第三章知识点总结完毕（好多东西啊）}
+
 \section{第四章 汇编语言程序设计基础}
 
 \subsection{概述及语句的组成}
@@ -2404,19 +2918,113 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
 
 \subsection{汇编语言语句组成元素}
 
-\subsubsection{字符集}
-
-\subsubsection{保留字与标识符}
-
-\subsubsection{常量、变量与标号}
+太多了，挑重点说。
 
 \subsubsection{表达式与运算符}
+
+\hlblue{\textbf{数值运算符}}
+
+运算符在\red{汇编阶段}由汇编器处理，用于将标号或变量转换成具体的数值（地址）；而指令在\red{运行时}由 CPU 执行。
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{\green{SEG 运算符}}{
+        \concepttable{
+            \conrow{定义}{获取标号或变量所在的\red{段基地址}。}
+            \conrow{返回值}{冒号前的 16 位段地址，如标号在代码段则为 CS，在数据段则为 DS。}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \entry{\green{OFFSET 运算符}}{
+        \concepttable{
+            \conrow{定义}{获取标号或变量在该段内的\red{偏移地址}。}
+            \conrow{返回值}{冒号后的 16 位偏移量，距离段起始位置的字节数。}
+        }
+    }
+\end{minipage}
+
+\entry{实例分析}{
+    假设标号 \texttt{ADDR: INC CX} 的逻辑地址为 \texttt{2000H:1234H}。
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{\texttt{MOV AX, SEG ADDR}}{
+            提取段基地址。\par
+            结果：\texttt{AX} = \texttt{2000H}
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \concepttable{
+        \conrow{\texttt{MOV AX, OFFSET ADDR}}{
+            提取偏移地址。\par
+            结果：\texttt{AX} = \texttt{1234H}
+        }
+    }
+\end{minipage}
+
+\entry{\red{关键性质}}{
+    \concepttable{
+        \conrow{等价指令}{\texttt{MOV AX, OFFSET ADDR} 等价于 \texttt{LEA AX, ADDR}：两者均得到标号的偏移地址。}
+        \conrow{汇编时计算}{OFFSET 在汇编阶段确定，机器码直接包含立即数；LEA 为运行时计算的指令，但结果相同。}
+    }
+}
 
 \subsection{汇编语言的语句}
 
 \subsubsection{指示性语句}
 
+\subsubsection{指示性语句（伪指令）}
+
+\entry{定义}{
+    指示性语句（伪指令）不被翻译成机器指令，CPU 无法直接执行。\red{这些语句是写给汇编器的}，用于指导汇编器分配内存、定义段、指定程序入口等。
+}
+
+\hlblue{\textbf{常用伪指令}}
+
+\concepttable{
+    \conrow{\texttt{SEGMENT / ENDS}}{
+        定义一个逻辑段的起始和结束。\par
+        \textbf{格式：}\texttt{<名字> SEGMENT} \quad … \quad \texttt{<名字> ENDS}
+    }
+    \conrow{\texttt{DB / DW / DD}}{
+        数据定义伪指令。\par
+        \texttt{DB}：定义字节数据；\texttt{DW}：定义字（2字节）；\texttt{DD}：定义双字（4字节）。\par
+        \textbf{例：}\texttt{MSG DB 'Hello', 0DH, 0AH, '\$'}（定义字符串，末尾需 \texttt{\$} 作为 INT 21H 09H 的结束标志）。
+    }
+    \conrow{\texttt{DUP}}{
+        重复操作符，用于快速分配未初始化或重复的存储空间。\par
+        \textbf{例：}\texttt{BUFFER DB 256 DUP (?)}（分配 256 字节未初始化区域）；\texttt{ZERO DB 100 DUP (0)}（分配 100 个字节全为 0）。
+    }
+    \conrow{\texttt{ASSUME}}{
+        将逻辑段名与段寄存器关联，便于汇编器进行地址计算。\par
+        \textbf{例：}\texttt{ASSUME CS:CODE, DS:DATA, SS:STACK}。\red{重点：仅供汇编器使用，不直接装入寄存器。}
+    }
+    \conrow{\texttt{END}}{
+        标记源程序结束。通常后跟程序入口标号。\par
+        \textbf{例：}\texttt{END START}（程序从 START 标号处开始执行）。
+    }
+    \conrow{\texttt{OFFSET}}{
+        返回标号或变量的段内偏移地址（16 位）。\par
+        \textbf{例：}\texttt{MOV AX, OFFSET LABEL}（等价于 \texttt{LEA AX, LABEL}）。
+    }
+    \conrow{\texttt{SEG}}{
+        返回标号或变量所在的段基址（16 位段地址）。\par
+        \textbf{例：}\texttt{MOV AX, SEG DATA}（取数据段的段基址）。
+    }
+}
+
+\entry{标号 vs 名字}{
+    \texttt{标号}（如 \texttt{LOOP:}）通常后跟冒号，代表指令地址，用于 JMP/CALL 跳转。\par
+    \texttt{名字}（如段名、变量名）不加冒号，是伪指令的标识符。
+}
+
 \subsubsection{指令性语句}
+
+好像都是 DOS 系统里的一些调用，暂时不看了。
 
 \subsection{完整的汇编程序}
 
@@ -2515,9 +3123,11 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
 
 \subsection{综合汇编语言程序设计}
 
-
+主要就是从整理逻辑图 - 编写代码 - 汇编链接 - 调试运行 这几个步骤来完成。
 
 \img[0.7\linewidth]{images/image-2026-01-11-17-31-42.png}
+
+\green{第四章知识点总结完毕。}
 
 \section{第五章 微机总线技术}
 
@@ -2713,11 +3323,46 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
 
 }
 
+\green{第五章知识点总结完毕。}
+
+\subsection{习题解析}
+
+\entry{\green{作业 3-1}}{8086/8088的数据信号与地址信号是复用引脚的，怎样把两种不同的信号分离出来？}
+
+\entry{解}{8086/8088工作时，对地址引脚与数据引脚进行分时复用，采用 373 锁存器来分离地址与数据信号，在 T1 状态时，CPU 提供 ALE 地址锁存允许信号，将地址信号锁存到 373 锁存器中，在 T2、T3 和 TW 状态时，CPU 将地址总线释放出来，改为输出数据信号。}
+
+\entry{\green{作业 3-2}}{在总线周期的 T1，T2，T3 和 T4 状态中，8086 分别执行什么动作？什么情况下需要插入 Tw 状态？在哪里插入，怎样插入？}
+
+\entry{解}{
+
+CPU在$T_1$、$T_2$、$T_3$、$T_4$这四个状态完成一个总线周期。在$T_1$状态，把地址信息从地址线$A_{19}\sim A_{16}$，$A_{15}\sim A_8$和$AD_7\sim AD_0$上输出，且立即发出地址锁存信号ALE，把在$A_{19}\sim A_{16}$上出现的高4位地址和在$AD_{15}\sim AD_0$(8088则是$AD_7\sim AD_0$)上出现的地址，在外部地址锁存器上锁存。
+
+在$T_2$状态，CPU发送读写等控制命令。
+
+在$T_3$、$T_4$状态，CPU发送或接收数据，并在$T_4$状态结束此总线周期。
+
+当外部存储器或I/O端口的时序不能与CPU的时序相配合时，就需要插入$T_W$周期。因此，在CPU中设计了一条准备就绪READY输入线，即存储器或I/O端口输给CPU的状态线。CPU在$T_3$采样READY线，若为高电平，则在$T_3$状态后进入$T_4$状态。若存储器或I/O端口来不及在$T_4$状态的前沿把数据准备好，则当CPU在$T_3$状态采样时应使READY线为低电平，并在$T_3$状态后插入一个等待状态$T_W$。
+
+}
+
+\entry{作业 3-3}{7. 在$T_1$状态下，8088/8086CPU数据/地址线上是什么信息？用哪个信号可将此信息锁存起来？数据信息是什么时候送出的？在最大组态下，怎样使系统地址总线和系统数据总线上同时分别存在地址信息和数据信息？}
+
+
+
+\entry{作业 3-4}{RESET信号到来后，8086/8088系统的CS和IP分别等于多少？}
+
+
+
+\entry{作业 3-5}{在中断响应过程中，8086/8088往8259A发的两个$\overline{INTA}$信号分别起什么作用？}
+
+
 \section{第六章 存储系统}
 
 \subsection{存储器分类与基本指标}
 
 \subsubsection{分类}
+
+和数集的内容类似，存储器也可以从多个角度进行分类：
 
 \concepttable{
     \conrow{按读写功能}{\blue{读写存储器 (RAM)}：可读可写，数据暂存；
@@ -2892,19 +3537,337 @@ EA=\text{基址值}\begin{cases}BX\\BP\end{cases}
     \entry{地址重叠计算}{若有 $n$ 根高位地址线未参与译码，则一个物理单元对应 \red{$2^n$} 个重叠地址。}
 }
 
+\subsubsection{全地址译码}
 
+这个后面的基本上都是以画图计算为主，就直接上题了：
 
+\subsection{习题解析}
+
+\entry{\green{作业 4-1}}{半导体存储器分几个类型？各自的特点是什么？}
+
+\entry{解}{从存取方式来分, 有读写存储器 RAM 和只读存储器 ROM。RAM 也称为随机存取存储器, CPU 在执行程序的过程中能对它进行读出和写入操作。在 RAM 中可分为双极型 (Bipolar) 和 MOS 型 RAM 两大类。双极型 RAM 具有很高的存取速度, 但是双极型 RAM 的集成度低, 单片容量小, 功耗大, 成本高。MOS 型 RAM 具有功耗低、集成度高、单片容量大的特点, 但存取速度则较慢。MOS 型 RAM 又可以分为静态 RAM 和动态 RAM 两种。ROM 器件的功能是只许读出, 不许写入, 一旦有了信息, 就不能轻易改变, 也不会在掉电时丢失, 所以它只能用在不需要经常对信息进行修改和写入的地方}
+
+\entry{PS}{这个标准答案唐的没边了}
+
+\entry{\green{作业 4-2}}{试比较 SRAM 和 DRAM 的优缺点。}
+
+\entry{解}{
+    SRAM 的优点是存取速度快, 不需要刷新, 结构简单, 控制电路简单, 易于与 CPU 直接相连; 缺点是集成度低, 单片容量小, 功耗大, 成本高。DRAM 的优点是集成度高, 单片容量大, 功耗低, 成本低; 缺点是存取速度慢, 需要定期刷新, 控制电路复杂, 不易与 CPU 直接相连。
+}
+
+\entry{\green{作业 4-3}}{若某微机系统的系统 RAM 存储器由 4 个模块组成，每个模块的容量为 128KB，若 4 个模块的地址是连续的，最低地址为 00000H，试指出每个模块的首末地址。}
+
+\entry{解}{
+    每个模块容量为 128KB = $2^{17}$ B，需 17 根地址线。模块地址连续，地址范围如下：
+    \begin{enumerate}
+        \item 模块 0：首地址 00000H，末地址 1FFFFH；
+        \item 模块 1：首地址 20000H，末地址 3FFFFH；
+        \item 模块 2：首地址 40000H，末地址 5FFFFH；
+        \item 模块 3：首地址 60000H，末地址 7FFFFH。
+    \end{enumerate}
+}
+
+\entry{\green{作业 4-4}}{对于下列芯片，它们的片内地址线各有多少条？若分别用以下芯片组成容量为 64KB 的模块，试指出分别需要多少芯片。}
+
+\begin{enumerate}
+    \item[(1)] Intel 2114 ($1\text{K} \times 4$ 位);
+    \item[(2)] Intel 6116 ($2\text{K} \times 8$ 位);
+    \item[(3)] Intel 2164 ($64\text{K} \times 1$ 位);
+    \item[(4)] Intel 3148 ($4\text{K} \times 8$ 位)。
+\end{enumerate}
+
+\entry{解}{
+    \begin{enumerate}
+        \item[(1)] $1K=2^{10}$，地址线 $A_0 \sim A_9$ 共 10 条。每片容量 $1K \times 4 = 512B$，需 $64KB/512B=128$ 片。
+        \item[(2)] $2K=2^{11}$，地址线 $A_0 \sim A_{10}$ 共 11 条。每片容量 $2K \times 8 = 2KB$，需 $64KB/2KB=32$ 片。
+        \item[(3)] $64K=2^{16}$，地址线 $A_0 \sim A_{15}$ 共 16 条。每片容量 $64K \times 1 = 8KB$，需 $64KB/8KB=8$ 片。
+        \item[(4)] $4K=2^{12}$，地址线 $A_0 \sim A_{11}$ 共 12 条。每片容量 $4K \times 8 = 4KB$，需 $64KB/4KB=16$ 片。
+    \end{enumerate}
+}
+
+\entry{\green{作业 4-5}}{8. 某 RAM 芯片，容量为 $4K\times4$ 位，该芯片有数据线、地址线、片选信号线 $\overline{CS}$ 和读写控制线 $\overline{WR}$。请问：
+
+(1) 该 RAM 芯片有几条地址线? 几条数据线?
+
+(2) 现要在以 8088 为 CPU 的微机系统中，用该芯片构成图 6-35 中所示的 \texttt{RAM\#2} 和 \texttt{RAM\#4} 两个内存模块，请画出扩展这两个模块的存储器连接图。(连接图中可选用 3:8 译码器和与非门等。)}
+
+\imgleft[0.4]{images/image-2026-01-12-21-19-18.png}{
+
+第一问很好解决，第二问说几个注意的点吧
+
+\entry{内存大小}{所有的都给的是起始地址，所以两个起始地址相减就是内存大小，一个是 8KB，一个是 4KB。}
+
+\entry{译码电路}{译码电路挺好设计的，还是找三段式区间：统一区，片选区，片内区，然后这道题的标准答案（如图是使用了一个 74LS138了，所以还是很轻松的）}
+
+\entry{位扩展连接}{位扩展的两篇的片选，地址线和写入使能都是并联的，只有数据线一个是高 4 位，一个是低 4 位。}
+
+最后我们要感恩教材作者没让我们连 8086 的存储芯片，那很地狱了。
+}
 
 \subsection{存储器与 CPU 连接}
 
 \section{第七章\ I/O接口}
 
-\subsection{概念}
+\subsection{概述}
 
-\entry{端口}{接口电路中用于缓存数据、状态、及控制信息的部件，分为：\red{数据端口}、\red{状态端口}、\red{控制端口}。}
-\entry{接口电路}{计算机系统中包含多个不同功能的接口电路，\red{每个接口电路又可能包含 1 个或多个端口}。}
-\entry{寻址端口方法}{先找到端口所在的接口电路芯片（\red{片选}），在该芯片上找到具体要访问的端口（\red{片内地址}）。若接口中仅有一个端口，则找到芯片即找到端口；若接口中有多个端口，则找到芯片后需再找端口。每个端口地址 = \red{片选地址（高位地址）} + \red{片内地址}。}
-\entry{8086/8088 的 I/O 端口编址}{采用 \red{I/O 独立编址方式}；I/O 操作只使用 20 根地址线中的 \red{16 根（A15～A0）}；可寻址的 I/O 端口数为：\red{$2^{16}=64$K (65536) 个}；I/O 地址范围为：\red{0～0FFFFH}。}
+CPU 对内存和外设的\red{操作本质上是读与写}。接口电路在 CPU 与外设之间实现信息交换，主要功能包括：
+
+\concepttable{
+    \conrow{地址选择}{选择输入或输出的外设设备}
+    \conrow{控制功能}{启动、停止或复位外设}
+    \conrow{时序匹配}{通过状态指示解决时序不匹配}
+    \conrow{速度匹配}{通过缓冲或握手信号解决速度不匹配}
+    \conrow{格式转换}{将信息格式调整为 CPU 和外设均可接受的形式}
+    \conrow{电平转换}{\red{将 TTL/CMOS 电平}（0V-5V）与其他标准（如 RS-232 的 ±12V）相互转换}
+    \conrow{可编程性}{通过控制寄存器提高硬件通用性}
+}
+
+\entry{输入/输出指令}{
+    \concepttable{
+        \conrow{\texttt{IN DST, SRC}}{从外设端口读取数据到 CPU 寄存器（外设 → CPU）}
+        \conrow{\texttt{OUT DST, SRC}}{将 CPU 数据输出到外设端口（CPU → 外设）}
+    }
+}
+
+\subsection{I/O 端口的编址方式}
+
+\entry{I/O 端口与接口概念}{
+    \concepttable{
+        \conrow{I/O 接口}{物理芯片或集成电路，是 CPU 与外设间的中介。}
+        \conrow{I/O 端口}{\red{接口内部的寄存器（数据/状态/控制）}，是逻辑单元。每个端口对应固定的地址。}
+    }
+}
+
+\entry{编址关系}{一个 I/O 接口若含有 $n$ 个端口，则占用 $n$ 个独立地址。}
+
+\hlblue{\red{编址方式分类}}
+
+\concepttable{
+    \conrow{独立编址（8086/8088）}{
+        CPU 开辟两个独立的地址空间：内存地址空间与 I/O 地址空间。\par
+        \textbf{区分机制}：专用控制信号（如 $M/\overline{IO}$）或专用指令（\texttt{IN}/\texttt{OUT}）。\par
+        \textbf{优势}：内存与 I/O 互不干扰，便于管理；I/O 地址空间通常较小（64KB）。
+    }
+    \conrow{统一编址（C51 单片机）}{
+        I/O 端口被视为内存的一部分，统一编址。\par
+        \textbf{访问方式}：使用通用访存指令（如 \texttt{MOV}），无需专用 I/O 指令。\par
+        \textbf{特点}：编址简单但占用内存空间；寻址灵活。
+    }
+}
+
+\subsubsection{独立编址}
+
+\entry{概述}{
+    \concepttable{
+        \conrow{特点}{CPU 通过\red{专用控制信号}（如 $M/\overline{IO}$）区分访问目标为存储器还是 I/O 端口。}
+        \conrow{地址空间}{I/O 地址与内存地址\red{互相独立}，互不占用。}
+        \conrow{指令系统}{需设置\red{专用 I/O 指令}（\texttt{IN}/\texttt{OUT}）进行 I/O 访问。}
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{总线信号区分}}
+    \concepttable{
+        \conrow{$M/\overline{IO}=1$}{内存访问}
+        \conrow{$M/\overline{IO}=0$}{I/O 访问}
+    }
+    \par
+    通过此信号与 $\overline{RD}/\overline{WR}$ 组合，CPU 产生 4 种总线周期：内存读、内存写、I/O 读、I/O 写。
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{8086 I/O 地址空间}}
+    \concepttable{
+        \conrow{地址总线位数}{16 位（部分系统仅用 10 位）}
+        \conrow{寻址范围}{\red{64 KB}（完整）或 \red{1 KB}（PC/XT）}
+        \conrow{地址范围}{0000H - FFFFH（或 000H - 3FFH）}
+    }
+\end{minipage}
+
+\entry{优缺点对比}{
+    
+}
+
+\noindent\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{优点}}
+    \concepttable{
+        \conrow{空间独立}{I/O 不占用内存地址，存储器容量最大化。}
+        \conrow{总线效率}{I/O 访问地址位数可较少，提高利用率。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{缺点}}
+    \concepttable{
+        \conrow{指令复杂}{需专用 I/O 指令，CPU 设计复杂度增加。}
+        \conrow{硬件复杂}{需独立的 I/O 控制逻辑与地址译码电路。}
+    }
+\end{minipage}
+
+
+\subsubsection{统一编址}
+
+\entry{概述}{
+    将 I/O 端口映射到内存地址空间的一部分，使用访存指令操作 I/O。
+}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{优点}}
+    \concepttable{
+        \conrow{指令通用性}{使用所有访存指令（\texttt{MOV}, \texttt{ADD}, \texttt{AND} 等）操作 I/O。}
+        \conrow{硬件简化}{无需专用控制线，仅使用内存读写信号。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+    \blue{\textbf{缺点}}
+    \concepttable{
+        \conrow{地址空间占用}{I/O 端口挤占内存寻址空间，可用存储器减少。}
+        \conrow{传输开销增加}{总线传送地址位数相同，可能增加系统负载。}
+    }
+\end{minipage}
+
+\subsection{I/O 接口的基本工作方式}
+
+\subsection{中断}
+
+比较重要的概念，这里单拿出来讲
+
+\imgleft[0.15]{images/image-2026-01-12-19-45-32.png}{
+
+    中断是指CPU\red{暂时停止正在执行的主程序，转而去执行处理"中断事件"的程序}（即中断服务程序）。待处理完后，CPU自动返回到原被中断的程序处继续执行。
+
+    \concepttable{
+        \conrow{可屏蔽中断 (\texttt{INTR})}{硬件中断，可通过软件设置忽略（如键盘、硬盘I/O等）。}
+        \conrow{非可屏蔽中断 (\texttt{NMI})}{极重要的硬件异常，CPU必须立即处理（如电源掉电预警、奇偶校验错误）。}
+        \conrow{内部中断（异常）}{由CPU内部事件触发，如除法错（除数为0或商溢出）。}
+    }
+
+    \entry{中断类型号}{
+        每个中断源分配一个\red{8位二进制编号（0-255）}，用于 CPU 识别中断来源。
+    }
+
+    \entry{中断向量表}{
+        \concepttable{
+            \conrow{位置}{内存最低地址 \red{00000H - 003FFH}}
+            \conrow{大小}{共 \red{1024} 字节，存放 \red{256} 个中断服务程序入口}
+            \conrow{结构}{每个入口占 \red{4 字节}：低地址 2 字节为偏移 (IP)，高地址 2 字节为段基址 (CS)}
+        }
+    }
+}
+
+\entry{中断断点}{
+    \concepttable{
+        \conrow{定义}{\red{中断发生时即将执行但尚未执行的指令地址}（当前指令的下一条）}
+        \conrow{处理}{CPU 自动将断点的 \red{CS:IP} 压入堆栈保存，以便中断返回后继续执行}
+    }
+}
+
+\subsubsection{中断响应过程}
+
+\hlblue{\textbf{响应条件}}
+
+\concepttable{
+    \conrow{内部中断}{等到当前指令执行结束}
+    \conrow{\texttt{NMI}}{总线控制权在 CPU，等到当前指令结束}
+    \conrow{\texttt{INTR}}{IF=1（中断允许），无更高优先级请求，当前指令结束}
+}
+
+\hlblue{\textbf{CPU 中断响应微操作}}
+
+\concepttable{
+    \conrow{1. 保存现场}{将 FLAGS、CS、IP 依次压入堆栈}
+    \conrow{2. 清除 IF}{禁止响应其他可屏蔽中断，防止混乱}
+    \conrow{3. 清除 TF}{避免单步跟踪 ISR}
+    \conrow{4. 查表跳转}{根据中断类型号查向量表获得中断服务程序入口 CS:IP，跳转执行}
+}
+
+\hlblue{\textbf{程序结构}}
+
+\concepttable{
+    \conrow{保护现场}{手动 PUSH 需使用的寄存器（AX、BX 等）}
+    \conrow{开中断 (\texttt{STI})}{将 IF 置 1，允许中断嵌套}
+    \conrow{执行主体}{处理中断事件的具体代码}
+    \conrow{关中断 (\texttt{CLI})}{将 IF 置 0，保护恢复现场的原子性}
+    \conrow{恢复现场}{按压入顺序反向 POP 出所有寄存器}
+    \conrow{返回 (\texttt{IRET})}{弹出 IP、CS、FLAGS，返回主程序}
+}
+
+\subsubsection{中断的定义与优先级}
+
+\entry{定义}{
+    CPU 暂停正在执行的程序，转而执行处理中断事件的程序（中断服务程序），完成后自动返回继续原程序。
+}
+
+\concepttable{
+    \conrow{内部中断}{CPU 内部事件触发（如除法错、溢出）。}
+    \conrow{NMI（非可屏蔽）}{极重要的硬件异常，必须立即处理（如电源掉电、奇偶校验错）。}
+    \conrow{INTR（可屏蔽）}{一般硬件中断，可通过 IF 标志屏蔽（如键盘、硬盘 I/O）。}
+}
+
+\entry{中断优先级（高→低）}{内部中断 → NMI → INTR → 单步中断}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{\textbf{INTR（可屏蔽中断）}}
+    \concepttable{
+        \conrow{控制}{由标志寄存器 IF 控制。IF=1 允许，IF=0 屏蔽。}
+        \conrow{类型号}{8～255（由 8259A 提供）。}
+        \conrow{指令}{CLI 禁止，STI 允许。}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{\textbf{NMI（不可屏蔽中断）}}
+    \concepttable{
+        \conrow{类型号}{2。}
+        \conrow{特性}{不受 IF 控制，必须响应。}
+    }
+\end{minipage}
+
+\blue{\textbf{内部中断}}
+\concepttable{
+    \conrow{除法错（INT 0）}{除数为 0 或商溢出。}
+    \conrow{单步（INT 1）}{TF=1 时每条指令后触发（调试用）。}
+    \conrow{断点（INT 3）}{执行 INT 3 指令。}
+    \conrow{溢出（INT 4）}{执行 INTO 指令且 OF=1。}
+    \conrow{软中断（INT n）}{执行 INT n 指令。}
+}
+
+\hlgreen{\textbf{中断向量表}}
+
+\concepttable{
+    \conrow{位置}{物理地址 00000H～003FFH（1KB）。}
+    \conrow{结构}{256 个向量，每个占 4 字节。向量 n 的地址为 $4n$，存放中断服务程序入口 CS:IP。}
+    \conrow{布局}{地址 $4n$：IP 低字节；$4n+1$：IP 高字节；$4n+2$：CS 低字节；$4n+3$：CS 高字节。}
+}
+
+\subsubsection{中断响应过程}
+
+\entry{响应条件}{当前指令执行完毕且满足条件（INTR 则需 IF=1，内部中断无延迟）。}
+
+\entry{CPU 微操作}{
+    \concepttable{
+        \conrow{1. PUSHF}{将 FLAGS 压栈。}
+        \conrow{2. 清 IF/TF}{禁止中断嵌套与单步。}
+        \conrow{3. PUSH CS}{将代码段压栈。}
+        \conrow{4. PUSH IP}{将指令指针（断点）压栈。}
+        \conrow{5. 查表跳转}{读取向量表获 CS:IP，跳转至中断服务程序。}
+    }
+}
+
+\entry{中断服务程序框架}{
+    \begin{tabular}{@{}l@{}}
+    \texttt{PUSH AX, BX, CX, ...} \quad \textcolor{gray}{; 保护现场} \\
+    \texttt{STI} \quad \textcolor{gray}{; 允许嵌套中断（可选）} \\
+    \textcolor{gray}{; 中断处理逻辑} \\
+    \texttt{CLI} \quad \textcolor{gray}{; 禁止中断（恢复现场前）} \\
+    \texttt{POP CX, BX, AX, ...} \quad \textcolor{gray}{; 恢复现场} \\
+    \texttt{IRET} \quad \textcolor{gray}{; 返回（弹出 IP/CS/FLAGS）}
+    \end{tabular}
+}
+
+\entry{关键点}{IRET 自动弹出 IP→CS→FLAGS 三次，恢复程序现场；栈平衡至关重要。}
+
 
 \subsection{8259A 及其应用}
 \entry{8259A 特性}{\red{功能}：8259A 是一个功能很强的中断扩充和多中断管理芯片，具有\red{中断扩展}、\red{自动提供中断类型码}、\red{中断优先级裁决}等中断管理功能。\red{可编程}：内部有多个寄存器以及功能部件都是可编程的，使用方便。\red{级联扩展}：单片可连接\red{8 个中断请求源}，多片级联可扩展到\red{64 级中断}。通过编程可设置\red{中断触发方式}、\red{中断类型码}、\red{中断屏蔽方式}、\red{中断优先级方式}、\red{中断结束方式}等。}
@@ -3300,13 +4263,271 @@ OCW3 用于配置特殊屏蔽方式及查询模式。它与 OCW2 一样写入偶
     }
 }
 
+\subsection{习题解析}
+
+\entry{\green{作业 5-1}}{用74LS138译码器及其他门电路设计一个端口地址译码器，使CPU可以对以下地址范围
+寻址：740H~747H；750H~757H；758H~75FH；768H~76FH。}
+
+\entry{解}{当时画的图实在是太丑了，就不贴了，讲一下思路：
+
+要确定要寻址的地址的统一段，片选段和片内段，很容易能找到 3-5 是片选段，正好接给 74LS138 的 A0-A2；，剩下的使能位就使用剩下能用的高低引脚使能了，这题按理说应该是上一章的。}
+
+\entry{\green{作业 5-2}}{如图所示为7段显示器接口，显示器采用共阳极接法，试编写程序段，使AL中的一位十六进制数显示于显示器上。输出锁存器地址为40H。}
+
+\imgleft[0.3]{images/image-2026-01-12-19-24-50.png}{
+
+    \concepttable{
+        \conrow{建立查找表}{和实验课一样，建立一个查找表存放0-F对应的7段显示码（虽然只让写了程序段，但是还是最好提一下这个表的存在）。
+        \texttt{SEGMENT DATA} \par
+        \texttt{TABLE DB 3FH, 06H, 5BH, 4FH, 66H, 6DH, 7DH, 07H, 7FH, 6FH, 77H, 7CH, 39H, 5EH, 79H, 71H} \par
+        \texttt{SEGMENT ENDS}}
+        \conrow{程序段}{这题其实没那么复杂，不需要非要使用 8259A，只需要简单的读 AL，然后查表，最后输出到端口即可。\par
+        \texttt{MOV AL, [要显示的数]} \par
+        \texttt{AND AL, 0FH ; 取低4位} \par
+        \texttt{MOV BL, AL ; 保存索引} \par
+        \texttt{MOV SI, OFFSET TABLE} \par
+        \texttt{MOV AL, [SI + BX] ; 查表取显示码} \par
+        \texttt{OUT 40H, AL ; 输出到锁存器}}
+    }
+
+}
+
+\entry{注}{这个可以考前看一眼，避免对代码过于生疏}
+
+\entry{\green{作业 5-3}}{已知$(SP)=0100H$，$(SS)=0300H$，$(CS)=0900H$，$IP=00A2H$，$(PSW)=0240H$，以及00020H\~00023H单元的内容分别是40H、00H、00H和01H，求执行INT 8指令并进入该指令响应的中断例程时，$SP$、$SS$、$IP$、$CS$、$PSW$和堆栈最上面3个字的内容。}
+
+\entry{解}{
+
+CPU执行INT 8指令时，自动进行以下微操作：
+\concepttable{
+    \conrow{步骤 1}{将标志寄存器 FLAGS (PSW) 压入堆栈}
+    \conrow{步骤 2}{将指令指针 IP 压入堆栈}
+    \conrow{步骤 3}{将代码段寄存器 CS 压入堆栈}
+    \conrow{步骤 4}{查询中断向量表获得中断服务程序入口，更新 CS:IP}
+}
+
+\entry{栈指针变化}{
+    初始 $SP = 0100H$，每压入一个字 (16位) 减 2：
+    \concepttable{
+        \conrow{压入 PSW 后}{$SP_1 = 0100H - 2 = 00FEH$}
+        \conrow{压入 CS 后}{$SP_2 = 00FEH - 2 = 00FCH$}
+        \conrow{压入 IP 后}{$SP_3 = 00FCH - 2 = 00FAH$}
+    }
+    最终 \red{$SP = 00FAH$}。
+}
+
+\entry{堆栈内容分析}{
+    \concepttable{
+        \conrow{最上面第 1 个字 (00FAH)}{原 IP = \red{00A2H}}
+        \conrow{最上面第 2 个字 (00FCH)}{原 CS = \red{0900H}}
+        \conrow{最上面第 3 个字 (00FEH)}{原 PSW = \red{0240H}}
+    }
+}
+
+\entry{新的寄存器值}{
+    中断向量表位置：$4 \times 8 = 0020H$，存放 INT 8 的中断服务程序入口地址。
+    
+    题目给出 $00020H\sim 00023H$ 内容：\texttt{40H、00H、00H、01H}。
+    \concepttable{
+        \conrow{新 IP}{= 0040H（来自向量表低字）}
+        \conrow{新 CS}{= 0100H（来自向量表高字）}
+    }
+    
+    新 PSW：CPU 自动清除 IF 和 TF 位（禁止中断，退出单步模式）。
+    \concepttable{
+        \conrow{原 PSW}{= 0240H = 0000\ 0010\ 0100\ 0000B}
+        \conrow{清除 IF(位 9) 与 TF(位 8)}{= 0000\ 0000\ 0100\ 0000B = \red{0040H}}
+    }
+}
+
+\entry{最终答案}{
+    \concepttable{
+        \conrow{SP}{= \red{00FAH}}
+        \conrow{SS}{= \red{0300H}（不变）}
+        \conrow{CS}{= \red{0100H}（新）}
+        \conrow{IP}{= \red{0040H}（新）}
+        \conrow{PSW}{= \red{0040H}（新）}
+        \conrow{堆栈最上面 3 个字}{\red{00FAH} 处：00A2H | \red{00FCH} 处：0900H | \red{00FEH} 处：0240H}
+    }
+}
+
+}
+
+\entry{\green{作业 5-4}}{8088系统中只有一片8259A，端口地址为\red{02C0H}(偶)和\red{02C1H}(奇)。要求：
+\begin{itemize}
+    \item (1) 中断请求采用\red{电平触发}
+    \item (2) \red{IR$_7$}对应中断类型码\red{23H}
+    \item (3) 采用\red{缓冲器工作方式}
+    \item (4) 采用\red{普通EOI命令}（非自动）
+\end{itemize}
+}
+
+\entry{解答}{
+    \concepttable{
+        \conrow{ICW1 构造}{
+            \texttt{D7 D6 D5 D4} = \texttt{0001} (特征位 ICW1)；\quad
+            D3（LTIM）= \red{0}（电平触发）；\quad
+            D1（SNGL）= \red{1}（单片）；\quad
+            D0（IC4）= \red{1}（需要ICW4）\par
+            \red{控制字：00010011B = 13H}
+        }
+        \conrow{ICW2 构造}{
+            IR$_7$ 对应中断类型码 \red{23H}，即基值为 \red{16H}（23 = 16 + 7）\par
+            \red{ICW2 = 16H}
+        }
+        \conrow{ICW3 构造}{
+            单片工作（SNGL=1），无级联，ICW3 不写入
+        }
+        \conrow{ICW4 构造}{
+            D0（μPM）= \red{1}（8086/8088 模式）；\quad
+            D1（AEOI）= \red{0}（普通EOI）；\quad
+            D3（BUF）= \red{1}（缓冲模式）；\quad
+            D2（M/S）= \red{1}（作为主片）\par
+            \red{控制字：00001101B = 0DH}
+        }
+    }
+    
+    \blue{\textbf{汇编程序}}：
+    \begin{itemize}
+        \item \texttt{INTA0 EQU 02C0H \ \ ;偶地址端口（ICW1, OCW2, OCW3）}
+        \item \texttt{INTA1 EQU 02C1H \ \ ;奇地址端口（ICW2, ICW4, OCW1）}
+        \item \texttt{\ }
+        \item \texttt{MOV DX, INTA0 \ \ ;指向偶地址}
+        \item \texttt{MOV AL, 13H \ \ ;ICW1 = 13H}
+        \item \texttt{OUT DX, AL \ \ ;写入ICW1}
+        \item \texttt{\ }
+        \item \texttt{MOV DX, INTA1 \ \ ;指向奇地址}
+        \item \texttt{MOV AL, 16H \ \ ;ICW2 = 16H（基值）}
+        \item \texttt{OUT DX, AL \ \ ;写入ICW2}
+        \item \texttt{\ }
+        \item \texttt{MOV AL, 0DH \ \ ;ICW4 = 0DH}
+        \item \texttt{OUT DX, AL \ \ ;写入ICW4（DX仍为INTA1）}
+    \end{itemize}
+    
+    \entry{关键点}{
+        \concepttable{
+            \conrow{写入顺序}{\red{ICW1(偶) → ICW2(奇) → ICW4(奇)}}
+            \conrow{地址区分}{ICW1写偶地址；ICW2/ICW4写奇地址}
+            \conrow{基值计算}{中断类型码23 = 基值16 + IR位号7}
+        }
+    }
+}
+
+\entry{\green{作业 5-5}}{8259A 级联初始化编程}
+
+\entry{题目条件}{
+    \concepttable{
+        \conrow{主 8259A}{偶地址 20H，奇地址 21H；IR0 中断类型码 08H}
+        \conrow{从 8259A}{偶地址 0A0H，奇地址 0A1H；接至主 IR2；IR0 中断类型码 70H}
+        \conrow{触发方式}{边沿触发；所有中断请求均开启（IMR 清零）}
+        \conrow{EOI 方式}{普通 EOI 命令（非自动）}
+        \conrow{引脚配置}{SP/EN 用作输入（级联模式）}
+    }
+}
+
+\entry{初始化参数计算}{
+    
+    \noindent
+    \begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+        \blue{\textbf{主 8259A}}
+        \concepttable{
+            \conrow{ICW1}{
+                \red{00010001B}（LTIM=0 边沿；SNGL=0 级联；IC4=1）
+            }
+            \conrow{ICW2}{
+                \red{00001000B = 08H}（IR0→08H）
+            }
+            \conrow{ICW3}{
+                \red{00000100B = 04H}（IR2 有从片）
+            }
+            \conrow{ICW4}{
+                \red{00000001B = 01H}（μPM=1 为 8086 模式；AEOI=0 普通 EOI）
+            }
+        }
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.48\linewidth}\vspace{0pt}
+        \blue{\textbf{从 8259A}}
+        \concepttable{
+            \conrow{ICW1}{
+                \red{00010001B}（同主，边沿、级联、需 ICW4）
+            }
+            \conrow{ICW2}{
+                \red{01110000B = 70H}（IR0→70H）
+            }
+            \conrow{ICW3}{
+                \red{00000010B = 02H}（从片 ID=2，接主 IR2）
+            }
+            \conrow{ICW4}{
+                \red{00000001B = 01H}（同主）
+            }
+        }
+    \end{minipage}
+}
+
+\entry{汇编程序实现}{
+    
+    \noindent
+    \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+        \blue{\textbf{主 8259A 初始化}}
+        \vspace{5pt}
+        \begin{tabular}{@{}l@{}}
+        \texttt{MAIN\_ICW0 EQU 20H} \\
+        \texttt{MAIN\_ICW1 EQU 21H} \\[8pt]
+        \texttt{; 写 ICW1 (偶地址)} \\
+        \texttt{MOV AL, 11H} \\
+        \texttt{MOV DX, MAIN\_ICW0} \\
+        \texttt{OUT DX, AL} \\[8pt]
+        \texttt{; 写 ICW2 (奇地址)} \\
+        \texttt{MOV AL, 08H} \\
+        \texttt{MOV DX, MAIN\_ICW1} \\
+        \texttt{OUT DX, AL} \\[8pt]
+        \texttt{; 写 ICW3 (奇地址)} \\
+        \texttt{MOV AL, 04H} \\
+        \texttt{OUT DX, AL} \\[8pt]
+        \texttt{; 写 ICW4 (奇地址)} \\
+        \texttt{MOV AL, 01H} \\
+        \texttt{OUT DX, AL}
+        \end{tabular}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+        \blue{\textbf{从 8259A 初始化}}
+        \vspace{5pt}
+        \begin{tabular}{@{}l@{}}
+        \texttt{SLAVE\_ICW0 EQU 0A0H} \\
+        \texttt{SLAVE\_ICW1 EQU 0A1H} \\[8pt]
+        \texttt{; 写 ICW1 (偶地址)} \\
+        \texttt{MOV AL, 11H} \\
+        \texttt{MOV DX, SLAVE\_ICW0} \\
+        \texttt{OUT DX, AL} \\[8pt]
+        \texttt{; 写 ICW2 (奇地址)} \\
+        \texttt{MOV AL, 70H} \\
+        \texttt{MOV DX, SLAVE\_ICW1} \\
+        \texttt{OUT DX, AL} \\[8pt]
+        \texttt{; 写 ICW3 (奇地址)} \\
+        \texttt{MOV AL, 02H} \\
+        \texttt{OUT DX, AL} \\[8pt]
+        \texttt{; 写 ICW4 (奇地址)} \\
+        \texttt{MOV AL, 01H} \\
+        \texttt{OUT DX, AL}
+        \end{tabular}
+    \end{minipage}
+}
+
+\entry{核心要点}{
+    \concepttable{
+        \conrow{写入顺序}{主/从片均须遵循 \red{ICW1（偶）→ ICW2（奇）→ ICW3（奇）→ ICW4（奇）}。}
+        \conrow{地址区分}{ICW1 写偶地址端口；ICW2/ICW3/ICW4 写奇地址端口。}
+        \conrow{从片 ID 设定}{从片 ICW3 的低 3 位（\red{02H}）对应其在主片中的 IR 号（2）。}
+        \conrow{中断向量}{主 IR0=08H，从 IR0=70H；从片 IR1-7 对应 71H-77H。}
+    }
+}
 
 \section{第八章 常用接口技术}
 
-\subsection{8255A}
+\subsection{8255A（可编程并行接口）}
 
 \entry{8255 功能介绍}{
-        \red{8255} 是一种\red{可编程的并行通信接口芯片}，可用于 \red{CPU} 和外设之间进行并行数据传输。内部有\red{三个 8 位的数据端口}，有三种工作方式。端口号的 \red{A0A1} 为 \red{00}、\red{01}、\red{10} 分别表示读写 \red{A、B、C 口}；\red{11} 表示只写控制寄存器。
+        \red{8255} 是一种\red{可编程的并行通信接口芯片}，可用于 \red{CPU} 和外设之间进行并行数据传输。内部有\red{三个 8 位的数据端口（24 条 IO 线）}，有三种工作方式。端口号的 \red{A0A1} 为 \red{00}、\red{01}、\red{10} 分别表示读写 \red{A、B、C 口}；\red{11} 表示只写控制寄存器。
     }
 
 \imgleft[0.3]{images/image-2025-12-26-00-05-16.png}{
@@ -3314,23 +4535,91 @@ OCW3 用于配置特殊屏蔽方式及查询模式。它与 OCW2 一样写入偶
         指\red{多位数据同时进行传送}的方式，其特点是\red{传输速度快}。
     }
         \concepttable{
-            \conrow{方式 0}{基本的输入/输出方式，A/B/C 口均可用，C 口仅需设置方向。}
-            \conrow{方式 1}{选通的输入/输出方式，A/B 口可用，支持中断方式传输，C 口部分引脚用于控制和中断信号。}
-            \conrow{方式 2}{选通的双向传输方式，仅 A 口可用，支持双向传输和中断，C 口部分引脚用于控制和中断信号。}
+            \conrow{方式 0}{基本的输入/输出方式，\red{A/B/C 口均可用}，C 口仅需设置方向。}
+            \conrow{方式 1}{选通的输入/输出方式，\red{A/B 口可用}，支持中断方式传输，C 口部分引脚用于控制和中断信号。}
+            \conrow{方式 2}{选通的双向传输方式，\red{仅 A 口可用}，支持双向传输和中断，C 口部分引脚用于控制和中断信号。}
         }
         \concepttable{
             \conrow{A 口}{可工作在方式 0、1、2，方式 2 时支持双向传输。}
             \conrow{B 口}{可工作在方式 0、1，仅支持单向传输。}
-            \conrow{C 口}{只能工作在方式 0，高四位和低四位可分开使用，方式 1/2 时部分引脚用于控制和中断。}
+            \conrow{C 口}{只能工作在方式 0，\red{高四位和低四位可分开使用}，方式 1/2 时部分引脚用于控制和中断。}
         }
 }
-\red{方式 1、2}：选通输入输出方式，可以\red{中断方式传输}，且\red{C 口会固定的引脚用作控制联络信号和中断请求信号}。\par
-\red{仅 A 口工作在方式 2 时，可以双向传输}，A 口工作在方式 0、1 及 B、C 口只能单向传输。\par
-\entry{控制字}{
-    控制字分为端口的\red{方式选择控制字}（可使 8255 的 3 个数据端口工作在不同的方式）和 C 口的\red{按位置位和复位控制字}（可使 C 口的任意一位置位和复位）。
-    \red{★控制字送入的端口为最后一个端口}
+
+\subsubsection{芯片结构}
+
+\entry{硬件结构与端口寻址}{
+    \concepttable{
+        \conrow{数据总线 $D_7\sim D_0$}{双向三态8位线，CPU读取状态/写入控制字或传输数据。}
+        \conrow{控制信号}{$\overline{RD}$（读有效）、$\overline{WR}$（写有效）、$\overline{CS}$（片选有效）均为低电平有效。}
+        \conrow{复位信号 RESET}{高电平有效，\red{复位后所有端口置为输入方式。}}
+        \conrow{三个数据端口}{PA口、PB口、PC口各8位，与外设连接。}
+    }
 }
-\vspace{-0.3cm}
+
+\imgleft[0.3]{images/image-2026-01-12-14-47-41.png}{
+
+    \entry{地址线与端口选择（$A_1 A_0$）}{
+        \concepttable{
+            \conrow{00}{端口A}
+            \conrow{01}{端口B}
+            \conrow{10}{端口C}
+            \conrow{11}{控制寄存器（\red{只写不读}）}
+        }
+    }
+
+    \entry{端口分组结构}{
+        \concepttable{
+            \conrow{A组}{PA口 (8位) + PC高4位 ($PC_7\sim PC_4$)，支持方式0/1/2。}
+            \conrow{B组}{PB口 (8位) + PC低4位 ($PC_3\sim PC_0$)，支持方式0/1。}
+        }
+    }
+
+}
+
+\entry{PC口的双重功能}{
+    \concepttable{
+        \conrow{独立I/O}{可作为8位通用数据端口。}
+        \conrow{握手信号}{在方式1/2中，PC的部分引脚作为\red{中断请求、应答等控制信号}。}
+    }
+}
+
+\subsubsection{工作方式与控制字}
+
+\hlblue{\textbf{工作方式}}
+
+\concepttable{
+    \conrow{方式 0 — 基本 I/O}{
+        \textbf{适用}：A/B/C 口均可用；\textbf{特征}：无握手信号，不使用PC控制位；\textbf{应用}：同步传输或接入\red{简单外设}（LED、开关等）。
+    }
+    \conrow{方式 1 — 选通 I/O}{
+        \textbf{适用}：A/B 口可用；\textbf{特征}：带握手信号，PC的部分位用作选通($\overline{STB}$)、中断请求($INTR$)等控制信号；\textbf{应用}：\red{查询/中断方式}，用于速度不匹配或时序不确定的外设。
+    }
+    \conrow{方式 2 — 双向传送}{
+        \textbf{适用}：仅 A 口可用；\textbf{特征}：PA 双向传输，\red{需 5 个 PC 位作握手信号}；\textbf{应用}：高速双向传输，\red{查询/中断方式}。
+    }
+}
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+    \hlblue{\textbf{工作方式控制字}}
+    \concepttable{
+        \conrow{功能}{初始化芯片，\red{设定 A/B/C 口的工作方向与模式}。}
+        \conrow{写入时机}{程序启动时，一次性配置所有端口。}
+        \conrow{格式}{8 位数据，按位编码各口的工作方式（0/1/2）与 I/O 方向。}
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+    \hlblue{\textbf{PC 口按位操作控制字}}
+    \concepttable{
+        \conrow{功能}{对端口 C 的单个位（位 0--7）进行独立的置 1 或置 0。}
+        \conrow{应用场景}{方式 1/2 中通过软件改变控制信号电平（如中断允许）。}
+        \conrow{优势}{无需读-改-写整个端口，避免竞态。}
+    }
+\end{minipage}
+
+\hlblue{\textbf{工作方式控制字}}
+
 \begin{center}
 \begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
     % Draw 8 boxes for bits
@@ -3343,11 +4632,241 @@ OCW3 用于配置特殊屏蔽方式及查询模式。它与 OCW2 一样写入偶
     }
     % Value labels
     \node[red] at (0.5,0.85) {1};
-    % Draw a brace and label
-    \draw [decorate,decoration={brace,amplitude=4pt,mirror},thick] (0,0) -- (8,0) node[midway,below=4pt, font=\tiny] {方式控制字（8255A）};
+    % Function labels
+    \node at (3.5,0.85) {A向}; 
+    \node at (4.5,0.85) {C高向};
+    \node at (5.5,0.85) {B方式};  
+    \node at (6.5,0.85) {B向}; 
+    \node at (7.5,0.85) {C低向};
+    
+    % Braces
+    \draw [decorate,decoration={brace,amplitude=3pt},thick] (0,1) -- (1,1) node[midway,above=2pt] {特征};
+    \draw [decorate,decoration={brace,amplitude=3pt},thick] (1,1.5) -- (5,1.5) node[midway,above=2pt] {A组};
+    \draw [decorate,decoration={brace,amplitude=3pt},thick] (1,1) -- (3,1) node[midway,above=2pt] {A方式};
+    \draw [decorate,decoration={brace,amplitude=3pt},thick] (5,1.5) -- (8,1.5) node[midway,above=2pt] {B组};
+    
+    % Bottom label
+    \node at (4,-0.4) {8255A 工作方式控制字格式};
 \end{tikzpicture}
 \end{center}
- 
+
+\noindent
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+
+\entry{工作方式与端口方向设置}{
+    \concepttable{
+        \conrow{\texttt{D7} (特征位)}{必须为 \red{1}，标识该字为方式控制字（区别于端口C按位操作控制字）。}
+        \conrow{\texttt{D6 - D3} (A组)}{D6D5 确定工作方式：\red{00=方式0}；\red{01=方式1}；\red{1X=方式2}。\quad D4：PA方向。\quad D3：PC高4位方向}
+        \conrow{\texttt{D2 - D0} (B组)}{D2：工作方式(\red{0}=方式0，\red{1}=方式1)。\quad D1：PB方向。\quad D0：PC低4位方向}
+        \conrow{核心规则}{\red{1 = 输入}；\red{0 = 输出}}
+    }
+}
+
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+
+\entry{初始化编程示例}{
+    \concepttable{
+        \conrow{题目}{PA 输入 (方式0)；PB、PC 输出 (方式0)}
+        \conrow{分析}{A组：D6D5=00，D4=1，D3=0 $\to$ 10001 
+        \par
+        B组：D2=0，D1=0，D0=0 $\to$ 000 \par 完整控制字：\red{10001000B = 90H}}
+        \conrow{汇编}{
+            \texttt{MOV AL, 90H} \par
+            \texttt{OUT 63H, AL \ ;设 63H 为控制寄存器}
+        }
+    }
+}
+
+\end{minipage}
+
+\hlblue{\textbf{端口 C 按位操作控制字}}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.65, every node/.style={font=\tiny, inner sep=0pt}]
+    % Draw 8 boxes for bits
+    \foreach \i in {0,...,7} {
+        \draw (\i,0) rectangle ++(1,0.6);
+    }
+    % Bit labels (D7...D0)
+    \foreach \i/\b in {0/D7,1/x,2/x,3/x,4/D3,5/D2,6/D1,7/D0} {
+        \node at (\i+0.5,0.3) {\b};
+    }
+    % Value labels
+    \node[red] at (0.5,0.85){0};
+    % Function labels
+    \node at (7.5,0.85) {置位};
+    
+    % Braces
+    \draw [decorate,decoration={brace,amplitude=3pt},thick] (0,1) -- (1,1) node[midway,above=2pt] {特征};
+    \draw [decorate,decoration={brace,amplitude=3pt},thick] (4,1) -- (7,1) node[midway,above=2pt] {选择 C 口位};
+    
+    % Bottom label
+    \node at (4,-0.4) {8255A 端口 C 按位操作控制字格式};
+\end{tikzpicture}
+\end{center}
+
+\concepttable{
+    \conrow{D7（特征位）}{必须为 \red{0}，标识为端口C按位操作控制字。}
+    \conrow{D6-D4}{无关位（通常置0）。}
+    \conrow{D3-D1（位选择）}{3位二进制码选择 $PC_0 \sim PC_7$ 中的某一位；\red{000} 选 $PC_0$，\red{111} 选 $PC_7$。}
+    \conrow{D0（操作）}{\red{1}：该位置1（高电平）；\red{0}：该位清0（低电平）。}
+}
+
+\entry{应用}{
+    方式1/2中PC口部分引脚用作握手信号。通过此控制字可在不改变其他位的前提下，独立控制某一位电平，避免读-改-写竞态。例如置位PC4：\texttt{MOV AL, 09H（00001001B）; OUT 63H, AL}。
+}
+
+\hlblue{\textbf{PC 口按位操作编程实例}}
+
+\entry{需求}{8255A 基地址为 380H，要求对 PC7 置 1，PC3 清 0。}
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{PC7 置 1}{
+        \concepttable{
+            \conrow{控制字构造}{$D_7=0, D_3D_2D_1=111, D_0=1 \to \red{0FH}$}
+            \conrow{代码}{
+                \texttt{MOV DX, 383H} \par
+                \texttt{MOV AL, 0FH} \par
+                \texttt{OUT DX, AL}
+            }
+        }
+    }
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+    \entry{PC3 清 0}{
+        \concepttable{
+            \conrow{控制字构造}{$D_7=0, D_3D_2D_1=011, D_0=0 \to \red{06H}$}
+            \conrow{代码}{
+                \texttt{MOV DX, 383H} \par
+                \texttt{MOV AL, 06H} \par
+                \texttt{OUT DX, AL}
+            }
+        }
+    }
+\end{minipage}
+
+\entry{要点}{控制字必须写入\red{控制口（基地址+3）}，即使操作的目标是 PC 口引脚。}
+
+\subsubsection{工作方式 0}
+
+\entry{方式 0（基本 I/O）}{
+    \concepttable{
+        \conrow{特征}{
+            不需握手信号，CPU 假定外设随时就绪；适用于同步传送或简单外设（如 LED、开关）。
+        }
+        \conrow{独立性}{
+            A 口、B 口、C 高 4 位、C 低 4 位\red{可独立定义方向}（1 = 输入，0 = 输出）。
+        }
+        \conrow{控制字解析}{
+            示例 \texttt{93H = 1001 0011B}
+            D7=1（方式控制字）；D6D5=00（A 组方式0）；D4=1（PA 输入）；D3=0（PC 高4 输出）；D2=0（B 组方式0）；D1=1（PB 输入）；D0=1（PC 低4 输入）。
+        }
+    }
+}
+
+\hlblue{\textbf{方式 0 编程实例}}
+
+\entry{\green{例 1}}{8255A 占用 280H-287H 的奇地址，设定 PA 口为输入，PB 口为输出控制 LED 灯的亮灭。}
+
+总共分为三步：
+
+\imgleft[0.3]{images/image-2026-01-12-15-48-55.png}{
+
+    \concepttable{
+        \conrow{设计连接电路}{片选信号：根据 28XH 前缀，使用A3-A15，BHE（奇地址）和 MIO 信号通过反相器和与非门生成 $\overline{CS}$ 信号译码器，然后 A2 连接8255 的A1，A1 连接8255 的A0。}
+        \conrow{初始化}{我们以 PA 为开关输入，PB 为 LED 输出为例，设计控制字，并输出到 287H 端口。}
+        \conrow{数据传输}{读取 PA 口状态（281H），输出到 PB 口（283H）。}
+    }
+
+}
+
+\subsubsection{工作方式 1}
+
+\hlblue{\textbf{方式 1 输入}}
+
+将 PC 口征用为握手/中断信号线，A/B 端口用于数据传输，通信通过 STB/IBF/INTR 协同完成。
+
+\concepttable{
+    \conrow{\texttt{STB}}{方向：外设 → 8255A（输入）。\par \textbf{功能}：外设在准备好数据时发出选通脉冲；\texttt{STB} 的有效边沿（下降沿）用于锁存数据。}
+    \conrow{\texttt{IBF}}{方向：8255A → 外设（输出）。\par \textbf{功能}：8255A 在锁存后置位，通知外设“缓冲已满，请等待”；CPU 读出数据后由 8255A 清零。}
+    \conrow{\texttt{INTR}}{方向：8255A → CPU（输出）。\par \textbf{功能}：当 \texttt{STB} 完成且 \texttt{IBF} 为有效且内部中断使能（INTE=1）时置位，通知 CPU 读取端口数据；CPU 读操作后复位。}
+}
+
+\concepttable{
+    \conrow{A 组映射}{\texttt{PC4}=\texttt{STB\_A}（输入），\ \texttt{PC5}=\texttt{IBF\_A}（输出），\ \texttt{PC3}=\texttt{INTR\_A}（输出）。}
+    \conrow{B 组映射}{\texttt{PC2}=\texttt{STB\_B}（输入），\ \texttt{PC1}=\texttt{IBF\_B}（输出），\ \texttt{PC0}=\texttt{INTR\_B}（输出）。}
+}
+
+\entry{注意}{
+    \concepttable{
+        \conrow{中断使能}{内部的 \texttt{INTE} 为软件可控开关，须由软件置 1 才允许由 \texttt{INTR} 发起中断；即\red{中断发生需满足 \texttt{STB、IBF、INTE} 条件}。}
+    }
+}
+
+\concepttable{
+    \conrow{方式 1（输入）传输流程}{
+        \begin{enumerate}
+            \item 外设准备好数据，向 PC4 送出低电平 STB（选通信号）。
+            \item 8255 在 STB 有效时锁存数据到 PA。
+            \item 8255 将 IBF（PC5）置高，表示缓冲已满并阻止外设再送新数据；同时撤销 STB（变高）。
+            \item 在中断方式下，若 IBF=1 且中断允许，则 PC3 发出 INTR 给 CPU。
+            \item CPU 响应 INTR 后通过 RD 读出数据。
+            \item CPU 读出后，8255 将 IBF 清零（置低），准备进入下一轮传送。
+        \end{enumerate}
+    }
+}
+
+\hlblue{\textbf{方式 1 输出}}
+
+\concepttable{
+    \conrow{\texttt{OBF}}{表示数据已由 CPU 写入 8255，等待外设取走。}
+    \conrow{\texttt{ACK}}{外设发出的回执信号，表示已取走数据。}
+    \conrow{\texttt{INTR}（中断请求）}{8255 向 CPU 发出的中断请求信号。}
+}
+
+\concepttable{
+    \conrow{传输流程}{
+        CPU 在写周期（\(\overline{WR}\) 有效）将数据写入 8255 数据端口；8255 发出 OBF（PC7 置低）通知外设取数据；外设取走数据后反馈 ACK（PC6 低电平脉冲）；8255 撤销 OBF（PC7 置高），一次传输完成。
+    }
+    \conrow{OBF / ACK 含义}{
+        OBF（低电平）表示“请外设取数据”；在程序查询方式下亦作为 CPU 查询信号。ACK（低电平脉冲）表示外设已取走数据，向 8255 作应答。
+    }
+    \conrow{中断方式}{
+        在中断方式下，OBF 和 ACK 满足规定状态（原文：都为高电平）时，PC3 向 CPU 发出 INTR 信号；CPU 响应后即可开始下一轮数据输出。
+    }
+}
+
+\hlblue{\textbf{方式 1 编程实例}}
+
+这里的代码普遍挺长的，感觉应该不能考，理解工作过程即可。
+
+\subsubsection{工作方式 2}
+
+% 方式 2 — 双向传送（Bidirectional）
+\entry{概述}{
+    \concepttable{
+        \conrow{定义}{Port A 双向工作（既能输入又能输出），实质上将方式1 的选通输入与选通输出合并到同一端口，因此也就只需要 PA 端口工作即可。}
+    }
+}
+
+\concepttable{
+    \conrow{输入握手}{
+        \textbf{\(\overline{\text{STB}}\) (PC4)}：外设选通信号（低有效，外设表示数据已准备好）；\par
+        \textbf{IBF (PC5)}：输入缓冲器满（8255 发出，高电平有效），通知外设暂停发送，直至 CPU 取走数据。
+    }
+    \conrow{输出握手}{
+        \textbf{\(\overline{\text{OBF}}\) (PC7)}：输出缓冲器满（8255 发出，低电平有效），表示 CPU 已写入数据；\quad
+        \textbf{\(\overline{\text{ACK}}\) (PC6)}：外设应答（低电平有效），表示外设已取走数据。
+    }
+    \conrow{公共中断}{
+        \textbf{INTR (PC3)}：输入/输出共用的中断请求线。只要满足中断允许条件（INTE=1），输入缓冲器满或输出可接受新数据时均可经 PC3 向 CPU 请求中断；CPU 响应后需查询状态以区分事件类型。
+    }
+}
+
+由于 \texttt{PC7..PC3} 被 PA 占用，剩余资源为 Port B（8 位）及 \texttt{PC2..PC0}（低 3 位）。Port B 可独立设为方式0 或 方式1；\texttt{PC2..PC0} 在 B 为方式1 时作 B 的握手线，否则作普通 I/O 引脚。
+
 \subsection{8253}
 
 \entry{概述}{
@@ -4189,83 +5708,261 @@ OCW3 用于配置特殊屏蔽方式及查询模式。它与 OCW2 一样写入偶
     }
 }
 
-\newpage
+\subsection{习题解析}
 
-\green{此页开始收集整理作业题与教材（周杰英版）课后习题答案}
+\entry{\green{作业 6-1}}{8253通道2工作于方式3，输入时钟信号频率为1MHz，OUT引脚输出周期为10ms的方波。已知通道0的端口地址为3F0H，试编写该8253芯片的初始化程序段。}
 
-\section{第一章\ 微机概述}
+\entry{解（核心计算）}{
+方式 3 下输出周期满足：$T_{\text{out}}=N\cdot T_{\text{clk}}$。\par
+$T_{\text{clk}}=1/f_{\text{in}}=1\,\mu s$，故
+\[
+N=\frac{10\,\text{ms}}{1\,\mu s}=10000_{10}=2710_{\mathrm{H}}.
+\]
+端口：\texttt{CNT0=3F0H, CNT1=3F1H, CNT2=3F2H, CTRL=3F3H}。\par
+控制字：$SC=10,\ RL=11,\ M=011,\ BCD=0 \Rightarrow \texttt{B6H}$。
+}
 
-\section{第二章\ 微机结构}
+\entry{解（核心代码）}{
+\begin{tabular}{@{}l@{}}
+\texttt{MOV  AL, 0B6H} \quad \textcolor{gray}{; CNT2, 16位(先低后高), 方式3, 二进制} \\
+\texttt{OUT  3F3H, AL} \quad \textcolor{gray}{; 写控制字到控制口} \\
+\texttt{MOV  AX, 2710H} \quad \textcolor{gray}{; N=10000} \\
+\texttt{OUT  3F2H, AL} \quad \textcolor{gray}{; 写低8位 10H} \\
+\texttt{MOV  AL, AH} \\
+\texttt{OUT  3F2H, AL} \quad \textcolor{gray}{; 写高8位 27H} \\
+\end{tabular}
+}
 
-\section{第三章\ 80x86指令系统}
+\entry{\green{作业 6-2}}{假设有一片8253芯片，其端口地址为0FCH~0FFH，其CLK引脚输入的时钟信号周期为0.84μs。现用该8253芯片的计数器1，工作在方式2，产生周期为2ms的信号，试写出该8253芯片的初始化程序。}
 
-\section{第四章\ 汇编语言程序设计基础}
+\entry{解（核心计算）}{
+方式 2：$T_{\text{out}} = N\cdot T_{\text{clk}}$。\quad
+$T_{\text{clk}}=0.84\,\mu s$，$T_{\text{out}}=2\,ms$，
+\[
+N=\frac{2\,ms}{0.84\,\mu s}\approx 2381_{10}=094D_{\mathrm{H}}.
+\]
+端口：\texttt{CNT1=0FDH,\ CTRL=0FFH}；控制字：$SC=01,RL=11,M=010,BCD=0\Rightarrow$\ \texttt{74H}。
+}
 
-\newpage
+\entry{解（核心代码）}{
+\begin{tabular}{@{}l@{}}
+\texttt{MOV  AL, 74H} \quad \textcolor{gray}{; CNT1, 16位(先低后高), 方式2, 二进制}\\
+\texttt{OUT  0FFH, AL} \\
+\texttt{MOV  AX, 094DH} \quad \textcolor{gray}{; N=2381}\\
+\texttt{OUT  0FDH, AL} \quad \textcolor{gray}{; 低8位 4DH}\\
+\texttt{MOV  AL, AH} \\
+\texttt{OUT  0FDH, AL} \quad \textcolor{gray}{; 高8位 09H}\\
+\end{tabular}
+}
 
-\green{此页开始收集本人另找的习题解析与考研指导的习题}
+\entry{\green{作业 6-3}}{假设8253各端口的地址分别为40H~43H，若计数器0，OUT引脚输出频率为1kHz的连续方波信号；计数器1，每秒产生18.2次连续的方波信号；计数器2，每15.12μs输出一次连续的单脉冲信号。CLK时钟脉冲的频率为1.19MHz。对以上计数器通道进行初始化编程。}
 
-\section{第一章\ 微机概述}
-
-\section{第二章\ 微机结构}
-
-\section{第三章\ 80x86指令系统}
-
-\subsection{8086 的寻址方式}
-
-\entry{\green{试题 3-1-1}}{(西南交通大学2004年) 判断题：立即数寻址方式的操作数是在代码段中的，因此在执行指令的过程中也要执行总线周期。（ ）}
-
-\entry{分析}{考查立即数寻址方式的特点。}
-
-\entry{解答}{
-    \concepttable{
-        \conrow{定义}{立即数寻址方式下，操作数直接包含在指令中，它是一个 8 位或 16 位的常数，称为立即数。立即数在机器码中紧跟在操作码之后，存放在代码段内。}
-        \conrow{总线周期}{从存储器的代码段取指时，BIU 会执行取指的总线周期并把指令（含随后的立即数字节）送入指令队列。由于立即数是指令的一部分，由 BIU 的指令序列提供，\textbf{不需要另外单独占用总线周期}。}
-        \conrow{结论}{因此该判断命题是 \red{错误} 的。}
+\entry{解（核心计算）}{
+已知 $f_{\text{clk}}=1.19\,\text{MHz}$，则 $T_{\text{clk}}=\dfrac{1}{f_{\text{clk}}}\approx 0.840\,\mu s$。\par
+\concepttable{
+    \conrow{CNT0：$f_{out}=1\,\text{kHz}$ 方波（方式3）}{
+        方式3：$f_{out}=\dfrac{f_{\text{clk}}}{N}\Rightarrow N=\dfrac{1.19\times10^6}{10^3}=1190_{10}=04A6_{\mathrm{H}}$。
     }
+    \conrow{CNT1：$f_{out}=18.2\,\text{Hz}$ 方波（方式3）}{
+        $N=\dfrac{1.19\times10^6}{18.2}\approx 65385_{10}=FF69_{\mathrm{H}}$（取最接近整数）。
+    }
+    \conrow{CNT2：周期 $T_{out}=15.12\,\mu s$ 的连续单脉冲（方式2）}{
+        方式2：$T_{out}=N\cdot T_{\text{clk}}\Rightarrow N=\dfrac{15.12}{0.840}\approx 18_{10}=0012_{\mathrm{H}}$。
+    }
+}
+端口：\texttt{CNT0=40H, CNT1=41H, CNT2=42H, CTRL=43H}。\par
+控制字：\texttt{CNT0(方式3)} $\Rightarrow$ \texttt{36H}；\ \texttt{CNT1(方式3)} $\Rightarrow$ \texttt{76H}；\ \texttt{CNT2(方式2)} $\Rightarrow$ \texttt{B4H}。
+}
+
+\entry{解（核心代码）}{
+\begin{tabular}{@{}l@{}}
+\texttt{; CNT0: 1kHz 方波 (Mode 3), N=04A6H} \\
+\texttt{MOV  AL, 36H} \\
+\texttt{OUT  43H, AL} \\
+\texttt{MOV  AX, 04A6H} \\
+\texttt{OUT  40H, AL} \\
+\texttt{MOV  AL, AH} \\
+\texttt{OUT  40H, AL} \\
+\\
+\texttt{; CNT1: 18.2Hz 方波 (Mode 3), N=FF69H} \\
+\texttt{MOV  AL, 76H} \\
+\texttt{OUT  43H, AL} \\
+\texttt{MOV  AX, 0FF69H} \\
+\texttt{OUT  41H, AL} \\
+\texttt{MOV  AL, AH} \\
+\texttt{OUT  41H, AL} \\
+\\
+\texttt{; CNT2: 15.12us 周期单脉冲 (Mode 2), N=0012H} \\
+\texttt{MOV  AL, B4H} \\
+\texttt{OUT  43H, AL} \\
+\texttt{MOV  AX, 0012H} \\
+\texttt{OUT  42H, AL} \\
+\texttt{MOV  AL, AH} \\
+\texttt{OUT  42H, AL} \\
+\end{tabular}
 }
 
 
-\section{第四章\ 汇编语言程序设计基础}
+\entry{\green{作业 6-4}}{假设8253各端口的地址分别为40H~43H，CLK时钟信号频率为1MHz，若要计数器产生周期为1s的方波，请问使用一片8253如何达到目的？写出初始化程序。}
 
-\subsection{汇编语言的执行过程}
+\entry{解（核心思路）}{
+    单计数器最大初值仅 $65536$，在 $f_{clk}=1\,\text{MHz}$ 下无法直接得到 $1\,\text{s}$ 周期（需分频 $N=10^6$）。\par
+    用\red{一片8253内部两级级联分频}：\textbf{OUT0 $\rightarrow$ CLK1}。\par
+    取两级均为方式3（方波），令 $N_0=N_1=1000$，则总分频 $=1000\times1000=10^6$，最终得到 $1\,\text{Hz}$ 方波（周期 $1\,\text{s}$）。
+}
 
-\entry{\green{试题 4-1-1}}{(西安理工大学2004年) 说明 ASM 程序的作用。}
+\entry{解（核心计算）}{
+\[
+N=\frac{f_{in}}{f_{out}}=\frac{10^6}{1}=10^6,\qquad
+10^6=1000\times1000
+\]
+\[
+1000_{10}=03E8_{\mathrm{H}}
+\]
+控制字（均为方式3、16位先低后高、二进制计数）：
+\[
+\text{CNT0: }SC=00,RL=11,M=011 \Rightarrow \texttt{36H};\qquad
+\text{CNT1: }SC=01,RL=11,M=011 \Rightarrow \texttt{76H}.
+\]
+}
 
-\entry{分析}{考查汇编程序的汇编过程。}
+\entry{解（核心代码）}{
+\begin{tabular}{@{}l@{}}
+\texttt{; CNT0: Mode 3, N0=1000 = 03E8H (输出 1kHz 方波)} \\
+\texttt{MOV  AL, 36H} \\
+\texttt{OUT  43H, AL} \\
+\texttt{MOV  AX, 03E8H} \\
+\texttt{OUT  40H, AL} \\
+\texttt{MOV  AL, AH} \\
+\texttt{OUT  40H, AL} \\
+\\
+\texttt{; 硬件：OUT0 -> CLK1} \\
+\\
+\texttt{; CNT1: Mode 3, N1=1000 = 03E8H (输出 1Hz 方波, T=1s)} \\
+\texttt{MOV  AL, 76H} \\
+\texttt{OUT  43H, AL} \\
+\texttt{MOV  AX, 03E8H} \\
+\texttt{OUT  41H, AL} \\
+\texttt{MOV  AL, AH} \\
+\texttt{OUT  41H, AL} \\
+\end{tabular}
+}
 
-\entry{解答}{
+\entry{\green{作业 6-5}}{假设8255A芯片起始端口地址为60H，编写指令序列分别完成下列配置：}
+
+\noindent
+\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
+    \entry{(1)}{A/B组方式0；PB、PC输出；PA输入}
+    \vspace{5pt}
     \concepttable{
-        \conrow{定义与说明}{
-            汇编源程序是按严格的语法规则用汇编语言编写的程序,称为汇编语言源程序,简称为汇编源程序或源程序。8086指令系统中的每条指令都是构成源程序的基本语句。
+        \conrow{控制字}{90H}
+        \conrow{代码}{
+            \texttt{MOV AL, 90H} \par
+            \texttt{OUT 63H, AL}
         }
-        \conrow{汇编与链接流程}{
-            汇编语言的指令和机器语言的指令之间有一一对应的关系,但机器不能识别源程序,要通过汇编程序翻译成二进制代码的目标程序,然后由连接程序将目标文件与库文件相连,最后得到可执行的程序,才可在机器上直接运行。
+    }
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
+    \entry{(2)}{A组方式2；B组方式0；PB输出}
+    \vspace{5pt}
+    \concepttable{
+        \conrow{控制字}{0C0H}
+        \conrow{代码}{
+            \texttt{MOV AL, 0C0H} \par
+            \texttt{OUT 63H, AL}
         }
-        \conrow{MASM 与 ASM 的比较}{
-            8086常用的汇编程序有宏汇编程序MASM和小汇编程序ASM。宏汇编程序MASM是能够汇编含有宏指令和大量伪指令源程序的汇编程序,支持标号、表达式等,功能强,但占用更多的内存容量，MASM需96KB以上的内存支持。小汇编程序ASM的汇编能力有限,对于指令中的符号地址都不能汇编,ASM需要64KB的内存支持。
+    }
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
+    \entry{(3)}{A组方式1（PA输入、PC7/PC6输出）；B组方式1（PB输入）}
+    \concepttable{
+        \conrow{控制字}{0B6H}
+        \conrow{代码}{
+            \texttt{MOV AL, 0B6H} \par
+            \texttt{OUT 63H, AL}
         }
+    }
+\end{minipage}
+
+\entry{\green{作业 6-6}}{
+现要求用一个8255A作为终端机的接口。由PA通道输出字符到终端机的显示缓冲器，PB通道用于键盘输入字符，PC通道为终端状态信息输入通道。当PC0=1表示键盘输入字符就绪，PC7=0表示显示缓冲器已空。要求用查询方法把从键盘输入的每个字符都送到终端机的显示缓冲器上，当输入的是回车符时(ASCII码为0DH)则操作结束。假设该8255A芯片的端口地址为60H～63H，请编写包括8255A\red{初始化的输入/输出驱动程序}
+}
+
+\entry{\hlblue{\textbf{题目分析}}}{
+    \concepttable{
+        \conrow{PA口}{输出字符到显示缓冲器（\textbf{输出}）}
+        \conrow{PB口}{从键盘接收字符（\textbf{输入}）}
+        \conrow{PC口}{读取状态信息（\textbf{输入}）；\quad PC0=1：键盘就绪；\quad PC7=0：显示缓冲器已空}
+        \conrow{通信方式}{查询（轮询）方式，监测 PC0 直到获得就绪信号}
+        \conrow{终止条件}{输入的字符为回车符（\red{0DH}）时程序结束}
     }
 }
 
-\entry{\green{试题 4-1-2}}{(西安理工大学2005年) 说明 LINK 程序的作用。}
-
-\img{images/image-2026-01-11-17-55-35.png}
-
-\entry{分析}{考查汇编程序的汇编过程。}
-
-\entry{解答}{
+\entry{\hlblue{\textbf{初始化设置}}}{
     \concepttable{
-        \conrow{汇编产物}{
-            调用宏汇编程序MASM或小汇编程序ASM对源文件进行汇编,汇编程序对源文件进行两遍扫描,汇编后产生二进制目标文件(OBJ文件),但二进制目标文件(OBJ文件)仍然不可执行,必须经过连接,将它转换成EXE文件才可执行。
-        }
-        \conrow{LINK 的功能}{
-            连接程序为 \texttt{LINK.exe}, 它可以把多个模块连接在一起,这些模块可以是库文件或汇编程序产生的目标文件。
-        }
-        \conrow{生成的文件}{
-            执行 LINK 程序后产生两个文件,一个为可执行的 EXE 文件,另一个为 MAP 文件,它是连接映像文件,给出了每个段在存储器中的分配情况。
-        }
+        \conrow{PA口}{方式0、输出（\red{D4=0}）}
+        \conrow{PB口}{方式0、输入（\red{D1=1}）}
+        \conrow{PC口}{方式0、输入（\red{D0=1, D3=0}）}
+        \conrow{控制字值}{\red{\texttt{10001011B = 8BH}}}
     }
+}
+
+\entry{\hlblue{\textbf{汇编程序}}}{
+\noindent
+\begin{tabular}{|l|l|}
+\hline
+\textbf{地址定义} & \textbf{说明} \\
+\hline
+\texttt{COUNTA \ EQU 60H} & PA口地址（键盘输出） \\
+\texttt{COUNTB \ EQU 61H} & PB口地址（键盘输入） \\
+\texttt{COUNTC \ EQU 62H} & PC口地址（状态输入） \\
+\texttt{COUNTD \ EQU 63H} & 控制口地址 \\
+\hline
+\end{tabular}
+
+\vspace{8pt}
+
+\noindent
+\begin{tabular}{|l|l|}
+\hline
+\textbf{指令段} & \textbf{说明} \\
+\hline
+\multicolumn{2}{|l|}{\textbf{8255A初始化}} \\
+\hline
+\texttt{MOV AL, 8BH} & 控制字：PA输出, PB/PC输入 \\
+\texttt{MOV DX, COUNTD} & 加载控制口地址 \\
+\texttt{OUT DX, AL} & 写入控制字 \\
+\hline
+\multicolumn{2}{|l|}{\textbf{主循环：接收键盘输入}} \\
+\hline
+\texttt{AGAIN:} & 循环标号 \\
+\texttt{MOV DX, COUNTC} & 指向PC口（状态口） \\
+\texttt{IN AL, DX} & 读取状态信息 \\
+\texttt{TEST AL, 01H} & 检测PC0位（键盘输入就绪） \\
+\texttt{JZ AGAIN} & 若PC0=0，继续查询等待 \\
+\hline
+\multicolumn{2}{|l|}{\textbf{读取并处理字符}} \\
+\hline
+\texttt{MOV DX, COUNTB} & 指向PB口（键盘输入） \\
+\texttt{IN AL, DX} & 从键盘读取字符 \\
+\texttt{CMP AL, 0DH} & 与回车符(0DH)比较 \\
+\texttt{JZ DONE} & 若是回车符，程序结束 \\
+\hline
+\multicolumn{2}{|l|}{\textbf{输出到显示缓冲器}} \\
+\hline
+\texttt{MOV DX, COUNTA} & 指向PA口（显示输出） \\
+\texttt{OUT DX, AL} & 将字符输出到显示 \\
+\texttt{JMP AGAIN} & 返回，接收下一个字符 \\
+\hline
+\multicolumn{2}{|l|}{\textbf{程序结束}} \\
+\hline
+\texttt{DONE:} & 结束标号 \\
+\texttt{RET} & 返回调用程序 \\
+\hline
+\end{tabular}
+
 }
 
 % --- 手动换栏命令（如果需要强制换列）---

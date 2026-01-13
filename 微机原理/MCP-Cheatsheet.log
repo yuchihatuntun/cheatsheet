@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  11 JAN 2026 21:40
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  12 JAN 2026 21:55
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1132,157 +1132,191 @@ File: images/image-2026-01-11-00-26-13.png Graphic file (type bmp)
 <images/image-2026-01-11-00-26-13.png>
 File: images/image-2026-01-11-00-43-27.png Graphic file (type bmp)
 <images/image-2026-01-11-00-43-27.png>
+File: images/image-2026-01-12-11-14-43.png Graphic file (type bmp)
+<images/image-2026-01-12-11-14-43.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1412--1414
+Missing character: There is no ↔ (U+2194) in font [lmroman5-regular]:mapping=tex-text;!
+Missing character: There is no ↔ (U+2194) in font [lmroman5-regular]:mapping=tex-text;!
+
+Underfull \hbox (badness 10000) in paragraph at lines 1457--1457
+[][]\TU/PingFangSC(0)/b/n/5 不 能 直 接 将 立 即 数 写 入 段 寄 存 器[] |\TU/PingFangSC(0)/m/n/5 （须 经 通 用 寄 存 器：| \TU/lmtt/m/n/5 MOV
+ []
+
+File: images/image-2026-01-12-11-20-13.png Graphic file (type bmp)
+<images/image-2026-01-12-11-20-13.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1599--1599
+[]|[]\TU/lmtt/b/n/5 LFS / LGS / LSS
+ []
+
+File: images/image-2026-01-12-12-01-39.png Graphic file (type bmp)
+<images/image-2026-01-12-12-01-39.png>
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 1718--1720
 
  []
 
 File: images/image-2026-01-11-16-17-26.png Graphic file (type bmp)
 <images/image-2026-01-11-16-17-26.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1473--1473
+Underfull \hbox (badness 10000) in paragraph at lines 1779--1779
 []|\TU/PingFangSC(0)/m/n/5 高 位 运 算 将 低 位 进 位 纳 入 计 算：| \TU/lmtt/m/n/5 1357h +
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1492--1492
+Underfull \hbox (badness 10000) in paragraph at lines 1798--1798
 []|[]\TU/PingFangSC(0)/b/n/5 不 影 响 的 标
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1505--1508
+Underfull \hbox (badness 10000) in paragraph at lines 1811--1814
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1543--1543
+Underfull \hbox (badness 10000) in paragraph at lines 1849--1849
 []|\TU/lmtt/m/n/5 CMP Destination, Source  \TU/PingFangSC(0)/m/n/5 执 行
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1543--1543
+Underfull \hbox (badness 10000) in paragraph at lines 1849--1849
 \OML/cmm/m/it/5 Destination \OMS/cmsy/m/n/5 ^^@ \OML/cmm/m/it/5 Source$\TU/PingFangSC(0)/m/n/5 ，|  但 \TU/PingFangSC(0)/b/n/5 不
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1543--1543
+Underfull \hbox (badness 10000) in paragraph at lines 1849--1849
 []|\TU/PingFangSC(0)/m/n/5 仅 更 新 标 志 寄 存 器 以 供 条 件 转 移\TU/lmr/m/n/5 /\TU/PingFangSC(0)/m/n/5 判 断 使 用
  []
 
 
-Underfull \hbox (badness 5231) in paragraph at lines 1621--1621
+Underfull \hbox (badness 5231) in paragraph at lines 1927--1927
 []|[]\TU/PingFangSC(0)/b/n/5 字 乘 法  |（\TU/lmr/bx/n/5 16
  []
 
 File: images/image-2026-01-11-16-51-19.png Graphic file (type bmp)
 <images/image-2026-01-11-16-51-19.png>
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 1786--1786
+[4]
+File: images/image-2026-01-12-12-49-38.png Graphic file (type bmp)
+<images/image-2026-01-12-12-49-38.png>
+
+Overfull \hbox (0.75633pt too wide) in paragraph at lines 2151--2151
+[][] 
+ []
+
+
+Overfull \hbox (0.75633pt too wide) in paragraph at lines 2151--2151
+[][] 
+ []
+
+File: images/image-2026-01-12-12-50-49.png Graphic file (type bmp)
+<images/image-2026-01-12-12-50-49.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 2298--2298
 []|[]\TU/lmtt/b/n/5 REPE\TU/lmr/bx/n/5 /\TU/lmtt/b/n/5 REPZ\TU/lmr/bx/n/5 ,
  []
 
 
-Overfull \hbox (0.83119pt too wide) in paragraph at lines 1918--1918
+Overfull \hbox (0.83119pt too wide) in paragraph at lines 2430--2430
 []|[]\TU/lmtt/b/n/5 REPNE\TU/lmr/bx/n/5 /\TU/lmtt/b/n/5 REPNZ
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1918--1918
+Underfull \hbox (badness 10000) in paragraph at lines 2430--2430
 []|\TU/PingFangSC(0)/m/n/5 重 复 扫 描，|  \TU/PingFangSC(0)/b/n/5 先 判 后 执\TU/PingFangSC(0)/m/n/5 ：|  在 每 次 迭 代 前 检 查
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1947--1947
+Underfull \hbox (badness 10000) in paragraph at lines 2459--2459
 []|[]\TU/PingFangSC(0)/b/n/5 适 用 指
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1947--1947
+Underfull \hbox (badness 10000) in paragraph at lines 2459--2459
 []|[]\TU/PingFangSC(0)/b/n/5 循 环 逻
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1947--1947
+Underfull \hbox (badness 10000) in paragraph at lines 2459--2459
 []|[]\TU/PingFangSC(0)/b/n/5 退 出 条
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1947--1947
+Underfull \hbox (badness 10000) in paragraph at lines 2459--2459
 []|[]\TU/PingFangSC(0)/b/n/5 典 型 用
  []
 
 
-Overfull \hbox (1.30017pt too wide) in paragraph at lines 1947--1947
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 2459--2459
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1956--1956
+Underfull \hbox (badness 10000) in paragraph at lines 2468--2468
 []|[]\TU/PingFangSC(0)/b/n/5 适 用 指
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1956--1956
+Underfull \hbox (badness 10000) in paragraph at lines 2468--2468
 []|[]\TU/PingFangSC(0)/b/n/5 循 环 逻
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1956--1956
+Underfull \hbox (badness 10000) in paragraph at lines 2468--2468
 []|[]\TU/PingFangSC(0)/b/n/5 退 出 条
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1956--1956
+Underfull \hbox (badness 10000) in paragraph at lines 2468--2468
 []|[]\TU/PingFangSC(0)/b/n/5 典 型 用
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1956--1956
+Underfull \hbox (badness 10000) in paragraph at lines 2468--2468
 []|\TU/PingFangSC(0)/m/n/5 判 断 两 个 字 符 串 是 否 完 全 相
  []
 
 
-Overfull \hbox (1.30017pt too wide) in paragraph at lines 1956--1956
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 2468--2468
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1965--1965
+Underfull \hbox (badness 10000) in paragraph at lines 2477--2477
 []|[]\TU/PingFangSC(0)/b/n/5 适 用 指
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1965--1965
+Underfull \hbox (badness 10000) in paragraph at lines 2477--2477
 []|[]\TU/PingFangSC(0)/b/n/5 循 环 逻
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1965--1965
+Underfull \hbox (badness 10000) in paragraph at lines 2477--2477
 []|[]\TU/PingFangSC(0)/b/n/5 退 出 条
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1965--1965
+Underfull \hbox (badness 10000) in paragraph at lines 2477--2477
 []|[]\TU/PingFangSC(0)/b/n/5 典 型 用
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1965--1965
+Underfull \hbox (badness 10000) in paragraph at lines 2477--2477
 []|\TU/PingFangSC(0)/m/n/5 在 内 存 中 搜 索 某 值：| \TU/lmtt/m/n/5 REPNE
  []
 
 
-Overfull \hbox (1.30017pt too wide) in paragraph at lines 1965--1965
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 2477--2477
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2028--2028
+Underfull \hbox (badness 10000) in paragraph at lines 2540--2540
 []|[]\TU/lmr/bx/n/5 SHORT
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2036--2036
+Underfull \hbox (badness 10000) in paragraph at lines 2548--2548
 []|[]\TU/lmr/bx/n/5 NEAR
  []
 
@@ -1294,25 +1328,25 @@ File: images/image-2026-01-11-10-57-43.png Graphic file (type bmp)
 <images/image-2026-01-11-10-57-43.png>
 File: images/image-2026-01-11-10-58-08.png Graphic file (type bmp)
 <images/image-2026-01-11-10-58-08.png>
+[5]
 File: images/image-2026-01-11-11-12-37.png Graphic file (type bmp)
 <images/image-2026-01-11-11-12-37.png>
-[4]
 File: images/image-2026-01-11-11-39-34.png Graphic file (type bmp)
 <images/image-2026-01-11-11-39-34.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2240--2240
+Underfull \hbox (badness 10000) in paragraph at lines 2752--2752
 []|[]\TU/PingFangSC(0)/b/n/5 调 用 过 程
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2250--2250
+Underfull \hbox (badness 10000) in paragraph at lines 2762--2762
 []|[]\TU/PingFangSC(0)/b/n/5 返 回 过 程
  []
 
 File: images/image-2026-01-01-04-02-42.png Graphic file (type bmp)
 <images/image-2026-01-01-04-02-42.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2345--2345
+Underfull \hbox (badness 10000) in paragraph at lines 2859--2859
 []|\TU/PingFangSC(0)/m/n/5 计 算 机 硬 件 唯 一 能 直 接 识 别 并 执 行 的 语 言，|
  []
 
@@ -1321,35 +1355,51 @@ File: images/image-2026-01-11-10-06-20.png Graphic file (type bmp)
 File: images/image-2026-01-11-10-19-28.png Graphic file (type bmp)
 <images/image-2026-01-11-10-19-28.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2391--2391
+Underfull \hbox (badness 10000) in paragraph at lines 2905--2905
 []|[]\TU/lmtt/b/n/5 DATA
  []
 
 File: images/image-2026-01-11-10-19-57.png Graphic file (type bmp)
 <images/image-2026-01-11-10-19-57.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2402--2402
+Underfull \hbox (badness 10000) in paragraph at lines 2916--2916
 []|[]\TU/lmtt/b/n/5 CODE
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2958--2958
+[]|[]\TU/lmtt/b/n/5 MOV AX,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2966--2966
+[]|[]\TU/lmtt/b/n/5 MOV AX,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2966--2966
+\TU/lmtt/b/n/5 OFFSET
  []
 
 File: images/image-2026-01-11-17-22-18.png Graphic file (type bmp)
 <images/image-2026-01-11-17-22-18.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2454--2454
+Underfull \hbox (badness 10000) in paragraph at lines 3062--3062
 []|\TU/PingFangSC(0)/m/n/5 程 序 可 含 多 个 数 据 段；|  小 程 序 可 仅 用 寄 存
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2483--2483
+Underfull \hbox (badness 10000) in paragraph at lines 3091--3091
 []|\TU/PingFangSC(0)/m/n/5 例 如：| \TU/lmtt/m/n/5 STACK SEGMENT PARA STACK
  []
 
+[6]
 File: images/image-2026-01-11-17-25-51.png Graphic file (type bmp)
 <images/image-2026-01-11-17-25-51.png>
 File: images/image-2026-01-11-17-31-42.png Graphic file (type bmp)
 <images/image-2026-01-11-17-31-42.png>
-[5]
-Underfull \hbox (badness 10000) in paragraph at lines 2605--2605
+
+Underfull \hbox (badness 10000) in paragraph at lines 3215--3215
 []|[]$[]$\TU/PingFangSC(0)/b/n/5 、|
  []
 
@@ -1362,42 +1412,37 @@ File: images/image-2025-12-28-20-35-32.png Graphic file (type bmp)
 File: images/image-2025-12-28-20-38-15.png Graphic file (type bmp)
 <images/image-2025-12-28-20-38-15.png>
 
-Underfull \hbox (badness 5771) in paragraph at lines 2714--2714
+Underfull \hbox (badness 5771) in paragraph at lines 3324--3324
 []|\TU/lmr/m/n/5 CPU \TU/PingFangSC(0)/m/n/5 发 出 第 二 个 $[]$ 负 脉 冲，|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2714--2714
+Underfull \hbox (badness 10000) in paragraph at lines 3324--3324
 \TU/lmr/m/n/5 8259A \TU/PingFangSC(0)/m/n/5 将[]\TU/PingFangSC(0)/b/n/5 中 断 类 型 码[]\TU/PingFangSC(0)/m/n/5 送 往 数 据 总 线
  []
 
 
-Overfull \hbox (12.18823pt too wide) in paragraph at lines 2731--2731
+Overfull \hbox (32.18823pt too wide) in paragraph at lines 3420--3420
+ []|[][][][][][][] [][] 
+ []
+
+[7]
+Overfull \hbox (32.18823pt too wide) in paragraph at lines 3433--3433
  []|[][][][][][][] [][] 
  []
 
 
-Overfull \hbox (32.18823pt too wide) in paragraph at lines 2775--2775
+Overfull \hbox (17.34824pt too wide) in paragraph at lines 3441--3441
  []|[][][][][][][] [][] 
  []
 
 
-Overfull \hbox (32.18823pt too wide) in paragraph at lines 2788--2788
+Overfull \hbox (17.34824pt too wide) in paragraph at lines 3448--3448
  []|[][][][][][][] [][] 
  []
 
 
-Overfull \hbox (17.34824pt too wide) in paragraph at lines 2796--2796
- []|[][][][][][][] [][] 
- []
-
-
-Overfull \hbox (17.34824pt too wide) in paragraph at lines 2803--2803
- []|[][][][][][][] [][] 
- []
-
-
-Overfull \hbox (17.34824pt too wide) in paragraph at lines 2821--2821
+Overfull \hbox (17.34824pt too wide) in paragraph at lines 3466--3466
  []|[][][][][][][] [][] 
  []
 
@@ -1406,7 +1451,7 @@ File: images/image-2025-12-28-21-02-01.png Graphic file (type bmp)
 File: images/image-2025-12-28-21-12-23.png Graphic file (type bmp)
 <images/image-2025-12-28-21-12-23.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2850--2850
+Underfull \hbox (badness 10000) in paragraph at lines 3495--3495
 []|[]\TU/PingFangSC(0)/b/n/5 地 址\TU/lmr/bx/n/5 /\TU/PingFangSC(0)/b/n/5 片 选\TU/lmr/bx/n/5 /\TU/PingFangSC(0)/b/n/5 读 写
  []
 
@@ -1417,41 +1462,102 @@ File: images/image-2025-12-28-21-25-45.png Graphic file (type bmp)
 File: images/image-2025-12-28-21-46-21.png Graphic file (type bmp)
 <images/image-2025-12-28-21-46-21.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2893--2893
+Underfull \hbox (badness 10000) in paragraph at lines 3538--3538
 []|[]\TU/PingFangSC(0)/b/n/5 仅 利 用 部 分 高 位 地 址[]\TU/PingFangSC(0)/m/n/5 参 与 译 码。|  存 在 未 使 用 的  |“悬 空”|  地 址 线
  []
 
-[6]
+File: images/image-2026-01-12-21-19-18.png Graphic file (type bmp)
+<images/image-2026-01-12-21-19-18.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 3684--3684
+[]|[]\TU/PingFangSC(0)/b/n/5 地 址 总 线 位
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 3726--3726
+[]|[]\TU/PingFangSC(0)/b/n/5 地 址 空 间 占
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 3726--3726
+[]|[]\TU/PingFangSC(0)/b/n/5 传 输 开 销 增
+ []
+
+File: images/image-2026-01-12-19-45-32.png Graphic file (type bmp)
+<images/image-2026-01-12-19-45-32.png>
+[8]
 File: images/image-2025-12-25-20-04-51.png Graphic file (type bmp)
 <images/image-2025-12-25-20-04-51.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 2956--2956
+Underfull \hbox (badness 10000) in paragraph at lines 3919--3919
 []|[]\TU/PingFangSC(0)/b/n/5 寄 存 器 更 新  |（\TU/lmr/bx/n/5 ISR /
  []
 
 File: images/image-2026-01-11-20-00-44.png Graphic file (type bmp)
 <images/image-2026-01-11-20-00-44.png>
 
-Overfull \hbox (8.06874pt too wide) in paragraph at lines 3056--3067
+Overfull \hbox (8.06874pt too wide) in paragraph at lines 4019--4030
 [] 
+ []
+
+File: images/image-2026-01-12-19-24-50.png Graphic file (type bmp)
+<images/image-2026-01-12-19-24-50.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 4293--4293
+[]\TU/lmtt/m/n/5 TABLE DB 3FH, 06H, 5BH, 4FH, 66H, 6DH, 7DH, 07H,
+ []
+
+[9]
+Underfull \hbox (badness 10000) in paragraph at lines 4354--4354
+[]|[]\TU/PingFangSC(0)/b/n/5 最 上 面 第 \TU/lmr/bx/n/5 1 \TU/PingFangSC(0)/b/n/5 个 字
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 4354--4354
+[]|[]\TU/PingFangSC(0)/b/n/5 最 上 面 第 \TU/lmr/bx/n/5 2 \TU/PingFangSC(0)/b/n/5 个 字
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 4354--4354
+[]|[]\TU/PingFangSC(0)/b/n/5 最 上 面 第 \TU/lmr/bx/n/5 3 \TU/PingFangSC(0)/b/n/5 个 字
+ []
+
+Missing character: There is no μ (U+03BC) in font [lmroman5-regular]:mapping=tex-text;!
+
+Underfull \hbox (badness 10000) in paragraph at lines 4465--4465
+[]|[]\TU/lmr/bx/n/5 00010001B[] |\TU/PingFangSC(0)/m/n/5 （\TU/lmr/m/n/5 LTIM=0 \TU/PingFangSC(0)/m/n/5 边 沿；|
+ []
+
+Missing character: There is no μ (U+03BC) in font [lmroman5-regular]:mapping=tex-text;!
+
+Underfull \hbox (badness 10000) in paragraph at lines 4465--4465
+[]|[]\TU/lmr/bx/n/5 00010001B[] |\TU/PingFangSC(0)/m/n/5 （同 主，|  边 沿、|  级 联、|  需
  []
 
 File: images/image-2025-12-26-00-05-16.png Graphic file (type bmp)
 <images/image-2025-12-26-00-05-16.png>
-Missing character: There is no ★ (U+2605) in font [lmroman5-bold]:mapping=tex-text;!
-[7]
+File: images/image-2026-01-12-14-47-41.png Graphic file (type bmp)
+<images/image-2026-01-12-14-47-41.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 4663--4663
+[]|[]\TU/lmtt/b/n/5 D6 - D3
+ []
+
+File: images/image-2026-01-12-15-48-55.png Graphic file (type bmp)
+<images/image-2026-01-12-15-48-55.png>
+[10]
 Missing character: There is no ★ (U+2605) in font [lmroman5-regular]:mapping=tex-text;!
 File: images/image-2025-12-29-14-11-40.png Graphic file (type bmp)
 <images/image-2025-12-29-14-11-40.png>
 File: images/image-2025-12-29-14-06-37.png Graphic file (type bmp)
 <images/image-2025-12-29-14-06-37.png>
 
-Overfull \hbox (0.98149pt too wide) in paragraph at lines 3408--3408
+Overfull \hbox (0.98149pt too wide) in paragraph at lines 4927--4927
 [][] 
  []
 
 
-Overfull \hbox (0.6628pt too wide) in paragraph at lines 3588--3588
+Overfull \hbox (0.6628pt too wide) in paragraph at lines 5107--5107
 [][] 
  []
 
@@ -1465,13 +1571,13 @@ File: images/image-2025-12-29-15-43-06.png Graphic file (type bmp)
 <images/image-2025-12-29-15-43-06.png>
 File: images/image-2025-12-29-15-43-35.png Graphic file (type bmp)
 <images/image-2025-12-29-15-43-35.png>
-
-Overfull \hbox (1.88025pt too wide) in paragraph at lines 3755--3755
+[11]
+Overfull \hbox (1.88025pt too wide) in paragraph at lines 5274--5274
 []|[]\TU/lmr/bx/n/5 GATE=1[]| 
  []
 
 
-Overfull \hbox (1.88025pt too wide) in paragraph at lines 3755--3755
+Overfull \hbox (1.88025pt too wide) in paragraph at lines 5274--5274
 []|[]\TU/lmr/bx/n/5 GATE=0[]| 
  []
 
@@ -1481,18 +1587,18 @@ File: images/image-2025-12-31-18-55-24.png Graphic file (type bmp)
 <images/image-2025-12-31-18-55-24.png>
 File: images/image-2025-12-31-18-57-39.png Graphic file (type bmp)
 <images/image-2025-12-31-18-57-39.png>
-[8]
-Overfull \hbox (1.30017pt too wide) in paragraph at lines 3843--3843
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 5362--5362
 [][] 
  []
 
 
-Overfull \hbox (1.30017pt too wide) in paragraph at lines 3854--3854
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 5373--5373
 [][] 
  []
 
 
-Overfull \hbox (1.30017pt too wide) in paragraph at lines 3864--3864
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 5383--5383
 [][] 
  []
 
@@ -1501,41 +1607,41 @@ File: images/image-2025-12-31-20-50-11.png Graphic file (type bmp)
 File: images/image-2025-12-31-20-51-26.png Graphic file (type bmp)
 <images/image-2025-12-31-20-51-26.png>
 
-Overfull \hbox (1.88025pt too wide) in paragraph at lines 3896--3896
+Overfull \hbox (1.88025pt too wide) in paragraph at lines 5415--5415
 []|[]\TU/lmr/bx/n/5 GATE=1[]| 
  []
 
 
-Overfull \hbox (1.88025pt too wide) in paragraph at lines 3896--3896
+Overfull \hbox (1.88025pt too wide) in paragraph at lines 5415--5415
 []|[]\TU/lmr/bx/n/5 GATE=0[]| 
  []
 
 File: images/image-2025-12-31-20-56-48.png Graphic file (type bmp)
 <images/image-2025-12-31-20-56-48.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 3917--3917
+Underfull \hbox (badness 10000) in paragraph at lines 5436--5436
 []|[]\TU/PingFangSC(0)/b/n/5 前 半 周 期
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3917--3917
+Underfull \hbox (badness 10000) in paragraph at lines 5436--5436
 []|[]\TU/PingFangSC(0)/b/n/5 后 半 周 期
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3917--3917
+Underfull \hbox (badness 10000) in paragraph at lines 5436--5436
 []|\TU/PingFangSC(0)/m/n/5 高 低 电 平 宽 度 相 等，|  均 为 $\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 N\OT1/cmr/m/n/5 /2) \OMS/cmsy/m/n/5 ^^B
  []
 
 File: images/image-2025-12-31-21-02-18.png Graphic file (type bmp)
 <images/image-2025-12-31-21-02-18.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 3932--3932
+Underfull \hbox (badness 10000) in paragraph at lines 5451--5451
 []|[]\TU/PingFangSC(0)/b/n/5 第 一 阶 段
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3932--3932
+Underfull \hbox (badness 10000) in paragraph at lines 5451--5451
 []|[]\TU/PingFangSC(0)/b/n/5 第 二 阶 段
  []
 
@@ -1544,139 +1650,169 @@ File: images/image-2025-12-31-20-56-48.png Graphic file (type bmp)
 File: images/image-2025-12-31-21-02-18.png Graphic file (type bmp)
 <images/image-2025-12-31-21-02-18.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Overfull \hbox (1.2471pt too wide) in paragraph at lines 4153--4153
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 5672--5672
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Overfull \hbox (1.2471pt too wide) in paragraph at lines 4153--4153
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 5672--5672
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|\TU/PingFangSC(0)/m/n/5 输 入：|  来 自 计 数 器 \TU/lmr/m/n/5 1 ([]\TU/lmr/bx/n/5 1
  []
 
 
-Overfull \hbox (1.2471pt too wide) in paragraph at lines 4153--4153
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 5672--5672
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Overfull \hbox (1.2471pt too wide) in paragraph at lines 4153--4153
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 5672--5672
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|\TU/PingFangSC(0)/m/n/5 输 入：|  来 自 计 数 器 \TU/lmr/m/n/5 0
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 \TU/lmr/m/n/5 ([]\TU/lmr/bx/n/5 1 MHz[]\TU/lmr/m/n/5 )\TU/PingFangSC(0)/m/n/5 ；|  初 值：|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|\TU/PingFangSC(0)/m/n/5 输 入：|  来 自 计 数 器 \TU/lmr/m/n/5 1 ([]\TU/lmr/bx/n/5 1
  []
 
 
-Overfull \hbox (1.2471pt too wide) in paragraph at lines 4153--4153
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 5672--5672
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4153--4153
+Underfull \hbox (badness 10000) in paragraph at lines 5672--5672
 []|[]\TU/PingFangSC(0)/b/n/5 计 数 器
  []
 
 
-Overfull \hbox (1.2471pt too wide) in paragraph at lines 4153--4153
+Overfull \hbox (1.2471pt too wide) in paragraph at lines 5672--5672
 [][] 
  []
 
-[9] [10]
-File: images/image-2026-01-11-17-55-35.png Graphic file (type bmp)
-<images/image-2026-01-11-17-55-35.png>
- [11] (./MCP-Cheatsheet.aux)
+[12]
+Missing character: There is no μ (U+03BC) in font [lmroman5-regular]:mapping=tex-text;!
+Missing character: There is no μ (U+03BC) in font [lmroman5-regular]:mapping=tex-text;!
+
+Underfull \hbox (badness 10000) in paragraph at lines 5775--5775
+[]|[]\TU/lmr/bx/n/5 CNT0\TU/PingFangSC(0)/b/n/5 ：| $\OML/cmm/m/it/5 f[] \OT1/cmr/m/n/5 =
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5775--5775
+[]|[]\TU/lmr/bx/n/5 CNT1\TU/PingFangSC(0)/b/n/5 ：| $\OML/cmm/m/it/5 f[] \OT1/cmr/m/n/5 =
+ []
+
+
+Overfull \hbox (4.4218pt too wide) detected at line 5827
+[]\OML/cmm/m/it/5 SC \OT1/cmr/m/n/5 = 00\OML/cmm/m/it/5 ; RL \OT1/cmr/m/n/5 = 11\OML/cmm/m/it/5 ; M \OT1/cmr/m/n/5 = 011 \OMS/cmsy/m/n/5 ) []\OT1/cmr/m/n/5 ;  []\OML/cmm/m/it/5 SC \OT1/cmr/m/n/5 = 01\OML/cmm/m/it/5 ; RL \OT1/cmr/m/n/5 = 11\OML/cmm/m/it/5 ; M \OT1/cmr/m/n/5 = 011 \OMS/cmsy/m/n/5 ) []\OML/cmm/m/it/5 :
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 5863--5863
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 5875--5875
+[][] 
+ []
+
+
+Overfull \hbox (1.30017pt too wide) in paragraph at lines 5886--5886
+[][] 
+ []
+
+[13] (./MCP-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
@@ -1685,22 +1821,16 @@ L3 programming layer <2022/07/14>
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-Package rerunfilecheck Warning: File `MCP-Cheatsheet.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `MCP-Cheatsheet.out':
-(rerunfilecheck)             Before: 7BA7243952DD332ACBFF1F1AE3D7A142;13104
-(rerunfilecheck)             After:  1D42D2BACCF52699B1D7F0524500732B;13742.
+Package rerunfilecheck Info: File `MCP-Cheatsheet.out' has not changed.
+(rerunfilecheck)             Checksum: ED537950A524CD2C06DB0B14D7C10A83;14409.
  ) 
 Here is how much of TeX's memory you used:
- 28914 strings out of 473832
- 651962 string characters out of 5729481
- 1291254 words of memory out of 5000000
- 51423 multiletter control sequences out of 15000+600000
+ 29007 strings out of 473832
+ 655881 string characters out of 5729481
+ 1285666 words of memory out of 5000000
+ 51507 multiletter control sequences out of 15000+600000
  562640 words of font info for 75 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,16n,114p,646b,1299s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,16n,114p,586b,1373s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on MCP-Cheatsheet.pdf (11 pages).
+Output written on MCP-Cheatsheet.pdf (13 pages).
