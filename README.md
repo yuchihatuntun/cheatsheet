@@ -1,3 +1,1 @@
-# cheatsheet
-
-某人新建 repo 的时候不带脑子，把只建了一个 readme 的空仓库同步到本地了，自己在本地还没 备份，写了 3-4 天的东西全没了，幸亏latex是每编译一段时间就把原来的版本删除到废纸篓，才能一张张图找回文件。
+Cheatsheet-style review notes put together one month before each semester's exams by a 2023 SYSU MST student who rarely pays attention in class and loves to cram. If this helps you, please star the project!
