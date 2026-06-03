@@ -1,0 +1,173 @@
+\documentclass[10pt, a4paper, landscape]{article}
+
+% -------------------------------------------------
+% 宏包引入
+% -------------------------------------------------
+\usepackage[fontset=mac]{ctex}       % 中文支持
+\usepackage{multicol}   % 多分栏
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry} % 页面设置
+\usepackage{amsmath,amsthm,amsfonts,amssymb} % 数学公式
+\usepackage{color,graphicx,overpic} % 颜色与图片
+\usepackage{hyperref}   % 超链接
+\usepackage{enumitem}   % 列表环境控制
+\usepackage{titlesec}   % 标题控制
+\usepackage{bm}         % 加粗数学符号
+\usepackage{xcolor}
+\usepackage{tikz}       % 绘图
+\usetikzlibrary{decorations.pathreplacing, positioning} % 加载brace装饰库
+\usetikzlibrary{calc, positioning, arrows.meta, decorations.markings}
+\setCJKmainfont{PingFang SC}
+\setCJKsansfont{PingFang SC}
+\setCJKmonofont{PingFang SC}
+
+% -------------------------------------------------
+% 自定义颜色
+% -------------------------------------------------
+
+\definecolor{myblue}{HTML}{003153} % 蓝色字
+\definecolor{myred}{HTML}{85120F}  % 红色字
+\definecolor{mygreen}{HTML}{218254}  % 绿色字
+\definecolor{hlblue}{HTML}{ADC1DB} % 蓝色高亮
+\definecolor{hlred}{HTML}{D66A83}  % 红色高亮
+\definecolor{hlyellow}{HTML}{E3C79F}  % 奢金高亮
+\definecolor{hlgreen}{HTML}{BED49D}  % 抹茶绿高亮
+
+% -------------------------------------------------
+% 极限空间压缩设置 (核心部分)
+% -------------------------------------------------
+
+% 1. 页边距设置为极小 (0.5cm)
+\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm}
+
+% 2. 去掉段落首行缩进，改为段落间略微留空（可选，这里为了紧凑设为0）
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% 3. 设置正文基础字体大小为 scriptsize (约8pt)，如果还觉得大，可以改为 \tiny
+\renewcommand{\baselinestretch}{0.9} % 压缩行间距
+\let\oldfootnotesize\footnotesize
+\renewcommand{\footnotesize}{\fontsize{7pt}{8pt}\selectfont}
+
+% 4. 压缩列表环境 (Itemize/Enumerate) 的间距
+\setlist{nolistsep} 
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*}
+
+% 5. 压缩标题间距
+\titleformat{\section}{\bfseries\scriptsize\color{myblue}}{}{0em}{}[\hrule] % 标题带下划线，蓝色，省空间
+\titlespacing*{\section}{0pt}{2pt}{1pt} % 上方留2pt，下方留1pt
+\titleformat{\subsection}
+    [runin] % 不换行
+    {\bfseries\scriptsize} % 粗体、scriptsize，黑色字体
+    {} % 不显示编号
+    {0pt} % 标题与正文间距
+    {\hlyellow} % 用hlyellow高亮命令包裹标题
+    [] % 标题内容后无内容
+\titleformat{\subsubsection}
+    [runin] % 不换行
+    {\bfseries\tiny} % 粗体、scriptsize，黑色字体
+    {} % 不显示编号
+    {0pt} % 标题与正文间距
+    {\hlgreen} % 用hlgreen高亮命令包裹标题
+    [] % 标题内容后无内容
+\titlespacing*{\subsection}{0pt}{1pt}{0.5em} % 上方1pt,下方0.5em(水平间距)
+\titlespacing*{\subsubsection}{0pt}{1pt}{0.5em} % 上方1pt,下方0.5em(水平间距)
+
+% -------------------------------------------------
+% 自定义命令
+% -------------------------------------------------
+% 颜色字
+\newcommand{\red}[1]{\textbf{\textcolor{myred}{#1}}}  
+\newcommand{\blue}[1]{\textbf{\textcolor{myblue}{#1}}} 
+\newcommand{\green}[1]{\textbf{\textcolor{mygreen}{#1}}}
+\newcommand{\entry}[2]{$\bullet$ \textbf{#1}: #2\par\vspace{0.5pt}}
+% 高亮
+\newcommand{\cbox}[2][yellow]{\begingroup\setlength{\fboxsep}{1pt}\colorbox{#1}{\strut#2}\endgroup}
+\newcommand{\hlblue}[1]{\cbox[hlblue]{#1}}
+\newcommand{\hlred}[1]{\cbox[hlred]{#1}}
+\newcommand{\hlyellow}[1]{\cbox[hlyellow]{#1}}
+\newcommand{\hlgreen}[1]{\cbox[hlgreen]{#1}} 
+% 图片插入
+\newcommand{\img}[2][0.9\linewidth]{%
+    {\par\vspace{1pt}\centering\includegraphics[width=#1]{#2}\par\vspace{1pt}}%
+}
+% 左图右文 (参数: [图片宽度比例]{图片路径}{右侧文字内容})
+\newcommand{\imgleft}[3][0.3]{%
+    \noindent\begin{minipage}[t]{#1\linewidth}%
+        \vspace{0pt}%
+        \includegraphics[width=\linewidth]{#2}%
+    \end{minipage}%
+    \hfill%
+    \begin{minipage}[t]{0.98\linewidth - #1\linewidth}%
+        \vspace{0pt}%
+        #3%
+    \end{minipage}\par\vspace{2pt}%
+}
+% 左文右图 (参数: [图片宽度比例]{图片路径}{左侧文字内容})
+\newcommand{\imgright}[3][0.3]{%
+    \noindent\begin{minipage}[t]{0.98\linewidth - #1\linewidth}%
+        \vspace{0pt}%
+        #3%
+    \end{minipage}%
+    \hfill%
+    \begin{minipage}[t]{#1\linewidth}%
+        \vspace{0pt}%
+        \includegraphics[width=\linewidth]{#2}%
+    \end{minipage}\par\vspace{2pt}%
+}
+% -------------------------------------------------
+% 新增：概念速查表专用命令
+% -------------------------------------------------
+% 表格容器
+\newcommand{\concepttable}[1]{%
+    {\setlength{\tabcolsep}{1.5pt}% 局部减小列间距
+     \renewcommand{\arraystretch}{0.92}% 局部紧缩行距
+     \par\vspace{2pt}{\color{myblue}\hrule height 0.6pt}\vspace{1pt}% 上边框(蓝色,0.6pt粗)
+     \noindent\begin{tabular}{@{}p{0.22\linewidth}p{0.76\linewidth}@{}}%
+     #1%
+     \end{tabular}%
+     \vspace{1pt}{\color{myblue}\hrule height 0.6pt}\par\vspace{2pt}}% 下边框(蓝色,0.6pt粗)
+}
+% 表格行 (参数: {概念名}{解释})
+\newcommand{\conrow}[2]{\blue{#1} & #2 \\}
+
+
+
+
+% -------------------------------------------------
+% 正文
+% -------------------------------------------------
+\begin{document}
+
+\tiny
+
+% 三栏布局
+\begin{multicols*}{3}
+
+\section{第一章\ 平面晶体管技术}
+
+\imgleft[0.4]{images/image-2026-06-01-16-28-58.png}{
+    \entry{源漏重掺杂区（HDD, Heavily Doped Drain/Source）}{最外侧高浓度掺杂区，降低接触电阻，\textbf{\textcolor{myred}{实现优质欧姆接触}}，提升载流子注入/引出效率。}
+    \entry{源漏扩展区（Extension）}{HDD与沟道间的浅结中等掺杂区，缓解高场效应，抑制热载流子注入（HCI），保障导通连续性。}
+    \entry{表面沟道}{栅极垂直电场调控下形成的反型层区域，实现电子或空穴的高效输运。}
+    \entry{轻掺杂阱隔离}{阱区/衬底轻掺杂，增大源漏结耗尽层宽度，降低PN结寄生电容，提升高频响应，并增强垂直电场控制，抑制穿通效应，实现器件电学隔离。}
+    \entry{栅电极与栅介质}{共同构成MOS电容，栅介质厚度与介电常数决定静电调控能力。栅极功函数与沟道掺杂调节器件阈值电压（$V_{th}$）。}
+    \entry{侧墙（Spacer）}{栅极两侧绝缘结构，实现源漏注入的自对准掩膜。\textbf{\textcolor{myred}{精准分隔扩展区与重掺杂区，抑制杂质扩散，关键于短沟道效应控制}}。}
+}
+
+\section{第二章\ SOI\ MOS器件}
+
+\section{第三章\ 多栅MOS器件}
+
+\section{第四章\ 面向实际应用的器件}
+
+\section{第五章\ 存储器}
+
+% --- 手动换栏命令（如果需要强制换列）---
+% \columnbreak 
+
+\end{multicols*}
+
+\end{document}
