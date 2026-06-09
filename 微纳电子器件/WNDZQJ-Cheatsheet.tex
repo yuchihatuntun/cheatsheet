@@ -15,6 +15,9 @@
 \usepackage{titlesec}   % 标题控制
 \usepackage{bm}         % 加粗数学符号
 \usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{color} % 或 xcolor
 \usepackage{tikz}       % 绘图
 \usetikzlibrary{decorations.pathreplacing, positioning} % 加载brace装饰库
 \usetikzlibrary{calc, positioning, arrows.meta, decorations.markings}
@@ -133,8 +136,37 @@
 % 表格行 (参数: {概念名}{解释})
 \newcommand{\conrow}[2]{\blue{#1} & #2 \\}
 
+% 定义基于 X 列的自适应等宽列：L (左对齐) 和 C (居中对齐)
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
 
+% ==========================================
+% 智能满宽、均匀等分布对比表格环境 \compTable
+% 参数说明：
+%   [#1]: 可选参数，右侧对比列的格式，默认 C (居中且等宽)
+%   {#2}: 必填参数，表格的总列数 (数字)
+%   {#3}: 必填参数，表格的完整内容 (包括 header 和 row)
+% ==========================================
+\newcommand{\compTable}[3][C]{%
+    {\setlength{\tabcolsep}{6pt}% 适度保持列间距
+     \renewcommand{\arraystretch}{1.15}% 稍微舒展一点的行距
+     \par\vspace{3pt}{\color{myblue}\hrule height 0.8pt}\vspace{3pt}% 上边框
+     \noindent
+     \def\colsnum{#2}%
+     % 核心改动：改用 tabularx，宽度锁定为 \linewidth，使用 L 和 C 强制均匀平分列宽
+     \begin{tabularx}{\linewidth}{@{} L *{\numexpr\colsnum-1\relax}{#1} @{}}%
+         #3%
+     \end{tabularx}%
+     \vspace{2pt}{\color{myblue}\hrule height 0.8pt}\par\vspace{3pt}}% 下边框
+}
 
+% 泛用表格行 \comprow
+\newcommand{\comprow}[1]{#1 \\}
+
+% 专门的表头行 \compheader (自带下划线，不使用 \textbf 避免报错)
+\newcommand{\compheader}[1]{%
+    #1 \\ \noalign{\vspace{1.5pt}{\color{myblue}\hrule height 0.4pt}\vspace{2.5pt}}%
+}
 
 % -------------------------------------------------
 % 正文
@@ -148,6 +180,10 @@
 
 \section{第一章\ 平面晶体管技术}
 
+\subsection{平面晶体管结构}
+
+晶体管细分结构如下：
+
 \imgleft[0.4]{images/image-2026-06-01-16-28-58.png}{
     \entry{源漏重掺杂区（HDD, Heavily Doped Drain/Source）}{最外侧高浓度掺杂区，降低接触电阻，\textbf{\textcolor{myred}{实现优质欧姆接触}}，提升载流子注入/引出效率。}
     \entry{源漏扩展区（Extension）}{HDD与沟道间的浅结中等掺杂区，缓解高场效应，抑制热载流子注入（HCI），保障导通连续性。}
@@ -157,13 +193,494 @@
     \entry{侧墙（Spacer）}{栅极两侧绝缘结构，实现源漏注入的自对准掩膜。\textbf{\textcolor{myred}{精准分隔扩展区与重掺杂区，抑制杂质扩散，关键于短沟道效应控制}}。}
 }
 
+\subsection{尺寸缩小的设计方法}
+
+\subsection{平面晶体管性能增强技术}
+
 \section{第二章\ SOI\ MOS器件}
+
+\subsection{SOI 技术的演变}
+
+\subsection{SOI 器件结构}
+
+\subsection{SOI 器件特性}
+
+\subsection{SOI 器件增强技术}
 
 \section{第三章\ 多栅MOS器件}
 
+\subsection{FinFET 技术的发展}
+
+\subsection{FinFET 器件特性}
+
+\subsection{FinFET 结构设计}
+
+\subsection{围栅MOS器件（GAA, Gate-All-Around）}
+
 \section{第四章\ 面向实际应用的器件}
 
+\subsection{器件的涨落}
+
+\subsubsection{杂质随机分布(RDD)}
+
+\textbf{物理根源}：\textbf{\textcolor{myred}{离子注入与扩散在原子尺度离散随机}}。纳米尺度下（$L_g < 100\text{ nm}$）沟道耗尽层体积 $W \cdot L \cdot X_{dep}$ 极小，杂质原子总数 $N$ 降至数十至数百个。
+
+\entry{杂质数目统计}{服从泊松分布，$\sigma_N = \sqrt{N}$，相对涨落 $\frac{\sigma_N}{N} = \frac{1}{\sqrt{N}}$。$N$ 越小，涨落越大，相邻器件杂质数目出现显著微观差异。}
+
+\concepttable{
+    \conrow{杂质数目涨落}{沟道内杂质原子总数的统计起伏。}
+    \conrow{杂质位置涨落}{杂质原子在耗尽层内的具体坐标随机变化。}
+}
+
+RDD通过掺杂浓度 $N_A$ 的起伏\textbf{\textcolor{myred}{映射为阈值电压 $V_T$ 波动}}：
+$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} + \frac{K(2\phi_{FP})^{\frac{1}{2}}}{C_{ox}} + 2\phi_{FP}$$
+其中系数 $K \propto \sqrt{N_A}$，掺杂浓度的微观起伏直接传导至 $V_T$。
+
+\textbf{\hlblue{RDD 定量影响}}
+
+\entry{掺杂浓度相对涨落}{$\frac{\sigma_{N_A}}{N_A} \approx 2.4\%$}
+\entry{沟道杂质原子数相对起伏}{$\frac{\sigma_{n_a}}{n_a} \approx 2.3\%$}
+
+\imgleft[0.25]{images/image-2026-06-09-20-54-07.png}{
+$\sigma_{V_T}$（阈值电压标准差）随 $L_{eff}$ （有效栅长）缩小的演进：
+
+\concepttable{
+    \conrow{$L_{eff} = 0.5\,\mu\text{m}$}{$\sigma_{V_T} = 6.9\text{ mV}\ (\approx 1.4\%)$}
+    \conrow{$L_{eff} = 0.3\,\mu\text{m}$}{$\sigma_{V_T} = 10.6\text{ mV}\ (\approx 2.2\%)$}
+}
+
+\textbf{\textcolor{myred}{随 $L_{eff}$ 缩小，$\sigma_{V_T}$ 显著增大，分布（近高斯）变宽变矮}}，器件间性能离散度增加。影响 $\sigma_{V_T}$ 的设计变量还包括栅氧化层厚度、栅宽及掺杂浓度本身。
+}
+
+\textbf{\hlblue{$\sigma_{V_T}$ 对结构与工艺参数的依赖关系}}
+
+\concepttable{
+    \conrow{栅氧化层厚度 $t_{ox}$}{$t_{ox}\uparrow\ \Rightarrow\ \sigma_{V_T}\uparrow$。机理：$t_{ox}$ 增大 $\rightarrow$ $C_{ox}$ 减小 $\rightarrow$ 栅对沟道电荷控制减弱，微观电荷起伏对 $V_T$ 的调制放大。}
+    \conrow{器件面积 $W\times L$}{$WL\downarrow$（即 $1/\sqrt{LW}\uparrow$）$\Rightarrow$ $\sigma_{V_T}\uparrow$。机理：符合面积平方根倒数定律，\textbf{\textcolor{myred}{沟道内杂质原子绝对数越少，统计起伏越剧烈}}。}
+    \conrow{掺杂浓度 $N$}{$N\uparrow\ \Rightarrow\ \sigma_{V_T}\uparrow$（$\sigma_{V_T}\propto N^{1/4}$）。机理：耗尽区电荷总量随 $N$ 增大而增大，\textbf{\textcolor{myred}{绝对电荷涨落总量同步上升}}。}
+}
+
+\textbf{\hlblue{RDD 第二维度：杂质空间位置随机性}}
+
+\concepttable{
+    \conrow{控制变量}{固定沟道耗尽层内杂质原子数 $\equiv 170$}
+    \conrow{现象}{$V_T$ 仍从 $\sim 0.5\text{ V}$ 至 $\sim 0.8\text{ V}$ 宽幅离散}
+    \conrow{机理}{杂质靠近源端/漏端/沟道中心，局域静电势调制权重截然不同}
+    \conrow{结论}{\textbf{\textcolor{myred}{仅控制掺杂总数无法消除 $V_T$ 涨落，空间随机分布同等关键}}}
+}
+
+\textbf{\hlblue{RDD 对电路时序的影响}}
+
+\entry{传导机制}{$V_T$ 涨落 $\rightarrow$ $I_{on} \propto (V_{GS}-V_T)^\alpha$ 波动 $\rightarrow$ 负载电容充放电速度起伏 $\rightarrow$ \textbf{\textcolor{myred}{逻辑门延迟 5\%\textasciitilde15\% 离散}}。}
+
+\entry{受影响参数}{传播延迟 $t_{LH}$、$t_{HL}$，上升/下降时间 $t_r$、$t_f$。}
+
+\textbf{NAND/NOR 门 RDD 时序起伏仿真数据（单位：ps）}
+
+\compTable{5}{%
+    \compheader{参数 & $t_{HL}$ (Nom.) & $t_{HL}$ ($\sigma$) & $t_{LH}$ (Nom.) & $t_{LH}$ ($\sigma$)}
+    \comprow{NAND & 1.254 & 0.129 & 0.987 & 0.107}
+    \comprow{NOR  & 0.761 & 0.111 & 1.616 & 0.169}
+}
+
+\concepttable{
+    \conrow{NAND $t_r$/ $t_f$ 起伏}{$\sigma_{t_r} = 0.070\text{ ps}$，$\sigma_{t_f} = 0.056\text{ ps}$。}
+    \conrow{NOR 特征}{串联堆叠使 $t_{LH}$ 基数与波动均大于 NAND（$\sigma = 0.169\text{ ps}$），$t_{HL}$ 则相反。}
+}
+
+\entry{工程后果}{关键路径时序不确定性 $\rightarrow$ \textbf{\textcolor{myred}{时钟频率受限、时序收敛困难}}。}
+
+\textbf{\hlblue{逆向掺杂（减小杂质随机分布的措施）}}
+
+\entry{核心思路}{使表面处杂质掺杂浓度很低甚至不掺杂，而\textbf{\textcolor{myred}{在一定深度处增加一层高掺杂层来抑制泄漏电流}}}
+
+\imgleft[0.4]{images/image-2026-06-09-21-08-03.png}{
+    \textbf{逆向掺杂硼浓度剖面与 $V_T$ 分布改善（$0.25\,\mu\text{m}$ NMOS）}
+
+\concepttable{
+    \conrow{常规}{硼浓度 $\sim 10^{17}\text{ cm}^{-3}$ 平缓分布；$V_T$ 分布宽矮，$\sigma = 9.2\text{ mV}$。}
+    \conrow{逆向掺杂}{$0$--$0.04\,\mu\text{m}$ 表面区硼浓度 $< 10^{16}\text{ cm}^{-3}$；$> 0.04\,\mu\text{m}$ 深处陡升至 $10^{18}\text{ cm}^{-3}$ 量级。\textbf{\textcolor{myred}{$V_T$ 分布显著收窄}}，$\sigma = 3.3\text{ mV}$。}
+}
+}
+
+\subsubsection{线条边沿粗糙（LER）}
+
+\entry{线条边沿粗糙（LER）}{\textbf{\textcolor{myred}{栅极线条边沿的原子级不规则凹凸不平}}，导致沿栅宽 $W$ 方向局域实际栅长随机变异。}
+
+\imgleft[0.2]{images/image-2026-06-09-21-11-03.png}{
+
+\concepttable{
+    \conrow{理想版图}{栅极为规则直线矩形，具有均匀栅长 $L$ 与栅宽 $W$。}
+    \conrow{实际形貌}{光刻光子散粒效应与刻蚀离子轰击不均匀 $\rightarrow$ 边沿非陡直，\textbf{\textcolor{myred}{SEM 下呈现微观粗糙}}。}
+    \conrow{核心问题}{随器件尺寸缩小，LER 如何演变？$\rightarrow$ 工艺极限下的缩放规律。}
+}
+
+}
+
+\entry{工艺极限下 LER 的非比例缩放}{经厂商实验证明：\textbf{\textcolor{myred}{各工艺节点下 LER 绝对值基本保持在 $\sim 5\text{ nm}$ 不变}}。\textbf{\textcolor{myred}{栅 LER 不能按比例缩小}}。随 $L$ 持续微缩，LER 相对栅长占比急剧飙升，$5\text{ nm}$ 级粗糙度对沟道几何产生主导性破坏，导致器件参数剧烈涨落。}
+
+\textbf{\hlblue{LER 数学表征}}
+
+方均根值 $\Delta$（RMS）：
+
+$\Delta = \left( \frac{1}{n} \sum_{i=1}^n \delta_i^2 \right)^{\frac{1}{2}}$
+
+$\delta_i$：实际栅边沿与理想边沿的几何位置偏差；$n$：沿线条方向采样点数目。\textbf{\textcolor{myred}{工业界常用 $3\Delta$（3 倍 RMS）表征 LER}}，覆盖约 99.73$\%$ 统计波动。
+
+\imgleft[0.35]{images/image-2026-06-09-21-17-11.png}{
+
+\entry{从 LER 到 LWR（线宽粗糙度）}{MOSFET 沟道由\textbf{双侧}栅边缘共同定义，故引入线条宽度粗糙度（LWR）：$\Delta_{LWR} = \left[ \frac{1}{n} \sum_{i=1}^n (L_{gi} - L_g)^2 \right]^{\frac{1}{2}}$
+
+其中：$L_{gi}$：局域实际栅线条宽度；$L_g$：平均栅长（设计标称值）。}
+
+\textbf{双侧相关系数}：
+
+\concepttable{
+    \conrow{$\rho = 0$（最常见）}{两侧粗糙不相关，独立叠加：$\sigma_{LWR}^2 = 2\sigma_{LER}^2$。}
+    \conrow{$\rho = -1$（完全负相关）}{互补波浪状，线宽变异最大：$\sigma_{LWR}^2 = 4\sigma_{LER}^2$。}
+    \conrow{$\rho = 1$（完全正相关）}{整体弯曲但宽度恒定，线宽无起伏：$\sigma_{LWR}^2 = 0$。}
+}
+
+}
+
+\textbf{\hlblue{LER/LWR 对器件电学性能的影响}}
+
+\entry{尺寸依赖性}{参数标准差随 $W$ 减小而显著增大。}
+
+\entry{电学不对称响应}{\textbf{\textcolor{myred}{LER 对 $I_{on}$ 影响小，对 $I_{off}$ 影响显著}}。机理：$I_{on}$ 取决于沟道平均电阻（并联沟道的线性平均效应），局部栅长起伏被均值平抑；$I_{off}$ 与栅长呈指数反比（DIBL 在短栅长处加剧），LWR 导致局域栅长极度缩短处漏电流指数暴增，拉高整体 $I_{off}$。}
+
+\textbf{仿真数据（固定 $\bm{\sigma = 5.7\text{ nm}}$，不同 $W$）}
+
+\concepttable{
+    \conrow{$V_{tlin}$ $3\sigma$ 变异}{$W$: $10\,\mu\text{m}\rightarrow 0.050\,\mu\text{m}$，$0.311\%\rightarrow 5.03\%$。}
+    \conrow{$V_{tsat}$ $3\sigma$ 变异}{$W$: $10\,\mu\text{m}\rightarrow 0.050\,\mu\text{m}$，$1.40\%\rightarrow 20.0\%$。}
+    \conrow{$I_{off}$（$W=0.050\,\mu\text{m}$）}{均值 $31.08\rightarrow 60.13\text{ nA/}\mu\text{m}$，$3\sigma$ 变异 $141.0\%$。}
+    \conrow{$I_{on}$（$W=0.050\,\mu\text{m}$）}{均值 $768\,\mu\text{A/}\mu\text{m}$ 无偏移，$3\sigma$ 变异仅 $4.50\%$。}
+}
+
+\textbf{\hlblue{LER 对电学参数的量化影响}}
+
+\entry{阈值电压 $V_T$ 起伏}{$\sigma_{V_T}$ 随方均根涨落 $\Delta$ 单调上升；相同 $\Delta$ 下，$L=30\text{ nm}$ 的 $\sigma_{V_T}$ 斜率远高于 $L=50\text{ nm}$，表明\textbf{\textcolor{myred}{器件缩小剧烈放大 LER 对 $V_T$ 的扰动}}，并伴随 $V_T$ 降低效应。}
+
+\entry{关态电流 $I_{off}$ 起伏}{$\sigma_{\log_{10}I_{off}}$ 随 $\Delta$ 增大而上升，$V_D = 1.0\text{ V}$ 时波动远大于 $V_D = 0.1\text{ V}$。机理：高漏压下 DIBL 加剧，LER 致局域栅长极度缩短处势垒严重下陷，\textbf{\textcolor{myred}{局域漏电指数暴增}}。}
+
+\entry{开态电流 $I_{on}$ 对比}{$\sigma_{I_{on}}$ 虽随 $\Delta$ 上升，但斜率与幅度远小于 $I_{off}$，\textbf{\textcolor{myred}{印证 LER 对 $I_{off}$ 影响远大于 $I_{on}$}}。}
+
+\textbf{\hlblue{工艺解决方案：侧墙光刻技术}}
+
+\entry{原理}{以 ALD 薄膜厚度与各向异性刻蚀的物理边界定义图形，\textbf{\textcolor{myred}{避开传统光刻光子散射造成的边界畸变}}。}
+
+\concepttable{
+    \conrow{常规光刻}{光刻胶分子随机溶解度变异与化学放大胶随机扩散 → 栅边缘锯齿状畸变 → 不同断面 $L_g$ 空间变异剧烈，易诱发局域漏电。}
+    \conrow{侧墙光刻}{边缘由均匀薄膜沉积外延侧壁定义 → 沿栅宽方向 $L_g$ 高度一致，消除几何畸变引入的局域短沟道效应。}
+}
+
+\subsubsection{栅材料的功函数变化}
+
+\entry{物理机制}{金属栅（HK/MG）由随机取向晶粒构成，各晶向逸出功不同 → 栅平面内功函数 $\phi_M$ 空间不均匀，即 WKF。\textbf{\textcolor{myred}{由 $\phi_{MS} = \phi_M - \phi_S$，$\phi_M$ 局域波动直接传导至 $V_T$，引发 $\sigma_{V_T}$ 退化。}}}
+
+\entry{材料依赖性（栅面积 $(16\text{ nm})^2$）}{$\sigma_{V_{th}}$ 由低到高：$\text{TiN}\,(98\text{ mV}) < \text{TaN}\,(120\text{ mV}) < \text{WN}\,(157\text{ mV}) < \text{MoN}\,(295\text{ mV})$。\textbf{\textcolor{myred}{晶粒尺寸与晶向各向异性决定涨落敏感度}}。}
+
+\subsubsection{NMOS 与 PMOS 涨落源非对称性对比}
+
+NMOS 和 PMOS上拉电阻的涨落源非对称性对比：
+
+\concepttable{
+    \conrow{NMOS $\sigma_{V_{th}}$ 排序}{RDD（$43\text{ mV}$）$>$ PVE（$28\text{ mV}$）$>$ WKF（$24.7\text{ mV}$）。\textbf{\textcolor{myred}{沟道掺杂精度是 NMOS 一致性核心}}。}
+    \conrow{PMOS $\sigma_{V_{th}}$ 排序}{WKF（$73.6\text{ mV}$）$>$ RDD（$42.2\text{ mV}$）$>$ PVE（$27.6\text{ mV}$）。\textbf{\textcolor{myred}{栅极晶粒起伏是 PMOS 一致性核心}}。}
+}
+
+\textbf{\hlblue{电路级时序涨落对比}}
+
+\entry{瞬态波形离散}{200 晶体管样本仿真表明：$\sigma_{V_{th}}$ 离散引致 $t_f$、$t_r$、$t_{HL}$、$t_{LH}$ 开关沿发散，输出瞬态曲线在转换沿形成明显散布带。}
+
+\concepttable{
+    \conrow{RDD}{四项时序参数影响均衡，$\sigma \sim 0.08\!-\!0.13\text{ ps}$。}
+    \conrow{PVE}{四项时序参数离散均 $< 0.10\text{ ps}$，整体波动最低。}
+    \conrow{WKF（核心）}{对过渡时间 $t_r$、$t_f$ 波动极小（$< 0.07\text{ ps}$、$< 0.03\text{ ps}$）；\textbf{\textcolor{myred}{对传播延迟 $t_{HL}$、$t_{LH}$ 爆炸性增强，均 $> 0.20\text{ ps}$，远超 RDD 与 PVE 之和}}。}
+}
+
+\subsection{器件的可靠性}
+
+\textbf{核心定义}：器件在正常工作电场与温度下，因\textbf{\textcolor{myred}{老化（aging）}}引起微观结构不可逆物理病变，导致宏观参数随时间衰减，\textbf{\textcolor{myred}{关注排除早期制造缺陷后的长期退化规律}}。
+
+\entry{物理根源}{宏观电流衰减直接反映老化应力下 \textbf{\textcolor{myred}{$\Delta V_T > 0$（阈值电压正向漂移）或 $\mu_{eff}$（有效迁移率）严重退化}} 等微观病变。}
+
+\subsubsection{偏置温度不稳定性}
+
+\entry{BTI 定义}{高温且栅极承受较大偏压应力下，器件特性参数（核心为 $V_{th}$）发生漂移的现象。}
+
+\concepttable{
+    \conrow{触发条件}{高温 + 栅极大偏置电压（应力电场）。}
+    \conrow{极性分类}{\textbf{PBTI}（正偏压）：正栅压应力，主要对应 nFET。\ \textbf{NBTI}（负偏压）：负栅压应力，主要对应 pFET。}
+    \conrow{典型 NBTI 偏置状态}{pFET（n-well 上，$p^+$ 源漏）：源/漏/n-well/p-衬底接地，栅极施加负压 $V$。}
+    \conrow{核心电学特征}{应力阶段参数持续退化，恢复阶段出现松弛回漂。}
+}
+
 \section{第五章\ 存储器}
+
+\subsection{存储器概述}
+
+存储层次结构源于\textbf{单一介质无法兼顾高速与高密度}，故引入金字塔型层次。\textbf{\textcolor{myred}{从顶端到底端：速度递减、容量递增、每比特成本递减}}。
+
+\concepttable{
+    \conrow{Processing}{访问时间 $\sim$ 1ns，基准（Size: 1x, Latency: 1x）。}
+    \conrow{Memory}{DRAM/NVDIMM 延迟 $\sim$ 10ns（Size: 10x, Latency: 100x）。}
+    \conrow{SCM}{介于DRAM与SSD间（Size: 100x, Latency: 1,000x），\textbf{\textcolor{myred}{填补主存与外存性能鸿沟}}。}
+    \conrow{Storage}{SSD延迟 $\sim$ 100,000x；HDD $\sim$ 10ms（Latency: 10,000,000x）。}
+}
+
+主存与外存间存在数个数量级的延迟断层，此即驱动SCM及新型非易失性存储器（RRAM、MRAM等）发展的根本原因。
+
+存储器分类基于\textbf{\textcolor{myred}{物理特性（易失性/非易失性）和工作原理}}：
+
+\concepttable{
+    \conrow{挥发随机存储器（DRAM、SRAM）}{断电数据消失，随机地址读写，位于层次金字塔上部。}
+    \conrow{不挥发性存储器（Flash）}{断电不丢失，ROM$\rightarrow$PROM$\rightarrow$EPROM$\rightarrow$E$^2$PROM$\rightarrow$\textbf{Flash}（SSD主力），擦写速度慢。}
+    \conrow{新型非易失性存储器}{结合RAM高速与ROM非易失性，SCM层候选：\textbf{CTM}、\textbf{FeRAM}、\textbf{MRAM}、\textbf{PRAM}、\textbf{RRAM}。}
+}
+
+发展脉络：$ROM \rightarrow PROM \rightarrow EPROM \rightarrow E^2PROM \rightarrow Flash$
+
+% 4列对比（表格会自动计算 1个左对齐 + 3个居中对齐）
+\compTable{4}{%
+    \compheader{维度 & DRAM & SRAM & Flash}
+    \comprow{晶体管数 & 1T+1C & 6T & 1T}
+    \comprow{Cell Size & 6-12 $F^2$ & 50-80 $F^2$ & ---}
+    \comprow{读/写时间 & 50ns & 8ns / 8ns & 1us / 1-100ms}
+    \comprow{耐久性 & $\infty$ & $\infty$ & $>10^5$}
+    \comprow{缩放瓶颈 & 电容保持 & 漏电 & EOT}
+}
+
+新型非易失存储器横向对比：
+
+% 5列对比（表格会自动计算 1个左对齐 + 4个居中对齐）
+\compTable{5}{%
+    \compheader{维度 & FeRAM & MRAM & PRAM & \textbf{\textcolor{myred}{RRAM}}}
+    \comprow{非易失性 & $\circ$ & $\circ$ & $\circ$ & $\circ$}
+    \comprow{晶体管数 & 1T & 1T & 1T & 0$\sim$1T}
+    \comprow{擦写时间 & --- & --- & --- & 10ns/30ns}
+    \comprow{读时间 & --- & --- & --- & 20ns}
+    \comprow{Cell Size & --- & --- & --- & 4 $F^2$}
+    \comprow{Endurance & --- & $\infty$ & --- & $\sim10^9$}
+}
+
+RRAM 优势：擦写电压/功耗低，速度接近SRAM/DRAM，4 $F^2$极限缩放（受限于光刻），CMOS兼容性好（BEOL），局限：Endurance $\sim10^9$劣于MRAM（$\infty$）和DRAM。
+
+\imgleft[0.4]{images/image-2026-06-06-20-52-05.png}{
+    \concepttable{
+        \conrow{单元阵列}{基本存储单元按行列矩阵排列，\textbf{\textcolor{myred}{存储核心}}。}
+        \conrow{地址输入缓冲器}{接收 $A_0,A_1,\dots,A_n$，\textbf{行/列地址分时复用}同一引脚锁存，减少管脚数。}
+        \conrow{行译码器 / 列译码器}{行地址 $\rightarrow$ 激活字线（WL）选中整行；列地址 $\rightarrow$ 控制位线（BL）开关定位目标单元。}
+        \conrow{数据 I/O 缓冲器}{衔接 $D_{\text{in}}/D_{\text{out}}$ 总线，对微弱读写信号放大、锁存、整形驱动。}
+        \conrow{时钟与控制电路}{接收 $\overline{\text{WE}}$, $\overline{\text{CE}}$, $\overline{\text{RAS}}$, $\overline{\text{CAS}}$，产生内部时序协调各模块。}
+    }
+}
+
+\subsection{挥发性存储器}
+
+\subsubsection{DRAM}
+
+\textbf{\hlblue{1T1C结构}}
+
+\imgleft[0.25]{images/image-2026-06-06-21-12-01.png}{
+    \entry{WL（字线）}{接栅极，控制MOS管导通/截止。}\entry{BL（位线）}{接源/漏区，负责数据输入输出。}\entry{PL（极板线）}{与存储电容$C_s$顶部连接。}$C_s = A_s(C_{ox}+C_j) \approx A_s C_{ox}$，\textbf{\textcolor{myred}{氧化层极薄故$C_{ox}\gg C_j$}}。
+    
+    \textbf{读写}：WL高$\to$MOS导通$\to$BL与电容连通，电荷转移。
+    
+    \textbf{保持}：WL低$\to$MOS截止$\to$电荷隔离存储。
+}
+
+\textbf{\textcolor{myred}{"动态"物理根源}}：DRAM存"1"时pn结反偏$\to$反向泄漏电流$I_{leak}$致电容电荷流失、电平衰退，须周期性刷新。
+
+\imgleft[0.25]{images/image-2026-06-06-21-17-12.png}{
+\concepttable{
+    \conrow{存"0"}{自然稳定态：反型层与p型衬底无外部电压，仅存自建电势$V_{bi}$，系统平衡。}
+    \conrow{存"1"}{非平衡态：反型层带电荷，pn结反偏。}
+    \conrow{保持时间}{$t_h = \dfrac{0.2 V_{S1} C_s}{I_{leak}}$，\textbf{\textcolor{myred}{$C_s$越大、$I_{leak}$越小则保持越久}}；系数0.2为允许电压衰减裕度。}
+}
+}
+
+\textbf{\hlblue{读操作与电荷共享}}
+
+\noindent\textbf{流程}：BL预充至$V_R$ $\to$ WL拉高 $\to$ $C_B$与$C_s$连通 $\to$ 电荷共享，电平趋于一致。
+
+\imgleft[0.4]{images/image-2026-06-08-20-48-14.png}{
+
+\concepttable{
+    \conrow{读"0"终态}{$V_{B0} = \dfrac{C_B V_R + C_s V_{S0}}{C_B + C_s}$，检测量 $\Delta V_0 = V_R - V_{B0}$。}
+    \conrow{读"1"终态}{$V_{B1} = \dfrac{C_B V_R + C_s V_{S1}}{C_B + C_s}$，检测量 $\Delta V_1 = V_{B1} - V_R$。}
+}
+
+\noindent\textbf{两大致命问题}：
+\begin{itemize}
+    \item \textbf{读出信号微弱}：$C_B \gg C_s$ $\Rightarrow$ \textbf{\textcolor{myred}{$\Delta V$极小，后续电路难以识别}}。
+    \item \textbf{破坏性读出}：读后$C_s$电压变为中间电平$V_{B0}$/$V_{B1}$，原存储数据丢失。
+\end{itemize}
+
+}
+
+\textbf{\hlblue{灵敏再生放大器（S/R）:}}
+
+\noindent 解决读出信号微弱与破坏性读出两大问题。\textbf{结构}：交叉耦合反相器（两对PMOS+NMOS）构成\textbf{\textcolor{myred}{双稳态触发器}}。
+
+\concepttable{
+    \conrow{放大}{将微弱$\Delta V$放大至满幅逻辑电平（$V_{DD}$或GND）。}
+    \conrow{再生（回写）}{放大信号立即写回$C_s$，恢复原存储数据，解决破坏性读出。}
+}
+
+\noindent\textbf{传输特性}：横轴$\Delta V_{in}$，纵轴$\Delta V_{out}$。即使$\Delta V_{in}$极小，放大器亦能迅速拉伸至$\sim V_{DD}$，\textbf{\textcolor{myred}{增益极高、再生能力强}}。
+
+\noindent\textbf{阵列差分工作（差分输入放大器）}：
+
+\imgleft[0.4]{images/image-2026-06-08-20-55-48.png}{
+
+\concepttable{
+    \conrow{差分结构}{BL与$\overline{BL}$配对；读前均预充至$V_R = \frac{V_{S1} + V_{S0}}{2}$（公正比较基准）。}
+    \conrow{信号差}{选通$WL_i$：$C_s$与BL电荷共享，BL变，$\overline{BL}$保持$V_R$。
+    $\Delta V_1 = V_{B1} - V_R = \frac{C_s}{C_s + C_B}(V_{S1} - V_R),\quad
+      \Delta V_0 = V_R - V_{B0} = \frac{C_s}{C_s + C_B}(V_R - V_{S0})$
+    \textbf{\textcolor{myred}{信号大小受制于传输比$\frac{C_s}{C_s+C_B}$}}。}
+    \conrow{判决与再生}{S/R感知$\Delta V_1$或$\Delta V_0$后，正反馈迅速拉伸至电源轨，完成逻辑判决并回写$V_{S1}$/$V_{S0}$。}
+}
+
+}
+
+\textbf{\hlblue{设计要求与核心矛盾}}
+
+\concepttable{
+    \conrow{传输效率（性能优值）}{$T = \dfrac{\Delta V_B}{\Delta V_S} = \dfrac{1}{1 + \frac{C_B}{C_S}}$；$C_B$越小或$C_s$越大则$T\to1$，读出信号越强。}
+    \conrow{单元面积（密度优值）}{$A_{cell} = NF^2$（$F$为特征尺寸/最小布线间距之半，$N$为常数）；提升容量须不断缩小$N$与$F$。}
+    \conrow{\textcolor{myred}{核心矛盾}}{面积缩小$\to$存储电极面积减小$\to C_s$减小$\to T$降低$\to$读出信号微弱至S/R无法识别。}
+}
+
+\noindent\textbf{后续演进目标}：在面积缩小的同时维持/提升$C_s$。
+
+\textbf{\hlblue{MB 及 GB级 DRAM}}
+
+见课件「第六讲-1」P21-28，这里暂不整理。
+
+\textbf{\hlblue{DRAM 的刷新}}
+
+\concepttable{
+    \conrow{“动态”之源}{$C_s$无绝对绝缘，泄漏电流$I_{leak}$使存储电荷持续流失，需周期刷新维持数据。}
+    \conrow{失效阈值}{高电平下降\textbf{\textcolor{myred}{20\%}}即判定信息丢失（对应$\Delta V = 0.2V_{S1}$）。}
+    \conrow{刷新操作}{失效前由S/R将衰退电平重新放大并写回$C_s$，恢复标准逻辑电平。}
+}
+
+\noindent\textbf{\hlblue{泄漏电流来源（6类）}}
+
+\concepttable{
+    \conrow{亚阈值电流}{WL低电平时，表面势引起源漏间微弱载流子扩散。}
+    \conrow{穿通电流}{短沟下源漏耗尽区展宽接触，势垒降低，栅控失效。}
+    \conrow{pn结反向电流}{$n^+$节点与p衬底反偏，产生势垒区产生-复合电流及少子扩散电流。}
+    \conrow{氧化层隧穿电流}{栅氧极薄时电子量子隧穿穿透绝缘层。}
+    \conrow{热电子效应}{强场下载流子碰撞电离，少子被存储节点收集，改变存储电荷。}
+    \conrow{场区寄生沟道泄漏}{场氧隔离不良，下方硅表面形成寄生反型层，导致相邻单元电荷串扰。}
+}
+
+\textbf{\hlblue{刷新效率 $\eta$（系统性能指标）}}
+
+\noindent 刷新期间DRAM无法响应CPU读写请求（死区时间）。$\eta$越小则有效读写时间占比越大。
+
+$$\eta = \frac{m \times t_{RC}}{t_h} \times 100\%$$
+
+\concepttable{
+    \conrow{$t_h$}{保持时间，电荷衰减达20\%阈值的物理时间极限，为考查时间窗口。}
+    \conrow{$m$}{刷新周期数（阵列需刷新的总行数）。}
+    \conrow{$t_{RC}$}{单行刷新周期耗时。}
+    \conrow{$m \times t_{RC}$}{$t_h$窗口内所有刷新操作的总物理耗时。}
+}
+
+\noindent\textbf{实例}（256Kb DRAM）：$m=256$，$t_h=4\text{ms}$，$t_{RC}=400\text{ns}$。
+分子：$256 \times 400 \times 10^{-9} = 102.4\,\mu\text{s}$；分母：$4 \times 10^{-3} = 4000\,\mu\text{s}$。
+
+$$\eta = \frac{102.4}{4000} \times 100\% = 2.56\%$$
+
+即4ms窗口内2.56\%时间被刷新锁死，97.44\%可供正常存取。
+
+\subsubsection{SRAM}
+
+\textbf{\hlblue{核心结构}}
+
+\imgleft[0.4]{images/image-2026-06-08-21-32-02.png}{
+
+SRAM核心为\textbf{\textcolor{myred}{交叉耦合反相器对}}（节点N1/N2），外接双位线（BL / $\overline{BL}$）与单字线（WL）控制两访问管M1/M2。
+
+\concepttable{
+    \conrow{写"1"}{WL置高$\to$M1/M2导通；BL拉高、$\overline{BL}$拉低$\to$N1充电、N2放电$\to$强制锁入 N1=1,N2=0 稳态。}
+    \conrow{写"0"}{BL拉低、$\overline{BL}$拉高$\to$N1放电、N2充电$\to$锁入 N1=0,N2=1 稳态。}
+}
+
+\concepttable{
+    \conrow{读操作}{读前BL与$\overline{BL}$\textbf{\textcolor{myred}{预充至高电平}}；WL置高$\to$N2=0时$\overline{BL}$经M2放电（读"1"），N1=0时BL经M1放电（读"0"），在位线对产生差分电压差。}
+    \conrow{保持}{WL置低$\to$M1/M2截止$\to$N1/N2隔离；\textbf{\textcolor{myred}{交叉耦合正反馈}}使状态无限期保持（仅需维持供电）。}
+}
+
+}
+
+\compTable{4}{%
+    \compheader{类型 & 负载 & 静态电流 & 特征}
+    \comprow{NMOS 6T早期 & 耗尽型NMOS（非线性电阻） & $I_{on}=K_DV_{TD}^2\approx1.4\times10^{-5}$A & 直流通路，功耗极大}
+    \comprow{多晶硅负载4T过渡 & 高阻多晶硅$R_L$ & $I_{on}\approx V_{DD}/R_L=10^{-8}$A & 降3个数量级，仍存直流功耗}
+    \comprow{CMOS 6T现代主流 & PMOS上拉+NMOS下拉 & $\approx0$（仅亚阈值漏电） & 无直流通路，信号稳定}
+}
+
+\textbf{\textcolor{myred}{对比DRAM}}：静态正反馈锁存，无需刷新，速度极快，广泛用于cache与嵌入式存储。
+
+\textbf{\hlblue{SRAM单元稳定性}}
+
+\concepttable{
+    \conrow{不稳定性来源}{内部：工艺偏差致阈值电压/宽长比失配；外部：$\alpha$粒子辐射、线路串扰、$V_{DD}$波动。干扰超阈值则正反馈破坏$\to$状态翻转。}
+    \conrow{写稳定性}{外部驱动强制改变内部状态的难易程度——越易写入则写稳定性越好。}
+    \conrow{读稳定性}{读操作时内部节点受位线电压扰动，抵抗干扰维持原态的能力。}
+}
+
+\textbf{\hlblue{写稳定性与$\beta_Q$}}
+
+\imgleft[0.4]{images/image-2026-06-08-21-46-30.png}{
+
+\concepttable{
+    \conrow{物理过程（写"0"）}{原态 N1=1,N2=0；WL拉高$\to$M5导通；BL拉低至0V。$V_{DD}$经负载管M3向N1充电，BL经门管M5将N1放电，形成$V_{DD}$-M3-N1-M5-BL直流通路（分压电路）。}
+    \conrow{核心参数}{$\displaystyle\beta_Q=\frac{K_p}{K_a}=\frac{K_3}{K_5}=\frac{K_4}{K_6}$；$K_p$为负载管（PMOS）导电因子，$K_a$为门管（NMOS）导电因子。}
+    \conrow{物理本质}{$\beta_Q$越小写入越易：门管导电能力须强于负载管，方能将N1电位拉低越过反相器翻转阈值。故设计上需\textbf{\textcolor{myred}{减小PMOS尺寸、增大传输门NMOS尺寸}}。}
+}
+
+}
+
+\textbf{\hlblue{写操作动态机制}}
+
+写翻转的本质是\textbf{\textcolor{myred}{强行拉低原本为"1"的节点}}。因读稳定性约束，外部难以通过PG将"0"节点直接拉高，突破口在"1"节点N2。
+
+\concepttable{
+    \conrow{第1阶段}{初始 N1=0,N2=1。外部$\overline{BL}$低电平经PG2强行拉低$V_{N2}$。}
+    \conrow{第2阶段}{$V_{N2}$低于反相器开关阈值时正反馈启动：PU1导通$\to$N1充电($0\!\to\!1$)；PU2截止$\to$N2彻底放电至0，写入完成。}
+}
+
+\noindent\textbf{\hlblue{等效分压与$\gamma$ ratio}}
+
+写入瞬间N2节点经历PU2（拉高）与PG2（拉低）的电荷角力。
+
+$$\gamma=\frac{(W/L)_{PU}}{(W/L)_{PG}}\;\text{等效于}\;\beta_Q=\frac{K_p}{K_a}$$
+
+PG导电能力须战胜PU——$I_{\text{WRITE}}$主要流向GND而非维持N2电位。WL开启后$\overline{BL}$拉低，$V_{N2}$从$V_{DD}$开始下降，\textbf{\textcolor{myred}{PG强度必须克服PU强度方能率先拉低"1"}}。
+
+\textbf{\hlblue{读稳定性与$\beta_R$（Cell Ratio）}}
+
+读稳定性是写稳定性的对立面。读操作前BL与$\overline{BL}$预充至$V_{DD}$。以读"1"（N1=1, N2=0）为例：WL开启，M6导通，$\overline{BL}$高电平经M6向N2注入电荷，形成$\overline{BL}$-M6-N2-M2-GND通路，N2产生瞬态电压扰动$\Delta V$。
+
+$$\beta_R = \frac{K_d}{K_a} = \frac{K_1}{K_5} = \frac{K_2}{K_6}$$
+
+\concepttable{
+    \conrow{$K_d$}{驱动管（Pull-Down NMOS M1/M2）导电因子。}
+    \conrow{$K_a$}{门管（Pass-Gate NMOS M5/M6）导电因子。}
+    \conrow{物理本质}{M2须远强于M6，将$\overline{BL}$涌入电荷迅速泄放至地，\textbf{\textcolor{myred}{钉住N2于低电位}}，防止$\Delta V$超反相器阈值致误翻转。}
+    \conrow{设计原则}{$\beta_R \uparrow\ \Rightarrow$ 读稳定性$\uparrow$；驱动管NMOS尺寸须远大于门管NMOS。}
+}
+
+\subsection{不挥发性存储器}
+
+\subsection{新型存储器}
 
 % --- 手动换栏命令（如果需要强制换列）---
 % \columnbreak 

@@ -1,1 +1,25 @@
-Cheatsheet-style review notes put together one month before each semester's exams by a 2023 SYSU MST student who rarely pays attention in class and loves to cram. If this helps you, please star the project!
+# 📝 Cheatsheet
+
+> 一位 SYSU MST 2023 级学生的泣血之作 —— 平时不听讲，期末火葬场，考前一个月含泪整理的复习笔记。
+
+## 这是什么？
+
+每学期期末考前一个月，临时抱佛脚的产物。将一学期的课程内容浓缩成一份精简的 cheatsheet，力求用最少的篇幅覆盖最核心的考点。风格直白、功利，不追求推导严谨，只求考试够用。
+
+## 适用人群
+
+- 🎯 SYSU MST 在读同学，期末周急需速成
+- 📚 偏好提纲挈领式复习的同类
+- ⚡ 信奉「考前一个月创造奇迹」的极限选手
+
+## 使用方式
+
+按课程目录找到对应学期 → 对应科目，直接开背。
+
+## 免责声明
+
+本笔记纯属个人理解，不保证覆盖所有考点，请结合课件与教材食用。若因过度依赖本笔记导致挂科，概不负责 🙏
+
+---
+
+如果对你有帮助，欢迎 ⭐ Star 支持一下～

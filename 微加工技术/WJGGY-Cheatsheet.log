@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  16 MAY 2026 20:15
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  6 JUN 2026 17:58
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -935,30 +935,30 @@ Package hyperref Info: Link coloring OFF on input line 142.
 \@outlinefile=\write4
 \openout4 = `WJGGY-Cheatsheet.out'.
 
- [1
+LaTeX Font Info:    Trying to load font information for U+msa on input line 153.
+ (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 153.
+ (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) [1
 
 ] (./WJGGY-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
-
-
-Package rerunfilecheck Warning: File `WJGGY-Cheatsheet.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `WJGGY-Cheatsheet.out':
-(rerunfilecheck)             Before: FDA58EAC0DF0B0DE8A3319332E7E8C43;890
-(rerunfilecheck)             After:  AD33BF4FB07A766BF3B0BEF461F1DD23;747.
+Package rerunfilecheck Info: File `WJGGY-Cheatsheet.out' has not changed.
+(rerunfilecheck)             Checksum: D7F0E6DA75FA6FF487EC5F247290B107;1275.
  ) 
 Here is how much of TeX's memory you used:
- 27607 strings out of 473832
- 590994 string characters out of 5729481
- 985513 words of memory out of 5000000
- 50201 multiletter control sequences out of 15000+600000
- 561015 words of font info for 61 fonts, out of 8000000 for 9000
+ 27680 strings out of 473832
+ 593935 string characters out of 5729481
+ 1002980 words of memory out of 5000000
+ 50260 multiletter control sequences out of 15000+600000
+ 562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,5n,114p,589b,526s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,5n,114p,589b,577s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on WJGGY-Cheatsheet.pdf (1 page).
