@@ -15,6 +15,10 @@
 \usepackage{titlesec}   % 标题控制
 \usepackage{bm}         % 加粗数学符号
 \usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{color} % 或 xcolor
 \usepackage{tikz}       % 绘图
 \usetikzlibrary{decorations.pathreplacing, positioning} % 加载brace装饰库
 \usetikzlibrary{calc, positioning, arrows.meta, decorations.markings}
@@ -134,6 +138,38 @@
 \newcommand{\conrow}[2]{\blue{#1} & #2 \\}
 
 
+% 定义基于 X 列的自适应等宽列：L (左对齐) 和 C (居中对齐)
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+% ==========================================
+% 智能满宽、均匀等分布对比表格环境 \compTable
+% 参数说明：
+%   [#1]: 可选参数，右侧对比列的格式，默认 C (居中且等宽)
+%   {#2}: 必填参数，表格的总列数 (数字)
+%   {#3}: 必填参数，表格的完整内容 (包括 header 和 row)
+% ==========================================
+\newcommand{\compTable}[3][C]{%
+    {\setlength{\tabcolsep}{6pt}% 适度保持列间距
+     \renewcommand{\arraystretch}{1.15}% 稍微舒展一点的行距
+     \par\vspace{3pt}{\color{myblue}\hrule height 0.8pt}\vspace{3pt}% 上边框
+     \noindent
+     \def\colsnum{#2}%
+     % 核心改动：改用 tabularx，宽度锁定为 \linewidth，使用 L 和 C 强制均匀平分列宽
+     \begin{tabularx}{\linewidth}{@{} L *{\numexpr\colsnum-1\relax}{#1} @{}}%
+         #3%
+     \end{tabularx}%
+     \vspace{2pt}{\color{myblue}\hrule height 0.8pt}\par\vspace{3pt}}% 下边框
+}
+
+% 泛用表格行 \comprow
+\newcommand{\comprow}[1]{#1 \\}
+
+% 专门的表头行 \compheader (自带下划线，不使用 \textbf 避免报错)
+\newcommand{\compheader}[1]{%
+    #1 \\ \noalign{\vspace{1.5pt}{\color{myblue}\hrule height 0.4pt}\vspace{2.5pt}}%
+}
+
 
 
 % -------------------------------------------------
@@ -148,60 +184,263 @@
 
 \section{第一章\ 采样定理}
 
-\subsection{信号与信号处理}
+\subsection{前言}
+
+傅里叶变换与傅里叶级数的相关概念复习：
+
+\concepttable{
+    \conrow{FT}{$X(j\Omega) = \int_{-\infty}^{\infty} x(t)e^{-j\Omega t}dt$，时域连续非周期 $\mapsto$ 频域连续复函数}
+    \conrow{IFT}{$x(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} X(j\Omega)e^{j\Omega t}d\Omega$，归一化系数 $1/2\pi$}
+    \conrow{频率变量}{\textbf{\textcolor{myred}{$\Omega$ 为模拟角频率（rad/s）}}，区别于数字角频率 $\omega$}
+}
+
+\concepttable{
+    \conrow{FS 展开}{$x(t) = \sum_{m=-\infty}^{\infty} C_m e^{jm\omega_0 t}$，基频 $\omega_0 = \frac{2\pi}{T_0}$}
+    \conrow{FS 系数}{$C_m = \frac{1}{T_0} \int_{T_0} x(t)e^{-jm\omega_0 t}dt$}
+    \conrow{FS vs.\ FT}{\textbf{\textcolor{myred}{时域周期 $\mapsto$ 频域离散（谱线）；非周期 $\mapsto$ 连续谱}}}
+}
+
+\concepttable{
+    \conrow{时域卷积}{$x(t) * y(t) \overset{\text{FT}}{\leftrightarrow} X(j\Omega) \cdot Y(j\Omega)$}
+    \conrow{系统分析}{$y(t)=x(t)*h(t) \;\Rightarrow\; Y(j\Omega)=X(j\Omega)H(j\Omega)$}
+    \conrow{频域卷积}{$x(t) \cdot y(t) \overset{\text{FT}}{\leftrightarrow} \frac{1}{2\pi} X(j\Omega) * Y(j\Omega)$}
+    \conrow{采样依据}{理想采样 $x(t) \cdot \delta_T(t)$，频域卷积 $\Rightarrow$ 频谱周期延拓}
+}
+
+\textbf{\hlblue{傅里叶变换的充要条件}}
+
+\concepttable{
+    \conrow{1. 充分条件（狄利克雷）}{$\int_{-\infty}^{\infty}|x(t)|dt<\infty$，绝对可积}
+    \conrow{2. 次强条件（能量有限）}{$\int_{-\infty}^{\infty}|x(t)|^2dt<\infty$}
+    \conrow{3. 弱条件（功率有限）}{$\lim_{T\to\infty}\frac{1}{2T}\int_{-T}^{T}|x(t)|^2dt<\infty$}
+    \conrow{4. 周期信号}{周期信号为功率有限信号的子类；可用FS求$C_m$，也可用广义FT}
+}
+
+\compTable{4}{
+    \compheader{$x(t)$ & $X(j\Omega)$ & $x(t)$ & $X(j\Omega)$}
+    \comprow{$\delta(t)$ & $1$ & $u(t)$ & $\pi\delta(\Omega)+\frac{1}{j\Omega}$}
+    \comprow{$1$ & $2\pi\delta(\Omega)$ & $\operatorname{sgn}(t)$ & $\frac{2}{j\Omega}$}
+    \comprow{$e^{j\Omega_0 t}$ & $2\pi\delta(\Omega-\Omega_0)$ & $e^{-at}u(t),\,a>0$ & $\frac{1}{a+j\Omega}$}
+    \comprow{$\cos(\Omega_0 t)$ & $\pi[\delta(\Omega-\Omega_0)+\delta(\Omega+\Omega_0)]$ & $\operatorname{rect}\!\left(\frac{t}{\tau}\right)$ & $\tau\operatorname{sinc}\!\left(\frac{\Omega\tau}{2}\right)$}
+    \comprow{$\sin(\Omega_0 t)$ & $\frac{\pi}{j}[\delta(\Omega-\Omega_0)-\delta(\Omega+\Omega_0)]$ & $\frac{W}{\pi}\operatorname{sinc}(Wt)$ & $\operatorname{rect}\!\left(\frac{\Omega}{2W}\right)$}
+    \comprow{$\sum_{n=-\infty}^{\infty}\delta(t-nT)$ & \multicolumn{3}{L}{$\frac{2\pi}{T}\sum_{k=-\infty}^{\infty}\delta\!\left(\Omega-\frac{2\pi k}{T}\right)$}}
+}
+
+\textbf{\hlblue{广义傅里叶变换}}
+
+广义FT将$\delta$函数引入频域，使周期信号（不满足绝对可积条件）也能用FT统一分析。
+
+\concepttable{
+    \conrow{核心思想}{\textbf{\textcolor{myred}{引入冲激函数 $\delta(\Omega)$}}，将周期信号的频谱表示为频域冲激串，绕过积分发散问题}
+    \conrow{数学基础}{$\mathcal{F}\{e^{j\Omega_0 t}\} = 2\pi\delta(\Omega - \Omega_0)$，即复指数信号的频谱为频域单一冲激}
+    \conrow{FT对}{$x(t)=e^{j\Omega_0 t} \;\overset{\text{FT}}{\longleftrightarrow}\; X(j\Omega)=2\pi\delta(\Omega-\Omega_0)$}
+}
+
+\concepttable{
+    \conrow{周期信号广义FT}{由FS展开 $x(t)=\sum_{m=-\infty}^{\infty}C_m e^{jm\omega_0 t}$，两边取广义FT得：}
+    \conrow{频谱表达式}{$X(j\Omega)=\sum_{m=-\infty}^{\infty}2\pi C_m\,\delta(\Omega-m\omega_0)$}
+    \conrow{物理含义}{时域周期 $\mapsto$ 频域离散冲激串；谱线位于谐波频率 $m\omega_0$，强度为 $2\pi C_m$}
+}
+
+
+\subsection{模拟信号数字化处理方法}
 
 \subsubsection{采样与量化}
 
-采样和量化一般在ADC中同时完成，本课程理论分析对象主要为\textbf{\textcolor{myred}{离散时间信号}}，在物理世界中不存在
+信号依据\textbf{时间轴}与\textbf{幅值轴}的连续/离散属性，分为四类：
 
-\entry{模拟信号 $x(t)$}{时间与幅值均连续}
-\entry{离散时间信号 $x[k]$}{时间离散，幅值连续，采样所得}
-\entry{量化阶梯信号 $x_Q(t)$}{时间连续，幅值离散，量化所得}
-\entry{数字信号 $x_D[k]$}{时间与幅值均离散，可由采样与量化获得}
-
-\subsubsection{时域混叠}
-
-首先假设一个情形：
-
-\concepttable{
-    \conrow{连续信号建模}{$x_a(t) = A\cos(2\pi F_0 t + \theta)$，$F_0$ 为模拟频率}
-    \conrow{采样离散化}{采样频率 $F_s = 1/T$，采样周期 $T$，$t = nT = \frac{n}{F_s}$}
-    \conrow{离散时间信号}{代入采样，$x(n) = A\cos\left(2\pi \frac{F_0}{F_s} n + \theta\right) = A\cos(2\pi f_0 n + \theta)$}
-    \conrow{数字频率定义}{$f_0 = \frac{F_0}{F_s}$}
+\imgleft[0.2]{images/image-2026-06-10-16-20-20.png}{
+    \concepttable{
+    \conrow{模拟信号}{时间连续、取值连续。物理世界中的基本信号形态}
+    \conrow{离散时间信号}{模拟信号经采样（时间离散化）后得到：时间离散、取值连续}
+    \conrow{量化阶梯信号}{模拟信号经量化（幅值离散化）后得到：时间连续、取值离散}
+    \conrow{数字信号}{离散时间信号再量化（或量化信号再采样），时域与幅值域双重离散：时间离散、取值离散}
+}
 }
 
-% --- 时域混叠配图笔记（精简学术版）---
-\concepttable{
-    \conrow{混叠信号构造}{$F_k = F_0 + kF_s$，$k \in \mathbb{N}$}
-    \conrow{采样表达}{$x'_a(t) = A\cos(2\pi F_k t + \theta)$}
-    \conrow{离散化推导}{$x'(n) = A\cos\left(2\pi \frac{F_0 + kF_s}{F_s} n + \theta\right)$}
-    \conrow{恒等变换}{$x'(n) = A\cos\left(2\pi \frac{F_0}{F_s} n + \theta\right) = x(n)$}
-    \conrow{混叠本质}{\textbf{\textcolor{myred}{不同模拟频率信号采样后可产生完全相同的离散序列}}}
-}
+\textbf{\hlblue{信号处理流程}}
 
-\subsubsection{从模拟信号理解采样}
-
-我们已知冲激函数的抽样性：
+$x_a(t)\xrightarrow{\text{预滤波}} \xrightarrow{\text{A/D}} x(n) \xrightarrow{\text{DSP}} y(n) \xrightarrow{\text{D/A}} \xrightarrow{\text{平滑滤波}} y_a(t)$
 
 \concepttable{
-    \conrow{采样脉冲序列}{$p_\delta(t)=\sum_{n=-\infty}^{\infty}\delta(t-nT)$（公式1-45）}
-    \conrow{采样运算}{$\hat{x}_a(t)=x_a(t)\,p_\delta(t)=\sum_{n=-\infty}^{\infty}x_a(t)\delta(t-nT)$}
-    \conrow{抽样筛选性质}{由冲激函数的筛选特性得$\hat{x}_a(t)=\sum_{n=-\infty}^{\infty}x_a(nT)\delta(t-nT)$}
-    \conrow{物理含义}{采样将连续信号在$t=nT$处的幅值以脉冲加权表示，形成便于离散域处理的样值序列}
+    \conrow{预滤波}{限制最高频率，防频谱混叠}
+    \conrow{A/D}{采样 + 量化，得数字序列}
+    \conrow{DSP}{核心算法，$x(n) \mapsto y(n)$}
+    \conrow{D/A}{恢复为阶梯模拟信号}
+    \conrow{平滑滤波}{滤除高频镜像，重构 $y_a(t)$}
 }
 
-\section{第二章\ 有效字长效应}
+\textbf{\hlblue{时域混叠}}
 
-\section{第三章\ 时域离散信号及系统频域分析}
+\concepttable{
+    \conrow{连续正弦}{$x_a(t)=A\cos(2\pi F_0 t+\theta)$，$F_0$ 为模拟频率（Hz）}
+    \conrow{采样}{设采样频率$F_s=1/T$，令 $t=nT=n/F_s$，得 $x(n)=A\cos(2\pi f_0 n+\theta)$}
+    \conrow{数字频率}{$f_0 = \dfrac{F_0}{F_s}$}
+    \conrow{混叠}{\textbf{\textcolor{myred}{不同 $F$ 经 $F_s$ 缩放后若对应相同 $f$，则发生频谱混叠}}}
+}
+
+\textbf{数学证明}
+
+设 $x_a(t)=A\cos(2\pi F_0 t+\theta)$，另取 $F_k = F_0 + kF_s\ (k \in \mathbb{N})$，则 $x_a'(t)=A\cos(2\pi F_k t+\theta)$。
+
+以 $F_s$ 采样，$t=n/F_s$：
+$$x'(n)=A\cos\!\left(2\pi\frac{F_0+kF_s}{F_s}n+\theta\right)=A\cos\!\left(\frac{2\pi nF_0}{F_s}+\theta+2\pi kn\right)$$
+
+由 $\cos(\phi+2\pi kn)=\cos(\phi)$（$k,n\in\mathbb{Z}$），得
+$$x'(n)=A\cos\!\left(\frac{2\pi nF_0}{F_s}+\theta\right)=x(n)$$
+
+\concepttable{
+    \conrow{结论}{$F_0$ 与 $F_0+kF_s$ 经同一 $F_s$ 采样后所得序列完全相同，即频域混叠在数学上必然发生。}
+}
+
+\textbf{\hlblue{数字角频率与模拟角频率}}
+
+\concepttable{
+    \conrow{数字角频率 $w$}{$w = \dfrac{2\pi f}{f_s} = 2\pi f_0$}
+    \conrow{模拟角频率 $\Omega$}{$\Omega = 2\pi f = w f_s$}
+    \conrow{核心映射}{$\displaystyle w = \Omega T_s,\quad \Omega = \frac{w}{T_s}$}
+}
+
+和前面的$f$与$f_0$关系类似，分别是模拟信号本身的频率与采样成离散时间信号之后的频率。
+
+\textbf{\hlblue{理想采样（时域建模）}}
+
+\imgleft[0.25]{images/image-2026-06-10-16-53-23.png}{、
+
+\concepttable{
+    \conrow{冲激串}{$P_\delta(t) = \sum_{n=-\infty}^{\infty} \delta(t - nT)$}
+    \conrow{采样模型}{$x_a(t) \cdot P_\delta(t) = \sum_{n=-\infty}^{\infty} x_a(t)\,\delta(t - nT)$}
+    \conrow{采样输出}{$\displaystyle \hat{x}_a(t) = \sum_{n=-\infty}^{\infty} x_a(nT)\,\delta(t - nT)$}
+    \conrow{本质}{$\hat{x}_a(t)$ 是强度为 $x_a(nT)$ 的冲激串，\textbf{\textcolor{myred}{仍是连续时间信号}}，是 $x_a(t)$ 与 $x(n)$ 的桥梁}
+}
+}
+
+\textbf{\hlblue{采样信号频域推导}}
+
+易得采样算子 $P_\delta(t)$ 的频域形式：$\displaystyle P_\delta(j\Omega) = \text{FT}[P_\delta(t)] = \Omega_s \sum_{k=-\infty}^{\infty} \delta(\Omega - k\Omega_s),\quad \Omega_s = \frac{2\pi}{T}$
+
+时域相乘对应频域卷积（由于采样算子的频域也是冲激串，所以卷积结果为复制平移）：
+
+$\hat{X}_a(j\Omega) = \frac{1}{T} \sum_{k=-\infty}^{\infty} X_a(j\Omega) * \delta(\Omega - k\Omega_s) = \frac{1}{T} \sum_{k=-\infty}^{\infty} X_a(j(\Omega - k\Omega_s))$
+
+\entry{核心结论}{\textbf{\textcolor{myred}{采样后频谱是原频谱以 $\Omega_s$ 为周期的周期延拓，幅度缩放 $1/T$}}。$k=0$ 为基带，$k\neq 0$ 为镜像频谱}
+
+\textbf{\hlblue{镜像频谱}}
+
+\imgleft[0.1]{images/image-2026-06-10-17-12-43.png}{
+
+\concepttable{
+    \conrow{原频谱}{带限 $X_a(j\Omega)$，截止频率 $\Omega_c$，$[-\Omega_c,\Omega_c]$ 外无分量}
+    \conrow{采样序列频谱}{$P_\delta(j\Omega)$ 为间隔 $\Omega_s$ 的离散冲激串}
+    \conrow{过采样}{$\Omega_c < \Omega_s/2$，镜像间有隔离带，无混叠，低通滤波（截止 $\Omega_s/2$）可无失真重构}
+    \conrow{欠采样}{$\Omega_c > \Omega_s/2$，\textbf{\textcolor{myred}{高频镜像侵入基带，谱线代数叠加}}，频谱结构不可逆破坏}
+}
+
+}
+
+\textbf{\hlblue{时域-频域对偶归纳}}
+
+\textbf{\textcolor{myred}{一句话：连续和非周期对应，离散和周期对应。}}
+
+\concepttable{
+    \conrow{连续周期}{时域连续 + 周期 $\;\Rightarrow\;$ 频域非周期 + 离散（谱线），工具：FS}
+    \conrow{连续非周期}{时域连续 + 非周期 $\;\Rightarrow\;$ 频域非周期 + 连续，工具：FT}
+    \conrow{\textbf{\textcolor{myred}{离散周期}}}{时域离散 + 周期 $\;\Rightarrow\;$ 频域周期 + 离散，工具：DFS / DFT}
+    \conrow{离散非周期}{时域离散 + 非周期 $\;\Rightarrow\;$ 频域周期 + 连续，工具：DTFT}
+}
+
+时域非周期的信号就是包含各种各样的频率，所以频域是连续的。
+
+\entry{注}{离散非周期信号即理想采样后的标准数字信号形态}
+
+\textbf{\textcolor{mygreen}{第一章 LY-PPT 总结完毕}}
+
+\section{第二章\ 时域离散信号及系统频域分析}
+
+\subsection{时域离散信号的傅里叶变换}
+
+\subsubsection{DTFT（离散时间傅里叶变换）}
+
+承接上一章的理想采样信号的频域公式：$X(j\Omega) = \sum_{n=-\infty}^{\infty} x_a(nT)e^{-j\Omega nT}$
+
+\concepttable{
+    \conrow{定义公式}{
+    \textbf{\textcolor{myred}{$X(e^{j\omega}) = \text{DTFT}[x(n)] = \sum_{n=-\infty}^{\infty} x(n)e^{-j\omega n}$}}}
+    \conrow{充分条件（绝对可和）}{$\displaystyle\sum_{n=-\infty}^{\infty} |x(n)| < \infty$，和绝对可积条件对应}
+}
+
+\textbf{\hlblue{IDTFT （逆DTFT）}}
+
+推导用到了 DTFT 的周期性（以 $2\pi$ 为周期）。
+
+\concepttable{
+    \conrow{定义公式}{
+    \textbf{\textcolor{myred}{$x(n) = \text{IDTFT}[X(e^{j\omega})] = \frac{1}{2\pi}\int_{-\pi}^{\pi} X(e^{j\omega})e^{j\omega n}d\omega$}}}
+}
+
+\subsubsection{DTFT 的性质}
+   
+\entry{特殊序列映射关系}{    
+1. 实偶序列 $\longleftrightarrow$ 实偶谱；2. 实奇序列 $\longleftrightarrow$ 虚奇谱；3. 虚偶序列 $\longleftrightarrow$ 虚偶谱；4. 虚奇序列 $\longleftrightarrow$ 实奇谱。}
 
 
+\compTable{6}{
+    \compheader{序列 & 傅里叶变换 & 说明 & 序列 & 傅里叶变换 & 说明}
+    \comprow{$x(n)$ & $X(e^{j\omega})$ & 原始序列 & $x(n-n_0)$ & $e^{-j\omega n_0}X(e^{j\omega})$ & 时移}
+    \comprow{$x(n)e^{j\omega_0n}$ & $X(e^{j(\omega-\omega_0)})$ & 频移 & $x^*(n)$ & $X^*(e^{-j\omega})$ & 共轭}
+    \comprow{$x(-n)$ & $X(e^{-j\omega})$ & 时间反转 & $ax_1(n)+bx_2(n)$ & $aX_1+bX_2$ & 线性}
+    \comprow{$x(n)*y(n)$ & $X(e^{j\omega})Y(e^{j\omega})$ & 卷积 & $x(n)y(n)$ & $\frac{1}{2\pi}\!\int\! X*Y$ & 调制}
+    \comprow{$nx(n)$ & $j\frac{dX}{d\omega}$ & 频域微分 & $\operatorname{Re}\{x(n)\}$ & $X_e(e^{j\omega})$ & 实部}
+    \comprow{$j\operatorname{Im}\{x(n)\}$ & $X_o(e^{j\omega})$ & 虚部 & $x_e(n)$ & $\operatorname{Re}\{X\}$ & 偶部}
+    \comprow{$x_o(n)$ & $j\operatorname{Im}\{X\}$ & 奇部 & & &}
+}
 
-\section{第四章\ 离散傅里叶变换}
+\subsubsection{离散傅里叶级数}
 
-\section{第五章\ 时域离散系统的算法结构}
+一个时域离散周期信号 $\tilde{x}(n)$，其周期为 $N$，\textbf{\textcolor{myred}{只能展开为 $N$ 个时域离散周期复指数信号的线性叠加}}：
+
+$\tilde{x}(n) = \sum_{k=0}^{N-1} a_k e^{j\frac{2\pi}{N}kn}$
+
+系数的分析公式：$a_k = \frac{1}{N} \sum_{n=0}^{N-1} x(n) e^{-j\frac{2\pi}{N}kn}, \quad k = 0, 1, \dots, N-1$
+
+
+\subsection{时域离散信号的 z 变换}
+
+\subsection{时域离散系统的系统函数以及频率特性}
+
+\subsection{理想采样序列频谱与连续信号频谱的关系}
+
+\section{第三章\ 离散傅里叶变换}
+
+\subsection{离散傅里叶变换的定义}
+
+\subsection{离散傅里叶变换的性质}
+
+\subsection{频域采样}
+
+\subsection{快速傅里叶变换}
+
+\subsection{离散傅里叶变换的应用举例}
+
+\section{第四章\ 时域离散系统的算法结构}
 
 \subsection{时域离散系统的实现}
 
+\subsection{IIR 系统的基本算法结构}
+
+\subsection{FIR 系统的基本算法结构}
+
+\subsection{格形网络}
+
+\subsection{时域离散系统算法结构的计算复杂度}
+
+\section{第五章\ IIR数字滤波器的设计}
+
+\subsection{数字滤波器的基本概念}
+
+\subsection{模拟滤波器设计}
+
+\subsection{IIR 数字滤波器的设计方法}
 
 
 % --- 手动换栏命令（如果需要强制换列）---

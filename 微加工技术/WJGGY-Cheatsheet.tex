@@ -15,6 +15,9 @@
 \usepackage{titlesec}   % 标题控制
 \usepackage{bm}         % 加粗数学符号
 \usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{color} % 或 xcolor
 \usepackage{tikz}       % 绘图
 \usetikzlibrary{decorations.pathreplacing, positioning} % 加载brace装饰库
 \usetikzlibrary{calc, positioning, arrows.meta, decorations.markings}
@@ -133,6 +136,37 @@
 % 表格行 (参数: {概念名}{解释})
 \newcommand{\conrow}[2]{\blue{#1} & #2 \\}
 
+% 定义基于 X 列的自适应等宽列：L (左对齐) 和 C (居中对齐)
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+% ==========================================
+% 智能满宽、均匀等分布对比表格环境 \compTable
+% 参数说明：
+%   [#1]: 可选参数，右侧对比列的格式，默认 C (居中且等宽)
+%   {#2}: 必填参数，表格的总列数 (数字)
+%   {#3}: 必填参数，表格的完整内容 (包括 header 和 row)
+% ==========================================
+\newcommand{\compTable}[3][C]{%
+    {\setlength{\tabcolsep}{6pt}% 适度保持列间距
+     \renewcommand{\arraystretch}{1.15}% 稍微舒展一点的行距
+     \par\vspace{3pt}{\color{myblue}\hrule height 0.8pt}\vspace{3pt}% 上边框
+     \noindent
+     \def\colsnum{#2}%
+     % 核心改动：改用 tabularx，宽度锁定为 \linewidth，使用 L 和 C 强制均匀平分列宽
+     \begin{tabularx}{\linewidth}{@{} L *{\numexpr\colsnum-1\relax}{#1} @{}}%
+         #3%
+     \end{tabularx}%
+     \vspace{2pt}{\color{myblue}\hrule height 0.8pt}\par\vspace{3pt}}% 下边框
+}
+
+% 泛用表格行 \comprow
+\newcommand{\comprow}[1]{#1 \\}
+
+% 专门的表头行 \compheader (自带下划线，不使用 \textbf 避免报错)
+\newcommand{\compheader}[1]{%
+    #1 \\ \noalign{\vspace{1.5pt}{\color{myblue}\hrule height 0.4pt}\vspace{2.5pt}}%
+}
 
 
 
@@ -177,6 +211,10 @@
 
 \section{第三章\ 氧化层制备}
 
+\subsection{二氧化硅薄膜概述}
+
+
+
 \section{第四章\ 扩散}
 
 \section{第五章\ 沟道效应}
@@ -184,6 +222,355 @@
 \section{第六章\ CVD 工艺}
 
 \section{第七章\ PVD 工艺}
+
+\subsection{PVD 概述}
+
+\entry{定义}{利用物理过程实现物质转移，原子/分子由源（靶）\textbf{\textcolor{myred}{气相转移到衬底表面沉积成薄膜}}。}
+
+\concepttable{%
+\conrow{对比 CVD}{\textbf{优点}：工艺温度低（室温~几百℃），工艺原理简单。
+
+\textbf{缺点}：台阶覆盖特性、附着性、致密性均不如 CVD。}
+\conrow{用途}{主用于\textbf{\textcolor{myred}{金属类薄膜}}及其他 CVD 难以沉积的薄膜（金属电极、互连系统附着层/阻挡层合金、金属硅化物薄膜）。}
+}
+
+\textbf{\hlblue{真空蒸镀}}
+
+\imgleft[0.3]{images/image-2026-06-11-09-59-24.png}{
+\concepttable{%
+\conrow{原理}{高真空室内\textbf{\textcolor{myred}{加热源材料使其气化}}，气相转移至衬底表面凝结成膜。}
+\conrow{主要分类}{电阻蒸镀、电子束蒸镀、激光蒸镀。}
+\conrow{优缺点}{\textbf{优点}：设备简单、易操作；薄膜纯度高、成膜速度快；生长机理简单。
+
+\textbf{缺点}：薄膜附着性差，台阶覆盖性不够理想。}
+\conrow{应用}{蒸镀 Al 电极（双极型晶体管）、蒸镀 Pt。}
+\conrow{光刻剥离技术（Lift-off）}{\textbf{时序}：薄膜沉积前先光刻。
+
+\textbf{过程}：用蒸镀将金属沉积在光刻胶及窗口上 $\rightarrow$ 光刻胶剥离液去胶 $\rightarrow$ 胶顶金属随之剥离 $\rightarrow$ 形成金属图形。}
+}
+}
+
+\textbf{\hlblue{溅射}}
+
+\imgleft[0.3]{images/image-2026-06-11-10-00-28.png}{
+\concepttable{%
+\conrow{原理}{\textbf{\textcolor{myred}{一定真空度下使气体等离子体化}}，离子轰击靶阴极，逸出靶原子气相转移至衬底表面沉积成膜。}
+\conrow{主要分类}{直流溅射、射频溅射、磁控溅射。}
+\conrow{优缺点}{\textbf{优点}：薄膜附着性好、台阶覆盖能力强；沉积多元化合物薄膜时成分容易控制。
+
+\textbf{缺点}：沉淀速率低、衬底温度高、设备复杂、造价高。}
+\conrow{地位}{当前集成电路制造中制备\textbf{\textcolor{myred}{金属、合金、金属硅化物薄膜}}最常用的技术。}
+\conrow{应用}{反应磁控溅射：制备 TiN、TaN 阻挡层。磁控溅射：制备 Cu 种子层。}
+}
+}
+
+\subsection{真空系统以及真空的获得}
+
+\subsubsection{真空系统简介}
+
+\entry{真空度}{指真空室内气体压力。工艺平衡：\textbf{\textcolor{myred}{抽吸室内气体与通入工艺气体二者平衡}} $\rightarrow$ 维持恒定真空度。}
+
+\textbf{核心公式与物理量}
+
+\concepttable{%
+\conrow{气体流量 $Q$}{$$Q = \frac{d(PV)}{dt}$$单位：标准体积（$0^\circ\text{C}, 1\text{atm}$ 下），slm（标准升/分），sccm（标准毫升/分）。}
+\conrow{核心关系式}{$$Q = S_p P$$}
+\conrow{真空泵抽速 $S_p$}{$$S_p = \frac{dV}{dt} = \frac{Q}{P}$$}
+\conrow{结论}{同一泵的 $S_p$ 固定时，入口压力 $P$ 改变则流量 $Q$ 改变。}
+\conrow{气体质量流量 $q_m$}{$$q_m = \frac{dG}{dt}$$ $G$ 为气体质量（与气体分子量和密度有关）}
+\conrow{气体导管导率 $C$}{$$C = \frac{Q}{P_1 - P_2}$$ \textbf{并联}：各导管导率简单相加。
+
+\textbf{串联}：各导管导率倒数相加。}
+}
+
+\concepttable{%
+\conrow{设计要求}{要保持真空室压力接近泵入口压力 $\rightarrow$ 要求导管有大导率。}
+\conrow{尺寸与几何影响}{直径越大、长度越短 $\rightarrow$ 导率越大；有波纹、弯曲 $\rightarrow$ 导率减小。}
+}
+
+\subsubsection{真空的获得}
+
+\textbf{单位换算}：$1\text{ atm} = 760\text{ Torr} = 1.013 \times 10^5\text{ Pa}$，$1\text{ Pa} = 1\text{ N/m}^2$，$1\text{ Torr} = 133\text{ Pa}$。
+
+微电子工艺设备一般工作在低、中真空度；通入工作气体前，设备基压在高、超高真空度。
+
+\compTable{5}{%
+\compheader{真空等级 & 压力范围 (Pa) & 压力范围 (Torr) & 条件判定 & 运动状态}
+\comprow{低真空   & $10^5 \sim 10^2$   & $760 \sim 1$        & $\lambda \ll d$           & 粘滞流}
+\comprow{中真空   & $10^2 \sim 10^{-1}$ & $1 \sim 10^{-3}$     & 尺寸接近 & 中间流}
+\comprow{高真空   & $10^{-1} \sim 10^{-5}$ & $10^{-3} \sim 10^{-7}$ & $\lambda > d$           & 分子流}
+\comprow{超高真空 & $<10^{-5}$           & $<10^{-7}$           & $\lambda \gg d$           & 分子流}
+}
+$d$ 为真空室特征尺寸，$\lambda$ 为气体分子平均自由程。
+
+\textbf{\hlblue{低、中真空度的获得}}
+
+\concepttable{%
+\conrow{机械泵原理}{利用活塞/叶片/隔膜的机械运动将气体正向移位（油封转片式真空泵、罗茨泵）。}
+\conrow{工作三个步骤}{捕捉气体 $\rightarrow$ 压缩气体 $\rightarrow$ 排出气体。}
+\conrow{\textbf{\textcolor{myred}{压缩比}}}{泵气体出/入口压力的比值。}
+}
+
+若要在气体入口和出口之间产生更高的压力差，必须采用多个压缩泵串联（即多级连接）。
+
+\textbf{\hlblue{高、超真空度的获得}}
+
+\entry{高真空泵工作条件}{必须在一定真空度下工作；否则无法工作，甚至导致泵损坏（需前级机械泵预抽），要在气体入/出口间产生更大压差，\textbf{\textcolor{myred}{须使用多级泵串联}}。}
+
+\textbf{分级与机制：}
+
+\compTable{4}{%
+\compheader{ & 机制 & 抽吸气体流量 & 代表}
+\comprow{二级泵 & 通过\textbf{\textcolor{myred}{转移动量}}给气体分子实现抽气 & 大流量气体 & 扩散泵、分子泵}
+\comprow{三级泵 & 通过\textbf{\textcolor{myred}{俘获气体分子}}实现抽气 & 小流量气体 & 低温泵、升华泵}
+}
+
+\textbf{二级高真空泵原理对比}
+
+\compTable{3}{%
+\compheader{ & 扩散泵 & 分子泵}
+\comprow{原理 & 泵油蒸汽向气体分子转移动量 & 利用高速旋转的转子把动量传输给气体分子}
+\comprow{循环 & 加热泵底油使其挥发 $\rightarrow$ 蒸汽流从中央叠塔上部孔洞喷出 $\rightarrow$ 碰撞水冷泵体后凝结回流至泵底 & ——}
+\comprow{分类 & —— & 牵引分子泵、涡轮分子泵、复合分子泵}
+\comprow{缺点 & 会导致油蒸气回流进入真空室或后级泵，造成系统油污染 & ——}
+\comprow{优点 & —— & 更清洁}
+}
+
+
+\subsubsection{真空测量}
+
+\textbf{\hlblue{真空计分类与量程}}
+
+\concepttable{%
+\conrow{测低、中真空度}{电容压力计、热偶规。}
+\conrow{测高、超高真空度}{电离规、B-A规（热阴极电离规）、复合真空计。}
+}
+
+\textbf{\hlblue{热偶规}}
+
+\entry{测量原理}{热偶电势 $\propto$ 加热元件温度 $\propto$ 气体热传导特性 → 反应真空度。}
+
+\entry{逻辑链}{真空度越高 → 气体分子密度越低 → 气体散热越慢 → 加热丝温度越高（热电势随之改变）。}
+
+\textbf{\hlblue{电离规}}
+
+\entry{结构}{由内到外依次为：中心灯丝 → 栅网 → 筒状收集极（收集极在栅网外面）。}
+
+\entry{测量原理}{热阴极（灯丝）发射电子 → 碰撞电离气体分子 → 产生离子被外层收集极收集 → 气体压强 $\propto$ 收集的离子流大小。}
+
+\subsection{真空蒸镀}
+
+\subsubsection{工艺原理}
+
+\entry{工艺原理与三过程}{在高真空度下，加热源材料使其蒸发（\textbf{\textcolor{myred}{蒸发过程}}）$\rightarrow$ 蒸气分子流直射到衬底表面（\textbf{\textcolor{myred}{气相质量输运过程}}）$\rightarrow$ 凝结形成薄膜（\textbf{\textcolor{myred}{淀积成膜过程}}）}
+
+\textbf{\hlblue{蒸发过程}}
+
+\entry{相变}{固/液态源 $\xrightarrow{\text{蒸发/升华}}$ 分子/原子。}
+
+\entry{饱和蒸气压}{固/液态物质在平衡时的蒸气压强。}
+
+\entry{净蒸发条件}{周围环境中该物质的蒸气分压 $<$ 它的平衡饱和蒸气压。}
+
+\entry{蒸发温度}{物质的蒸气压为 $1.33\text{ Pa}$ 时所对应的温度。}
+
+\entry{单位时间、单位面积气体分子流通量 $J_n$}{$$J_n = \sqrt{\frac{P^2}{2\pi kTM}}$$}
+
+\entry{源质量消耗率 $R_{ML}$（坩埚内源面积为 $A$）}{$$R_{ML} = J_n M A = \sqrt{\frac{P_e^2 M}{2\pi k T_e}} \cdot A$$}
+
+\textbf{\hlblue{气相质量输运过程}}
+
+\entry{分子平均自由程 $\lambda$（$d$ 为原子半径）}{$$\lambda = \frac{kT}{\sqrt{2}\pi d^2 P} \propto \frac{1}{P}$$}
+
+\entry{无散射输运条件}{$$\lambda > L$$（$L$ 为衬底与源之距）。}
+
+\entry{到达衬底表面比例系数（空间几何关系）$K$（假设全吸附且分子流满量相等）}{$$\frac{\cos\theta \cos\phi}{\pi L^2} = K$$}
+
+\entry{特殊几何（球面配置）}{此时 $\cos\theta = \cos\phi = \frac{L}{2r}$，则：$$K = \frac{1}{4\pi r^2}$$}
+
+\entry{到达衬底分子流通量 $J_d$}{$$J_d = K \cdot R_{ML} = K \sqrt{\frac{M P_e^2}{2\pi k T_e}} \cdot A$$}
+
+\textbf{\hlblue{淀积成膜过程}}
+
+\entry{核心时序}{吸附 $\rightarrow$ 成核 $\rightarrow$ 连片 $\rightarrow$ 生长。}
+
+\entry{物理机制}{蒸气分子动能低 $\rightarrow$ 吸附后少再蒸发 $\rightarrow$ 表面扩散移动 $\rightarrow$ 凝聚成团 $\rightarrow$ 达临界大小形成稳定核 $\rightarrow$ 岛状核扩大 $\rightarrow$ 延展成片 $\rightarrow$ 继续生长成薄膜。}
+
+\entry{薄膜淀积速率 $R_d$（$\rho$ 为膜的质量密度，$f$ 为蒸镀系数，考虑再蒸发，视工艺在 $0 \sim 1$ 之间）}{$$R_d = \frac{J_d}{\rho} = f \cdot K \sqrt{\frac{M}{2\pi k \rho^2}} \cdot \frac{P_e}{\sqrt{T_e}} \cdot A$$}
+
+\subsubsection{蒸镀设备}
+
+\entry{蒸镀工艺分类}{电阻蒸镀、高频感应蒸镀、电子束（EB）蒸镀、激光蒸镀。}
+
+\concepttable{%
+\conrow{真空室}{系统核心，\textbf{\textcolor{myred}{提供真空环境}}。组件含：源加热器、挡板、衬底支架、控温装置。}
+\conrow{真空系统}{\textbf{\textcolor{myred}{维持真空}}。组件含：多级真空泵、各种阀门（放气阀/旁通阀/前置阀）、真空规（高/低真空气规）、冷凝器、过滤器、管路。}
+\conrow{监测系统与控制台}{核心功能\textbf{\textcolor{myred}{为对薄膜厚度、淀积速率、薄膜结构、成分进行实时监测}}。}
+}
+
+\textbf{\hlblue{加热器内部结构特征}}
+
+\concepttable{%
+\conrow{电阻加热器}{螺旋式、锥形篮式、舟式、坩埚式。}
+\conrow{电子束加热器构成}{灯丝、加速栅极、偏转板、偏转磁铁、坩埚、原材料、电子束。}
+\conrow{高频感应加热器构成}{RF（射频）线圈、BN（氮化硼）坩埚、原材料。}
+}
+
+\subsubsection{蒸镀工艺}
+
+\entry{工艺参数确定依据}{\textbf{薄膜材料特性}：单/多组分、各组分熔沸点、分解温度、饱和蒸气压-温度曲线、相图。\textbf{系统匹配}：衬底耐温情况、设备情况。}
+
+\entry{蒸发功率对成膜质量影响}{\textbf{功率过高}（速率过快）：薄膜晶粒长大、表面不平整。\textbf{功率过低}：薄膜疏松、与衬底粘附不牢。}
+
+\textbf{\hlblue{五大工艺步骤}}
+
+\concepttable{%
+\conrow{准备}{放衬底、试旋转、装源材料、换观察窗保护玻璃、换晶振。}
+\conrow{抽真空}{开真空系统、加热衬底。}
+\conrow{预蒸}{不开挡板升高加热功率。（目的：去除表面杂质、达到稳定速率）}
+\conrow{蒸发}{打开挡板开始蒸镀（控制速率） $\rightarrow$ 达到厚度关闭挡板 $\rightarrow$ 降低加热功率至 0。}
+\conrow{取片}{等温度降到室温附近 $\rightarrow$ 停抽真空 $\rightarrow$ 通气 $\rightarrow$ 开腔取片。（目的：保护衬底材料和源）}
+}
+
+\entry{多组分薄膜的蒸镀方式}{}
+
+\compTable{4}{%
+\compheader{蒸镀方式 & 场景 / 工艺控制 & 物理机制}
+\comprow{单源蒸发 & 各组分的平衡蒸气压接近。 & 熔融合金单源蒸发。}
+\comprow{多源同时蒸发 & 组分蒸气压不同，分立独立加热。 & 不同温度下同时蒸发；对淀积速率和温度控制要求较高。}
+\comprow{多源顺次蒸发 & 形成多层交替结构。 & 利用打开或关断挡板来实现交替淀积。}
+}
+
+\textbf{\hlblue{真空蒸镀（质量及控制）}}
+
+\textbf{1. 为什么要求高真空度}
+
+\concepttable{%
+\conrow{直进性与致密度}{保证蒸发分子直线性质量输运。若真空度低 $\rightarrow$ 气体分子多次散射 $\rightarrow$ 方向改变、动量降低 $\rightarrow$ 薄膜疏松、致密度低。}
+\conrow{防止气相氧化}{若真空度低 $\rightarrow$ 氧和水汽高 $\rightarrow$ 金属原子在气相即被氧化 $\rightarrow$ 形成氧化物薄膜。}
+\conrow{保证纯度}{避免气体杂质分子被原子流裹挟淀积 $\rightarrow$ 恶化薄膜纯度和质量。}
+}
+
+\textbf{2. 台阶覆盖特性及均匀性的改善方法}
+
+\concepttable{%
+\conrow{衬底加热（几百°C）}{改善原子迁移和再反射；直接影响成膜、平整度及薄膜成分。}
+\conrow{衬底旋转}{改善因遮蔽效应带来的台阶阴影区覆盖问题，提高厚度均匀性。}
+\conrow{支架几何设计}{采用半球形支架（坩埚位于球面中心位置） $+$ 行星式转动 $\rightarrow$ 进一步提高成膜均匀性。}
+}
+
+\textbf{3. 蒸发速率控制与质量特征}
+
+\entry{速率双刃剑效应}{\textbf{适当提高速率}：可提高薄膜纯度、与衬底结合力及表面质量。\textbf{速率过快}：气相原子碰撞加剧 $\rightarrow$ 动能降低 $\rightarrow$ 原子结团后淀积 $\rightarrow$ 薄膜表面不平坦。}
+
+\textbf{4. 控制因素}
+
+\concepttable{%
+\conrow{蒸发速度}{加热温度、蒸发面积}
+\conrow{薄膜纯度}{真空室基压、加热方式、挡板开/关时间}
+\conrow{与衬底粘附性（结合力）}{衬底温度、蒸发速率}
+}
+
+\subsection{溅射}
+
+\subsubsection{工艺原理}
+
+\entry{工艺四阶段}{利用等离子体中的离子轰击阴极靶，使靶原子/颗粒飞溅并淀积在衬底表面成膜。\textbf{四大过程}：工作气体等离子体化 $\rightarrow$ 离子轰击靶 $\rightarrow$ 靶原子气相输运 $\rightarrow$ 淀积成膜。}
+
+\textbf{\hlblue{气体离子化（阶段一）}}
+
+\concepttable{%
+\conrow{实现方式}{直流或射频气体\textbf{\textcolor{myred}{辉光放电}}。}
+\conrow{物理条件}{自由电子碰撞原子时，转移能量 $>$ 原子的电离能。}
+\conrow{影响离子浓度因素}{工作气压、电（磁）场激发功率。}
+\conrow{高密度等离子体（HDP）}{离子浓度较高，磁控 HDP 技术是溅射常采用的方法。}
+}
+
+\textbf{\hlblue{离子轰击靶与溅射产额（阶段二）}}
+
+\entry{机理}{正离子轰击处于负电位的靶，激发靶原子。}
+
+入射离子能量对表面的四种物理效应：
+
+\compTable{2}{%
+\compheader{能量范围 & 物理效应}
+\comprow{能量很低 & 离子从表面反射回来。}
+\comprow{能量较低（$<10\text{ eV}$） & 离子吸附于表面，释放能量。}
+\comprow{能量较高（$10\text{ eV} \sim 10\text{ keV}$） & 与表层原子碰撞，溅射出靶原子（注：不同材料靶的溅射阈值能量不同）。}
+\comprow{能量很高（$>10\text{ keV}$） & 离子注入表面，造成衬底损伤。}
+}
+
+\entry{溅射率（溅射产额）$S$}{$$S = \frac{\text{溅射出的靶原子数}}{\text{入射离子数}}$$}
+
+\entry{结论}{$S$ 越高 $\rightarrow$ 淀积到衬底原子越多 $\rightarrow$ 薄膜淀积速率越快。}
+
+\textbf{4. 影响溅射率 $S$ 的因素}
+
+\concepttable{%
+\conrow{入射角 $\theta$（入射方向与靶法线的夹角）}{在低能量下，$S$ 随 $\theta$ 增加而增加；但当 $\theta \rightarrow 80^\circ$ 时，$S$ 迅速下降。}
+\conrow{靶材料特性}{靶原子的序数、表面原子的结合状态、结晶取向（纯金属或合金）对 $S$ 有影响。}
+\conrow{靶温度}{靶温几乎不影响溅射率；但当温度高于一定范围时，溅射率有迅速增加的走向。}
+}
+
+\textbf{\hlblue{靶原子气相输运（阶段三）}}
+
+\concepttable{%
+\conrow{较低真空度下}{靶原子到达衬底前与其它粒子发生多次散射，\textbf{\textcolor{myred}{到达衬底某点的原子数与该点的到达角有关}}。}
+\conrow{高真空度下}{气相输运轨迹是直线，衬底表面某点到达的靶原子数受遮蔽效应限制。}
+}
+
+\textbf{\hlblue{沉淀成膜（阶段四）}}
+
+\concepttable{%
+\conrow{能量特征}{溅射离子与靶原子间能量传递大，逸出原子携带的动量较高，在 $10 \sim 50\text{ eV}$ 之间。}
+\conrow{成膜质量}{由于动能高，原子在衬底的迁移能力、再发射能力都强 $\rightarrow$ 成膜的台阶覆盖性和附着力都较好。}
+}
+
+\subsubsection{直流溅射}
+
+\entry{别名}{阴极溅射、二级溅射。}
+
+\entry{适用材料}{利用\textbf{\textcolor{myred}{金属、半导体靶}}制备金属或半导体薄膜。}
+
+\concepttable{%
+\conrow{溅射四要素}{工作气体、工作气压、溅射电压、靶电流密度。}
+\conrow{气压效应}{工作气体的气压直接影响薄膜的淀积速率和致密度。}
+\conrow{\textbf{\textcolor{myred}{淀积速率}}}{$R \sim \frac{W}{d} = \frac{IV}{d}$（$W$ 为溅射功率，$I$ 为电流，$V$ 为电压，$d$ 为靶与衬底的距离）}
+\conrow{\textbf{\textcolor{myred}{局限性}}}{各工艺参量不能独立控制。工作气体气压较高。只能制备导电的金属薄膜。不能淀积绝缘体薄膜。}
+}
+
+\subsubsection{射频溅射}
+
+\entry{基本原理}{利用\textbf{\textcolor{myred}{交变电场（工业标准频率 $13.56MHz$）激发气体等离子化}}。}
+
+\entry{特点（对比直流）}{可以溅射绝缘体薄膜（如介质薄膜等）。}
+
+\entry{缺点}{淀积速率较慢、设备成本高、存在辐射污染。}
+
+\textbf{\hlblue{自偏压与电极特性}}
+
+\entry{自偏压}{由于电子迁移率远大于离子，电子的积累导致靶面呈现负偏压，从而负责吸引正离子向靶材轰击。}
+
+\concepttable{%
+\conrow{阴阳极面积/电位公式}{$\frac{V_L}{V_R} = \left(\frac{A_R}{A_L}\right)^4$（$V_L$ 为靶/阴极电位，$V_R$ 为衬底/阳极电位；$A_L$ 为阴极靶面积，$A_R$ 为阳极面积）}
+\conrow{结论}{面积较小的电极（靶 $A_L$）有较低的电位（$V_L$），从而专门负责吸引离子的强力轰击。}
+}
+
+\subsubsection{磁控溅射}
+
+\subsubsection{其他溅射方法}
+
+\subsubsection{溅射薄膜质量及改善方法}
+
+
+\subsection{PVD 金属及化合物薄膜}
+
+\subsubsection{铝及铝合金薄膜淀积}
+
+\subsubsection{铜及其阻挡层薄膜的淀积}
+
+\subsubsection{其它金属薄膜和化合物薄膜}
+
 % --- 手动换栏命令（如果需要强制换列）---
 % \columnbreak 
 
