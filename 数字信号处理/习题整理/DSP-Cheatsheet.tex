@@ -1,0 +1,806 @@
+\documentclass[10pt, a4paper, landscape]{article}
+
+% -------------------------------------------------
+% 宏包引入
+% -------------------------------------------------
+\usepackage[fontset=mac]{ctex}       % 中文支持
+\usepackage{multicol}   % 多分栏
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry} % 页面设置
+\usepackage{amsmath,amsthm,amsfonts,amssymb} % 数学公式
+\usepackage{mathtools} % 提供 \xleftrightarrow 等箭头
+\usepackage{color,graphicx,overpic} % 颜色与图片
+\usepackage{hyperref}   % 超链接
+\usepackage{enumitem}   % 列表环境控制
+\usepackage{titlesec}   % 标题控制
+\usepackage{bm}         % 加粗数学符号
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{color} % 或 xcolor
+\usepackage{tikz}       % 绘图
+\usetikzlibrary{decorations.pathreplacing, positioning} % 加载brace装饰库
+\usetikzlibrary{calc, positioning, arrows.meta, decorations.markings}
+\setCJKmainfont{PingFang SC}
+\setCJKsansfont{PingFang SC}
+\setCJKmonofont{PingFang SC}
+
+% -------------------------------------------------
+% 自定义颜色
+% -------------------------------------------------
+
+\definecolor{myblue}{HTML}{003153} % 蓝色字
+\definecolor{myred}{HTML}{85120F}  % 红色字
+\definecolor{mygreen}{HTML}{218254}  % 绿色字
+\definecolor{hlblue}{HTML}{ADC1DB} % 蓝色高亮
+\definecolor{hlred}{HTML}{740003}  % 红色高亮
+\definecolor{hlred40}{HTML}{D5807F}  % 红色高亮40%透明度
+\definecolor{sysugreen}{HTML}{00561F}  
+\definecolor{hlyellow}{HTML}{E3C79F}  % 奢金高亮
+\definecolor{hlgreen}{HTML}{BED49D}  % 抹茶绿高亮
+
+
+% -------------------------------------------------
+% 极限空间压缩设置 (核心部分)
+% -------------------------------------------------
+
+% 1. 页边距设置为极小 (0.5cm)
+\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm}
+
+% 2. 去掉段落首行缩进，改为段落间略微留空（可选，这里为了紧凑设为0）
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% 3. 设置正文基础字体大小为 scriptsize (约8pt)，如果还觉得大，可以改为 \tiny
+\renewcommand{\baselinestretch}{0.9} % 压缩行间距
+\let\oldfootnotesize\footnotesize
+\renewcommand{\footnotesize}{\fontsize{7pt}{8pt}\selectfont}
+
+% 4. 压缩列表环境 (Itemize/Enumerate) 的间距
+\setlist{nolistsep} 
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*}
+
+% 5. 压缩标题间距
+\titleformat{\section}{\bfseries\scriptsize\color{myblue}}{}{0em}{}[\hrule] % 标题带下划线，蓝色，省空间
+\titlespacing*{\section}{0pt}{2pt}{1pt} % 上方留2pt，下方留1pt
+\titleformat{\subsection}
+    [runin] % 不换行
+    {\bfseries\scriptsize} % 粗体、scriptsize，黑色字体
+    {} % 不显示编号
+    {0pt} % 标题与正文间距
+    {\hlyellow} % 用hlyellow高亮命令包裹标题
+    [] % 标题内容后无内容
+\titleformat{\subsubsection}
+    [runin] % 不换行
+    {\bfseries\tiny} % 粗体、scriptsize，黑色字体
+    {} % 不显示编号
+    {0pt} % 标题与正文间距
+    {\hlgreen} % 用hlgreen高亮命令包裹标题
+    [] % 标题内容后无内容
+\titlespacing*{\subsection}{0pt}{1pt}{0.5em} % 上方1pt,下方0.5em(水平间距)
+\titlespacing*{\subsubsection}{0pt}{1pt}{0.5em} % 上方1pt,下方0.5em(水平间距)
+
+% -------------------------------------------------
+% 自定义命令
+% -------------------------------------------------
+% 颜色字
+\newcommand{\red}[1]{\textbf{\textcolor{myred}{#1}}}  
+\newcommand{\blue}[1]{\textbf{\textcolor{myblue}{#1}}} 
+\newcommand{\green}[1]{\textbf{\textcolor{mygreen}{#1}}}
+\newcommand{\entry}[2]{$\bullet$ \textbf{#1}: #2\par\vspace{0.5pt}}
+% 高亮
+\newcommand{\cbox}[2][yellow]{\begingroup\setlength{\fboxsep}{1pt}\colorbox{#1}{\strut#2}\endgroup}
+\newcommand{\hlblue}[1]{\cbox[hlblue]{#1}}
+\newcommand{\hlred}[1]{\cbox[hlred40]{#1}}
+\newcommand{\hlyellow}[1]{\cbox[hlyellow]{#1}}
+\newcommand{\hlgreen}[1]{\cbox[hlgreen]{#1}} 
+% 图片插入
+\newcommand{\img}[2][0.9\linewidth]{%
+    {\par\vspace{1pt}\centering\includegraphics[width=#1]{#2}\par\vspace{1pt}}%
+}
+% 左图右文 (参数: [图片宽度比例]{图片路径}{右侧文字内容})
+\newcommand{\imgleft}[3][0.3]{%
+    \noindent\begin{minipage}[t]{#1\linewidth}%
+        \vspace{0pt}%
+        \includegraphics[width=\linewidth]{#2}%
+    \end{minipage}%
+    \hfill%
+    \begin{minipage}[t]{0.98\linewidth - #1\linewidth}%
+        \vspace{0pt}%
+        #3%
+    \end{minipage}\par\vspace{2pt}%
+}
+% 左文右图 (参数: [图片宽度比例]{图片路径}{左侧文字内容})
+\newcommand{\imgright}[3][0.3]{%
+    \noindent\begin{minipage}[t]{0.98\linewidth - #1\linewidth}%
+        \vspace{0pt}%
+        #3%
+    \end{minipage}%
+    \hfill%
+    \begin{minipage}[t]{#1\linewidth}%
+        \vspace{0pt}%
+        \includegraphics[width=\linewidth]{#2}%
+    \end{minipage}\par\vspace{2pt}%
+}
+% -------------------------------------------------
+% 新增：概念速查表专用命令
+% -------------------------------------------------
+% 表格容器
+\newcommand{\concepttable}[1]{%
+    {\setlength{\tabcolsep}{1.5pt}% 局部减小列间距
+     \renewcommand{\arraystretch}{0.92}% 局部紧缩行距
+     \par\vspace{2pt}{\color{myblue}\hrule height 0.6pt}\vspace{1pt}% 上边框(蓝色,0.6pt粗)
+     \noindent\begin{tabular}{@{}p{0.22\linewidth}p{0.76\linewidth}@{}}%
+     #1%
+     \end{tabular}%
+     \vspace{1pt}{\color{myblue}\hrule height 0.6pt}\par\vspace{2pt}}% 下边框(蓝色,0.6pt粗)
+}
+% 表格行 (参数: {概念名}{解释})
+\newcommand{\conrow}[2]{\blue{#1} & #2 \\}
+
+
+% 定义基于 X 列的自适应等宽列：L (左对齐) 和 C (居中对齐)
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+% ==========================================
+% 智能满宽、均匀等分布对比表格环境 \compTable
+% 参数说明：
+%   [#1]: 可选参数，右侧对比列的格式，默认 C (居中且等宽)
+%   {#2}: 必填参数，表格的总列数 (数字)
+%   {#3}: 必填参数，表格的完整内容 (包括 header 和 row)
+% ==========================================
+\newcommand{\compTable}[3][C]{%
+    {\setlength{\tabcolsep}{6pt}% 适度保持列间距
+     \renewcommand{\arraystretch}{1.15}% 稍微舒展一点的行距
+     \par\vspace{3pt}{\color{myblue}\hrule height 0.8pt}\vspace{3pt}% 上边框
+     \noindent
+     \def\colsnum{#2}%
+     % 核心改动：改用 tabularx，宽度锁定为 \linewidth，使用 L 和 C 强制均匀平分列宽
+     \begin{tabularx}{\linewidth}{@{} L *{\numexpr\colsnum-1\relax}{#1} @{}}%
+         #3%
+     \end{tabularx}%
+     \vspace{2pt}{\color{myblue}\hrule height 0.8pt}\par\vspace{3pt}}% 下边框
+}
+
+% 泛用表格行 \comprow
+\newcommand{\comprow}[1]{#1 \\}
+
+% 专门的表头行 \compheader (自带下划线，不使用 \textbf 避免报错)
+\newcommand{\compheader}[1]{%
+    #1 \\ \noalign{\vspace{1.5pt}{\color{myblue}\hrule height 0.4pt}\vspace{2.5pt}}%
+}
+
+% 题干专属方框 (minipage版)
+% 用法: \prob{大题号}{小题号}{题干内容}，小题号可空
+% 框宽占满行宽，超出行宽时自动换行
+\newcommand{\prob}[3]{%
+    \par\vspace{3pt}\noindent%
+    \fcolorbox{myblue}{myblue!5}{%
+        \begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+        \vspace{1pt}%
+        \textbf{\textcolor{myblue}{[T#1\if\relax\detokenize{#2}\relax\else(#2)\fi]}} #3%
+        \vspace{1pt}%
+        \end{minipage}%
+    }%
+    \par\vspace{3pt}%
+}
+
+% 注释专属方框 (minipage版)
+% 用法: \comment{大题号}{小题号}{注释内容}，小题号可空
+% 框宽占满行宽，超出行宽时自动换行
+\newcommand{\comment}[3]{%
+    \par\vspace{3pt}\noindent%
+    \fcolorbox{sysugreen}{sysugreen!5}{%
+        \begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+        \vspace{1pt}%
+        \textbf{\textcolor{sysugreen}{[注#1\if\relax\detokenize{#2}\relax\else(#2)\fi]}} #3%
+        \vspace{1pt}%
+        \end{minipage}%
+    }%
+    \par\vspace{3pt}%
+}
+
+% -------------------------------------------------
+% 正文
+% -------------------------------------------------
+\begin{document}
+
+\tiny
+
+% 三栏布局
+\begin{multicols*}{3}
+
+\section{第一章\ 采样定理}
+
+\section{第二章\ 时域离散信号及系统频域分析}
+
+\prob{1}{}{设$X(e^{j\omega})$和$Y(e^{j\omega})$分别是$x(n)$和$y(n)$的傅里叶变换，试求下面序列的傅里叶变换：（1）$x(n-n_0)$；（2）$x^*(n)$；（3）$x(-n)$；（4）$x(n)*y(n)$；（5）$x(n)y(n)$；（6）$nx(n)$；（7）$x(2n)$；（8）$x^2(n)$；（9）$x_9(n)=\begin{cases}x\left(\frac{n}{2}\right) & n=\text{偶数} \\ 0 & n=\text{奇数}\end{cases}$。}
+
+解：
+
+(1)～(6)都可以通过查性质表得到。
+
+(7)注意$x(2n) \stackrel{\mathcal{F}}{\longleftrightarrow} \frac{1}{2}\left[X\left(\mathrm{e}^{\mathrm{j}\frac{\omega}{2}}\right) + X\left(\mathrm{e}^{\mathrm{j}\left(\frac{\omega}{2}-\pi\right)}\right)\right]$
+
+(8)x(n)和自己相乘，即应用 DTFT 的时域相乘性质即可。
+
+(9)略
+
+\prob{\textbf{\hlblue{2}}}{}{已知$X(e^{j\omega}) = \begin{cases} 1, & |\omega| < \omega_0 \\ 0, & \omega_0 < |\omega| \leq \pi \end{cases}$，求$X(e^{j\omega})$的傅里叶反变换$x(n)$。}
+
+\textbf{解：}
+
+由 IDTFT 定义：
+\[
+x(n) = \frac{1}{2\pi} \int_{-\pi}^{\pi} X(e^{j\omega})\,e^{j\omega n}\,d\omega
+\]
+
+$\because\ X(e^{j\omega})$ 仅在 $|\omega|<\omega_0$ 时为 $1$，其余为零，
+
+$\therefore$ 积分限可收缩至 $[-\omega_0,\ \omega_0]$：
+\[
+x(n) = \frac{1}{2\pi} \int_{-\omega_0}^{\omega_0} e^{j\omega n}\,d\omega
+     = \frac{\sin(\omega_0 n)}{n\pi}
+\]
+
+\textbf{\textcolor{mygreen}{注：$X(e^{j\omega})$ 为经典的矩形窗频谱，其 IDTFT 为 sinc 函数形式，需熟记。}}
+
+\prob{3}{}{线性时不变系统的频率响应(频率响应函数)$H(e^{j\omega}) = |H(e^{j\omega})|e^{j\theta(\omega)}$，如果单位脉冲响应$h(n)$为实序列，试证明输入$x(n) = A\cos(\omega_0 n + \varphi)$的稳态响应为$y(n) = A|H(e^{j\omega_0})|\cos\left[\omega_0 n + \varphi + \theta(\omega_0)\right]$}
+
+\textbf{解：}
+
+实际上就是课件中的一个性质的证明（\textbf{单频率周期信号输入，系统输出为单频率周期信号，且幅值和相位对应变化}），当成结论记住即可。
+
+\prob{4}{}{设$x(n) = \begin{cases} 1, & n = 0,1 \\ 0, & \text{其他} \end{cases}$，将$x(n)$以4为周期进行周期延拓，形成周期序列$\widetilde{x}(n)$，画出$x(n)$和$\widetilde{x}(n)$的波形，求出$\widetilde{x}(n)$的离散傅里叶级数$\widetilde{X}(k)$和傅里叶变换。}
+
+\textbf{解：}
+
+\vspace{4pt}
+\begin{itemize}[leftmargin=*,itemsep=6pt]
+\item[\textbf{1)}] \textbf{求 DFS：$\widetilde{X}(k)$}
+
+$\widetilde{x}(n)$ 由 $x(n)=\{1,1\}$ 以 $N=4$ 周期延拓得到。
+\[
+\widetilde{X}(k)=\mathrm{DFS}[\widetilde{x}(n)]
+                 =\sum_{n=0}^{3}\widetilde{x}(n)e^{-j\frac{2\pi}{4}kn}
+                 =\sum_{n=0}^{1}e^{-j\frac{\pi}{2}kn}
+                 =1+e^{-j\frac{\pi}{2}k}
+\]
+提公因子化为幅度-相位形式：
+\[
+\widetilde{X}(k)=e^{-j\frac{\pi}{4}k}
+                  \bigl(e^{j\frac{\pi}{4}k}+e^{-j\frac{\pi}{4}k}\bigr)
+                =2\cos\!\Bigl(\frac{\pi}{4}k\Bigr)\,
+                  e^{-j\frac{\pi}{4}k},
+\qquad \widetilde{X}(k)\ \text{以 $4$ 为周期}.
+\]
+
+\item[\textbf{2)}] \textbf{求 FT：$X(e^{j\omega})$}
+
+周期序列的 FT 为频域冲激串（$N=4$）：
+\[
+X(e^{j\omega})=\mathrm{FT}[\widetilde{x}(n)]
+              =\frac{2\pi}{N}\sum_{k=-\infty}^{\infty}
+                \widetilde{X}(k)\,
+                \delta\!\Bigl(\omega-\frac{2\pi}{N}k\Bigr)
+              =\frac{\pi}{2}\sum_{k=-\infty}^{\infty}
+                \widetilde{X}(k)\,
+                \delta\!\Bigl(\omega-\frac{\pi}{2}k\Bigr).
+\]
+代入 $\widetilde{X}(k)$ 表达式：
+\[
+\boxed{%
+X(e^{j\omega})=\pi\sum_{k=-\infty}^{\infty}
+               \cos\!\Bigl(\frac{\pi}{4}k\Bigr)
+               e^{-j\frac{\pi}{4}k}\,
+               \delta\!\Bigl(\omega-\frac{\pi}{2}k\Bigr)
+}.
+\]
+\end{itemize}
+
+\prob{\textbf{\hlblue{5}}}{}{设题5图所示的序列$x(n)$的FT用$X(e^{j\omega})$表示，不直接求出$X(e^{j\omega})$，完成下列运算或工作：\\
+(1) $X(e^{j0})$；\\
+(2) $\int_{-\pi}^{\pi} X(e^{j\omega}) d\omega$；\\
+(3) $X(e^{j\pi})$；\\
+(4) 确定并画出傅里叶变换实部$\text{Re}[X(e^{j\omega})]$的时间序列$x_o(n)$；\\
+(5) $\int_{-\pi}^{\pi} \left| X(e^{j\omega}) \right|^2 d\omega$；\\
+(6) $\int_{-\pi}^{\pi} \left| \frac{dX(e^{j\omega})}{d\omega} \right|^2 d\omega$。\\}
+
+\textbf{解：}
+
+\begin{itemize}[leftmargin=*,itemsep=4pt]
+\item[(1)] \textbf{\textcolor{myred}{$X(e^{j0})$ — 直流分量}}
+  \[
+  X(e^{j0}) = \sum_{n=-\infty}^{\infty} x(n) e^{-j0\cdot n}
+            = \sum_{n=-\infty}^{\infty} x(n)
+            = \sum_{n=-3}^{7} x(n) = 6
+  \]
+  \textcolor{myred}{要点：$\omega=0 \ \Rightarrow\ e^{-j\omega n}=1$，即序列各点之和。}
+
+\item[(2)] \textbf{\textcolor{myred}{$\displaystyle\int_{-\pi}^{\pi} X(e^{j\omega})\,\mathrm{d}\omega$ — 反变换求 $x(0)$}}
+  \[
+  x(n) = \frac{1}{2\pi}\int_{-\pi}^{\pi} X(e^{j\omega})\,e^{j\omega n}\,\mathrm{d}\omega
+  \quad\overset{n=0}{\Longrightarrow}\quad
+  x(0) = \frac{1}{2\pi}\int_{-\pi}^{\pi} X(e^{j\omega})\,\mathrm{d}\omega
+  \]
+  \[
+  \therefore\ \int_{-\pi}^{\pi} X(e^{j\omega})\,\mathrm{d}\omega = 2\pi\cdot x(0) = 4\pi
+  \]
+
+\item[(3)] \textbf{\textcolor{myred}{$X(e^{j\pi})$ — Nyquist 频率}}
+  \[
+  X(e^{j\pi}) = \sum_{n=-\infty}^{\infty} x(n)\,e^{-j\pi n}
+              = \sum_{n=-3}^{7} (-1)^n x(n) = 2
+  \]
+  \textcolor{myred}{要点：$e^{-j\pi n}=(-1)^n$，序列交错求和。}
+
+\item[(4)] \textbf{\textcolor{myred}{$\operatorname{Re}[X(e^{j\omega})]$ 对应的时间序列 $x_e(n)$}}
+  \[
+  \boxed{x_e(n) = \tfrac{1}{2}\bigl[x(n) + x^*(-n)\bigr]}
+  \xrightarrow{\text{实序列}}\
+  x_e(n) = \tfrac{1}{2}\bigl[x(n) + x(-n)\bigr]
+  \]
+  \textcolor{myred}{即共轭对称分量，其傅里叶变换为 $\operatorname{Re}[X(e^{j\omega})]$.}
+
+\item[(5)] \textbf{\textcolor{myred}{$\displaystyle\int_{-\pi}^{\pi} |X(e^{j\omega})|^2\,\mathrm{d}\omega$ — 帕塞瓦尔定理}}
+  \[
+  \int_{-\pi}^{\pi} |X(e^{j\omega})|^2\,\mathrm{d}\omega
+  = 2\pi\!\!\sum_{n=-\infty}^{\infty} |x(n)|^2
+  = 2\pi\!\!\sum_{n=-3}^{7} |x(n)|^2 = 28\pi
+  \]
+
+\item[(6)] \textbf{\textcolor{myred}{$\displaystyle\int_{-\pi}^{\pi} \bigl|\tfrac{\mathrm{d}X}{\mathrm{d}\omega}\bigr|^2\,\mathrm{d}\omega$ — 频域微分 + 帕塞瓦尔}}
+  \[
+  \frac{\mathrm{d}X(e^{j\omega})}{\mathrm{d}\omega}
+  = \operatorname{FT}\bigl[-jn\,x(n)\bigr]
+  \]
+  \[
+  \therefore\ \int_{-\pi}^{\pi} \Bigl|\frac{\mathrm{d}X}{\mathrm{d}\omega}\Bigr|^2\,\mathrm{d}\omega
+  = 2\pi\!\!\sum_{n=-3}^{7} |n\,x(n)|^2 = 316\pi
+  \]
+\end{itemize}
+
+\prob{6}{}{试求如下序列的傅里叶变换：\\
+(1) $x_1(n) = \delta(n-3)$；\\
+(2) $x_2(n) = \frac{1}{2}\delta(n+1) + \delta(n) + \frac{1}{2}\delta(n-1)$；\\
+(3) $x_3(n) = a^n u(n)\ (0 < a < 1)$；\\
+(4) $x_4(n) = u(n+3) - u(n-4)$。}
+
+\textbf{解：}
+
+(1) 由 $\delta(n-3)$ 的筛选性，仅有 $n=3$ 项非零：
+  \[
+  X_1(e^{j\omega}) = \sum_{n=-\infty}^{\infty} \delta(n-3) e^{-j\omega n} = e^{-j3\omega}
+  \]
+
+(2) 序列仅在 $n=-1,0,1$ 处非零，直接代入 FT 定义，并利用欧拉公式合并共轭项：
+  \[
+  X_2(e^{j\omega}) = \sum_{n=-\infty}^{\infty} x_2(n) e^{-j\omega n}
+  = \frac{1}{2}e^{j\omega} + 1 + \frac{1}{2}e^{-j\omega}
+  = 1 + \cos\omega
+  \]
+
+(3) 由 $u(n)$ 截断负半轴，使求和下限为 $n=0$；再利用几何级数公式 $\sum_{n=0}^{\infty} r^n = \frac{1}{1-r}$（$|r|<1$），此处 $r = a e^{-j\omega}$ 且 $0<a<1$ 保证收敛：
+  \[
+  X_3(e^{j\omega}) = \sum_{n=-\infty}^{\infty} a^n u(n) e^{-j\omega n}
+  = \sum_{n=0}^{\infty} \bigl(a e^{-j\omega}\bigr)^n
+  = \frac{1}{1 - a e^{-j\omega}}
+  \]
+
+(4) $u(n+3)-u(n-4)$ 为长度 7 的矩形窗（$n\in[-3,3]$），可分正负半轴求和，然后分别用有限项等比级数公式收取：
+  \[
+  \begin{aligned}
+  X_4(e^{j\omega})
+  &= \sum_{n=-\infty}^{\infty} \bigl[u(n+3) - u(n-4)\bigr] e^{-j\omega n}
+   = \sum_{n=-3}^{3} e^{-j\omega n} \\[4pt]
+  &= \sum_{n=0}^{3} e^{-j\omega n} + \sum_{n=-3}^{-1} e^{-j\omega n}
+   = \frac{1 - e^{-j4\omega}}{1 - e^{-j\omega}} + \frac{e^{j\omega} - e^{-j3\omega}}{1 - e^{-j\omega}} \cdot e^{j\omega}
+   = \frac{1 - e^{-j4\omega}}{1 - e^{-j\omega}} + \frac{e^{j\omega}\bigl(1 - e^{-j3\omega}\bigr)}{1 - e^{-j\omega}} e^{j\omega}
+  \end{aligned}
+  \]
+
+\prob{7}{}{设：\\
+(1) $x(n)$是实偶函数；\\
+(2) $x(n)$是实奇函数；\\
+分别分析推导以上两种假设下，其$x(n)$的傅里叶变换性质。}
+
+\textbf{解：}
+
+记住对应结论（证明的分不要了）：
+
+实偶 $\rightarrow$ 实偶，实奇 $\rightarrow$ 虚奇\\
+虚奇 $\rightarrow$ 实奇，虚偶 $\rightarrow$ 虚偶
+
+\prob{8}{}{设$x(n) = R_4(n)$，试求$x(n)$的共轭对称序列$x_e(n)$和共轭反对称序列$x_o(n)$，并分别用图表示。}
+
+\textbf{解：}
+
+图略，直接按照奇偶函数的定义式求解即可。
+
+\prob{9}{}{已知$x(n) = a^n u(n)\ (0 < a < 1)$，分别求出其偶函数$x_e(n)$和奇函数$x_o(n)$的傅里叶变换。}
+
+\textbf{解：}
+
+先求 $x(n)$ 的傅里叶变换：
+
+\[
+X(e^{j\omega}) = \frac{1}{1 - a e^{-j\omega}}.
+\]
+
+由共轭对称性质：
+
+\textbf{\textcolor{myred}{\[
+\text{FT}[x_e(n)] = \operatorname{Re}\bigl[X(e^{j\omega})\bigr], \qquad
+\text{FT}[x_o(n)] = j \operatorname{Im}\bigl[X(e^{j\omega})\bigr].
+\]}}
+
+为提取实部和虚部，将 $X(e^{j\omega})$ 分母实数化：
+
+\[
+X(e^{j\omega}) = \frac{1}{1 - a e^{-j\omega}}
+               \cdot \frac{1 - a e^{j\omega}}{1 - a e^{j\omega}}
+               = \frac{1 - a e^{j\omega}}{1 + a^2 - 2a \cos\omega}.
+\]
+
+分离实部与虚部：
+
+\[
+\operatorname{Re}[X(e^{j\omega})]
+ = \frac{1 - a \cos\omega}{1 + a^2 - 2a \cos\omega}, \qquad
+\operatorname{Im}[X(e^{j\omega})]
+ = \frac{-a \sin\omega}{1 + a^2 - 2a \cos\omega}.
+\]
+
+故：
+
+\[
+\boxed{\text{FT}[x_e(n)] = \frac{1 - a \cos\omega}{1 + a^2 - 2a \cos\omega}}, \qquad
+\boxed{\text{FT}[x_o(n)] = \frac{-a \sin\omega}{1 + a^2 - 2a \cos\omega}}.
+\]
+
+
+\prob{10}{}{若序列$h(n)$是\textbf{\textcolor{myred}{实因果序列}}，其傅里叶变换的实部如下式：$H_R(e^{j\omega}) = 1 + \cos\omega$，求序列$h(n)$及其傅里叶变换$H(e^{j\omega})$。}
+
+\comment{1}{}{
+\textbf{\textcolor{myred}{常见函数的复指数形式：}}
+\begin{align*}
+\cos\omega = \frac{e^{j\omega} + e^{-j\omega}}{2}, &\quad \sin\omega = \frac{e^{j\omega} - e^{-j\omega}}{2j}
+\end{align*}
+}
+
+\textbf{解：}
+
+由傅里叶变换的性质，实部 $H_R(e^{j\omega})$ 对应于序列共轭对称分量 $h_e(n)$ 的傅里叶变换。\textbf{将已知式展为复指数形式}：
+
+\[
+H_R(e^{j\omega}) = 1 + \cos\omega = 1 + \tfrac{1}{2}e^{j\omega} + \tfrac{1}{2}e^{-j\omega} = \text{FT}[h_e(n)].
+\]
+
+比较 $\sum_{n} h_e(n) e^{-j\omega n}$，直接读出共轭对称分量：
+
+\[
+h_e(n) = \begin{cases}
+\frac{1}{2}, & n = -1, \\
+1,        & n = 0, \\
+\frac{1}{2}, & n = 1, \\
+0,        & \text{其它}.
+\end{cases}
+\]
+
+\comment{2}{实因果序列与共轭（反）对称分量的关系}{
+对于实因果序列 $x(n)$满足$x(n) = x_e(n) + x_o(n)$，其中：
+\begin{itemize}[leftmargin=*]
+  \item 共轭对称分量：$x_e(n) = \frac{1}{2}[x(n) + x^*(-n)]$
+  \item 共轭反对称分量：$x_o(n) = \frac{1}{2}[x(n) - x^*(-n)]$
+\end{itemize}
+
+因果性使二者不是独立的，可由其一恢复 $x(n)$：
+\[
+x(n) = \begin{cases}
+0,              & n < 0, \\[2pt]
+x_e(0),         & n = 0, \\[2pt]
+2x_e(n),        & n > 0.
+\end{cases}
+\qquad
+x(n) = \begin{cases}
+0,              & n < 0, \\[2pt]
+x(0),           & n = 0, \\[2pt]
+2x_o(n),        & n > 0.
+\end{cases}
+\]
+}
+
+代入得：
+
+\[
+\boxed{h(n) = \begin{cases}
+1, & n = 0, \\
+1, & n = 1, \\
+0, & \text{其它}.
+\end{cases}}
+\]
+
+对其直接作离散时间傅里叶变换：
+
+\[
+H(e^{j\omega}) = \sum_{n=-\infty}^{\infty} h(n) e^{-j\omega n}
+               = 1 + e^{-j\omega}
+               = 2e^{-j\omega/2} \cos\frac{\omega}{2}.
+\]
+
+\[
+\boxed{H(e^{j\omega}) = 2e^{-j\omega/2} \cos(\omega/2)}.
+\]
+
+\prob{11}{}{若序列$h(n)$是实因果序列，$h(0) = 1$，其傅里叶变换的虚部为$H_I(e^{j\omega}) = -\sin\omega$，求序列$h(n)$及其傅里叶变换$H(e^{j\omega})$。}
+
+\textbf{解：}
+
+由已知，傅里叶变换的虚部为
+\[
+H_I(e^{j\omega}) = -\sin\omega = -\frac{1}{2j}\bigl[e^{j\omega} - e^{-j\omega}\bigr].
+\]
+
+对于实序列，\textbf{\textcolor{myred}{其奇部 $h_o(n)$ 的傅里叶变换满足 $\text{FT}[h_o(n)] = jH_I(e^{j\omega})$}}，故
+\[
+\text{FT}[h_o(n)] = jH_I(e^{j\omega}) 
+= -\frac{1}{2}\bigl[e^{j\omega} - e^{-j\omega}\bigr]
+= \sum_{n=-\infty}^{\infty} h_o(n)\,e^{-j\omega n}.
+\]
+
+对照逆变换系数，立得奇部序列：
+\[
+h_o(n) = \begin{cases}
+-\dfrac{1}{2}, & n = -1, \\[4pt]
+0,            & n = 0,  \\[4pt]
+\dfrac{1}{2}, & n = 1.
+\end{cases}
+\]
+
+对于实因果序列，有还原关系
+\[
+h(n) = \begin{cases}
+0,            & n < 0, \\
+h(0) = 1,     & n = 0, \\
+2h_o(n),      & n > 0.
+\end{cases}
+\]
+
+由 $h(0)=1$ 及 $h_o(1)=\frac{1}{2}$ 得 $h(1)=2h_o(1)=1$，其余 $n>0$ 处 $h_o(n)=0$，故
+\[
+\boxed{h(n) = \begin{cases}
+1, & n = 0, \\
+1, & n = 1, \\
+0, & \text{其它}.
+\end{cases}}
+\]
+
+对其直接作离散时间傅里叶变换：
+\[
+H(e^{j\omega}) = \sum_{n=-\infty}^{\infty} h(n)\,e^{-j\omega n}
+               = 1 + e^{-j\omega}
+               = 2e^{-j\omega/2}\cos\frac{\omega}{2}.
+\]
+
+\[
+\boxed{H(e^{j\omega}) = 2e^{-j\omega/2}\cos(\omega/2)}.
+\]
+
+\prob{12}{}{设系统的单位脉冲响应$h(n)=a^n u(n)$，$0<a<1$，输入序列为$x(n)=\delta(n)+2\delta(n-2)$，完成下面各题：\\ (1) 求出系统输出序列$y(n)$；\\ (2) 分别求出$x(n)$、$h(n)$和$y(n)$的傅里叶变换。}
+
+\textbf{解：}
+
+\textbf{(1) 求输出序列 $y(n)$。}
+由卷积运算及单位脉冲的筛选性质，有：
+\[
+y(n) = h(n) * x(n)
+     = a^n u(n) * \bigl[\delta(n) + 2\delta(n-2)\bigr]
+     = a^n u(n) + 2a^{n-2} u(n-2).
+\]
+其中第二项利用了 $\delta(n-2)$ 将 $h(n)$ 平移两位并乘以 2 的性质。\\[4pt]
+\textbf{(2) 求 $x(n)$、$h(n)$、$y(n)$ 的傅里叶变换。}
+不宜直接套用定义式逐项求和，而应借助经典傅里叶变换对及性质巧解：
+
+$\bullet$ $x(n)$：利用 $\delta(n) \xleftrightarrow{\mathcal{F}} 1$ 及时移性质 $\delta(n-n_0) \xleftrightarrow{\mathcal{F}} e^{-j\omega n_0}$，得
+\[
+X(e^{j\omega}) = 1 + 2e^{-j2\omega}.
+\]
+
+$\bullet$ $h(n)$：由经典变换对 $a^n u(n) \xleftrightarrow{\mathcal{F}} \dfrac{1}{1-ae^{-j\omega}}$（$|a|<1$），直接写出
+\[
+H(e^{j\omega}) = \frac{1}{1 - a e^{-j\omega}}.
+\]
+
+$\bullet$ $y(n)$：由傅里叶变换的卷积定理 $y(n)=x(n)*h(n) \;\xleftrightarrow{\mathcal{F}}\; Y(e^{j\omega})=X(e^{j\omega})H(e^{j\omega})$，得
+\[
+Y(e^{j\omega}) = H(e^{j\omega})\,X(e^{j\omega})
+              = \frac{1 + 2e^{-j2\omega}}{1 - a e^{-j\omega}}.
+\]
+
+\prob{14}{}{求出以下序列的Z变换及收敛域：\\ (1) $2^{-n} u(n)$ \quad (2) $-2^{-n} u(-n-1)$ \\ (3) $2^{-n} u(-n)$ \quad (4) $\delta(n)$ \\ (5) $\delta(n-1)$ \quad (6) $2^{-n}[u(n)-u(n-10)]$}
+
+\textbf{解：} 
+
+\textbf{(1) $2^{-n}u(n)$}：令 $a=2^{-1}$，直接由经典变换对得
+\[
+\mathcal{Z}\big[2^{-n}u(n)\big] = \frac{1}{1-\frac{1}{2}z^{-1}},\qquad |z|>\frac{1}{2}.
+\]
+
+\textbf{(2) $-2^{-n}u(-n-1)$}：此为左边序列。由经典左边序列变换对
+\[
+-a^{n}u(-n-1) \xleftrightarrow{Z} \frac{1}{1-az^{-1}},\;|z|<|a|,
+\]
+取 $a=2^{-1}$ 即得
+\[
+\mathcal{Z}\big[-2^{-n}u(-n-1)\big] = \frac{1}{1-\frac{1}{2}z^{-1}},\qquad |z|<\frac{1}{2}.
+\]
+
+\textbf{\textcolor{mygreen}{注意分子分母表达式与(1)相同，但收敛域截然不同}}
+
+\textbf{(3) $2^{-n}u(-n)$}：$u(-n)$ 在 $n\le 0$ 时为1，令 $m=-n$，化为右边序列的幂级数：
+\[
+\mathcal{Z}\big[2^{-n}u(-n)\big] = \sum_{n=-\infty}^{0} (2z)^{-n}
+= \sum_{m=0}^{\infty} (2z)^{m}
+= \frac{1}{1-2z},\qquad |2z|<1 \;\Rightarrow\; |z|<\frac{1}{2}.
+\]
+
+\textbf{(4) $\delta(n)$}：单位样值序列的Z变换恒为常数：
+\[
+\mathcal{Z}[\delta(n)] = 1,\qquad 0 \le |z| \le \infty.
+\]
+
+\textbf{(5) $\delta(n-1)$}：利用时移性质 $\delta(n-n_0)\xleftrightarrow{Z} z^{-n_0}$（全平面或除原点/无穷远），得
+\[
+\mathcal{Z}[\delta(n-1)] = z^{-1},\qquad 0 < |z| \le \infty.
+\]
+
+\textbf{(6) $2^{-n}[u(n)-u(n-10)]$}：\textbf{\textcolor{myred}{此为有限长序列（$n=0,1,\ldots,9$），收敛域为整个 $z$ 平面}}。利用有限项等比级数公式：
+\[
+\mathcal{Z}\big[2^{-n}(u(n)-u(n-10))\big]
+= \sum_{n=0}^{9} \big(\tfrac{1}{2}z^{-1}\big)^{n}
+= \frac{1 - (\frac{1}{2}z^{-1})^{10}}{1 - \frac{1}{2}z^{-1}}
+= \frac{1 - 2^{-10}z^{-10}}{1 - \frac{1}{2}z^{-1}},\qquad 0 < |z| \le \infty.
+\]
+
+\prob{15}{}{求以下序列的Z变换及其收敛域，并在$z$平面上画出极零点分布图。\\ (1) $x(n)=R_N(n)$，$N=4$ \\ (2) $x(n)=A r^n \cos(\omega_0 n+\varphi) u(n)$，$r=0.9$，$\omega_0=0.5\pi \, \text{rad}$，$\varphi=0.25\pi \, \text{rad}$ \\ (3) $x(n)=\begin{cases} n & 0 \le n \le N \\ 2N-n & N+1 \le n \le 2N \\ 0 & \text{其他} \end{cases}$，式中$N=4$。}
+
+\textbf{解：}
+
+\imgleft[0.3]{images/image-2026-06-15-20-38-13.png}{
+\textbf{(1)}  $R_4(n)=u(n)-u(n-4)\;\xleftrightarrow{Z}\;
+\frac{1}{1-z^{-1}}-\frac{z^{-4}}{1-z^{-1}}
+=\frac{z^{4}-1}{z^{3}(z-1)}.$
+
+\textbf{零点}：由分子 $z^{4}-1=0$ 得 $z_k=e^{\mathrm{j}\frac{2\pi}{4}k}=e^{\mathrm{j}\frac{\pi}{2}k}\;(k=0,1,2,3)$，即 $z=1,\,j,\,-1,\,-j$，均匀分布在单位圆上；
+
+\textbf{极点}：由分母 $z^{3}(z-1)=0$ 得 $z_{1,2,3}=0$ (三阶极点) 及 $z=1$ (一阶极点)。
+
+\textbf{\textcolor{myred}{$z=1$ 处零极点相消}}，实际极点为 $z=0$（三阶）。零极点图及收敛域如图所示。
+}
+
+\imgleft[0.3]{images/image-2026-06-15-20-40-48.png}{
+\textbf{(2)} 由欧拉公式将余弦分解为复指数：
+\[
+x(n)=\frac{A}{2}r^{n}\big(e^{\mathrm{j}\omega_{0}n}e^{\mathrm{j}\varphi}+e^{-\mathrm{j}\omega_{0}n}e^{-\mathrm{j}\varphi}\big)u(n).
+\]
+
+将 $x(n)$ 视为两个单边复指数序列的线性组合，利用 Z 变换的线性性质直接写出：
+\[
+X(z)=\frac{A}{2}\Big(\frac{e^{\mathrm{j}\varphi}}{1-r e^{\mathrm{j}\omega_{0}}z^{-1}}+\frac{e^{-\mathrm{j}\varphi}}{1-r e^{-\mathrm{j}\omega_{0}}z^{-1}}\Big),\quad |z|>r.
+\]
+\textbf{零极点分析：}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{极点：} $z_{p1}=r e^{\mathrm{j}\omega_{0}},\;z_{p2}=r e^{-\mathrm{j}\omega_{0}}$，位于半径为 $r$ 的圆上，辐角 $\pm\omega_{0}$；
+  \item \textbf{零点：} 由分子 $A\big(\cos\varphi-r\cos(\omega_{0}-\varphi)z^{-1}\big)=0$ 解得收敛域为 $|z|>r$，零极点图如图所示。
+\end{itemize}
+}
+
+\imgleft[0.3]{images/image-2026-06-15-20-49-04.png}{
+\textbf{(3)} 注意到：
+\[
+x(n+1)=y(n)*y(n).
+\]
+
+对上式两边取 Z 变换，利用\textbf{时域卷积定理}与\textbf{时移性质}：
+\[
+\mathcal{Z}[x(n+1)]=zX(z),\qquad
+\mathcal{Z}[y(n)*y(n)]=[Y(z)]^{2},
+\]
+故得
+\[
+zX(z)=[Y(z)]^{2}\;\Longrightarrow\;X(z)=z^{-1}[Y(z)]^{2}.
+\]
+
+代入即得
+\[
+X(z)=z^{-1}\Bigl[\frac{z^{4}-1}{z^{3}(z-1)}\Bigr]^{2}
+      =\frac{1}{z^{7}}\Bigl[\frac{z^{4}-1}{z-1}\Bigr]^{2}.
+\]
+
+\textbf{零极点与收敛域分析：}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{极点：} 分母 $z^{7}(z-1)^{2}=0$ 给出 $z=0$（七阶极点）与 $z=1$（二阶极点）；
+  \item \textbf{零点：} 分子 $(z^{4}-1)^{2}=0$ 给出 $z_{k}=e^{\mathrm{j}\frac{\pi}{2}k}\;(k=0,1,2,3)$，均为二阶零点，其中 $z=1$ 处零点与同位置极点\textbf{精确对消}，故实际极点仅为 $z=0$（七阶）；
+  \item \textbf{收敛域：} 序列为有限长（$n=0,1,\dots,2N$），故收敛域为 $0<|z|\leqslant\infty$，包含整个 $z$ 平面（可能除去原点）。
+\end{itemize}
+}
+
+\prob{16}{}{已知$X(z)=\frac{3}{1-\frac{1}{2}z^{-1}}+\frac{2}{1-2z^{-1}}$，求出对应$X(z)$的各种可能的序列表达式。}
+
+\textbf{解：}
+
+根据两个极点，分为\textbf{全左序列}:
+$$x(n)=-\operatorname{Res}[F(z), 0.5]-\operatorname{Res}[F(z), 2] 
+$$
+
+$$=-\left.\frac{(5z-7)z^{n}}{(z-0.5)(z-2)}(z-0.5)\right|_{z=0.5}-\left.\frac{(5z-7)z^{n}}{(z-0.5)(z-2)}(z-2)\right|_{z=2}$$
+
+$$=-\left[3\cdot\left(\frac{1}{2}\right)^{n}+2\cdot 2^{n}\right]u(-n-1)$$
+
+\textbf{双边序列：}
+
+$$x(n)=3\cdot\left(\frac{1}{2}\right)^{n}u(n)-2\cdot 2^{n}u(-n-1)$$ 
+
+\textbf{全右序列：}
+
+$$x(n)=\operatorname{Res}[F(z), 0.5]+\operatorname{Res}[F(z), 2]=3\cdot\left(\frac{1}{2}\right)^{n}+2\cdot 2^{n}$$
+
+\prob{17}{}{已知$x(n)=a^n u(n)$，$0<a<1$。分别求：\\ (1) $x(n)$的Z变换；\\ (2) $n x(n)$的Z变换；\\ (3) $a^{-n} u(-n)$的Z变换。}
+
+\textbf{解：}
+
+(1) $X(z)=\mathrm{ZT}[a^{n}u(n)]=\sum\limits_{n=-\infty}^{\infty}a^{n}u(n)z^{-n}=\frac{1}{1-az^{-1}}\quad|z|>a$
+
+(2) $\mathrm{ZT}[nx(n)]=-z\frac{\mathrm{d}}{\mathrm{d}z}X(z)=\frac{-az^{-2}}{(1-az^{-1})^{2}}\quad|z|>a$
+
+(3) $\mathrm{ZT}[a^{-n}u(-n)]=\sum\limits_{n=0}^{-\infty}a^{-n}z^{-n}=\sum\limits_{n=0}^{\infty}a^{n}z^{n}=\frac{1}{1-az}\quad|z|<|a|^{-1}$
+
+\prob{18}{}{已知$X(z)=\frac{-3z^{-1}}{2-5z^{-1}+2z^{-2}}$，分别求：\\ (1) 收敛域$0.5<|z|<2$对应的原序列$x(n)$；\\ (2) 收敛域$|z|>2$对应的原序列$x(n)$。}
+
+\textbf{解：}普通的部分分式展开法，看看答案就成。
+
+\prob{19}{}{用部分分式法求以下$X(z)$的反变换：\\ (1) $X(z)=\frac{1-\frac{1}{3}z^{-1}}{2-5z^{-1}+2z^{-2}}$，$\vert z\vert>\frac{1}{2}$；\\ (2) $X(z)=\frac{1-2z^{-1}}{1-\frac{1}{4}z^{-2}}$，$\vert z\vert<\frac{1}{2}$。}
+
+\textbf{解：}普通的部分分式展开法，看看答案就成。
+
+\prob{21}{}{用Z变换法解下列差分方程：\\ (1) $y(n)-0.9y(n-1)=0.05u(n)$，$y(n)=0$，$n\le-1$；\\ (2) $y(n)-0.9y(n-1)=0.05u(n)$，$y(-1)=1$，$y(n)=0$，$n<-1$；\\ (3) $y(n)-0.8y(n-1)-0.15y(n-2)=\delta(n)$，$y(-1)=0.2$，$y(-2)=0.5$，$y(n)=0$，$n\le-3$。}
+
+
+
+\prob{22}{}{设线性时不变系统的系统函数$H(z)$为$H(z)=\frac{1-a^{-1}z^{-1}}{1-az^{-1}}$（$a$为实数）。\\ (1) 在$z$平面上用几何法证明该系统是全通网络，即$\vert H(e^{j\omega})\vert=$常数；\\ (2) 参数$a$如何取值，才能使系统因果稳定？画出其极零点分布及收敛域。}
+
+\prob{23}{}{设系统由下面差分方程描述：$y(n)=y(n-1)+y(n-2)+x(n-1)$。\\ (1) 求系统的系统函数$H(z)$，并画出极零点分布图；\\ (2) 限定系统是因果的，写出$H(z)$的收敛域，并求出其单位脉冲响应$h(n)$；\\ (3) 限定系统是稳定性的，写出$H(z)$的收敛域，并求出其单位脉冲响应$h(n)$。}
+
+\prob{24}{}{已知线性因果网络用下面差分方程描述：$y(n)=0.9y(n-1)+x(n)+0.9x(n-1)$。\\ (1) 求网络的系统函数$H(z)$及单位脉冲响应$h(n)$；\\ (2) 写出网络频率响应函数$H(e^{j\omega})$的表达式，并定性画出其幅频特性曲线；\\ (3) 设输入$x(n)=e^{j\omega_0 n}$，求输出$y(n)$。}
+
+\prob{25}{}{已知网络的输入和单位脉冲响应分别为$x(n)=a^n u(n)$，$h(n)=b^n u(n)$（$0<a<1$，$0<b<1$）。\\ (1) 试用卷积法求网络输出$y(n)$；\\ (2) 试用ZT法求网络输出$y(n)$。}
+
+\prob{27}{}{如果$x_1(n)$和$x_2(n)$是两个不同的因果稳定实序列，求证：$\frac{1}{2\pi}\int_{-\pi}^{\pi}X_1(e^{j\omega})X_2(e^{j\omega})d\omega=\left[\frac{1}{2\pi}\int_{-\pi}^{\pi}X_1(e^{j\omega})d\omega\right]\left[\frac{1}{2\pi}\int_{-\pi}^{\pi}X_2(e^{j\omega})d\omega\right]$，式中$X_1(e^{j\omega})$和$X_2(e^{j\omega})$分别表示$x_1(n)$和$x_2(n)$的傅里叶变换。}
+
+\prob{28}{}{若序列$h(n)$是因果序列，其傅里叶变换的实部如下式：$H_{\text{R}}(e^{j\omega})=\frac{1-a\cos\omega}{1+a^2-2a\cos\omega}$（$\vert a\vert<1$），求序列$h(n)$及其傅里叶变换$H(e^{j\omega})$。}
+
+\prob{29}{}{若序列$h(n)$是因果序列，$h(0)=1$，其傅里叶变换的虚部为$H_{\text{I}}(e^{j\omega})=\frac{-a\sin\omega}{1+a^2-2a\cos\omega}$（$\vert a\vert<1$），求序列$h(n)$及其傅里叶变换$H(e^{j\omega})$。}
+
+\section{第三章\ 离散傅里叶变换}
+
+\subsection{高西全习题整理}
+
+\section{第四章\ 时域离散系统的算法结构}
+
+
+
+\section{第五章\ IIR数字滤波器的设计}
+
+
+
+
+% --- 手动换栏命令（如果需要强制换列）---
+% \columnbreak 
+
+\end{multicols*}
+
+\end{document}

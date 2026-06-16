@@ -221,6 +221,96 @@
 
 \section{第六章\ CVD 工艺}
 
+\subsection{概述}
+
+\entry{定义}{将气/液态反应剂蒸气引入反应室，在衬底表面发生化学反应并沉积成膜。要素：\textbf{\textcolor{myred}{化学方法、气相反应剂、沉积固体}}。}
+
+\concepttable{%
+\conrow{结构与衬底}{薄膜为非晶或多晶态；衬底不要求单晶，满足平整度与耐受沉积温度即可。}
+\conrow{关键反应}{$$\text{SiH}_4 = \text{Si}(\text{多晶}) + 2\text{H}_2(\text{g});\quad \text{SiH}_4 + \text{O}_2 = \text{SiO}_2(\text{薄膜}) + 2\text{H}_2$$}
+}
+
+\concepttable{%
+\conrow{按气压（热激活）}{常压CVD (APCVD)、低压CVD (LPCVD)。}
+\conrow{按反应激活方式}{等离子增强CVD (PECVD)、金属有机物CVD (MOCVD)、激光诱导CVD (LCVD)、微波等离子体CVD (MWCVD)。}
+}
+
+\subsection{CVD 工艺原理}
+
+\subsubsection{薄膜淀积过程}
+
+\entry{薄膜沉积五步}{①\textbf{边界层形成}（粘滞流、层流）；②反应气体\textbf{扩散}穿过边界层；③含硅原子团\textbf{吸附}于表面；④表面反应与成膜：$\text{SiH}_4 \rightarrow \text{Poly-Si} + 2\text{H}_2$，成核$\rightarrow$成膜；⑤副产物解吸，排出反应器。}
+
+\concepttable{%
+\conrow{气相质量输运}{反应气体以\textbf{扩散}方式穿过边界层。较外延要求低。}
+\conrow{表面化学反应}{衬底温度更低、淀积速率更快、衬底不要求单晶；薄膜呈\textbf{非晶或多晶态}。}
+\conrow{低温激活CVD}{\textbf{PECVD}：电能 $\rightarrow$ 化学能；
+
+\textbf{LCVD}：光能 $\rightarrow$ 化学能；
+
+\textbf{MWCVD}：微波能 $\rightarrow$ 化学能。}
+\conrow{气相反应}{不同气相化合物在空间直接反应，会导致空间成核形成颗粒，导致薄膜疏松、粘附性差、电学不良。\textbf{CVD应促使表面反应，抑制气相反应}。}
+}
+
+\subsubsection{薄膜淀积速率及影响速率}
+
+\textbf{\hlblue{Grove 生长动力学模型}}
+
+\entry{局限性}{仅在反应剂浓度\textbf{较低}时与实测吻合，高浓度时偏差大。原因：忽略气态副产物解吸、扩散对浓度影响；以及忽略室内温度梯度对气相输运的影响。}
+
+\concepttable{%
+\conrow{气相扩散流密度}{$J_g = -D_g \frac{C_s - C_g}{\delta} = h_g(C_g - C_s)$， $h_g$为质量输运系数（$\delta$：边界层厚度）}
+\conrow{表面反应流密度}{$J_s = k_s C_s$，表面反应系数 $k_s = k_0 e^{-E_A / kT}$}
+\conrow{稳态条件}{令$J_g = J_s = J$，得 $C_s = C_g \left( 1 + \frac{k_s}{h_g} \right)^{-1}$}
+\conrow{摩尔百分比}{$Y = C_g / C_T$（$C_T$：主气流区单位体积分子总数）}
+\conrow{\textbf{\textcolor{myred}{淀积速率 $G$}}}{$G = \frac{J}{N} = \frac{k_s h_g}{k_s + h_g} \frac{C_g}{N} = \frac{k_s h_g}{k_s + h_g} \frac{C_T}{N} Y$，$N_{\text{Si}} = 5 \times 10^{22} \text{ cm}^{-3}$}
+}
+
+\textbf{\hlblue{两种极限情况}}
+$Y$一定时，$G$ 由 $h_g$ 与 $k_s$ 中较小者决定
+
+\concepttable{%
+\conrow{表面反应控制（$h_g \gg k_s$）}{$G \approx \frac{C_T}{N} k_s Y$；对温度非常敏感。}
+\conrow{质量输运控制（$h_g \ll k_s$）}{$G \approx \frac{C_T}{N} h_g Y$；$h_g = \frac{D_g}{\delta}$，$D_g \propto T^{1 \sim 1.8}$，对温度不敏感。}
+}
+
+\textbf{\hlblue{温度影响}}
+
+\concepttable{%
+\conrow{低温区（$k_s \ll h_g$）}{表面反应控制，$G \propto e^{-E_A/kT}$，Arrhenius 斜率大，对温度敏感。}
+\conrow{高温区（$k_s \gg h_g$）}{质量输运控制，$D_g \propto T^{1\sim1.8}$，对温度不敏感，曲线平缓。}
+}
+
+\textbf{\hlblue{反应剂流量影响}}
+
+\concepttable{%
+\conrow{反应剂流量影响}{$G \propto C_g$，流量增加$\Rightarrow C_g\uparrow \Rightarrow$淀积速率加快。}
+}
+
+\subsubsection{薄膜质量控制}
+
+\textbf{\hlblue{台阶覆盖特性}}
+
+\textbf{\hlblue{影响台阶覆盖因素}}
+
+\textbf{\hlblue{薄膜内应力}}
+
+\textbf{\hlblue{其他质量特性}}
+
+
+
+
+
+\subsection{CVD 工艺方法}
+
+\subsection{二氧化硅薄膜沉积}
+
+\subsection{氮化硅薄膜沉积}
+
+\subsection{多晶硅薄膜沉积}
+
+\subsection{CVD 金属及金属化合物薄膜}
+
 \section{第七章\ PVD 工艺}
 
 \subsection{PVD 概述}
@@ -570,6 +660,128 @@ $d$ 为真空室特征尺寸，$\lambda$ 为气体分子平均自由程。
 \subsubsection{铜及其阻挡层薄膜的淀积}
 
 \subsubsection{其它金属薄膜和化合物薄膜}
+
+\section{第八章\ 光刻工艺}
+
+\subsection{光刻工艺概述}
+
+\entry{光刻}{将掩模版（光刻版）上的几何图形，转移到覆盖在硅衬底表面对光辐射敏感的光刻胶上的工艺。}
+
+\entry{特征线宽 (CD)}{光刻胶图形能分辨线条的最小线宽。与光刻版、光刻胶、衬底及工艺操作相关。}
+
+\entry{分辨率}{光学系统精确区分目标的能力（由瑞利判据决定）。}
+
+\textbf{核心公式}
+
+\concepttable{%
+\conrow{特征线宽公式}{$CD = L_{min} = k_1 \frac{\lambda}{NA}$}
+\conrow{数值孔径公式}{$NA = n \sin\alpha$（定义系统收集光的能力；$n$为介质折射率；$\alpha$为入射光线穿透介质的半角）}
+\conrow{降低CD途径}{$k_1 \downarrow$、$\lambda \downarrow$、$NA \uparrow$}
+}
+
+\textbf{提升途径：}
+
+\compTable{3}{%
+\compheader{途径 & 方法 & 效果}
+\comprow{$\lambda \downarrow$ & 更换短波长光源 & 436nm $\rightarrow$ 13.5nm，CD从0.5$\mu$m降至20nm }
+\comprow{$NA \uparrow$ & 浸润式光刻（主镜头与硅片间有液体） & 利用液体折射率$n>n_{空气}$提高$NA$}
+\comprow{$k_1 \downarrow$ & 改良光学系统与光刻工艺 & 减少工艺相关参数$k_1$（一般$>0.25$） }
+}
+
+\textbf{\hlblue{物理极限与线对分辨率}}
+
+\concepttable{%
+\conrow{线对分辨率 $R_{max}$}{$R_{max} = \dfrac{1}{2L_{min}}$（单位尺寸内能分辨的\textbf{\textcolor{myred}{最窄线条对}}的数量）}
+\conrow{衍射限制最小线宽}{$L_{min} \ge \dfrac{\lambda}{2}$（受波动性所显现的衍射效应限制）}
+\conrow{曝光粒子束波长}{$\lambda = \dfrac{h}{\sqrt{2mE}}$}
+\conrow{粒子束光刻物理极限线宽}{$L_{min} \ge \dfrac{h}{2\sqrt{2mE}}$}
+}
+
+\textbf{\hlblue{套准精度}}
+
+\entry{定义}{光刻形成的图形层和衬底前次光刻图形层的最大相对位移。}
+
+\entry{结论}{套准容差大约为关键尺寸（CD）的三分之一。}
+
+\textbf{\hlblue{焦深（DOF）}}
+
+\entry{定义}{能刻出特征线宽时，曝光相偏离焦平面的范围（成像清晰的前后平面之间的距离）。}
+
+\concepttable{%
+\conrow{公式}{$DOF = \dfrac{k_2 \lambda}{(NA)^2}$}
+\conrow{相关因素}{特征线宽的变化范围、曝光剂量、光刻胶倾斜角度等。}
+\conrow{作用}{使有一定厚度的光刻胶膜上下均匀曝光，对实际曝光系统获得优良图像分辨率至关重要。}
+}
+
+\textbf{\hlblue{对比度（CON/MTF）}}
+
+\entry{定义}{评价成像图形质量的重要指标。与图形的尺寸有关。}
+
+\concepttable{%
+\conrow{公式}{$CON = \dfrac{I_{max} - I_{min}}{I_{max} + I_{min}}$（$I_{max}$、$I_{min}$ 分别代表空间图像中对应透光区与暗区的实际光强）}
+\conrow{要求}{一般要求 $CON > 0.5$。}
+}
+
+\subsection{基本流程}
+
+\entry{基本光刻工艺流程}{底膜处理 $\rightarrow$ 涂胶 $\rightarrow$ 前烘 $\rightarrow$ 曝光 $\rightarrow$ 显影 $\rightarrow$ 坚膜、检验 $\rightarrow$ 刻蚀 $\rightarrow$ 去胶 $\rightarrow$ 光刻检验}
+
+\subsubsection{底膜处理}
+
+\entry{目的}{增强衬底与光刻胶之间的黏附性。}
+
+\concepttable{%
+\conrow{核心步骤}{%
+  \textbf{清洗}：使硅片表面洁净，与光刻胶形成良好接触。\newline
+  \textbf{烘烤}：去除衬底表面水汽，使其彻底干燥。\newline
+  \textbf{增黏处理}：涂敷能增加光刻胶与硅片表面附着能力的化合物。}
+\conrow{增黏材料}{六甲基二硅氮烷 HMDS}
+\conrow{润湿性指标}{不浸润：接触角 $\theta > 90^\circ$；浸润：接触角 $\theta < 90^\circ$}
+\conrow{表面化学变化}{未处理的氧化硅表面有 Si-OH 基团（易吸水导致不黏胶），经HMDS处理后，表面反应形成疏水的 $Si-O-Si(CH_3)_2$ 结构。}
+}
+
+\subsubsection{涂胶 (Spin Coating)}
+
+\concepttable{%
+\conrow{质量要求}{厚度均匀、附着性强、没有缺陷。}
+\conrow{工艺机理}{利用离心力向外甩胶，最终留在表面的光刻胶 $< 1\%$；伴随溶剂挥发，光刻胶干燥且黏度增加。}
+\conrow{厚度规律}{转速提升 $\rightarrow$ 薄膜均匀性越好，厚度越薄。}
+\conrow{核心参数}{转速 3000~6000 rpm；胶膜厚度 0.5~1 $\mu m$。}
+\conrow{注意事项}{必须在\textbf{\textcolor{myred}{超净环境}}进行（光刻胶具黏性，易黏附微粒）。喷洒的光刻胶中不能含有空气（防产生气泡引起缺陷）。}
+}
+
+\subsubsection{前烘 (Pre-bake / 软烘)}
+
+\entry{主要作用}{\newline
+  \textbf{溶剂挥发}：使衬底表面涂敷的胶膜溶剂挥发。\newline
+  \textbf{增强黏附性}：增强与衬底的黏附性。\newline
+  \textbf{增强光吸收与抗腐蚀}：增强胶膜的光吸收与抗腐蚀能力。\newline
+  \textbf{缓和内应力}：缓和光刻胶中的内应力。}
+
+\concepttable{%
+\conrow{溶剂含量演变}{液态胶（65~85\%）$\rightarrow$ 涂胶后固态薄膜（10~30\%）$\rightarrow$ 前烘后（降至 5\%）。}
+\conrow{薄膜厚度变化}{前烘后减幅 10~20\%。}
+\conrow{前烘方法}{热平板传导、红外线辐射、干燥循环热风。}
+\conrow{核心参数}{烘箱前烘温度 80~110°C，烘烤时间 5~10min。}
+\conrow{异常影响}{温度过高或时间过长 $\rightarrow$ 光刻胶变脆且附着力降低；前烘不足 $\rightarrow$ 影响后续显影效果。}
+}
+
+\subsubsection{曝光 (Exposure)}
+
+\concepttable{%
+\conrow{工艺定义}{前烘好的衬底在光刻机上与光刻版对准后曝光，受光辐射的光刻胶发生光化学变化，形成潜影。}
+\conrow{光源选择}{波长须与光刻胶响应匹配（在敏感光波段，通常为紫外光）。}
+\conrow{对准目的}{光刻板与衬底上的对版标记精确对准，确定硅片位置和方向，确保多套光刻板各版间图形彼此套准。}
+\conrow{曝光时间决定因素}{由光源强度、光刻胶种类、厚度、光源与硅片间距等决定。}
+\conrow{曝光时间异常影响}{过长：显影后胶面出现皱纹，分辨率降低。过短：光刻胶交联不充分，显影时部分被溶解，抗蚀性大大降低。}
+\conrow{驻波效应 (Standing Wave Effect)}{引起图形边缘不齐。消除手段：在曝光后进行烘烤，即曝光后烘焙 (PEB)。}
+}
+
+\subsection{常见问题}
+
+\section{第九章\ 光刻技术}
+
+\section{第十章\ 刻蚀技术}
 
 % --- 手动换栏命令（如果需要强制换列）---
 % \columnbreak 

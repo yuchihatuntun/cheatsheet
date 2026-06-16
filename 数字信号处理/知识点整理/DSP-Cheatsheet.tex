@@ -34,7 +34,8 @@
 \definecolor{myred}{HTML}{85120F}  % 红色字
 \definecolor{mygreen}{HTML}{218254}  % 绿色字
 \definecolor{hlblue}{HTML}{ADC1DB} % 蓝色高亮
-\definecolor{hlred}{HTML}{D66A83}  % 红色高亮
+\definecolor{hlred}{HTML}{740003}  % 红色高亮
+\definecolor{hlred40}{HTML}{D5807F}  % 红色高亮40%透明度（在白色背景上模拟）
 \definecolor{hlyellow}{HTML}{E3C79F}  % 奢金高亮
 \definecolor{hlgreen}{HTML}{BED49D}  % 抹茶绿高亮
 
@@ -90,7 +91,7 @@
 % 高亮
 \newcommand{\cbox}[2][yellow]{\begingroup\setlength{\fboxsep}{1pt}\colorbox{#1}{\strut#2}\endgroup}
 \newcommand{\hlblue}[1]{\cbox[hlblue]{#1}}
-\newcommand{\hlred}[1]{\cbox[hlred]{#1}}
+\newcommand{\hlred}[1]{\cbox[hlred40]{#1}}
 \newcommand{\hlyellow}[1]{\cbox[hlyellow]{#1}}
 \newcommand{\hlgreen}[1]{\cbox[hlgreen]{#1}} 
 % 图片插入
@@ -170,6 +171,20 @@
     #1 \\ \noalign{\vspace{1.5pt}{\color{myblue}\hrule height 0.4pt}\vspace{2.5pt}}%
 }
 
+% 题干专属方框 (minipage版)
+% 用法: \prob{大题号}{小题号}{题干内容}，小题号可空
+% 框宽占满行宽，超出行宽时自动换行
+\newcommand{\prob}[3]{%
+    \par\vspace{3pt}\noindent%
+    \fcolorbox{myblue}{myblue!5}{%
+        \begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+        \vspace{1pt}%
+        \textbf{\textcolor{myblue}{[T#1\if\relax\detokenize{#2}\relax\else(#2)\fi]}} #3%
+        \vspace{1pt}%
+        \end{minipage}%
+    }%
+    \par\vspace{3pt}%
+}
 
 
 % -------------------------------------------------
@@ -353,61 +368,181 @@ $\hat{X}_a(j\Omega) = \frac{1}{T} \sum_{k=-\infty}^{\infty} X_a(j\Omega) * \delt
 
 \entry{注}{离散非周期信号即理想采样后的标准数字信号形态}
 
-\textbf{\textcolor{mygreen}{第一章 LY-PPT 总结完毕}}
-
 \section{第二章\ 时域离散信号及系统频域分析}
 
 \subsection{时域离散信号的傅里叶变换}
 
-\subsubsection{DTFT（离散时间傅里叶变换）}
-
-承接上一章的理想采样信号的频域公式：$X(j\Omega) = \sum_{n=-\infty}^{\infty} x_a(nT)e^{-j\Omega nT}$
+\subsubsection{DTFT}
 
 \concepttable{
-    \conrow{定义公式}{
+    \conrow{定义式}{
     \textbf{\textcolor{myred}{$X(e^{j\omega}) = \text{DTFT}[x(n)] = \sum_{n=-\infty}^{\infty} x(n)e^{-j\omega n}$}}}
-    \conrow{充分条件（绝对可和）}{$\displaystyle\sum_{n=-\infty}^{\infty} |x(n)| < \infty$，和绝对可积条件对应}
+    \conrow{充分条件（绝对可和）}{$\displaystyle\sum_{n=-\infty}^{\infty} |x(n)| < \infty$，和 Z 变换收敛条件对应}
 }
 
-\textbf{\hlblue{IDTFT （逆DTFT）}}
-
-推导用到了 DTFT 的周期性（以 $2\pi$ 为周期）。
+\textbf{\hlblue{IDTFT}}
 
 \concepttable{
-    \conrow{定义公式}{
+    \conrow{定义式}{
     \textbf{\textcolor{myred}{$x(n) = \text{IDTFT}[X(e^{j\omega})] = \frac{1}{2\pi}\int_{-\pi}^{\pi} X(e^{j\omega})e^{j\omega n}d\omega$}}}
 }
 
-\subsubsection{DTFT 的性质}
-   
-\entry{特殊序列映射关系}{    
-1. 实偶序列 $\longleftrightarrow$ 实偶谱；2. 实奇序列 $\longleftrightarrow$ 虚奇谱；3. 虚偶序列 $\longleftrightarrow$ 虚偶谱；4. 虚奇序列 $\longleftrightarrow$ 实奇谱。}
+\textbf{\hlblue{DTFT 的性质}}
 
+主要性质和 Z 变换相同，这里主要列出一些特殊性质。
 
 \compTable{6}{
     \compheader{序列 & 傅里叶变换 & 说明 & 序列 & 傅里叶变换 & 说明}
-    \comprow{$x(n)$ & $X(e^{j\omega})$ & 原始序列 & $x(n-n_0)$ & $e^{-j\omega n_0}X(e^{j\omega})$ & 时移}
-    \comprow{$x(n)e^{j\omega_0n}$ & $X(e^{j(\omega-\omega_0)})$ & 频移 & $x^*(n)$ & $X^*(e^{-j\omega})$ & 共轭}
-    \comprow{$x(-n)$ & $X(e^{-j\omega})$ & 时间反转 & $ax_1(n)+bx_2(n)$ & $aX_1+bX_2$ & 线性}
-    \comprow{$x(n)*y(n)$ & $X(e^{j\omega})Y(e^{j\omega})$ & 卷积 & $x(n)y(n)$ & $\frac{1}{2\pi}\!\int\! X*Y$ & 调制}
-    \comprow{$nx(n)$ & $j\frac{dX}{d\omega}$ & 频域微分 & $\operatorname{Re}\{x(n)\}$ & $X_e(e^{j\omega})$ & 实部}
-    \comprow{$j\operatorname{Im}\{x(n)\}$ & $X_o(e^{j\omega})$ & 虚部 & $x_e(n)$ & $\operatorname{Re}\{X\}$ & 偶部}
-    \comprow{$x_o(n)$ & $j\operatorname{Im}\{X\}$ & 奇部 & & &}
+    \comprow{$nx(n)$ & $j\frac{dX}{d\omega}$ & 频域微分 & $x^*(n)$ & $X^*(e^{-j\omega})$ & 共轭}
+    \comprow{$j\operatorname{Im}\{x(n)\}$ & $X_o(e^{j\omega})$ & 虚部 & $\operatorname{Re}\{x(n)\}$ & $X_e(e^{j\omega})$ & 实部}
+    \comprow{$x_o(n)$ & $j\operatorname{Im}\{X\}$ & 奇部 & $x_e(n)$ & $\operatorname{Re}\{X\}$ & 偶部}
+    \comprow{$x(n)y(n)$ & $\frac{1}{2\pi} \int_{-\pi}^{\pi} X(e^{j\omega})^* Y(e^{-j\omega})$ & & 时域乘积}
 }
 
 \subsubsection{离散傅里叶级数}
 
-一个时域离散周期信号 $\tilde{x}(n)$，其周期为 $N$，\textbf{\textcolor{myred}{只能展开为 $N$ 个时域离散周期复指数信号的线性叠加}}：
+设 $x(n)$ 为离散周期序列，周期为 $N$。
 
-$\tilde{x}(n) = \sum_{k=0}^{N-1} a_k e^{j\frac{2\pi}{N}kn}$
+\textbf{离散傅里叶级数系数；}$\tilde{X}(k)=\sum_{n=0}^{N-1} \tilde{x}(n) e^{-j \frac{2 \pi}{N} k n} \quad 0<k<N-1$
 
-系数的分析公式：$a_k = \frac{1}{N} \sum_{n=0}^{N-1} x(n) e^{-j\frac{2\pi}{N}kn}, \quad k = 0, 1, \dots, N-1$
+\textbf{DFS 形式：}$\tilde{x}(n)=\operatorname{IDFS}[\tilde{X}(k)]=\frac{1}{N} \sum_{k=0}^{N-1} \tilde{X}(k) e^{j \frac{2 \pi}{N} k n} \quad 0<n<N-1$
 
+\textbf{\hlblue{广义 DTFT}}
 
-\subsection{时域离散信号的 z 变换}
+$X(e^{j\omega}) = \mathrm{FT}[\tilde{x}(n)] = \frac{2\pi}{N}\sum_{k=-\infty}^{\infty}\tilde{X}(k)\delta\left(\omega-\frac{2\pi}{N}k\right)$
 
-\subsection{时域离散系统的系统函数以及频率特性}
+\compTable{4}{%
+\compheader{序列 & DTFT & 序列 & DTFT}%
+\comprow{$\delta(n)$ & $1$ & $a^n u(n) \quad (|a|<1)$ & $\frac{1}{1 - a e^{-j\omega}}$}%
+\comprow{$R_N(n)$ & $\frac{\sin(\omega N/2)}{\sin(\omega/2)} e^{-j\omega(N-1)/2}$ & $u(n)$ & $\frac{1}{1 - e^{-j\omega}} + \displaystyle\sum_{k=-\infty}^{\infty} \pi \delta(\omega - 2\pi k)$}%
+\comprow{$x(n)=1$ & $2\pi \displaystyle\sum_{k=-\infty}^{\infty} \delta(\omega - 2\pi k)$ & $e^{j\omega_0 n}$ & $2\pi \displaystyle\sum_{l=-\infty}^{\infty} \delta(\omega - \omega_0 - 2\pi l)$}%
+\comprow{$\cos \omega_0 n$ & $\pi \displaystyle\sum_{l=-\infty}^{\infty} [\delta(\omega - \omega_0 - 2\pi l) + \delta(\omega + \omega_0 - 2\pi l)]$ & $\sin \omega_0 n$ & $-j\pi \displaystyle\sum_{l=-\infty}^{\infty} [\delta(\omega - \omega_0 - 2\pi l) - \delta(\omega + \omega_0 - 2\pi l)]$}%
+}
 
+\subsubsection{Z 变换}
+
+Z 变换存在的条件是等号右边\textbf{级数收敛，要求级数绝对可和}，即$
+\sum_{n=-\infty}^{\infty} \left| x(n) z^{-n} \right| < \infty
+$。
+
+\concepttable{%
+\conrow{双边 Z 变换}{$X(z) \stackrel{\text{def}}{=} \displaystyle\sum_{n=-\infty}^{\infty} x(n) z^{-n}$}%
+\conrow{单边 Z 变换}{$X(z) \stackrel{\text{def}}{=} \displaystyle\sum_{n=0}^{\infty} x(n) z^{-n}$，适用于因果序列（$x(n) = 0, n<0$）}
+}
+
+\textbf{\hlblue{Z 变换的收敛域}}
+
+Z 变换的收敛域一般为环状域 $R_{x-} < |z| < R_{x+}$。收敛仅取决于 $|z|$，与相角无关，故\textbf{\textcolor{myred}{收敛域必为以原点为中心的环状区域}}。
+
+\concepttable{%
+\conrow{有理分式形式}{$X(z) = \frac{P(z)}{Q(z)}$}%
+\conrow{零点}{$P(z_0)=0$ 且 $Q(z_0)\neq 0$，记 $z=z_0$，复平面用 $\circ$ 表示。}%
+\conrow{极点}{$Q(z_0)=0$，$|X(z_0)|=\infty$，记 $z=z_0$，复平面用 $\times$ 表示。}%
+\conrow{结论}{极点处级数必发散，\textbf{\textcolor{myred}{收敛域内部绝不能包含任何极点}}；边界 $R_{x-}$、$R_{x+}$ 由极点半径决定。}%
+}
+
+\textbf{有限长序列收敛域：}
+
+仅在 $n_1\le n\le n_2$ 内非零，$X(z)=\sum_{n=n_1}^{n_2}x(n)z^{-n}$。有限项求和，每项有界则收敛。
+
+\compTable{4}{
+    \compheader{条件 & $X(z)$ 幂次特征 & ROC & 排除点}
+    \comprow{$n_1<0,\;n_2>0$ & 正、负幂次均有 & $0<|z|<\infty$ & $z=0$、$z=\infty$}
+    \comprow{$n_1\ge0$ & 仅负幂次（或常数） & $0<|z|\le\infty$ & $z=0$}
+    \comprow{$n_2\le0$ & 仅正幂次（或常数） & $0\le|z|<\infty$ & $z=\infty$}
+}
+
+\textbf{右序列收敛域：}
+
+$n \ge n_1$ 非全零，$n < n_1$ 全零。$R_{x-}$ 为最大极点半径。
+
+\compTable{4}{%
+    \compheader{条件 & ROC & 排除点 & 说明}%
+    \comprow{$n_1<0$（含负时间项） & $R_{x-}<|z|<\infty$ & $z=\infty$ & 含 $z$ 正幂次，$\infty$处发散}%
+    \comprow{$n_1=0$（因果序列） & $R_{x-}<|z|\le\infty$ & 无 & 不含 $z$ 正幂次}%
+    \comprow{有限长因果序列 & $0<|z|\le\infty$ & $z=0$ & $R_{x-}=0$}%
+}
+
+\textbf{左序列收敛域：}
+
+$n \le n_2$ 非全零，$n > n_2$ 全零。$R_{x+}$ 为最小极点半径，与右序列完全对偶。
+
+\compTable{4}{%
+    \compheader{条件 & ROC & 排除点 & 说明}%
+    \comprow{$n_2>0$（含正时间项） & $0<|z|<R_{x+}$ & $z=0$ & 含 $z$ 负幂次，$0$ 处发散}%
+    \comprow{$n_2<0$（特殊左序列） & $0\le|z|<R_{x+}$ & 无 & 仅含 $z$ 正幂次，$0$ 处收敛}%
+}
+
+\textbf{双边序列收敛域：}
+
+双边序列可以按线性性质拆分为左序列（反因果）与右序列（因果）：
+
+$X(z) = \sum_{n=-\infty}^{-1} x(n)z^{-n} + \sum_{n=0}^{\infty} x(n)z^{-n}$
+
+\entry{双边 ROC（交集）}{$R_{x-} < |z| < R_{x+}$，即环状区域，\textbf{\textcolor{myred}{若 $R_{x-} \ge R_{x+}$，两区域无交集，$z$ 变换不存在}}。}
+
+\textbf{\hlblue{Z 变换的计算}}
+
+\compTable{6}{
+    \compheader{序列 $f(k)$ & $Z$ 变换 $F(z)$ & 序列 $f(k)$ & $Z$ 变换 $F(z)$ & 序列 $f(k)$ & $Z$ 变换 $F(z)$}
+    \comprow{$\delta(k)$ & $1$ & $\varepsilon(k)$ & $\dfrac{z}{z-1}$ & $a^k\varepsilon(k)$ & $\dfrac{z}{z-a}$}
+    \comprow{$e^{\alpha k}\varepsilon(k)$ & $\dfrac{z}{z-e^{\alpha}}$ & $k\varepsilon(k)$ & $\dfrac{z}{(z-1)^2}$ & $k^2\varepsilon(k)$ & $\dfrac{z(z+1)}{(z-1)^3}$}
+    \comprow{$k a^k\varepsilon(k)$ & $\dfrac{az}{(z-a)^2}$ & $\sin(\beta k)\varepsilon(k)$ & $\dfrac{z\sin\beta}{z^2-2z\cos\beta+1}$ & $\cos(\beta k)\varepsilon(k)$ & $\dfrac{z(z-\cos\beta)}{z^2-2z\cos\beta+1}$}
+}
+
+\textbf{\hlblue{Z 变换的性质}}
+
+\compTable{6}{
+    \compheader{公式 & 公式 & 公式}
+    \comprow{$a f_1+b f_2 \leftrightarrow a F_1+b F_2$ & $f(k\pm m) \leftrightarrow z^{\pm m}F(z)$ & $e^{\pm j\omega_0 k}f \leftrightarrow F(e^{\mp j\omega_0}z)$}
+    \comprow{$a^k f(k) \leftrightarrow F\!\left(\dfrac{z}{a}\right)$ & $f(-k) \leftrightarrow F(z^{-1})$ & $f_1*f_2 \leftrightarrow F_1F_2$}
+    \comprow{$\dfrac{f(k)}{k} \leftrightarrow \displaystyle\int_{z}^{\infty}\dfrac{F(\eta)}{\eta}d\eta$ & $k f(k) \leftrightarrow -z\dfrac{dF(z)}{dz}$ & $\displaystyle\sum_{i=0}^{k}f(i) \leftrightarrow \dfrac{z}{z-1}F(z)$}
+    \comprow{$f(0)=\displaystyle\lim_{z\to\infty}F(z)$ & $f(\infty)=\displaystyle\lim_{z\to 1}(z-1)F(z)$& }
+}
+
+\textbf{\hlblue{逆Z变换（部分分式展开法）}}
+
+\textbf{整体思路}：把大的有理分式展开为多个简单的分式，每个分式通过查表得到对应的逆变换。
+
+\textbf{左序列处理：}如果分离出来的分式形式为$\frac{bz}{z+a}$，且由收敛域判断其为左序列，则\textbf{\textcolor{myred}{其逆变换为$-b(-a)^{n}u(-n-1)$}}，如果遇到不规则的$u(f(n))$，则为\textbf{\textcolor{myred}{$u(-f(n)-1)$的方式处理为左序列}}。
+
+\subsection{系统函数与频率特性}
+
+DTFT是z变换在单位圆上的特例，因此\textbf{\textcolor{myred}{系统稳定的条件是 $H(z)$ 的所有极点都在单位圆内}}，此时DTFT存在。
+
+\textbf{LTI 离散系统的三种表示方式}：冲激响应，差分方程，系统函数
+
+\concepttable{
+    \conrow{因果性}{$n < 0$ 时 $h(n) = 0$，即 H(z)的收敛域表示为 $R_{x^{-}} < |z| \leq \infty$}
+    \conrow{稳定性}{$H(z)$ 收敛域包含单位圆（即 DTFT 的存在条件）}
+    \conrow{因果稳定性}{$R_{x^{-}} < |z| \leq \infty, \quad 0 < R_{x^{-}} < 1$，即所有极点均在单位圆内}
+}
+
+\subsubsection{零极点分布与频率特性}
+$H(z)= K_1 z^{N-M} \frac{\prod_{m=1}^M (z - c_m)}{\prod_{k=1}^N (z - d_k)}$，其中$c_m$为零点，$d_k$为极点。
+
+系统稳定时，可化简为：$H(e^{j\omega}) = K e^{j(N-M)\omega} \frac{\prod_{m=1}^M (e^{j\omega} - c_m)}{\prod_{k=1}^N (e^{j\omega} - d_k)} = |H(e^{j\omega})| e^{j \arg[H(e^{j\omega})]}$
+
+\textbf{幅频函数（$|H(e^{j\omega})|$）}：等于增益模长（K），乘以单位圆当前频点 $e^{j\omega}$ 到所有零点的向量长度之积，再除以该频点到所有极点的向量长度之积。
+
+\textbf{注：}
+
+1. \textbf{\textcolor{myred}{位于原点处的零点或极点}}对系统的幅频特性完全没有影响；但它们会在相频函数中引入 $(N-M)\omega$ 的线性相位移。
+
+2. \textbf{\textcolor{myred}{实数系统的所有零点和极点，要么严格位于实轴上，要么必须成对以共轭复数的形式出现}}
+
+3. 若分子多项式 $P(z)$ 与分母多项式 $Q(z)$ 包含完全相同的根，则该零极点在代数上可以相互抵消，从而降低系统的实际阶数
+
+\textbf{\hlblue{区分 IIR 和 FIR}}
+
+\concepttable{
+    \conrow{时域判定}{若 $h(n)$ 为\textbf{无穷长序列}，则系统为 IIR 滤波器；
+    
+    若 $h(n)$ 为\textbf{有限长序列}，则系统为 FIR 滤波器。}
+    \conrow{频域判定}{包含至少一个不在原点的极点（非零极点），则系统为 IIR 滤波器；
+    
+    极点全部位于原点 $z=0$ 处，则系统为 FIR 滤波器。}
+}
 \subsection{理想采样序列频谱与连续信号频谱的关系}
 
 \section{第三章\ 离散傅里叶变换}
