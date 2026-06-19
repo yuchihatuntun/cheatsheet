@@ -199,247 +199,139 @@
 
 \section{第一章\ 采样定理}
 
-\subsection{前言}
-
-傅里叶变换与傅里叶级数的相关概念复习：
-
-\concepttable{
-    \conrow{FT}{$X(j\Omega) = \int_{-\infty}^{\infty} x(t)e^{-j\Omega t}dt$，时域连续非周期 $\mapsto$ 频域连续复函数}
-    \conrow{IFT}{$x(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} X(j\Omega)e^{j\Omega t}d\Omega$，归一化系数 $1/2\pi$}
-    \conrow{频率变量}{\textbf{\textcolor{myred}{$\Omega$ 为模拟角频率（rad/s）}}，区别于数字角频率 $\omega$}
-}
-
-\concepttable{
-    \conrow{FS 展开}{$x(t) = \sum_{m=-\infty}^{\infty} C_m e^{jm\omega_0 t}$，基频 $\omega_0 = \frac{2\pi}{T_0}$}
-    \conrow{FS 系数}{$C_m = \frac{1}{T_0} \int_{T_0} x(t)e^{-jm\omega_0 t}dt$}
-    \conrow{FS vs.\ FT}{\textbf{\textcolor{myred}{时域周期 $\mapsto$ 频域离散（谱线）；非周期 $\mapsto$ 连续谱}}}
-}
-
-\concepttable{
-    \conrow{时域卷积}{$x(t) * y(t) \overset{\text{FT}}{\leftrightarrow} X(j\Omega) \cdot Y(j\Omega)$}
-    \conrow{系统分析}{$y(t)=x(t)*h(t) \;\Rightarrow\; Y(j\Omega)=X(j\Omega)H(j\Omega)$}
-    \conrow{频域卷积}{$x(t) \cdot y(t) \overset{\text{FT}}{\leftrightarrow} \frac{1}{2\pi} X(j\Omega) * Y(j\Omega)$}
-    \conrow{采样依据}{理想采样 $x(t) \cdot \delta_T(t)$，频域卷积 $\Rightarrow$ 频谱周期延拓}
-}
-
-\textbf{\hlblue{傅里叶变换的充要条件}}
-
-\concepttable{
-    \conrow{1. 充分条件（狄利克雷）}{$\int_{-\infty}^{\infty}|x(t)|dt<\infty$，绝对可积}
-    \conrow{2. 次强条件（能量有限）}{$\int_{-\infty}^{\infty}|x(t)|^2dt<\infty$}
-    \conrow{3. 弱条件（功率有限）}{$\lim_{T\to\infty}\frac{1}{2T}\int_{-T}^{T}|x(t)|^2dt<\infty$}
-    \conrow{4. 周期信号}{周期信号为功率有限信号的子类；可用FS求$C_m$，也可用广义FT}
-}
-
-\compTable{4}{
-    \compheader{$x(t)$ & $X(j\Omega)$ & $x(t)$ & $X(j\Omega)$}
-    \comprow{$\delta(t)$ & $1$ & $u(t)$ & $\pi\delta(\Omega)+\frac{1}{j\Omega}$}
-    \comprow{$1$ & $2\pi\delta(\Omega)$ & $\operatorname{sgn}(t)$ & $\frac{2}{j\Omega}$}
-    \comprow{$e^{j\Omega_0 t}$ & $2\pi\delta(\Omega-\Omega_0)$ & $e^{-at}u(t),\,a>0$ & $\frac{1}{a+j\Omega}$}
-    \comprow{$\cos(\Omega_0 t)$ & $\pi[\delta(\Omega-\Omega_0)+\delta(\Omega+\Omega_0)]$ & $\operatorname{rect}\!\left(\frac{t}{\tau}\right)$ & $\tau\operatorname{sinc}\!\left(\frac{\Omega\tau}{2}\right)$}
-    \comprow{$\sin(\Omega_0 t)$ & $\frac{\pi}{j}[\delta(\Omega-\Omega_0)-\delta(\Omega+\Omega_0)]$ & $\frac{W}{\pi}\operatorname{sinc}(Wt)$ & $\operatorname{rect}\!\left(\frac{\Omega}{2W}\right)$}
-    \comprow{$\sum_{n=-\infty}^{\infty}\delta(t-nT)$ & \multicolumn{3}{L}{$\frac{2\pi}{T}\sum_{k=-\infty}^{\infty}\delta\!\left(\Omega-\frac{2\pi k}{T}\right)$}}
-}
-
-\textbf{\hlblue{广义傅里叶变换}}
-
-广义FT将$\delta$函数引入频域，使周期信号（不满足绝对可积条件）也能用FT统一分析。
-
-\concepttable{
-    \conrow{核心思想}{\textbf{\textcolor{myred}{引入冲激函数 $\delta(\Omega)$}}，将周期信号的频谱表示为频域冲激串，绕过积分发散问题}
-    \conrow{数学基础}{$\mathcal{F}\{e^{j\Omega_0 t}\} = 2\pi\delta(\Omega - \Omega_0)$，即复指数信号的频谱为频域单一冲激}
-    \conrow{FT对}{$x(t)=e^{j\Omega_0 t} \;\overset{\text{FT}}{\longleftrightarrow}\; X(j\Omega)=2\pi\delta(\Omega-\Omega_0)$}
-}
-
-\concepttable{
-    \conrow{周期信号广义FT}{由FS展开 $x(t)=\sum_{m=-\infty}^{\infty}C_m e^{jm\omega_0 t}$，两边取广义FT得：}
-    \conrow{频谱表达式}{$X(j\Omega)=\sum_{m=-\infty}^{\infty}2\pi C_m\,\delta(\Omega-m\omega_0)$}
-    \conrow{物理含义}{时域周期 $\mapsto$ 频域离散冲激串；谱线位于谐波频率 $m\omega_0$，强度为 $2\pi C_m$}
-}
-
-
-\subsection{模拟信号数字化处理方法}
-
-\subsubsection{采样与量化}
+\textbf{\hlyellow{模拟信号数字化处理方法}}
+\textbf{\hlgreen{采样与量化}}
 
 信号依据\textbf{时间轴}与\textbf{幅值轴}的连续/离散属性，分为四类：
-
-\imgleft[0.2]{images/image-2026-06-10-16-20-20.png}{
-    \concepttable{
-    \conrow{模拟信号}{时间连续、取值连续。物理世界中的基本信号形态}
-    \conrow{离散时间信号}{模拟信号经采样（时间离散化）后得到：时间离散、取值连续}
-    \conrow{量化阶梯信号}{模拟信号经量化（幅值离散化）后得到：时间连续、取值离散}
-    \conrow{数字信号}{离散时间信号再量化（或量化信号再采样），时域与幅值域双重离散：时间离散、取值离散}
+\vspace{-0.2cm}
+\begin{multicols}{2}
+\begin{minipage}{\columnwidth}
+\concepttable{
+    \conrow{模拟信号}{时间连续、取值连续}
+    \conrow{离散时间}{时间离散、取值连续}
 }
+\end{minipage}
+\begin{minipage}{\columnwidth}
+\concepttable{
+    \conrow{量化阶梯}{时间连续、取值离散}
+    \conrow{数字信号}{时间离散、取值离散}
 }
-
+\end{minipage}
+\end{multicols}
+\vspace{-0.2cm}
 \textbf{\hlblue{信号处理流程}}
 
-$x_a(t)\xrightarrow{\text{预滤波}} \xrightarrow{\text{A/D}} x(n) \xrightarrow{\text{DSP}} y(n) \xrightarrow{\text{D/A}} \xrightarrow{\text{平滑滤波}} y_a(t)$
-
-\concepttable{
-    \conrow{预滤波}{限制最高频率，防频谱混叠}
-    \conrow{A/D}{采样 + 量化，得数字序列}
-    \conrow{DSP}{核心算法，$x(n) \mapsto y(n)$}
-    \conrow{D/A}{恢复为阶梯模拟信号}
-    \conrow{平滑滤波}{滤除高频镜像，重构 $y_a(t)$}
-}
+$
+x_a(t)
+\xrightarrow[\text{限最高频率，防频谱混叠}]{\text{预滤波}}
+\xrightarrow[\text{采样量化}]{\text{A/D}}
+x(n)
+\xrightarrow[\text{核心}]{\text{DSP}}
+y(n)
+\xrightarrow[\text{恢复阶梯模拟信号}]{\text{D/A}}
+\xrightarrow[\text{滤除高频}]{\text{平滑滤波}}
+y_a(t)
+$
 
 \textbf{\hlblue{时域混叠}}
+\entry{定义}{频率为$F_0$ 与 $F_0+kF_s$ 的周期信号经同一 $F_s$ 采样后所得序列完全相同}
+
+\textbf{数字角频率 $w$：}$w = \dfrac{2\pi f}{f_s} = 2\pi f_0$ \ \ \textbf{模拟角频率 $\Omega$：}$\Omega = 2\pi f = w f_s$\ \ \textbf{映射：}$\displaystyle w = \Omega T_s,\quad \Omega = \frac{w}{T_s}$
+
+\textbf{\hlblue{理想采样信号}}
+$\hat{x}_a(t)$ 是强度为 $x_a(nT)$ 的冲激串，\textbf{\textcolor{myred}{仍是连续时间信号}}
 
 \concepttable{
-    \conrow{连续正弦}{$x_a(t)=A\cos(2\pi F_0 t+\theta)$，$F_0$ 为模拟频率（Hz）}
-    \conrow{采样}{设采样频率$F_s=1/T$，令 $t=nT=n/F_s$，得 $x(n)=A\cos(2\pi f_0 n+\theta)$}
-    \conrow{数字频率}{$f_0 = \dfrac{F_0}{F_s}$}
-    \conrow{混叠}{\textbf{\textcolor{myred}{不同 $F$ 经 $F_s$ 缩放后若对应相同 $f$，则发生频谱混叠}}}
+    \conrow{冲激串函数}{$P_\delta(t) = \sum_{n=-\infty}^{\infty} \delta(t - nT)$}
+    \conrow{采样信号}{$\hat{x}_a(t) = x_a(t) \cdot P_\delta(t) = \sum_{n=-\infty}^{\infty} x_a(nT)\,\delta(t - nT)$}
+    \conrow{频域形式}{$\hat{X}_a(j\Omega) = \frac{1}{T} \sum_{k=-\infty}^{\infty} X_a(j(\Omega - k\Omega_s))$}
 }
 
-\textbf{数学证明}
+\textbf{\textcolor{myred}{采样后频谱是原频谱以 $\Omega_s$ 为周期的周期延拓，幅度缩放 $1/T$}}。$k=0$ 为基带，$k\neq 0$ 为镜像谱
 
-设 $x_a(t)=A\cos(2\pi F_0 t+\theta)$，另取 $F_k = F_0 + kF_s\ (k \in \mathbb{N})$，则 $x_a'(t)=A\cos(2\pi F_k t+\theta)$。
-
-以 $F_s$ 采样，$t=n/F_s$：
-$$x'(n)=A\cos\!\left(2\pi\frac{F_0+kF_s}{F_s}n+\theta\right)=A\cos\!\left(\frac{2\pi nF_0}{F_s}+\theta+2\pi kn\right)$$
-
-由 $\cos(\phi+2\pi kn)=\cos(\phi)$（$k,n\in\mathbb{Z}$），得
-$$x'(n)=A\cos\!\left(\frac{2\pi nF_0}{F_s}+\theta\right)=x(n)$$
+\textbf{\hlblue{奈奎斯特采样定理}}
 
 \concepttable{
-    \conrow{结论}{$F_0$ 与 $F_0+kF_s$ 经同一 $F_s$ 采样后所得序列完全相同，即频域混叠在数学上必然发生。}
-}
-
-\textbf{\hlblue{数字角频率与模拟角频率}}
-
-\concepttable{
-    \conrow{数字角频率 $w$}{$w = \dfrac{2\pi f}{f_s} = 2\pi f_0$}
-    \conrow{模拟角频率 $\Omega$}{$\Omega = 2\pi f = w f_s$}
-    \conrow{核心映射}{$\displaystyle w = \Omega T_s,\quad \Omega = \frac{w}{T_s}$}
-}
-
-和前面的$f$与$f_0$关系类似，分别是模拟信号本身的频率与采样成离散时间信号之后的频率。
-
-\textbf{\hlblue{理想采样（时域建模）}}
-
-\imgleft[0.25]{images/image-2026-06-10-16-53-23.png}{、
-
-\concepttable{
-    \conrow{冲激串}{$P_\delta(t) = \sum_{n=-\infty}^{\infty} \delta(t - nT)$}
-    \conrow{采样模型}{$x_a(t) \cdot P_\delta(t) = \sum_{n=-\infty}^{\infty} x_a(t)\,\delta(t - nT)$}
-    \conrow{采样输出}{$\displaystyle \hat{x}_a(t) = \sum_{n=-\infty}^{\infty} x_a(nT)\,\delta(t - nT)$}
-    \conrow{本质}{$\hat{x}_a(t)$ 是强度为 $x_a(nT)$ 的冲激串，\textbf{\textcolor{myred}{仍是连续时间信号}}，是 $x_a(t)$ 与 $x(n)$ 的桥梁}
-}
-}
-
-\textbf{\hlblue{采样信号频域推导}}
-
-易得采样算子 $P_\delta(t)$ 的频域形式：$\displaystyle P_\delta(j\Omega) = \text{FT}[P_\delta(t)] = \Omega_s \sum_{k=-\infty}^{\infty} \delta(\Omega - k\Omega_s),\quad \Omega_s = \frac{2\pi}{T}$
-
-时域相乘对应频域卷积（由于采样算子的频域也是冲激串，所以卷积结果为复制平移）：
-
-$\hat{X}_a(j\Omega) = \frac{1}{T} \sum_{k=-\infty}^{\infty} X_a(j\Omega) * \delta(\Omega - k\Omega_s) = \frac{1}{T} \sum_{k=-\infty}^{\infty} X_a(j(\Omega - k\Omega_s))$
-
-\entry{核心结论}{\textbf{\textcolor{myred}{采样后频谱是原频谱以 $\Omega_s$ 为周期的周期延拓，幅度缩放 $1/T$}}。$k=0$ 为基带，$k\neq 0$ 为镜像频谱}
-
-\textbf{\hlblue{镜像频谱}}
-
-\imgleft[0.1]{images/image-2026-06-10-17-12-43.png}{
-
-\concepttable{
-    \conrow{原频谱}{带限 $X_a(j\Omega)$，截止频率 $\Omega_c$，$[-\Omega_c,\Omega_c]$ 外无分量}
-    \conrow{采样序列频谱}{$P_\delta(j\Omega)$ 为间隔 $\Omega_s$ 的离散冲激串}
-    \conrow{过采样}{$\Omega_c < \Omega_s/2$，镜像间有隔离带，无混叠，低通滤波（截止 $\Omega_s/2$）可无失真重构}
+    \conrow{过采样（正常情况）}{$\Omega_c < \Omega_s/2$，镜像间有隔离带，无混叠，低通滤波（截止 $\Omega_s/2$）可无失真重构}
     \conrow{欠采样}{$\Omega_c > \Omega_s/2$，\textbf{\textcolor{myred}{高频镜像侵入基带，谱线代数叠加}}，频谱结构不可逆破坏}
 }
 
-}
+\textbf{\hlblue{时域-频域对偶}}
+\textbf{\textcolor{myred}{连续$\leftrightarrow$非周期，离散$\leftrightarrow$周期。}}
 
-\textbf{\hlblue{时域-频域对偶归纳}}
-
-\textbf{\textcolor{myred}{一句话：连续和非周期对应，离散和周期对应。}}
-
-\concepttable{
-    \conrow{连续周期}{时域连续 + 周期 $\;\Rightarrow\;$ 频域非周期 + 离散（谱线），工具：FS}
-    \conrow{连续非周期}{时域连续 + 非周期 $\;\Rightarrow\;$ 频域非周期 + 连续，工具：FT}
-    \conrow{\textbf{\textcolor{myred}{离散周期}}}{时域离散 + 周期 $\;\Rightarrow\;$ 频域周期 + 离散，工具：DFS / DFT}
-    \conrow{离散非周期}{时域离散 + 非周期 $\;\Rightarrow\;$ 频域周期 + 连续，工具：DTFT}
-}
-
-时域非周期的信号就是包含各种各样的频率，所以频域是连续的。
-
-\entry{注}{离散非周期信号即理想采样后的标准数字信号形态}
+\textbf{\hlyellow{有限字长效应}}
+在数字系统中，由于寄存器、运算单元、存储单元的\textbf{位数（字长）有限，无法精确表示无限精度的数值与运算}，从而引入量化误差、导致系统性能下降的现象，统称为有限字长效应。
 
 \section{第二章\ 时域离散信号及系统频域分析}
 
-\subsection{时域离散信号的傅里叶变换}
+\textbf{\hlyellow{时域离散信号的傅里叶变换}}
+\textbf{\hlgreen{DTFT}}
 
-\subsubsection{DTFT}
-
-\concepttable{
-    \conrow{定义式}{
+\entry{定义式}{
     \textbf{\textcolor{myred}{$X(e^{j\omega}) = \text{DTFT}[x(n)] = \sum_{n=-\infty}^{\infty} x(n)e^{-j\omega n}$}}}
-    \conrow{充分条件（绝对可和）}{$\displaystyle\sum_{n=-\infty}^{\infty} |x(n)| < \infty$，和 Z 变换收敛条件对应}
-}
+\entry{充分条件（绝对可和）}{$\displaystyle\sum_{n=-\infty}^{\infty} |x(n)| < \infty$，和 Z 变换收敛条件对应}
 
-\textbf{\hlblue{IDTFT}}
+\textbf{\hlgreen{IDTFT}}
+\textbf{定义式：}\textbf{\textcolor{myred}{$x(n) = \text{IDTFT}[X(e^{j\omega})] = \frac{1}{2\pi}\int_{-\pi}^{\pi} X(e^{j\omega})e^{j\omega n}d\omega$}}
 
-\concepttable{
-    \conrow{定义式}{
-    \textbf{\textcolor{myred}{$x(n) = \text{IDTFT}[X(e^{j\omega})] = \frac{1}{2\pi}\int_{-\pi}^{\pi} X(e^{j\omega})e^{j\omega n}d\omega$}}}
-}
-
-\textbf{\hlblue{DTFT 的性质}}
-
-主要性质和 Z 变换相同，这里主要列出一些特殊性质。
+\textbf{\hlgreen{DTFT 的性质}}
+主要性质和 Z 变换相同。
 
 \compTable{6}{
     \compheader{序列 & 傅里叶变换 & 说明 & 序列 & 傅里叶变换 & 说明}
-    \comprow{$nx(n)$ & $j\frac{dX}{d\omega}$ & 频域微分 & $x^*(n)$ & $X^*(e^{-j\omega})$ & 共轭}
-    \comprow{$j\operatorname{Im}\{x(n)\}$ & $X_o(e^{j\omega})$ & 虚部 & $\operatorname{Re}\{x(n)\}$ & $X_e(e^{j\omega})$ & 实部}
-    \comprow{$x_o(n)$ & $j\operatorname{Im}\{X\}$ & 奇部 & $x_e(n)$ & $\operatorname{Re}\{X\}$ & 偶部}
     \comprow{$x(n)y(n)$ & $\frac{1}{2\pi} \int_{-\pi}^{\pi} X(e^{j\omega})^* Y(e^{-j\omega})$ & & 时域乘积}
+    \comprow{$nx(n)$ & $j\frac{dX}{d\omega}$ & 频域微分 & $x^*(n)$ & $X^*(e^{-j\omega})$ & 共轭}
+    \comprow{$j\operatorname{Im}\{x(n)\}$ & $X_o(e^{j\omega})$ & 虚部-共轭反 & $\operatorname{Re}\{x(n)\}$ & $X_e(e^{j\omega})$ & 实部-共轭对}
+    \comprow{$x_o(n)$ & $j\operatorname{Im}\{X\}$ & 共轭反-虚部 & $x_e(n)$ & $\operatorname{Re}\{X\}$ & 共轭对-实部}
 }
 
-\subsubsection{离散傅里叶级数}
-
+\textbf{\hlgreen{DFS}}
 设 $x(n)$ 为离散周期序列，周期为 $N$。
 
-\textbf{离散傅里叶级数系数；}$\tilde{X}(k)=\sum_{n=0}^{N-1} \tilde{x}(n) e^{-j \frac{2 \pi}{N} k n} \quad 0<k<N-1$
+\entry{离散傅里叶级数系数}{$\tilde{X}(k)=\sum_{n=0}^{N-1} \tilde{x}(n) e^{-j \frac{2 \pi}{N} k n} \quad 0<k<N-1$}
 
-\textbf{DFS 形式：}$\tilde{x}(n)=\operatorname{IDFS}[\tilde{X}(k)]=\frac{1}{N} \sum_{k=0}^{N-1} \tilde{X}(k) e^{j \frac{2 \pi}{N} k n} \quad 0<n<N-1$
+\entry{DFS 形式}{$\tilde{x}(n)=\frac{1}{N} \sum_{k=0}^{N-1} \tilde{X}(k) e^{j \frac{2 \pi}{N} k n} \quad 0<n<N-1$}
 
-\textbf{\hlblue{广义 DTFT}}
+\textbf{\hlgreen{广义 DTFT}}
 
-$X(e^{j\omega}) = \mathrm{FT}[\tilde{x}(n)] = \frac{2\pi}{N}\sum_{k=-\infty}^{\infty}\tilde{X}(k)\delta\left(\omega-\frac{2\pi}{N}k\right)$
+\entry{定义式}{$X(e^{j\omega}) = \mathrm{FT}[\tilde{x}(n)] = \frac{2\pi}{N}\sum_{k=-\infty}^{\infty}\tilde{X}(k)\delta\left(\omega-\frac{2\pi}{N}k\right)$}
 
-\compTable{4}{%
-\compheader{序列 & DTFT & 序列 & DTFT}%
-\comprow{$\delta(n)$ & $1$ & $a^n u(n) \quad (|a|<1)$ & $\frac{1}{1 - a e^{-j\omega}}$}%
-\comprow{$R_N(n)$ & $\frac{\sin(\omega N/2)}{\sin(\omega/2)} e^{-j\omega(N-1)/2}$ & $u(n)$ & $\frac{1}{1 - e^{-j\omega}} + \displaystyle\sum_{k=-\infty}^{\infty} \pi \delta(\omega - 2\pi k)$}%
-\comprow{$x(n)=1$ & $2\pi \displaystyle\sum_{k=-\infty}^{\infty} \delta(\omega - 2\pi k)$ & $e^{j\omega_0 n}$ & $2\pi \displaystyle\sum_{l=-\infty}^{\infty} \delta(\omega - \omega_0 - 2\pi l)$}%
-\comprow{$\cos \omega_0 n$ & $\pi \displaystyle\sum_{l=-\infty}^{\infty} [\delta(\omega - \omega_0 - 2\pi l) + \delta(\omega + \omega_0 - 2\pi l)]$ & $\sin \omega_0 n$ & $-j\pi \displaystyle\sum_{l=-\infty}^{\infty} [\delta(\omega - \omega_0 - 2\pi l) - \delta(\omega + \omega_0 - 2\pi l)]$}%
-}
+\textbf{\hlgreen{常用 DTFT 对}}
+$\cos \omega_0 n \leftrightarrow \pi \displaystyle\sum_{l=-\infty}^{\infty} [\delta(\omega - \omega_0 - 2\pi l) + \delta(\omega + \omega_0 - 2\pi l)]$
+
+$\sin \omega_0 n \leftrightarrow -j\pi \displaystyle\sum_{l=-\infty}^{\infty} [\delta(\omega - \omega_0 - 2\pi l) - \delta(\omega + \omega_0 - 2\pi l)]$
+
+\begin{multicols}{2}
+\begin{minipage}{\columnwidth}
+$x(n)=1$ $\leftrightarrow$ $2\pi \displaystyle\sum_{k=-\infty}^{\infty} \delta(\omega - 2\pi k)$
+
+$R_N(n)$ $\leftrightarrow$ $\frac{\sin(\omega N/2)}{\sin(\omega/2)} e^{-j\omega(N-1)/2}$
+
+$\delta(n) \leftrightarrow 1$ \ \ \ \  $a^n u(n) \leftrightarrow \frac{1}{1 - a e^{-j\omega}}$
+
+\end{minipage}
+\begin{minipage}{\columnwidth}
+$e^{j\omega_0 n}$ $\leftrightarrow$ $2\pi \displaystyle\sum_{l=-\infty}^{\infty} \delta(\omega - \omega_0 - 2\pi l)$
+
+$u(n)$ $\leftrightarrow$ $\frac{1}{1 - e^{-j\omega}} + \displaystyle\sum_{k=-\infty}^{\infty} \pi \delta(\omega - 2\pi k)$
+
+\end{minipage}
+\end{multicols}
 
 \subsubsection{Z 变换}
 
-Z 变换存在的条件是等号右边\textbf{级数收敛，要求级数绝对可和}，即$
+Z 变换存在的条件是\textbf{级数收敛，要求级数绝对可和}，即$
 \sum_{n=-\infty}^{\infty} \left| x(n) z^{-n} \right| < \infty
 $。
 
-\concepttable{%
-\conrow{双边 Z 变换}{$X(z) \stackrel{\text{def}}{=} \displaystyle\sum_{n=-\infty}^{\infty} x(n) z^{-n}$}%
-\conrow{单边 Z 变换}{$X(z) \stackrel{\text{def}}{=} \displaystyle\sum_{n=0}^{\infty} x(n) z^{-n}$，适用于因果序列（$x(n) = 0, n<0$）}
-}
 
-\textbf{\hlblue{Z 变换的收敛域}}
+\textbf{\textcolor{myred}{\textbf{双边 Z 变换}$X(z) \stackrel{\text{def}}{=} \displaystyle\sum_{n=-\infty}^{\infty} x(n) z^{-n}$\ \ 
+\textbf{单边 Z 变换}$X(z) \stackrel{\text{def}}{=} \displaystyle\sum_{n=0}^{\infty} x(n) z^{-n}$(适用于因果序列)}}
 
-Z 变换的收敛域一般为环状域 $R_{x-} < |z| < R_{x+}$。收敛仅取决于 $|z|$，与相角无关，故\textbf{\textcolor{myred}{收敛域必为以原点为中心的环状区域}}。
 
-\concepttable{%
-\conrow{有理分式形式}{$X(z) = \frac{P(z)}{Q(z)}$}%
-\conrow{零点}{$P(z_0)=0$ 且 $Q(z_0)\neq 0$，记 $z=z_0$，复平面用 $\circ$ 表示。}%
-\conrow{极点}{$Q(z_0)=0$，$|X(z_0)|=\infty$，记 $z=z_0$，复平面用 $\times$ 表示。}%
-\conrow{结论}{极点处级数必发散，\textbf{\textcolor{myred}{收敛域内部绝不能包含任何极点}}；边界 $R_{x-}$、$R_{x+}$ 由极点半径决定。}%
-}
+\textbf{\hlgreen{Z 变换的收敛域}}
+
+\textbf{\textcolor{myred}{收敛域必为以原点为中心的环状区域}}。
 
 \textbf{有限长序列收敛域：}
 
@@ -475,22 +367,19 @@ $n \le n_2$ 非全零，$n > n_2$ 全零。$R_{x+}$ 为最小极点半径，与�
 
 \textbf{双边序列收敛域：}
 
-双边序列可以按线性性质拆分为左序列（反因果）与右序列（因果）：
-
-$X(z) = \sum_{n=-\infty}^{-1} x(n)z^{-n} + \sum_{n=0}^{\infty} x(n)z^{-n}$
-
-\entry{双边 ROC（交集）}{$R_{x-} < |z| < R_{x+}$，即环状区域，\textbf{\textcolor{myred}{若 $R_{x-} \ge R_{x+}$，两区域无交集，$z$ 变换不存在}}。}
+$R_{x-} < |z| < R_{x+}$，即环状区域，\textbf{\textcolor{myred}{若 $R_{x-} \ge R_{x+}$，两区域无交集，$z$ 变换不存在}}。
 
 \textbf{\hlblue{Z 变换的计算}}
+$\sin(\beta k)\varepsilon(k) \leftrightarrow \dfrac{z\sin\beta}{z^2-2z\cos\beta+1}$ $\cos(\beta k)\varepsilon(k) \leftrightarrow \dfrac{z(z-\cos\beta)}{z^2-2z\cos\beta+1}$
 
 \compTable{6}{
     \compheader{序列 $f(k)$ & $Z$ 变换 $F(z)$ & 序列 $f(k)$ & $Z$ 变换 $F(z)$ & 序列 $f(k)$ & $Z$ 变换 $F(z)$}
     \comprow{$\delta(k)$ & $1$ & $\varepsilon(k)$ & $\dfrac{z}{z-1}$ & $a^k\varepsilon(k)$ & $\dfrac{z}{z-a}$}
     \comprow{$e^{\alpha k}\varepsilon(k)$ & $\dfrac{z}{z-e^{\alpha}}$ & $k\varepsilon(k)$ & $\dfrac{z}{(z-1)^2}$ & $k^2\varepsilon(k)$ & $\dfrac{z(z+1)}{(z-1)^3}$}
-    \comprow{$k a^k\varepsilon(k)$ & $\dfrac{az}{(z-a)^2}$ & $\sin(\beta k)\varepsilon(k)$ & $\dfrac{z\sin\beta}{z^2-2z\cos\beta+1}$ & $\cos(\beta k)\varepsilon(k)$ & $\dfrac{z(z-\cos\beta)}{z^2-2z\cos\beta+1}$}
+    \comprow{$k a^k\varepsilon(k)$ & $\dfrac{az}{(z-a)^2}$ & & & & }
 }
 
-\textbf{\hlblue{Z 变换的性质}}
+\textbf{\hlgreen{Z 变换的性质}}
 
 \compTable{6}{
     \compheader{公式 & 公式 & 公式}
@@ -500,14 +389,12 @@ $X(z) = \sum_{n=-\infty}^{-1} x(n)z^{-n} + \sum_{n=0}^{\infty} x(n)z^{-n}$
     \comprow{$f(0)=\displaystyle\lim_{z\to\infty}F(z)$ & $f(\infty)=\displaystyle\lim_{z\to 1}(z-1)F(z)$& }
 }
 
-\textbf{\hlblue{逆Z变换（部分分式展开法）}}
-
+\textbf{\hlgreen{逆Z变换（部分分式展开法）}}
 \textbf{整体思路}：把大的有理分式展开为多个简单的分式，每个分式通过查表得到对应的逆变换。
 
 \textbf{左序列处理：}如果分离出来的分式形式为$\frac{bz}{z+a}$，且由收敛域判断其为左序列，则\textbf{\textcolor{myred}{其逆变换为$-b(-a)^{n}u(-n-1)$}}，如果遇到不规则的$u(f(n))$，则为\textbf{\textcolor{myred}{$u(-f(n)-1)$的方式处理为左序列}}。
 
-\subsection{系统函数与频率特性}
-
+\textbf{\hlyellow{系统函数与频率特性}}
 DTFT是z变换在单位圆上的特例，因此\textbf{\textcolor{myred}{系统稳定的条件是 $H(z)$ 的所有极点都在单位圆内}}，此时DTFT存在。
 
 \textbf{LTI 离散系统的三种表示方式}：冲激响应，差分方程，系统函数
@@ -533,53 +420,314 @@ $H(z)= K_1 z^{N-M} \frac{\prod_{m=1}^M (z - c_m)}{\prod_{k=1}^N (z - d_k)}$，�
 
 3. 若分子多项式 $P(z)$ 与分母多项式 $Q(z)$ 包含完全相同的根，则该零极点在代数上可以相互抵消，从而降低系统的实际阶数
 
-\textbf{\hlblue{区分 IIR 和 FIR}}
-
-\concepttable{
-    \conrow{时域判定}{若 $h(n)$ 为\textbf{无穷长序列}，则系统为 IIR 滤波器；
-    
-    若 $h(n)$ 为\textbf{有限长序列}，则系统为 FIR 滤波器。}
-    \conrow{频域判定}{包含至少一个不在原点的极点（非零极点），则系统为 IIR 滤波器；
-    
-    极点全部位于原点 $z=0$ 处，则系统为 FIR 滤波器。}
-}
-\subsection{理想采样序列频谱与连续信号频谱的关系}
-
 \section{第三章\ 离散傅里叶变换}
 
-\subsection{离散傅里叶变换的定义}
+\subsubsection{定义}
 
-\subsection{离散傅里叶变换的性质}
+\entry{定义}{对于一个长度为 $M$ 的有限长序列 $x(n)$，其 $N$ 点 DFT 定义为：
 
-\subsection{频域采样}
+\textbf{\textcolor{myred}{$X(k) = \text{DFT}[x(n)]_N = \sum_{n=0}^{N-1} x(n) e^{-j\frac{2\pi}{N}kn}, \quad k = 0,1,\cdots,N-1$}}}
 
-\subsection{快速傅里叶变换}
+\textbf{注意：}
 
-\subsection{离散傅里叶变换的应用举例}
+\concepttable{
+    \conrow{变换区间长度 $N$}{必须满足 $N \ge M$（即变换点数不能小于序列实际长度）}
+    \conrow{简化形式}{引入旋转因子$W_N = e^{-j\frac{2\pi}{N}}$，\textbf{\textcolor{myred}{$X(k) = \sum_{n=0}^{N-1} x(n) W_N^{kn}$}}}
+}
+
+\textbf{逆变换：}\textbf{\textcolor{myred}{$x(n) = \text{IDFT}[X(k)]_N = \frac{1}{N} \sum_{k=0}^{N-1} X(k) W_N^{-kn}, \quad n = 0,1,\cdots,N-1$}}
+
+\concepttable{
+    \conrow{周期性\&共轭}{$W_N^{kn}=W_N^{kn+mN}$;\quad $W_N^{-kn}=(W_N^{kn})^*=W_N^{N-kn}$}
+    \conrow{半周期\&1/4}{\textbf{\textcolor{myred}{$W_N^{N/2}=-1$}}\textbf{\textcolor{myred}{$W_N^{N/4}=-j,W_N^{-N/4}=j$}}}
+}
+
+\subsubsection{与其他变换的关系}
+
+\textbf{\hlblue{DTFT：}}在 $N \ge M$ 的前提下，序列的 $N$ 点 DFT 是其 DTFT 在\textbf{\textcolor{myred}{频域区间 $[0, 2\pi)$ 上的 $N$ 点}}等间隔采样，采样间隔（即基频/频率分辨率）为 $\Delta \omega = \frac{2\pi}{N}$，即：$X(k) = \left. X(e^{j\omega}) \right|_{\omega = \frac{2\pi}{N}k}$
+
+\textbf{\hlblue{ZT：}}同时也是其 Z 变换\textbf{\textcolor{myred}{在 $Z$ 平面单位圆上的 $N$ 点}}等间隔采样，即：$X(k) = \left. X(z) \right| z = e^{j\frac{2\pi}{N}k}$。
+
+
+\textbf{\hlblue{DFS：}}DFT 的处理对象 $x_N(n)$ 是 DFS 的处理对象 $\tilde{x}_N(n)$ 的主值序列。DFT 的计算结果 $X(k)$ 是 DFS 计算结果 $\tilde{X}(k)$ 的主值序列，\textbf{即DFS 是 DFT 的周期性延拓}。
+
+\subsubsection{时域混叠}
+
+时域混叠（$N < M$）： 当设定的变换点数 $N$ 小于信号实际长度 $M$ 时，时域以 $N$ 为周期进行延拓会导致\textbf{\textcolor{myred}{前后周期的波形在时域发生重叠}}（即时域混叠）。
+
+\subsubsection{离散傅里叶变换的性质}
+
+\textbf{线性：}$y(n) = ax_1(n) + bx_2(n) \rightarrow Y(k) = aX_1(k) + bX_2(k)$
+
+\textbf{时域循环移位：}$\text{DFT}[x((n+m))_N R_N(n)] = W_N^{-km} X(k)$
+
+\textbf{频域循环移位：}$\text{DFT}[W_N^{mn} x(n)] = X((k+m))_N R_N(k)$
+
+\textbf{循环卷积计算：}
+$y_c(n) = \left[ \sum_{m=0}^{L-1} h(m) x((n-m))_L \right] R_L(n) = h(n) \bigodot x(n)$
+
+$\begin{bmatrix} y_c(0) \\ y_c(1) \\ y_c(2) \\ \vdots \\ y_c(L-1) \end{bmatrix} = \begin{bmatrix} x(0) & x(L-1) & x(L-2) & \cdots & x(1) \\ x(1) & x(0) & x(L-1) & \cdots & x(2) \\ x(2) & x(1) & x(0) & \cdots & x(3) \\ \vdots & \vdots & \vdots & & \vdots \\ x(L-1) & x(L-2) & x(L-3) & \cdots & x(0) \end{bmatrix} \begin{bmatrix} h(0) \\ h(1) \\ h(2) \\ \vdots \\ h(L-1) \end{bmatrix}$
+
+\textbf{时域循环卷积定理：}
+$y_c(n) = h(n) \bigodot x(n) \rightarrow Y_c(k) = \text{DFT}[y_c(n)]_L = H(k)X(k)$
+
+\textbf{帕塞瓦尔定理：}
+$\sum_{n=0}^{N-1} |x(n)|^2 = \frac{1}{N} \sum_{k=0}^{N-1} |X(k)|^2$
+
+\textbf{\hlyellow{频域采样}}
+
+「1」$x(n)$ 是任意序列，$X(e^{j\omega}) = DTFT[x(n)]$，对 $X(e^{j\omega})$ 等间隔采样得到
+$X_N(k) = X(e^{j\omega}) \big|_{\omega=\frac{2\pi}{N}k} \quad k = 0 \cdots N-1$
+
+则
+$x_N(n) = IDFT[X_N(k)] = \sum_{n=-\infty}^{\infty} x(n+iN) R_N(n)$
+
+「2」如果 $x(n)$ 的长度为 $M$，只有当频域采样点数 $N \geqslant M$ 时，$x_N(n) = x(n)$，否则
+$\tilde{x}_N(n) = \sum_{n=-\infty}^{\infty} x(n+iN)$ 会发生时域混叠。
+
+通过频率域采样得到频域离散序列 $x_N(k)$，再对 $x_N(k)$ 进行 IDFT 得到的序列 $x_N(n)$ 应是原序列 $x(n)$ 以采样点数 $N$ 为周期进行周期化后的主值区序列。
+
+「3」采样点数 $N$ 大于等于序列的长度 $M$时，可以用频率采样得到的离散函数 $X(k)$ 恢复原序列的 Z 变换 $X(z)$，公式为$X(z) = \sum_{k=0}^{N-1} X(k) \varphi_k(z)$（$z$ 域内插公式）
+
+\textbf{内插函数：}$\varphi_k(z) = \frac{1}{N} \frac{1-z^{-N}}{1-W_N^{-k} z^{-1}}$
+
+\textbf{\hlyellow{快速傅里叶变换}}
+
 
 \section{第四章\ 时域离散系统的算法结构}
 
-\subsection{时域离散系统的实现}
+\textbf{\hlyellow{FIR 与 IIR 区别}}
 
-\subsection{IIR 系统的基本算法结构}
+\compTable{3}{
+    \compheader{ & FIR & IIR}
+    \comprow{\textbf{时域} & $h(n)$ 有限长 & $h(n)$ 无穷长}
+    \comprow{\textbf{频域} & $H(z)$ 极点均在 $z=0$ & $H(z)$ 含非零极点}
+    \comprow{\textbf{反馈} & 一般无反馈（频率采样结构除外） & 必有反馈结构}
+    \comprow{\textbf{相位} & \textbf{\textcolor{myred}{可实现全频带线性相位}} & 仅部分频带近似线性相位}
+    \comprow{\textbf{复杂度} & 仅零点调滤波，阶数远高于 IIR & 零极点共调，阶数低，复杂度低}
+}
 
-\subsection{FIR 系统的基本算法结构}
+\textbf{\hlyellow{IIR 系统算法结构}}
 
-\subsection{格形网络}
+\textbf{\hlgreen{直接型结构}}
 
-\subsection{时域离散系统算法结构的计算复杂度}
+\begin{multicols}{3}
 
-\section{第五章\ IIR数字滤波器的设计}
+% --- 第一列 ---
+\begin{minipage}{\columnwidth}
 
-\subsection{数字滤波器的基本概念}
+\textbf{直接 I 型}
 
-\subsection{模拟滤波器设计}
+\img{images/image-2026-06-17-15-36-39.png}
 
-\subsection{IIR 数字滤波器的设计方法}
+\end{minipage}
 
+% --- 第二列 ---
+\begin{minipage}{\columnwidth}
+
+\textbf{直接 II 型}
+
+\img{images/image-2026-06-17-15-31-26.png}
+
+\end{minipage}
+
+% --- 第三列 ---
+\begin{minipage}{\columnwidth}
+
+\textbf{直接 II 型（转置结构，可由梅森公式证明）}
+
+\img{images/image-2026-06-17-15-36-48.png}
+
+\end{minipage}
+
+\end{multicols}
+\vspace{-0.45cm}
+\concepttable{
+\conrow{标准差分方程}{$y(n) =  \sum_{k=1}^{3} a_k y(n-k) + \sum_{k=0}^{3} b_k x(n-k)$}
+
+\conrow{系统函数}{$H(z) = \frac{b_0 + b_1 z^{-1} + b_2 z^{-2} + b_3 z^{-3}}{1 - a_1 z^{-1} - a_2 z^{-2} - a_3 z^{-3}}$}
+}
+
+\textbf{\hlgreen{级联型}} 系统函数分子与分母分别\textbf{\textcolor{myred}{因式分解}}$\rightarrow$变成多个子系统函数相乘的形式：$H(z) = H_1(z) H_2(z) H_3(z)$ $\rightarrow$ 绘制$H_1(z)$，$H_2(z)$，$H_3(z)$的信号流图
+$\rightarrow$级联连接即可。
+
+\textbf{\hlgreen{并联型}} 系统函数分母\textbf{\textcolor{myred}{因式分解}}$\rightarrow$待定系数法有理分式分解，得到$H(z) = H_1(z) + H_2(z) + H_3(z)$ $\rightarrow$ 绘制$H_1(z)$，$H_2(z)$，$H_3(z)$的信号流图$\rightarrow$并联连接即可。
+
+\textbf{\hlyellow{FIR 系统算法结构}}
+\textbf{\hlgreen{直接型结构}}
+\vspace{-0.3cm}
+\begin{multicols}{2}
+
+% --- 第一列 ---
+\begin{minipage}{\columnwidth}
+\entry{系统函数}{$H(z) = \sum_{n=0}^{N-1} h(n) z^{-n}$}
+\end{minipage}
+
+\begin{minipage}{\columnwidth}
+\entry{差分方程}{$y(n) = \sum_{k=0}^{N-1} h(n) x(n - k)$}
+\end{minipage}
+
+\end{multicols}
+
+\vspace{-0.45cm}
+
+\begin{multicols}{2}
+
+% --- 第一列 ---
+\begin{minipage}{\columnwidth}
+\textbf{直接型信号流图}
+\img{images/image-2026-06-17-15-54-09.png}
+\end{minipage}
+
+\begin{minipage}{\columnwidth}
+\textbf{转置型结构}
+\img{images/image-2026-06-17-15-54-27.png}
+\end{minipage}
+
+\end{multicols}
+
+\textbf{\hlgreen{线性相位结构}}
+单位脉冲响应 $h(n)$ 必须满足时域对称性，即$h(n) = \pm h(N - 1 - n)$（轴对称（第一类）或者中心对称（第二类））
+\vspace{-0.2cm}
+\begin{multicols}{2}
+\begin{minipage}{\columnwidth}
+\textbf{N 取偶数：}
+\img{images/image-2026-06-17-16-13-10.png}
+\end{minipage}
+
+\begin{minipage}{\columnwidth}
+\textbf{N 取奇数：}
+\img{images/image-2026-06-17-16-13-45.png}
+\end{minipage}
+\end{multicols}
+\vspace{-0.3cm}
+\textbf{\hlgreen{频率采样结构}}
+
+\imgleft[0.3]{images/image-2026-06-18-10-52-34.png}{
+    \textbf{公式化简形式：}$H(z) = (1 - z^{-N}) \frac{1}{N} \sum_{k=0}^{N-1} \frac{H(k)}{1 - W_N^{-k}z^{-1}}$
+
+    \textbf{前半部分 $H_c(z) = 1 - z^{-N}$}：梳状滤波器（\textbf{\textcolor{myred}{FIR结构}}），对应图中左侧单独的反馈回路。
+    
+    \textbf{后半部分 $\sum H_k(z)$}：由 $N$ 个一阶网络组成的并联结构（\textbf{\textcolor{myred}{IIR结构}}），对应图右并联的 $N$ 个支路，每个支路的增益为 $H(k)$，反馈系数为 $W_N^{-k}$。
+}
+
+\section{第五章\ IIR数字滤波器设计}
+
+\textbf{\hlyellow{数字滤波器参数}}：越像方波越好（通、阻带平（阻带幅值接近 0），过渡带陡）
+
+\imgleft[0.2]{images/image-2026-06-19-11-19-34.png}{
+通带截止频率 $w_p$，阻带截止频率 $w_s$，3dB截止频率 $w_c$，有 $|H(e^{jw_c})| = \sqrt{2}/2$
+
+\textbf{通带波纹} $\delta_1 = 1 - \sqrt{1 + \varepsilon^2}$，\textbf{阻带波纹} $\delta_2 = 1/A$。
+
+\textbf{通带最大衰减} $\alpha_p = -20\lg|H(e^{jw_p})| = 10\lg(1 + \varepsilon^2) \text{ dB}$
+
+\textbf{阻带最大衰减} $\alpha_s = -20\lg|H(e^{jw_s})| = 20\lg A \text{ dB}$
+}
+
+\textbf{\hlyellow{模拟滤波器设计}}
+
+\textbf{总思路：}
+$\text{读取四大指标} \rightarrow \text{计算相关参数} \rightarrow \text{计算滤波器阶数 N（注意高低通区别）} \rightarrow \text{求}G(p)\rightarrow \text{根据滤波器类型代入 p 的表达式得到}H_a(s)$
+
+\textbf{\hlgreen{技术指标（归一化系统函数）}}
+\textbf{损耗函数：}$\alpha(\Omega) = -20\lg|H_a(j\Omega)| = -10\lg|H_a(j\Omega)|^2 \text{ dB}$
+
+$\varepsilon = \sqrt{10^{\alpha_p/10} - 1}$
+\ \ \ $A = 10^{\alpha_s/10}$
+\ \ \ \textbf{过渡比：}$k = \Omega_p / \Omega_s$
+\ \ \ \textbf{偏离参数：}$k_1 = \frac{\varepsilon}{\sqrt{A^2 - 1}}$
+
+\textbf{\hlgreen{巴特沃斯低通滤波器（幅频响应单调变化，无波纹）}}
+
+\imgleft[0.26]{images/image-2026-06-19-11-37-43.png}{
+\textbf{幅度平方函数（单调递减）：}$|H_a(j\Omega)|^2 = \frac{1}{1 + (\Omega/\Omega_c)^{2N}}$
+
+\textbf{衰减函数：}$\alpha(\Omega) = -20\lg|H_a(j\Omega)| = 10\lg\left[1 + \left(\frac{\Omega}{\Omega_c}\right)^{2N}\right]$
+
+\textbf{阶数计算：}$\boxed{N = \frac{lg(k_{sp})}{lg(\lambda_{sp})} = \frac{\lg\left(\sqrt{10^{\alpha_p/10} - 1} \Big/ \sqrt{10^{\alpha_s/10} - 1}\right)}{\lg(\Omega_p/\Omega_s)}}$
+
+}
+
+\textbf{注：}计算出的 $N$ 如果不是整数，必须\textbf{\textcolor{myred}{向上取整}}(因为阶数 $N$ 越大，过渡带越窄，滤波器性能越好)
+
+\textbf{归一化系统函数：}$\boxed{G(p) = \frac{1}{\prod_{k=0}^{N-1}(p - p_k)}}$，分母系数可以查表。
+\ \ 
+\textbf{系统函数：}$\boxed{H_a(s) = \frac{\Omega_c^N}{\prod_{k=0}^{N-1}(s - s_k)}}$
+
+\textbf{\hlblue{极点情况}}幅值平方函数（s版）的极点分布称为\textbf{巴特沃斯圆}，$2N$ 个极点等间隔分布在半径为 $\Omega_c$ 的圆上（极点关于虚轴（$j\Omega$ 轴）对称，并且不落在虚轴上），左半平面的极点归$H_a(s)$，右半平面的极点归$H_a(s)$的共轭。
+
+\textbf{\hlblue{频率归一化}}
+令 $p = \frac{s}{\Omega_c} = j\lambda$，极点 \textbf{\textcolor{myred}{$p_k = e^{j\pi\left(\frac{1}{2} + \frac{2k+1}{2N}\right)}$}}（其中 $\lambda = \Omega/\Omega_c$ 为归一化角频率）原半径为 $\Omega_c$ 的巴特沃斯圆被映射成了 $p$ 平面上的单位圆（半径为 $1$）。
+
+
+
+\begin{multicols}{2}
+\begin{minipage}{\columnwidth}
+\textbf{\hlgreen{切比雪夫I型滤波器}}
+
+$|H_a(j\Omega)|^2 = \frac{1}{1 + \varepsilon^2 C_N^2(\Omega/\Omega_p)}$
+
+$\varepsilon$ 越大，通带内波纹幅度越大。$C_N(x)$在通带内为余弦函数，在阻带内为双曲余弦函数。\textbf{与巴特沃斯对比，在相同阶数 $N$ 的情况下，切比雪夫 I 型滤波器的过渡带比巴特沃斯滤波器更陡峭。}
+
+\textbf{\textcolor{myred}{计算量太大了，如果考到了就算一个阶数和参数拿点分算了。}}
+
+\end{minipage}
+\begin{minipage}{\columnwidth}
+\textbf{\hlgreen{切比雪夫II型滤波器}}
+
+$|H_a(j\Omega)|^2 = \frac{1}{1 + \varepsilon^2 \left( \frac{C_N(\Omega_s/\Omega_p)}{C_N(\Omega_s/\Omega)} \right)^2}$
+
+$\boxed{N = \frac{\text{arch}\, k^{-1}}{\text{arch}\, (f_s/f_p)}}$
+$\boxed{\varepsilon = \sqrt{10^{\frac{\alpha_p}{10}} - 1}}$
+
+切比雪夫 I 型滤波器是\textbf{全极点滤波器}，只包含极点。而切比雪夫 II 型滤波器\textbf{既包含极点，又包含零点}。
+\end{minipage}
+\end{multicols}
+
+\textbf{\hlyellow{频率变换（将低通滤波器转换为同类型其他滤波器）}}
+将下面表格中的$p$代入原归一化系统函数$G(p)$
+
+\concepttable{
+    \conrow{低通→高通}{$p = \dfrac{\Omega_c}{s}$（高通滤波器的截止频率为 $\Omega_c$），注意$N = -\frac{lg(k_{sp})}{lg(\lambda_{sp})}$}
+    \conrow{低通→带通}{$p = \dfrac{s^2 + \Omega_l \Omega_u}{s(\Omega_u - \Omega_l)}$（带通有两个截止频率（上截止 $\Omega_u$、下截止 $\Omega_l$））}
+    \conrow{低通→带阻}{$p = \dfrac{s(\Omega_u - \Omega_l)}{s^2 + \Omega_l \Omega_u}$（带阻有两个截止频率（上截止 $\Omega_u$、下截止 $\Omega_l$））}
+    \conrow{低通→低通}{$p = \frac{\Omega_c}{\Omega_c'} s$（低通原型 $G(p)$ 的截止频率是 $\Omega_c$，目标低通滤波器的截止频率是 $\Omega_c'$）}
+}
+
+\textbf{\hlyellow{模拟滤波器$\rightarrow$数字滤波器}}
+\textbf{\hlgreen{脉冲响应不变法}}
+
+\textbf{第一步：}我们根据 $\Omega_p, \Omega_s, \alpha_p, \alpha_s$ 设计好模拟滤波器，得到 $H_a(s)$。
+
+\textbf{第二步：}先进行部分分式展开，即$H_a(s) = \sum_{i=0}^{N-1} \frac{A_i}{s - s_i}$，再极点映射（$s \to z$）：
+
+\concepttable{
+    \conrow{单阶极点}{$\displaystyle\frac{A_i}{s - s_i} \longrightarrow \frac{A_i T}{1 - e^{s_i T} z^{-1}}$（最常用）}
+    \conrow{$2$ 重极点}{$\displaystyle\frac{A_i}{(s - s_i)^2} \longrightarrow \frac{A_i T^2 e^{s_i T} z^{-1}}{(1 - e^{s_i T} z^{-1})^2}$}
+}
+\vspace{-2pt}
+\textbf{\hlgreen{双线性变换法}}
+
+\textbf{第一步：}我们得到系统函数$H_a(s)$之后，$s$ 替换为 $z^{-1}$ 分式：$\boxed{\displaystyle H(z) = H_a(s) \big|_{s=\frac{2}{T}\frac{1-z^{-1}}{1+z^{-1}}}}$，再化简为标准形式即可。
 
 % --- 手动换栏命令（如果需要强制换列）---
 % \columnbreak 
+
+\section{第六章\ FIR 数字滤波器设计}
+
+\concepttable{
+    \conrow{第一类}{\textbf{幅度特性：} 关于 $\omega = 0, \pi, 2\pi$ 偶对称\ \ \textbf{相位特性：} 线性，关于 $\omega = 0$ 奇对称}
+    \conrow{第二类}{\textbf{幅度特性：} 关于 $\omega = 0, \pi, 2\pi$ 奇对称\ \ \textbf{相位特性：} 线性，且存在固定的 $\frac{\pi}{2}$ 相移。}
+}
+
+\textbf{\hlgreen{窗函数法}}
+
+
+
+\textbf{\hlgreen{频率采样法}}
+
+\textbf{\hlgreen{等波纹最佳逼近法}}
 
 \end{multicols*}
 

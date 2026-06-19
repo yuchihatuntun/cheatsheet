@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  15 JUN 2026 16:21
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  19 JUN 2026 23:55
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -973,73 +973,69 @@ Package hyperref Info: Link coloring OFF on input line 193.
 \@outlinefile=\write4
 \openout4 = `DSP-Cheatsheet.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 210.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 212.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 210.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 212.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Overfull \hbox (20.7952pt too wide) in paragraph at lines 242--242
-[]|$[] [][] \OML/cmm/m/it/5 ^^N  []$|  
- []
-
-File: images/image-2026-06-10-16-20-20.png Graphic file (type bmp)
-<images/image-2026-06-10-16-20-20.png>
-File: images/image-2026-06-10-16-53-23.png Graphic file (type bmp)
-<images/image-2026-06-10-16-53-23.png>
-File: images/image-2026-06-10-17-12-43.png Graphic file (type bmp)
-<images/image-2026-06-10-17-12-43.png>
-
-Overfull \hbox (22.98824pt too wide) in paragraph at lines 381--381
- []|[][][][][][][] [][] 
- []
-
-
-Overfull \hbox (46.7145pt too wide) in paragraph at lines 400--400
+Overfull \hbox (46.7145pt too wide) in paragraph at lines 286--286
  []|$[] [][] \OML/cmm/m/it/5 X\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 e[]\OT1/cmr/m/n/5 )[]\OML/cmm/m/it/5 Y\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 e[]\OT1/cmr/m/n/5 )$| 
  []
 
 
-Overfull \hbox (20.39876pt too wide) in paragraph at lines 420--420
- []|$[]\OML/cmm/m/it/5 e[]$| 
- []
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 321.
 
 
-Overfull \hbox (19.07794pt too wide) in paragraph at lines 491--491
- []|$[]$| 
- []
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 425.
 
-
-Overfull \hbox (1.10971pt too wide) in paragraph at lines 491--491
- []|$[]\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 ^^Lk\OT1/cmr/m/n/5 )\OML/cmm/m/it/5 "\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 k\OT1/cmr/m/n/5 )$| 
- []
-
-
-Overfull \hbox (19.07794pt too wide) in paragraph at lines 491--491
- []|$[]$| 
- []
-
+File: images/image-2026-06-17-15-36-39.png Graphic file (type bmp)
+<images/image-2026-06-17-15-36-39.png>
+File: images/image-2026-06-17-15-31-26.png Graphic file (type bmp)
+<images/image-2026-06-17-15-31-26.png>
+File: images/image-2026-06-17-15-36-48.png Graphic file (type bmp)
+<images/image-2026-06-17-15-36-48.png>
+File: images/image-2026-06-17-15-54-09.png Graphic file (type bmp)
+<images/image-2026-06-17-15-54-09.png>
+File: images/image-2026-06-17-15-54-27.png Graphic file (type bmp)
+<images/image-2026-06-17-15-54-27.png>
+File: images/image-2026-06-17-16-13-10.png Graphic file (type bmp)
+<images/image-2026-06-17-16-13-10.png>
+File: images/image-2026-06-17-16-13-45.png Graphic file (type bmp)
+<images/image-2026-06-17-16-13-45.png>
+File: images/image-2026-06-18-10-52-34.png Graphic file (type bmp)
+<images/image-2026-06-18-10-52-34.png>
 [1
 
-] [2]
+]
+File: images/image-2026-06-19-11-19-34.png Graphic file (type bmp)
+<images/image-2026-06-19-11-19-34.png>
+File: images/image-2026-06-19-11-37-43.png Graphic file (type bmp)
+<images/image-2026-06-19-11-37-43.png>
 
-[3] (./DSP-Cheatsheet.aux)
+Overfull \hbox (4.3215pt too wide) in paragraph at lines 654--657
+[]\TU/PingFangSC(0)/b/n/5 归 一 化 系 统 函 数：| $[]$\TU/PingFangSC(0)/m/n/5 ，|  分 母 系 数 可 以 查 表。|   \TU/PingFangSC(0)/b/n/5 系 统 函 数：| $[]$ 
+ []
+
+[2] (./DSP-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `DSP-Cheatsheet.out' has not changed.
-(rerunfilecheck)             Checksum: B66A0165D26FED87255C536B7D933776;3760.
+(rerunfilecheck)             Checksum: D578538A49D649B0C843E05968FA1E8C;1596.
  ) 
 Here is how much of TeX's memory you used:
- 28085 strings out of 473832
- 608180 string characters out of 5729481
- 1190295 words of memory out of 5000000
- 50651 multiletter control sequences out of 15000+600000
+ 28174 strings out of 473832
+ 612655 string characters out of 5729481
+ 1192739 words of memory out of 5000000
+ 50733 multiletter control sequences out of 15000+600000
  562592 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,14n,114p,594b,671s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,14n,114p,594b,705s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on DSP-Cheatsheet.pdf (3 pages).
+Output written on DSP-Cheatsheet.pdf (2 pages).

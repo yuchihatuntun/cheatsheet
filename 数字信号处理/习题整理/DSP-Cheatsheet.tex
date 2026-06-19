@@ -785,18 +785,498 @@ $$x(n)=\operatorname{Res}[F(z), 0.5]+\operatorname{Res}[F(z), 2]=3\cdot\left(\fr
 
 \prob{29}{}{若序列$h(n)$是因果序列，$h(0)=1$，其傅里叶变换的虚部为$H_{\text{I}}(e^{j\omega})=\frac{-a\sin\omega}{1+a^2-2a\cos\omega}$（$\vert a\vert<1$），求序列$h(n)$及其傅里叶变换$H(e^{j\omega})$。}
 
-\section{第三章\ 离散傅里叶变换}
+\section{第三章\ DFT与 FFT}
 
-\subsection{高西全习题整理}
+\prob{1}{}{计算以下序列的 $N$ 点 DFT，在变换区间 $0 \leqslant n \leqslant N-1$ 内，序列定义为\newline (1) $x(n)=1$\newline (2) $x(n)=\delta(n)$\newline (3) $x(n)=\delta(n-n_0) \quad 0 < n_0 < N$\newline (4) $x(n)=R_m(n) \quad 0 < m < N$\newline (5) $x(n)=\mathrm{e}^{\mathrm{j}\frac{2\pi}{N}mn} \quad 0 < m < N$\newline (6) $x(n)=\cos\left(\frac{2\pi}{N}mn\right) \quad 0 < m < N$\newline (7) $x(n)=\mathrm{e}^{\mathrm{j}\omega_0 n}R_N(n)$\newline (8) $x(n)=\sin(\omega_0 n)\cdot R_N(n)$\newline (9) $x(n)=\cos(\omega_0 n)\cdot R_N(N)$\newline (10) $x(n)=nR_N(n)$}
+
+\prob{2}{}{已知下列 $X(k)$，求 $x(n)=\mathrm{IDFT}[X(k)]$：\newline (1) $X(k)=\begin{cases} \dfrac{N}{2}\mathrm{e}^{\mathrm{j}\theta} & k=m \\[8pt] \dfrac{N}{2}\mathrm{e}^{-\mathrm{j}\theta} & k=N-m \\[8pt] 0 & \text{其他 }k \end{cases}$\newline (2) $X(k)=\begin{cases} -\dfrac{N}{2}\mathrm{e}^{\mathrm{j}\theta} & k=m \\[8pt] \dfrac{N}{2}\mathrm{j}\mathrm{e}^{-\mathrm{j}\theta} & k=N-m \\[8pt] 0 & \text{其他 }k \end{cases}$\newline 其中，$m$ 为正整数，$0 < m < N/2$。}
+
+\prob{3}{}{已知长度为 $N=10$ 的两个有限长序列：\newline $x_1(n)=\begin{cases} 1 & 0 \leqslant n \leqslant 4 \\ 0 & 5 \leqslant n \leqslant 9 \end{cases}$\newline $x_2(n)=\begin{cases} 1 & 0 \leqslant n \leqslant 4 \\ -1 & 5 \leqslant n \leqslant 9 \end{cases}$\newline 作图表示 $x_1(n)$、$x_2(n)$ 和 $y(n)=x_1(n)\circledast x_2(n)$，循环卷积区间长度 $L=10$。}
+
+\prob{4}{}{证明 DFT 的对称定理，即假设 $X(k)=\mathrm{DFT}[x(n)]$，证明\newline $\mathrm{DFT}[X(n)]=Nx(N-k)$}
+
+\prob{5}{}{如果 $X(k)=\mathrm{DFT}[x(n)]$，证明 DFT 的初值定理\newline $x(0)=\dfrac{1}{N}\sum\limits_{k=0}^{N-1}X(k)$}
+
+\prob{6}{}{设 $x(n)$ 的长度为 $N$，且\newline $X(k)=\mathrm{DFT}[x(n)] \quad 0 \leqslant k \leqslant N-1$\newline 令\newline $h(n)=x((n))_N R_{mN}(n) \quad m\text{ 为自然数}$\newline $H(k)=\mathrm{DFT}[h(n)]_{mN} \quad 0 \leqslant k \leqslant mN-1$\newline 求 $H(k)$ 与 $X(k)$ 的关系式。}
+
+\prob{7}{}{证明：若 $x(n)$ 为实序列，$X(k)=\mathrm{DFT}[x(n)]_N$，则 $X(k)$ 为共轭对称序列，即 $X(k)=X^*(N-k)$；若 $x(n)$ 实偶对称，即 $x(n)=x(N-n)$，则 $X(k)$ 也实偶对称；若 $x(n)$ 实奇对称，即 $x(n)=-x(N-n)$，则 $X(k)$ 为纯虚函数并奇对称。}
+
+\prob{8}{}{证明频域循环移位性质：设 $X(k)=\mathrm{DFT}[x(n)]$，$Y(k)=\mathrm{DFT}[y(n)]$，如果 $Y(k)=X((k+l))_N R_N(k)$，则\newline $y(n)=\mathrm{IDFT}[Y(k)]=W_N^{ln}x(n)$}
+
+\prob{9}{}{已知 $x(n)$ 长度为 $N$，$X(k)=\mathrm{DFT}[x(n)]$，\newline $y(n)=\begin{cases} x(n) & 0 \leqslant n \leqslant N-1 \\ 0 & N \leqslant n \leqslant mN-1 \end{cases}$，$m$ 为自然数\newline $Y(k)=\mathrm{DFT}[y(n)]_{mN} \quad 0 \leqslant k \leqslant mN-1$\newline 求 $Y(k)$ 与 $X(k)$ 的关系式。}
+
+\prob{10}{}{证明离散相关定理。若\newline $X(k)=X_1^*(k)X_2(k)$\newline 则\newline $x(n)=\mathrm{IDFT}[X(k)]=\sum\limits_{l=0}^{N-1}x_1^*(l)x_2((l+n))_N R_N(n)$}
+
+
+
+\prob{12}{}{已知 $f(n)=x(n)+\mathrm{j}y(n)$，$x(n)$ 与 $y(n)$ 均为长度为 $N$ 的实序列。设\newline $F(k)=\mathrm{DFT}[f(n)]_N \quad 0 \leqslant k \leqslant N-1$\newline (1) \quad $F(k)=\dfrac{1-a^N}{1-aW_N^k}+\mathrm{j}\,\dfrac{1-b^N}{1-bW_N^k} \quad a,b\text{ 为实数}$\newline (2) \quad $F(k)=1+\mathrm{j}N$\newline 试求 $X(k)=\mathrm{DFT}[x(n)]_N$，$Y(k)=\mathrm{DFT}[y(n)]_N$ 以及 $x(n)$ 和 $y(n)$。}
+
+\prob{13}{}{已知序列 $x(n)=a^n u(n)$，$0<a<1$，对 $x(n)$ 的 Z 变换 $X(z)$ 在单位圆上等间隔采样 $N$ 点，采样序列为\newline $X(k)=x(z)\big|_{z=W_N^{-k}} \quad k=0,1,\cdots,N-1$\newline 求有限长序列 $\mathrm{IDFT}[X(k)]_N$。}
+
+\prob{14}{}{两个有限长序列 $x(n)$ 和 $y(n)$ 的零值区间为\newline $x(n)=0 \quad n<0,\,8\leqslant n$\newline $y(n)=0 \quad n<0,\,20\leqslant n$\newline 对每个序列作 20 点 DFT，即\newline $X(k)=\mathrm{DFT}[x(n)] \quad k=0,1,\cdots,19$\newline $Y(k)=\mathrm{DFT}[y(n)] \quad k=0,1,\cdots,19$\newline 如果\newline $F(k)=X(k)\cdot Y(k) \quad k=0,1,\cdots,19$\newline $f(n)=\mathrm{IDFT}[F(k)] \quad k=0,1,\cdots,19$\newline 试问在哪些点上 $f(n)$ 与 $x(n)*y(n)$ 值相等，为什么？}
+
+\prob{15}{}{已知实序列 $x(n)$ 的 8 点 DFT 的前 5 个值为 $0.25$，$0.125-\mathrm{j}0.3018$，$0$，$0.125-\mathrm{j}0.0518$，$0$。\newline (1) 求 $X(k)$ 的其余 3 点的值；\newline (2) $x_1(n)=\sum\limits_{m=-\infty}^{+\infty}x(n+5+8m)R_8(n)$，求 $X_1(k)=\mathrm{DFT}[x_1(n)]_8$；\newline (3) $x_2(n)=x(n)\mathrm{e}^{\mathrm{j}\pi n/4}$，求 $x_2(k)=\mathrm{DFT}[x_2(n)]_8$。}
+
+\prob{16}{}{
+已知 $x(n)$、$x_1(n)$、$x_2(n)$ 分别如题 16 图 (a)、(b)、(c) 所示，$X(k)=\mathrm{DFT}[x(n)]_8$。
+求 $X_1(k)=\mathrm{DFT}[x_1(n)]_8$ 和 $X_2(k)=\mathrm{DFT}[x_2(n)]_8$（用 $X(k)$ 表示）。
+
+\medskip
+\begin{center}
+\begin{tikzpicture}[scale=0.55]
+  \draw[->] (-0.5,0) -- (8.5,0) node[right] {$n$};
+  \node[above] at (0,0.7) {\footnotesize (a) $x(n)$};
+  \foreach \x/\y in {0/1,1/1,2/1,3/1,4/1} {\fill (\x,0) circle (1.5pt); \draw (\x,0) -- (\x,\y);}
+  \foreach \x in {5,6,7} {\fill (\x,0) circle (1.5pt);}
+  \node[below] at (7,-0.2) {\footnotesize $7$};
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}[scale=0.55]
+  \draw[->] (-0.5,0) -- (8.5,0) node[right] {$n$};
+  \node[above] at (0,0.7) {\footnotesize (b) $x_1(n)$};
+  \foreach \x/\y in {0/1,4/1,5/1,6/1,7/1} {\fill (\x,0) circle (1.5pt); \draw (\x,0) -- (\x,\y);}
+  \foreach \x in {1,2,3} {\fill (\x,0) circle (1.5pt);}
+  \node[below] at (7,-0.2) {\footnotesize $7$};
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}[scale=0.55]
+  \draw[->] (-0.5,0) -- (8.5,0) node[right] {$n$};
+  \node[above] at (0,0.7) {\footnotesize (c) $x_2(n)$};
+  \foreach \x/\y in {1/1,2/1,3/1,4/1,5/1} {\fill (\x,0) circle (1.5pt); \draw (\x,0) -- (\x,\y);}
+  \foreach \x in {0,6,7} {\fill (\x,0) circle (1.5pt);}
+  \node[below] at (7,-0.2) {\footnotesize $7$};
+\end{tikzpicture}
+\end{center}
+\centerline{题 16 图}
+}
+
+\prob{17}{}{设 $x(n)$ 是长度为 $N$ 的因果序列，且\newline $X(\mathrm{e}^{\mathrm{j}\omega})=\mathrm{FT}[x(n)]$，$y(n)=\left[\sum\limits_{m=-\infty}^{\infty}x(n+mM)\right]R_M(n)$，$Y(k)=\mathrm{DFT}[y(n)]_M$\newline 试确定 $Y(k)$ 与 $X(\mathrm{e}^{\mathrm{j}\omega})$ 的关系式。}
+
+\prob{18}{}{用微处理机对实数序列作谱分析，要求谱分辨率 $F\leqslant 50$ Hz，信号最高频率为 $1$ kHz，试确定以下各参数：\newline (1) 最小记录时间 $T_{p\min}$；\newline (2) 最大取样间隔 $T_{\max}$；\newline (3) 最少采样点数 $N_{\min}$；\newline (4) 在频带宽度不变的情况下，使频率分辨率提高 1 倍(即 $F$ 缩小一半)的 $N$ 值。}
+
+\prob{19}{}{已知调幅信号的载波频率 $f_c=1$ kHz，调制信号频率 $f_m=100$ Hz，用 FFT 对其进行谱分析，试求：\newline (1) 最小记录时间 $T_{p\min}$；\newline (2) 最低采样频率 $f_{s\min}$；\newline (3) 最少采样点数 $N_{\min}$。}
+
+\comment{3}{}{以下题目来自 GXQ 教材第四章「快速傅里叶变换」}
+
+\prob{1}{}{如果某通用单片计算机的速度为平均每次复数乘需要 $4\,\mu\text{s}$，每次复数加需要 $1\,\mu\text{s}$，用来计算 $N=1024$ 点 DFT，问直接计算需要多少时间。用 FFT 计算呢？照这样计算，用 FFT 进行快速卷积来对信号进行处理时，估计可实现实时处理的信号最高频率。}
+
+\prob{2}{}{如果将通用单片机换成数字信号处理专用单片机 TMS320 系列，计算复数乘和复数加各需要 $10\,\text{ns}$。请重复做上题。}
+
+\prob{3}{}{已知 $X(k)$ 和 $Y(k)$ 是两个 $N$ 点实序列 $x(n)$ 和 $y(n)$ 的 DFT，希望从 $X(k)$ 和 $Y(k)$ 求 $x(n)$ 和 $y(n)$，为提高运算效率，试设计用一次 $N$ 点 IFFT 来完成的算法。}
+
+\prob{4}{}{设 $x(n)$ 是长度为 $2N$ 的有限长实序列，$X(k)$ 为 $x(n)$ 的 $2N$ 点 DFT。\newline (1) 试设计用一次 $N$ 点 FFT 完成计算 $X(k)$ 的高效算法；\newline (2) 若已知 $X(k)$，试设计用一次 $N$ 点 IFFT 实现求 $X(k)$ 的 $2N$ 点 IDFT 运算。}
+
+\prob{5}{}{分别画出 $16$ 点基 2 DIT-FFT 和 DIF-FFT 运算流图，并计算其复数乘次数，如果考虑三类碟形的乘法计算，试计算复乘次数。}
 
 \section{第四章\ 时域离散系统的算法结构}
 
+\prob{1}{}{已知系统用下面差分方程描述：\newline $y(n)=\frac{3}{4}y(n-1)-\frac{1}{8}y(n-2)+x(n)+\frac{1}{3}x(n-1)$\newline 试分别画出系统的直接型、级联型和并联型结构。式中 $x(n)$ 和 $y(n)$ 分别表示系统的输入和输出信号。}
 
+\textbf{解：}
+
+（1）
+
+\imgleft[0.3]{images/image-2026-06-18-15-20-14.png}{
+
+原式移项得：
+$y(n) - \frac{3}{4}y(n-1) + \frac{1}{8}y(n-2) = x(n) + \frac{1}{3}x(n-1)$
+
+Z变换，得到:
+$Y(z) - \frac{3}{4}Y(z)z^{-1} + \frac{1}{8}Y(z)z^{-2} = X(z) + \frac{1}{3}X(z)z^{-1}$
+$$H(z) = \frac{1 + \frac{1}{3}z^{-1}}{1 - \frac{3}{4}z^{-1} + \frac{1}{8}z^{-2}}$$
+
+}
+
+\textbf{（2）级联型结构：}
+
+\imgleft[0.3]{images/image-2026-06-18-15-32-00.png}{
+将$H(z)$的分母进行因式分解：
+
+$H(z) = \frac{1 + \frac{1}{3}z^{-1}}{1 - \frac{3}{4}z^{-1} + \frac{1}{8}z^{-2}} = \frac{1 + \frac{1}{3}z^{-1}}{\left(1 - \frac{1}{2}z^{-1}\right)\left(1 - \frac{1}{4}z^{-1}\right)}$
+
+按照上式可以有两种级联型结构：
+
+$H(z) = \frac{1 + \frac{1}{3}z^{-1}}{1 - \frac{1}{2}z^{-1}} \cdot \frac{1}{1 - \frac{1}{4}z^{-1}}$
+
+$H(z) = \frac{1}{1 - \frac{1}{2}z^{-1}} \cdot \frac{1 + \frac{1}{3}z^{-1}}{1 - \frac{1}{4}z^{-1}}$
+}
+
+\textbf{（3）并联型结构：}
+
+\imgleft[0.3]{images/image-2026-06-18-15-45-19.png}{
+$\frac{H(z)}{z} = \frac{\frac{10}{3}}{z - \frac{1}{2}} - \frac{\frac{7}{3}}{z - \frac{1}{4}}$
+
+$H(z) = \frac{\frac{10}{3}z}{z - \frac{1}{2}} - \frac{\frac{7}{3}z}{z - \frac{1}{4}} = \frac{\frac{10}{3}}{1 - \frac{1}{2}z^{-1}} + \frac{-\frac{7}{3}}{1 - \frac{1}{4}z^{-1}}$
+}
+
+\prob{2}{}{设数字滤波器的差分方程为\newline $y(n)=x(n)+x(n-1)+\frac{1}{3}y(n-1)+\frac{1}{4}y(n-2)$\newline 试画出系统的直接型结构。}
+
+\imgleft[0.3]{images/image-2026-06-18-15-46-50.png}{
+\textbf{解：}
+
+由差分方程得到滤波器的系统函数为  
+
+$H(z)=\frac{1+z^{-1}}{1-\frac{1}{3}z^{-1}-\frac{1}{4}z^{-2}}$  
+
+画出其直接型结构如题 2 解图所示。
+}
+
+\prob{3}{}{设系统的差分方程为\newline $y(n)=(a+b)y(n-1)-aby(n-2)+x(n-2)+(a+b)x(n-1)+abx(n)$\newline 式中，$|a|<1$，$|b|<1$，$x(n)$ 和 $y(n)$ 分别表示系统的输入和输出信号，试画出系统的直接型和级联型结构。}
+
+\textbf{解：}
+
+\textbf{（1）直接型结构：}
+
+\imgleft[0.3]{images/image-2026-06-18-15-53-20.png}{
+将差分方程进行Z变换，得到  
+
+$Y(z) = (a + b)Y(z)z^{-1} - abY(z)z^{-2} + X(z)z^{-2} - (a + b)X(z)z^{-1} + ab$  
+
+$H(z) = \frac{Y(z)}{X(z)} = \frac{ab - (a + b)z^{-1} + z^{-2}}{1 - (a + b)z^{-1} - abz^{-2}}$
+}
+
+\textbf{（2）级联型结构：}
+
+\imgleft[0.3]{images/image-2026-06-18-19-59-06.png}{
+$H(z) = \frac{(a - z^{-1})(b - z^{-1})}{(1 - az^{-1})(1 - bz^{-1})} = H_1(z)H_2(z)$  
+
+\textbf{a:}$H_1(z) = \frac{z^{-1} - a}{1 - az^{-1}}, H_2(z) = \frac{z^{-1} - b}{1 - bz^{-1}}$  
+  
+\textbf{b:}$H_1(z) = \frac{z^{-1} - a}{1 - bz^{-1}}, H_2(z) = \frac{z^{-1} - b}{1 - az^{-1}}$
+}
+
+\prob{4}{}{设系统的系统函数为\newline $H(z)=4\frac{(1+z^{-1})(1-1.414z^{-1}+z^{-2})}{(1-0.5z^{-1})(1+0.9z^{-1}+0.81z^{-2})}$\newline 试画出各种可能的级联型结构，并指出哪一种最好。}
+
+\textbf{解：}
+
+\imgleft[0.3]{images/image-2026-06-18-20-03-51.png}{
+根据系统函数表达式易得有两种级联方式：
+ 
+$H_1(z) = \frac{4(1 + z^{-1})}{1 - 0.5z^{-1}}, H_2(z) = \frac{1 - 1.414z^{-1} + z^{-2}}{1 + 0.9z^{-1} + 0.81z^{-2}}$  
+
+$H_1(z) = \frac{1 - 1.414z^{-1} + z^{-2}}{1 - 0.5z^{-1}}, H_2(z) = \frac{4(1 + z^{-1})}{1 + 0.9z^{-1} + 0.81z^{-2}}$
+
+\textbf{\textcolor{myred}{第一种更好：将需要延时两级的做成一个子系统，使用的延时器总数最少，也更方便。}}
+}
+
+\prob{5}{}{
+  题 5 图中画出了四个系统，试用各子系统的单位脉冲响应分别表示各总系统的
+  单位脉冲响应，并求其总系统函数。
+  \img{images/image-2026-06-17-11-37-38.png}
+}
+
+\textbf{解：}
+
+（1）$h(n)=h_{1}(n)*h_{2}(n)*h_{3}(n)$, $H(z)=H_{1}(z)H_{2}(z)H_{3}(z)$
+
+（2）$h(n)=h_{1}(n)+h_{2}(n)+h_{3}(n)$, $H(z)=H_{1}(z)+H_{2}(z)+H_{3}(z)$
+
+（3）$h(n)=h_{1}(n)*h_{2}(n)+h_{3}(n)$, $H(z)=H_{1}(z)\cdot H_{2}(z)+H_{3}(z)$
+
+（4）$h(n)=h_{1}(n)*[h_{2}(n)+h_{3}(n)*h_{4}(n)]+h_{5}(n)$
+
+$\quad =h_{1}(n)*h_{2}(n)+h_{1}(n)*h_{3}(n)*h_{4}(n)+h_{5}(n)$
+
+$H(z)=H_{1}(z)H_{2}(z)+H_{1}(z)H_{3}(z)H_{4}(z)+H_{5}(z)$
+
+\prob{6}{}{
+  题 6 图中画出了10 种不同的流图，分别写出它们的系统函数以及差分方程。
+  \img{images/image-2026-06-17-11-39-27.png}
+}
+
+\textbf{解：}
+
+由于题干里重复的类型太多了，这里只详细探讨（c）（h）问，其余小问考前看一眼即可。
+
+\textbf{（c）：}
+
+典型的 FIR 系统结构流图，但是就是一个简单类似于并联的结构，可得系统函数：$H(z)=a+bz^{-1}+cz^{-2}$
+
+\textbf{（h）：}
+
+\textbf{\textcolor{mygreen}{还是没怎么看懂（2026-06-19D）}}。
+
+\prob{7}{}{假设滤波器的单位脉冲响应为\newline $h(n)=a^n u(n) \quad 0<a<1$\newline 求出滤波器的系统函数，并画出它的直接型结构。}
+
+\textbf{解：}
+
+\imgleft[0.3]{images/image-2026-06-19-03-48-22.png}{
+由 Z 变换，得到该滤波器的系统函数为：$H(z)=\frac{1}{1-az^{-1}}$
+}
+
+\prob{8}{}{已知系统的单位脉冲响应为\newline $h(n)=\delta(n)+2\delta(n-1)+0.3\delta(n-2)+2.5\delta(n-3)+0.5\delta(n-5)$\newline 试写出系统的系统函数，并画出它的直接型结构。}
+
+\textbf{解：}
+
+典型的 FIR 系统的冲激响应结构，由 Z 变换，系统函数为：$H(z) = 1 + 2z^{-1} + 0.3z^{-2} + 2.5z^{-3} + 0.5z^{-5}$，由此可绘制直接型信号流图。
+
+\img{images/image-2026-06-19-03-53-49.png}
+
+
+\prob{9}{\textbf{\textcolor{myred}{线性相位结构母题}}}{已知 FIR 滤波器的系统函数为\newline $H(z)=\frac{1}{10}(1+0.9z^{-1}+2.1z^{-2}+0.9z^{-3}+z^{-4})$\newline 试画出该滤波器的直接型结构和线性相位结构。}
+
+\textbf{解：}
+
+主要关注本题的后半部分（奇数项冲击序列的线性相位结构）
+
+\imgleft[0.3]{images/image-2026-06-19-04-02-39.png}{
+绘制这个图的理解比较抽象（类似于电路原理的那种等效电路概念），这里暂时无法使用语言来描述这个过程，留一个链接（正好是本题的讲解视频，仅供参考）：\textbf{\textcolor{myblue}{\href{https://www.bilibili.com/video/BV1do5Fz5EMf?p=71}{讲解视频}}}
+
+但总的思路就是理解信号“流“的概念，然后就能大致明白为什么会使用线性相位结构这种“复用“结构可以简化实现了。
+}
+
+\prob{10}{}{已知 FIR 滤波器的单位脉冲响应为：\newline (1) $N=6$\newline $h(0)=h(5)=15$\newline $h(1)=h(4)=2$\newline $h(2)=h(3)=3$\newline (2) $N=7$\newline $h(0)=-h(6)=3$\newline $h(1)=-h(5)=-2$\newline $h(2)=-h(4)=1$\newline $h(3)=0$\newline 试画出它们的线性相位型结构图，并分别说明它们的\textbf{\textcolor{myred}{幅度特性、相位特性}}各有什么特点。}
+
+\textbf{解：}
+
+有 T9 的经验之后，线性相位结构图就好画了，这里不再展示指导书上的图了（因为指导书疑似出现了一些箭头标反的操作，这里不再展示谨防误导）
+
+
+\textbf{幅度、相位特性：}见 cheatsheet 上整理的第一类、第二类 FIR 系统的特性总结，直接抄就行。
+
+\prob{11}{}{已知 FIR 滤波器的 16 个频率采样值为：\newline $H(0)=12$，\qquad $H(3)\sim H(13)=0$\newline $H(1)=-3-\mathrm{j}\sqrt{3}$，\qquad $H(14)=1-\mathrm{j}$\newline $H(2)=1+\mathrm{j}$，\qquad $H(15)=-3+\mathrm{j}\sqrt{3}$\newline 试画出其频率采样结构，选择 $r=1$，可以用复数乘法器。}
+
+\textbf{解：}
+
+\imgleft[0.4]{images/image-2026-06-19-05-04-56.png}{
+核心就是\textbf{\textcolor{myred}{把题干信息代入到频率采样格式的系统函数公式中}}，对于本题，即：
+
+$$H(z) = \frac{1 - z^{-N}}{N} \sum_{k=0}^{N-1} \frac{H(k)}{1 - W_N^{-k} z^{-1}} \quad N = 16$$
+
+拆分为“级联+并联“的形式：
+
+\entry{级联流图系数}{即$\frac{1}{N}$}
+
+\entry{并联流图系数}{即$W_N^{-k}$，以及对应的频率采样值$H(k)$}
+}
+
+\prob{12}{\textbf{\textcolor{myred}{修正频率采样结构（ban 复数乘法器）}}}{已知 FIR 滤波器系统函数在单位圆上 16 个等间隔采样点为：\newline $H(0)=12$\qquad $H(3)\sim H(13)=0$\newline $H(1)=-3-\mathrm{j}\sqrt{3}$\qquad $H(14)=1-\mathrm{j}$\newline $H(2)=1+\mathrm{j}$\qquad $H(15)=-3+\mathrm{j}\sqrt{3}$\newline 试画出它的频率采样结构，取修正半径 $r=0.9$，要求用实数乘法器。}
+
+\textbf{解：}
+
+主要考察修正频率采样机构表达式，剩下的就交给卡西欧了：
+
+$$H(z) = \frac{1 - r^{16} z^{-16}}{16} \sum_{k=0}^{16} \frac{H(k)}{1 - r W_{16}^{-k} z^{-1}}$$
+
+$$= \frac{1}{16} (1 - 0.1853 z^{-16}) \left[ \frac{H(0)}{1 - 0.9 z^{-1}} + \left( \frac{H(1)}{1 - 0.9 W_{16}^{-1} z^{-1}} + \frac{H(15)}{1 - 0.9 W_{16}^{-15} z^{-1}} \right) \right.$$
+
+$$\left. + \left( \frac{H(2)}{1 - 0.9 W_{16}^{-2} z^{-1}} + \frac{H(14)}{1 - 0.9 W_{16}^{-14} z^{-1}} \right) \right]$$
+
+$$= \frac{1}{16} (1 - 0.1853 z^{-16}) \left[ \frac{12}{1 - 0.9 z^{-1}} + \left( \frac{-6 - 6.182 z^{-1}}{1 - 1.663 z^{-1} + 0.81 z^{-2}} \right. \right.$$
+
+$$\left. \left. + \frac{2 - 2.5456 z^{-1}}{1 - 1.2728 z^{-1} + 0.81 z^{-2}} \right) \right]$$
+
+\prob{13}{}{已知 FIR 滤波器的单位脉冲响应为\newline $h(n)=\delta(n)-\delta(n-1)+\delta(n-4)$\newline 试用频率采样结构实现该滤波器。设采样点数 $N=5$，要求画出频率采样网络结构，写出滤波器参数的计算公式。}
+
+\textbf{解：}
+
+我们已知频率采样形式下的系统函数表达式：
+
+$$H(z) = \frac{1 - z^{-N}}{N} \sum_{k=0}^{N-1} \frac{H(k)}{1 - W_N^{-k} z^{-1}}$$
+
+现在已知$N = 5$（级联型流图可画），接下来重点就是求解$H(k)$，即对$h(n)$进行$N = 5$点的 DFT，不过答案似乎也懒得算了，直接在系数位置标注$H(0),H(1),H(2),H(3),H(4)$了。
 
 \section{第五章\ IIR数字滤波器的设计}
 
+\prob{1}{}{设计一个巴特沃斯低通滤波器，要求通带截止频率 $f_p=6\,\text{kHz}$，通带最大衰减 $\alpha_p=3\,\text{dB}$，阻带截止频率 $f_s=12\,\text{kHz}$，阻带最小衰减 $\alpha_s=25\,\text{dB}$。求出滤波器归一化系统函数 $G(p)$ 以及实际的 $H_a(s)$。}
 
+\prob{2}{}{设计一个切比雪夫低通滤波器，要求通带截止频率 $f_p=3\,\text{kHz}$，通带最大衰减 $\alpha_p=0.2\,\text{dB}$，阻带截止频率 $f_s=12\,\text{kHz}$，阻带最小衰减 $\alpha_s=50\,\text{dB}$。求出滤波器归一化系统函数 $G(p)$ 和实际的 $H_a(s)$。}
 
+\prob{3}{}{设计一个巴特沃斯高通滤波器，要求其通带截止频率 $f_p=20\,\text{kHz}$，阻带截止频率 $f_s=10\,\text{kHz}$，$f_p$ 处最大衰减为 $3\,\text{dB}$，阻带最小衰减 $\alpha_s=15\,\text{dB}$。求出该高通滤波器的系统函数 $H_a(s)$。}
+
+\prob{4}{}{已知模拟滤波器的系统函数 $H_a(s)$ 如下：\newline (1) $H_a(s)=\dfrac{s+a}{(s+a)^2+b^2}$\newline (2) $H_a(s)=\dfrac{b}{(s+a)^2+b^2}$\newline 式中 $a$、$b$ 为常数，设 $H_a(s)$ 因果稳定，试采用脉冲响应不变法将其转换成数字滤波器 $H(z)$。}
+
+\prob{5}{}{已知模拟滤波器的系统函数如下：\newline (1) $H_a(s)=\dfrac{1}{s^2+s+1}$\newline (2) $H_a(s)=\dfrac{b}{2s^2+3s+1}$\newline 试采用脉冲响应不变法和双线性变换法将其转换为数字滤波器。设 $T=2\,\text{s}$。}
+
+\prob{6}{}{设 $h_a(t)$ 表示一模拟滤波器的单位冲激响应，即\newline $h_a(t) = \begin{cases} e^{-0.9t} & t \geq 0 \\ 0 & t < 0 \end{cases}$\newline 用脉冲响应不变法，将此模拟滤波器转换成数字滤波器（用 $h(n)$ 表示单位脉冲响应，即 $h(n)=h_a(nT)$）。确定系统函数 $H(z)$，并把 $T$ 作为参数，证明：$T$ 为任何值时，数字滤波器是稳定的，并说明数字滤波器近似为低通滤波器还是高通滤波器。}
+
+\prob{7}{}{假设某模拟滤波器 $H_a(s)$ 是一个低通滤波器，又知 $H(z)=H_a(s)\big|_{s=\frac{z-1}{z+1}}$，数字滤波器 $H(z)$ 的通带中心位于下面哪种情况？并说明原因。\newline (1) $\omega=0$（低通）。\newline (2) $\omega=\pi$（高通）。\newline (3) 除 $0$ 或 $\pi$ 以外的某一频率（带通）。}
+
+\prob{9}{}{设计低通数字滤波器，要求通带内频率低于 $0.2\pi$ rad 时，容许幅度误差在 $1$ dB 之内；频率在 $0.3\pi$ 到 $\pi$ 之间的阻带衰减大于 $10$ dB。试采用巴特沃斯型模拟滤波器进行设计，用脉冲响应不变法进行转换，采样间隔 $T=1$ ms。}
+
+\prob{10}{}{要求同题 9，试采用双线性变换法设计数字低通滤波器。}
+
+\prob{11}{}{设计一个数字高通滤波器，要求通带截止频率 $\omega_p=0.8\pi$ rad，通带衰减不大于 3 dB，阻带截止频率 $\omega_s=0.5\pi$ rad，阻带衰减不小于 18 dB，希望采用巴特沃斯型滤波器。}
+
+\prob{12}{}{设计一个数字带通滤波器，通带范围为 $0.25\pi$ rad 到 $0.45\pi$ rad，通带内最大衰减为 3 dB，$0.15\pi$ rad 以下和 $0.55\pi$ rad 以上为阻带，阻带内最小衰减为 15 dB。试采用巴特沃斯型模拟低通滤波器。}
+
+\section{第六章\ \ FIR数字滤波器的设计}
+
+\prob{1}{}{已知 FIR 滤波器的单位脉冲响应为：
+\newline
+(1) $h(n)$ 长度 $N=6$
+\newline
+$h(0)=h(5)=1.5$，$h(1)=h(4)=2$，$h(2)=h(3)=3$
+\newline
+(2) $h(n)$ 长度 $N=7$
+\newline
+$h(0)=-h(6)=3$，$h(1)=-h(5)=-2$，$h(2)=-h(4)=1$，$h(3)=0$
+\newline
+试分别说明它们的幅度特性和相位特性各有什么特点。}
+
+\prob{2}{}{已知第一类线性相位 FIR 滤波器的单位脉冲响应长度为 16，其 16 个频域幅度采样值中的前 9 个为：
+\newline
+$H_g(0)=12$，$H_g(1)=8.34$，$H_g(2)=3.79$，$H_g(3)\sim H_g(8)=0$
+\newline
+根据第一类线性相位 FIR 滤波器幅度特性 $H_g(\omega)$ 的特点，求其余 7 个频域幅度采样值。}
+
+\prob{3}{}{设 FIR 滤波器的系统函数为
+\newline
+$H(z)=\dfrac{1}{10}(1+0.9z^{-1}+2.1z^{-2}+0.9z^{-3}+z^{-4})$
+\newline
+求出该滤波器的单位脉冲响应 $h(n)$，判断是否具有线性相位，求出其幅度特性函数和相位特性函数。}
+
+\prob{4}{}{用矩形窗设计线性相位低通 FIR 滤波器，要求过渡带宽度不超过 $\pi/8$ rad。希望逼近的理想低通滤波器频率响应函数 $H_d(e^{j\omega})$ 为
+\newline
+$H_d(e^{j\omega}) = \begin{cases} e^{-j\omega\alpha} & 0 \leq |\omega| \leq \omega_c \\ 0 & \omega_c < |\omega| \leq \pi \end{cases}$
+\newline
+(1) 求出理想低通滤波器的单位脉冲响应 $h_d(n)$；
+\newline
+(2) 求出加矩形窗设计的低通 FIR 滤波器的单位脉冲响应 $h(n)$ 表达式，确定 $\alpha$ 与 $N$ 之间的关系；
+\newline
+(3) 简述 $N$ 取奇数或偶数对滤波特性的影响。}
+
+\prob{5}{}{用矩形窗设计线性相位高通滤波器，要求过渡带宽度不超过 $\pi/10$ rad。希望逼近的理想高通滤波器频率响应函数 $H_d(e^{j\omega})$ 为
+\[
+H_d(e^{j\omega}) = 
+\begin{cases} 
+e^{-j\omega\alpha} & \omega_c \leq \omega \leq \pi \\
+0 & \text{其他}
+\end{cases}
+\]
+(1) 求出该理想高通的单位脉冲响应 $h_d(n)$；
+(2) 求出加矩形窗设计的高通 FIR 滤波器的单位脉冲响应 $h(n)$ 表达式，确定 $\alpha$ 与 $N$ 的关系；
+(3) $N$ 的取值有什么限制？为什么？}
+
+\prob{6}{}{理想带通特性为
+\[
+H_d(e^{j\omega}) = 
+\begin{cases} 
+e^{-j\omega\alpha} & \omega_c \leq |\omega| \leq \omega_c + B \\
+0 & |\omega| < \omega_c,\ \omega_c + B < |\omega| \leq \pi
+\end{cases}
+\]
+(1) 求出该理想带通的单位脉冲响应 $h_d(n)$；
+(2) 写出用升余弦窗设计的滤波器的 $h(n)$ 表达式，确定 $\alpha$ 与 $N$ 之间的关系；
+(3) 要求过渡带宽度不超过 $\pi/16$ rad。$N$ 的取值是否有限制？为什么？}
+
+\prob{7}{}{试完成下面两题：
+(1) 设低通滤波器的单位脉冲响应与频率响应函数分别为 $h(n)$ 和 $H(e^{j\omega})$，另一个滤波器的单位脉冲响应为 $h_1(n)$，它与 $h(n)$ 的关系是 $h_1(n) = (-1)^n h(n)$。试证明滤波器 $h_1(n)$ 是一个高通滤波器。
+(2) 设低通滤波器的单位脉冲响应与频率响应函数分别为 $h(n)$ 和 $H(e^{j\omega})$，截止频率为 $\omega_c$，另一个滤波器的单位脉冲响应为 $h_2(n)$，它与 $h(n)$ 的关系是 $h_2(n) = 2h(n)\cos\omega_0 n$，且 $\omega_c < \omega_0 < (\pi - \omega_c)$。试证明滤波器 $h_2(n)$ 是一个带通滤波器。}
+
+\prob{8}{}{题 8 图中 $h_1(n)$ 是偶对称序列，$N=8$，设\newline $H_1(k)=\text{DFT}[h_1(n)] \quad k=0,1,\cdots,N-1$\newline $H_2(k)=\text{DFT}[h_2(n)] \quad k=0,1,\cdots,N-1$\newline (1) 试确定 $H_1(k)$ 与 $H_2(k)$ 的关系式。$|H_1(k)|=|H_2(k)|$ 是否成立？为什么？\newline (2) 用 $h_1(n)$ 和 $h_2(n)$ 分别构成的低通滤波器是否具有线性相位？群延时为多少？}
+
+\prob{9}{}{对下面的每一种滤波器指标，选择满足 FIRDF 设计要求的窗函数类型和长度。\newline (1) 阻带衰减为 $20$ dB，过渡带宽度为 $1$ kHz，采样频率为 $12$ kHz；\newline (2) 阻带衰减为 $50$ dB，过渡带宽度为 $2$ kHz，采样频率为 $20$ kHz；\newline (3) 阻带衰减为 $50$ dB，过渡带宽度为 $500$ Hz，采样频率为 $5$ kHz。}
+
+\prob{10}{}{利用矩形窗、升余弦窗、改进升余弦窗和布莱克曼窗设计线性相位 FIR 低通滤波器。要求希望逼近的理想低通滤波器通带截止频率 $\omega_c=\pi/4$ rad，$N=21$。求出分别对应的单位脉冲响应。\newline (1) 求出分别对应的单位脉冲响应 $h(n)$ 的表达式。}
+
+\prob{11}{}{将技术要求改为设计线性相位高通滤波器，重复题 10。}
+
+\prob{12}{}{利用窗函数(哈明窗)法设计一数字微分器，逼近题 12 图所示的理想微分器特性，并绘出其幅频特性。}
+
+\prob{13}{}{用窗函数法设计一个线性相位低通 FIRDF，要求通带截止频率为 $\pi/4$ rad，过渡带宽度为 $8\pi/51$ rad，阻带最小衰减为 $45$ dB。\newline (1) 选择合适的窗函数及其长度，求出 $h(n)$ 的表达式。\newline (2*) 用 MATLAB 画出损耗函数曲线和相频特性曲线。}
+
+\section{知识点整理寄存器}
+
+\subsection{前言}
+
+傅里叶变换与傅里叶级数的相关概念复习：
+
+\concepttable{
+    \conrow{FT}{$X(j\Omega) = \int_{-\infty}^{\infty} x(t)e^{-j\Omega t}dt$，时域连续非周期 $\mapsto$ 频域连续复函数}
+    \conrow{IFT}{$x(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} X(j\Omega)e^{j\Omega t}d\Omega$，归一化系数 $1/2\pi$}
+    \conrow{频率变量}{\textbf{\textcolor{myred}{$\Omega$ 为模拟角频率（rad/s）}}，区别于数字角频率 $\omega$}
+}
+
+\concepttable{
+    \conrow{FS 展开}{$x(t) = \sum_{m=-\infty}^{\infty} C_m e^{jm\omega_0 t}$，基频 $\omega_0 = \frac{2\pi}{T_0}$}
+    \conrow{FS 系数}{$C_m = \frac{1}{T_0} \int_{T_0} x(t)e^{-jm\omega_0 t}dt$}
+    \conrow{FS vs.\ FT}{\textbf{\textcolor{myred}{时域周期 $\mapsto$ 频域离散（谱线）；非周期 $\mapsto$ 连续谱}}}
+}
+
+\concepttable{
+    \conrow{时域卷积}{$x(t) * y(t) \overset{\text{FT}}{\leftrightarrow} X(j\Omega) \cdot Y(j\Omega)$}
+    \conrow{系统分析}{$y(t)=x(t)*h(t) \;\Rightarrow\; Y(j\Omega)=X(j\Omega)H(j\Omega)$}
+    \conrow{频域卷积}{$x(t) \cdot y(t) \overset{\text{FT}}{\leftrightarrow} \frac{1}{2\pi} X(j\Omega) * Y(j\Omega)$}
+    \conrow{采样依据}{理想采样 $x(t) \cdot \delta_T(t)$，频域卷积 $\Rightarrow$ 频谱周期延拓}
+}
+
+\textbf{\hlblue{傅里叶变换的充要条件}}
+
+\concepttable{
+    \conrow{1. 充分条件（狄利克雷）}{$\int_{-\infty}^{\infty}|x(t)|dt<\infty$，绝对可积}
+    \conrow{2. 次强条件（能量有限）}{$\int_{-\infty}^{\infty}|x(t)|^2dt<\infty$}
+    \conrow{3. 弱条件（功率有限）}{$\lim_{T\to\infty}\frac{1}{2T}\int_{-T}^{T}|x(t)|^2dt<\infty$}
+    \conrow{4. 周期信号}{周期信号为功率有限信号的子类；可用FS求$C_m$，也可用广义FT}
+}
+
+\compTable{4}{
+    \compheader{$x(t)$ & $X(j\Omega)$ & $x(t)$ & $X(j\Omega)$}
+    \comprow{$\delta(t)$ & $1$ & $u(t)$ & $\pi\delta(\Omega)+\frac{1}{j\Omega}$}
+    \comprow{$1$ & $2\pi\delta(\Omega)$ & $\operatorname{sgn}(t)$ & $\frac{2}{j\Omega}$}
+    \comprow{$e^{j\Omega_0 t}$ & $2\pi\delta(\Omega-\Omega_0)$ & $e^{-at}u(t),\,a>0$ & $\frac{1}{a+j\Omega}$}
+    \comprow{$\cos(\Omega_0 t)$ & $\pi[\delta(\Omega-\Omega_0)+\delta(\Omega+\Omega_0)]$ & $\operatorname{rect}\!\left(\frac{t}{\tau}\right)$ & $\tau\operatorname{sinc}\!\left(\frac{\Omega\tau}{2}\right)$}
+    \comprow{$\sin(\Omega_0 t)$ & $\frac{\pi}{j}[\delta(\Omega-\Omega_0)-\delta(\Omega+\Omega_0)]$ & $\frac{W}{\pi}\operatorname{sinc}(Wt)$ & $\operatorname{rect}\!\left(\frac{\Omega}{2W}\right)$}
+    \comprow{$\sum_{n=-\infty}^{\infty}\delta(t-nT)$ & \multicolumn{3}{L}{$\frac{2\pi}{T}\sum_{k=-\infty}^{\infty}\delta\!\left(\Omega-\frac{2\pi k}{T}\right)$}}
+}
+
+\textbf{\hlblue{广义傅里叶变换}}
+
+广义FT将$\delta$函数引入频域，使周期信号（不满足绝对可积条件）也能用FT统一分析。
+
+\concepttable{
+    \conrow{核心思想}{\textbf{\textcolor{myred}{引入冲激函数 $\delta(\Omega)$}}，将周期信号的频谱表示为频域冲激串，绕过积分发散问题}
+    \conrow{数学基础}{$\mathcal{F}\{e^{j\Omega_0 t}\} = 2\pi\delta(\Omega - \Omega_0)$，即复指数信号的频谱为频域单一冲激}
+    \conrow{FT对}{$x(t)=e^{j\Omega_0 t} \;\overset{\text{FT}}{\longleftrightarrow}\; X(j\Omega)=2\pi\delta(\Omega-\Omega_0)$}
+}
+
+\concepttable{
+    \conrow{周期信号广义FT}{由FS展开 $x(t)=\sum_{m=-\infty}^{\infty}C_m e^{jm\omega_0 t}$，两边取广义FT得：}
+    \conrow{频谱表达式}{$X(j\Omega)=\sum_{m=-\infty}^{\infty}2\pi C_m\,\delta(\Omega-m\omega_0)$}
+    \conrow{物理含义}{时域周期 $\mapsto$ 频域离散冲激串；谱线位于谐波频率 $m\omega_0$，强度为 $2\pi C_m$}
+}
+
+\textbf{数学证明}
+
+设 $x_a(t)=A\cos(2\pi F_0 t+\theta)$，另取 $F_k = F_0 + kF_s\ (k \in \mathbb{N})$，则 $x_a'(t)=A\cos(2\pi F_k t+\theta)$。
+
+以 $F_s$ 采样，$t=n/F_s$：
+$$x'(n)=A\cos\!\left(2\pi\frac{F_0+kF_s}{F_s}n+\theta\right)=A\cos\!\left(\frac{2\pi nF_0}{F_s}+\theta+2\pi kn\right)$$
+
+由 $\cos(\phi+2\pi kn)=\cos(\phi)$（$k,n\in\mathbb{Z}$），得
+$$x'(n)=A\cos\!\left(\frac{2\pi nF_0}{F_s}+\theta\right)=x(n)$$
+
+\concepttable{%
+\conrow{有理分式形式}{$X(z) = \frac{P(z)}{Q(z)}$}%
+\conrow{零点}{$P(z_0)=0$ 且 $Q(z_0)\neq 0$，记 $z=z_0$，复平面用 $\circ$ 表示。}%
+\conrow{极点}{$Q(z_0)=0$，$|X(z_0)|=\infty$，记 $z=z_0$，复平面用 $\times$ 表示。}%
+\conrow{结论}{极点处级数必发散，\textbf{\textcolor{myred}{收敛域内部绝不能包含任何极点}}；边界 $R_{x-}$、$R_{x+}$ 由极点半径决定。}%
+}
+
+\begin{multicols}{2}
+\begin{minipage}{\columnwidth}
+\textbf{\hlgreen{椭圆滤波器}}
+
+$|H_a(j\Omega)|^2 = \frac{1}{1 + \varepsilon^2 U_N^2(\Omega/\Omega_p)}$
+
+\textbf{波纹分布：}通带和阻带内都是等波纹。
+
+在相同阶数 $N$ 的情况下，\textbf{陡峭度：椭圆 > 切比雪夫 > 巴特沃斯}。
+
+\end{minipage}
+\begin{minipage}{\columnwidth}
+\textbf{\hlgreen{贝塞尔滤波器}}
+
+$H_a(s) = \frac{d_0}{B_N(s)}$，分母为贝塞尔多项式
+
+\textbf{幅频特性：}单调变化，无波纹。在相同阶数 $N$ 下，其过渡带比其他滤波器都平缓
+
+但\textbf{相频特性最好，在通带内接近线性相位}。 
+
+\textbf{极点位置：}$\boxed{s_k = \Omega_c e^{j\pi (\frac{1}{2} + \frac{2k+1}{2N})}}$
+
+\end{minipage}
+\end{multicols}
 
 % --- 手动换栏命令（如果需要强制换列）---
 % \columnbreak 
