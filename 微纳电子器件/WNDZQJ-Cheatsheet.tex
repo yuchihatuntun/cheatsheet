@@ -32,6 +32,7 @@
 \definecolor{myblue}{HTML}{003153} % 蓝色字
 \definecolor{myred}{HTML}{85120F}  % 红色字
 \definecolor{mygreen}{HTML}{218254}  % 绿色字
+\definecolor{sysugreen}{HTML}{00561F}  
 \definecolor{hlblue}{HTML}{ADC1DB} % 蓝色高亮
 \definecolor{hlred}{HTML}{D66A83}  % 红色高亮
 \definecolor{hlyellow}{HTML}{E3C79F}  % 奢金高亮
@@ -166,6 +167,21 @@
     #1 \\ \noalign{\vspace{1.5pt}{\color{myblue}\hrule height 0.4pt}\vspace{2.5pt}}%
 }
 
+% 注释专属方框 (minipage版)
+% 用法: \comment{大题号}{小题号}{注释内容}，小题号可空
+% 框宽占满行宽，超出行宽时自动换行
+\newcommand{\comment}[3]{%
+    \par\vspace{3pt}\noindent%
+    \fcolorbox{sysugreen}{sysugreen!5}{%
+        \begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+        \vspace{1pt}%
+        \textbf{\textcolor{sysugreen}{[注#1\if\relax\detokenize{#2}\relax\else(#2)\fi]}} #3%
+        \vspace{1pt}%
+        \end{minipage}%
+    }%
+    \par\vspace{3pt}%
+}
+
 % -------------------------------------------------
 % 正文
 % -------------------------------------------------
@@ -180,125 +196,667 @@
 
 \subsection{平面晶体管结构}
 
-晶体管细分结构如下：
+MOSFET 晶体管结构如下：
 
 \imgleft[0.4]{images/image-2026-06-01-16-28-58.png}{
-    \entry{源漏重掺杂区（HDD, Heavily Doped Drain/Source）}{最外侧高浓度掺杂区，降低接触电阻，\textbf{\textcolor{myred}{实现优质欧姆接触}}，提升载流子注入/引出效率。}
-    \entry{源漏扩展区（Extension）}{HDD与沟道间的浅结中等掺杂区，缓解高场效应，抑制热载流子注入（HCI），保障导通连续性。}
-    \entry{表面沟道}{栅极垂直电场调控下形成的反型层区域，实现电子或空穴的高效输运。}
-    \entry{轻掺杂阱隔离}{阱区/衬底轻掺杂，增大源漏结耗尽层宽度，降低PN结寄生电容，提升高频响应，并增强垂直电场控制，抑制穿通效应，实现器件电学隔离。}
-    \entry{栅电极与栅介质}{共同构成MOS电容，栅介质厚度与介电常数决定静电调控能力。栅极功函数与沟道掺杂调节器件阈值电压（$V_{th}$）。}
-    \entry{侧墙（Spacer）}{栅极两侧绝缘结构，实现源漏注入的自对准掩膜。\textbf{\textcolor{myred}{精准分隔扩展区与重掺杂区，抑制杂质扩散，关键于短沟道效应控制}}。}
+    \concepttable{
+    \conrow{源漏重掺杂区}{最外侧高浓度掺杂区，\textbf{\textcolor{myred}{实现优质欧姆接触}}，提升载流子注入/引出效率。}
+    \conrow{源漏扩展区}{HDD与沟道间的\textbf{\textcolor{myred}{浅结中等掺杂区}}，缓解高场效应，抑制热载流子注入，保障导通连续性。}
+    }
+
+    \concepttable{
+    \conrow{表面沟道}{栅极垂直电场调控下形成的反型层区域。}
+    \conrow{轻掺杂阱隔离}{阱区/衬底轻掺杂，可以增强垂直电场控制。}
+    }
+    \concepttable{
+    \conrow{栅电极、介质}{共同构成MOS电容，栅极功函数与沟道掺杂调节器件阈值电压（$V_{th}$）。}
+    \conrow{侧墙}{栅极两侧绝缘结构，实现源漏注入的自对准掩膜。\textbf{\textcolor{myred}{分隔扩展区与重掺杂区，抑制杂质扩散，控制短沟道效应}}。}
+    }
 }
+
+\subsubsection{平面 MOSFET 的特征尺寸}
+
+\textbf{\hlblue{器件层面}}
+
+\entry{特征尺寸}{电学引出的栅电极中心距的一半：$\frac{1}{2}CPP$。}
+
+\entry{几何限制}{$$CPP > l_g + l_{sp} + l_{cnt}$$$l_g$：栅长；$l_{sp}$：侧墙宽度；$l_{cnt}$：源漏接触孔宽度。}
+
+\textbf{\hlblue{工艺与互连层面}}
+
+\entry{特征尺寸}{第一层金属半节距：$\frac{1}{2}\times\text{metal1 pitch}$。metal1 pitch 为相邻 metal1 导线中心距。传统 ITRS 以此命名技术节点（如 90nm、65nm）。}
+\entry{via0}{第0层通孔（接触层与 metal1 间互连），集成度特征尺寸还受层间对准和通孔工艺制约。}
+
+\subsubsection{MOSFET 工作原理}
+
+\concepttable{
+    \conrow{$V_{GS} < V_T$（截止）}{$N^+$ 源漏被 P 型衬底隔离，无导电沟道，$I_D = 0$。}
+    \conrow{$V_{GS} > V_T$（导通）}{P 型硅表面强反型，形成 N 型沟道，$V_{DS}$ 驱动电子产生 $I_D$。}
+}
+
+\entry{控制规律}{恒定 $V_{DS}$ 下，$V_{GS} \uparrow \rightarrow$ 沟道电子 $\uparrow \rightarrow$ 沟道电阻 $\downarrow \rightarrow I_D \uparrow$。}
+
+\concepttable{
+    \conrow{N 沟道增强型}{$V_T>0$，常关，$V_{GS}>V_T$ 开启}
+    \conrow{N 沟道耗尽型}{$V_T<0$，常开，$V_{GS}<V_T$ 截止}
+    \conrow{P 沟道增强型}{$V_T<0$，常关，$V_{GS}<V_T$ 开启}
+    \conrow{P 沟道耗尽型}{$V_T>0$，常开，$V_{GS}>V_T$ 截止}
+}
+
+\subsubsection{MOS结构阈值电压}
+
+以下推导以 P 型 MOSFET 为例。
+
+\imgleft[0.3]{images/image-2026-06-21-16-09-56.png}{
+\textbf{\hlblue{理想 MOS 能带结构}}
+
+\concepttable{
+    \conrow{理想条件}{$\phi_{MS}=0$，$Q_{ox}=0$}
+    \conrow{$V_G=0$ 时}{全系统能带水平无弯曲（默认为平带状态）}
+}
+
+\entry{$\phi_{FP}$（P型衬底费米势）}{\textbf{\textcolor{myred}{$\phi_{FP} = \frac{1}{q}(E_i - E_F) = \frac{kT}{q}\ln\frac{N_A}{n_i}$}}
+
+\textbf{\textcolor{myred}{}}意义：$E_F$ 偏离 $E_i$ 的电势差。}
+}
+
+\imgleft[0.3]{images/image-2026-06-21-16-12-04.png}{
+\textbf{\hlblue{实际 MOS 能带结构（$V_G=0$）}}
+
+\concepttable{
+    \conrow{实际参数}{$\phi_{MS}<0$，$Q_{ox}>0$（材料差异/工艺缺陷所致）}
+    \conrow{能带特征}{半导体表面能带向下弯曲，$\phi_s>0$}
+}
+
+\entry{表面势 $\phi_s$}{硅表面到体内平衡处的电势差，\textbf{\textcolor{myred}{$q\phi_s={}$能带弯曲量}}。能带向下弯曲 $\rightarrow \phi_s>0$（表面电势高于体内）。}
+
+\entry{平带电压}{实际 MOS 在 $V_G=0$ 时能带已弯曲，需外加电压恢复平带，由此定义平带电压。}
+}
+
+\concepttable{
+    \conrow{$V_{FB}$ 定义式}{$V_{FB} = \phi_{MS} - \frac{Q_{ox}}{C_{ox}}$}
+}
+
+\textbf{\hlblue{\textbf{\textcolor{myred}{MOS 结构}}阈值电压公式}}
+
+\textbf{对于 PMOS：}
+
+$$V_T = V_{FB} + V_{ox} + 2\phi_{FP} = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} - \frac{Q_S}{C_{ox}} + 2\phi_{FP}$$
+
+\textbf{对于 NMOS：}
+
+$$V_T = V_{FB} + V_{ox} + 2\phi_{FP} = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} + \frac{Q_S}{C_{ox}} + 2\phi_{FN}$$
+
+对于 NMOS（Al/p-Si），$\phi_{FN}$通常为负值（约 -0.9V 左右），这也会使 $V_T$ 向正方向移动。
+
+\subsubsection{MOSFET 阈值电压}
+
+\textbf{MOSFET（四端）与 MOS 结构（三端）的边界条件有区别：}
+
+\imgleft[0.3]{images/image-2026-06-22-12-29-32.png}{
+\entry{栅极有效驱动电压修正}{栅-衬电压由 $V_G$ 变为 $V_G-V_B$，故有效栅电压修正为：
+$$V_G - V_B - V_{FB}$$}
+
+\entry{\textbf{\textcolor{myred}{强反型临界 $\phi_s$ 修正}}}{源/漏及反型层与衬底间 PN 结承受反向电压 $V_S-V_B$，使强反型更难。$\phi_s$ 阈值由 $2\phi_{FP}$ 增大为：
+$$\phi_s = 2\phi_{FP} + V_S - V_B$$}
+}
+
+将 $\phi_s = 2\phi_{FP} + V_S - V_B$ 代入传统氧化层压降公式中，得到：
+
+$$-\frac{Q_S}{C_{ox}} = \frac{(2q N_A \varepsilon_s)^{\frac{1}{2}}}{C_{ox}} (2\phi_{FP} + V_S - V_B)^{\frac{1}{2}} = K(2\phi_{FP} + V_S - V_B)^{\frac{1}{2}}$$
+
+体因子$K$：$$K = \frac{(2q N_A \varepsilon_s)^{\frac{1}{2}}}{C_{ox}}$$
+
+$K$ 仅由工艺参数（衬底掺杂浓度 $N_A$、氧化层电容 $C_{ox}$）决定，与外加电势无关。
+
+\textbf{\hlblue{MOSFET 阈值电压公式对比}}
+
+\begin{multicols}{2}
+
+\raggedcolumns
+
+\textbf{\hlblue{N 沟道 MOSFET（NMOS）}}
+
+\textbf{P 型衬底费米势 $\phi_{FP}$：}
+$$\phi_{FP} = \frac{kT}{q}\ln\frac{N_A}{n_i} > 0$$
+
+\textbf{体因子 $K$：}
+$$K = \frac{\sqrt{2q N_A \varepsilon_s}}{C_{ox}}$$
+
+\textbf{偏置情况下的完整公式（$V_S > 0, V_B < 0$）：}
+
+$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}}$$
+$$+ K(2\phi_{FP} + V_S - V_B)^{\frac{1}{2}}$$
+$$+ 2\phi_{FP} + V_S$$
+
+\textbf{$V_S = 0, V_B = 0$ 时（源与衬底均接地）：}
+$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}}$$
+$$+ K(2\phi_{FP})^{\frac{1}{2}} + 2\phi_{FP}$$
+
+\columnbreak
+
+\textbf{\hlblue{P 沟道 MOSFET（PMOS）}}
+
+\textbf{N 型衬底费米势 $\phi_{FN}$：}
+$$\phi_{FN} = -\frac{kT}{q}\ln\frac{N_D}{n_i} < 0$$
+
+\textbf{体因子 $K$：}
+$$K = \frac{\sqrt{2q N_D \varepsilon_s}}{C_{ox}}$$
+
+\textbf{偏置情况下的完整公式（$V_S < 0, V_B > 0$）：}
+
+$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}}$$
+$$- K(-2\phi_{FN} + V_B - V_S)^{\frac{1}{2}}$$
+$$+ 2\phi_{FN} + V_S$$
+
+\textbf{$V_S = 0, V_B = 0$ 时（源与衬底均接地）：}
+
+$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}}$$
+
+$$- K(-2\phi_{FN})^{\frac{1}{2}} + 2\phi_{FN}$$
+
+\end{multicols}
+
+\subsubsection{阈值电压影响因素}
+
+\textbf{\hlblue{栅氧化层厚度 $T_{ox}$}}
+
+\textbf{工艺参数化统一公式：}
+
+$$V_T = \phi_{MS} - \frac{T_{ox}}{\varepsilon_{ox}}Q_{ox} - \frac{T_{ox}}{\varepsilon_{ox}}Q_{AD} + 2\phi_{FB}$$
+
+从公式可见，\textbf{\textcolor{myred}{$T_{ox}$ 越厚，电荷引起的阈值电压漂移量就越大}}。
+
+\textbf{$T_{ox}$ 的工艺演进数值：}
+
+\concepttable{
+    \conrow{早期 MOSFET}{约 150 nm}
+    \conrow{目前高性能 MOSFET}{可达 10 nm 以下}
+}
+
+\textbf{\hlblue{衬底费米势 $\phi_{FB}$}}
+
+\entry{NP 沟道电学符号区分}{
+    $$\phi_{FB} = \begin{cases} \phi_{FP} = \frac{kT}{q}\ln\frac{N_A}{n_i} > 0 & \text{(N 沟道)} \\ \phi_{FN} = -\frac{kT}{q}\ln\frac{N_D}{n_i} < 0 & \text{(P 沟道)} \end{cases}$$
+}
+
+\entry{掺杂强弱依赖性}{$\phi_{FB}$ 与衬底掺杂浓度（$N_A$ 或 $N_D$）呈对数（$\ln$）关系，因此\textbf{\textcolor{myred}{掺杂浓度对其影响不大}}。}
+
+\entry{高频特征常数}{在室温下，当衬底掺杂浓度为 $\mathbf{10^{15}\text{ cm}^{-3}}$ 时，$|\phi_{FB}|$ 约为 0.3 V。即：
+
+N 沟道 MOSFET：$2\phi_{FB} = 2\phi_{FP} = \mathbf{0.6\text{ V}}$
+
+P 沟道 MOSFET：$2\phi_{FB} = 2\phi_{FN} = \mathbf{-0.6\text{ V}}$}
+
+\textbf{\hlblue{功函数差 $\phi_{MS}$}}
+
+\entry{物理决定因素}{功函数差 $\phi_{MS}$ 仅与以下三者相关：\textbf{\textcolor{myred}{金属种类、半导体种类以及掺杂浓度}}（题干里应该会给）。}
+
+以 \textbf{\textcolor{myred}{$N = 10^{15}\text{ cm}^{-3}$}} 的 \textbf{\textcolor{myred}{Al-Si 体系}} \textbf{\textcolor{myred}{N 沟道}}增强型 MOSFET 为例：
+
+$$V_T = \underbrace{-0.9\text{ V}}_{\phi_{MS}} - \frac{T_{ox}}{\varepsilon_{ox}}Q_{ox} - \frac{T_{ox}}{\varepsilon_{ox}}Q_{AD} + \underbrace{0.6\text{ V}}_{2\phi_{FB}}$$
+
+\textbf{\hlblue{耗尽区空间电荷 $Q_{AD}$}}
+
+\entry{N 沟道（NMOS）}{$$Q_A = -q N_A x_d = -(4q N_A \varepsilon_s \phi_{FP})^{\frac{1}{2}} < 0$$耗尽区内为电离受主杂质，电荷面密度为负值。}
+
+\entry{P 沟道（PMOS）}{$$Q_D = q N_D x_d = (-4q N_D \varepsilon_s \phi_{FN})^{\frac{1}{2}} > 0$$耗尽区内为电离施主杂质，电荷面密度为正值（注：因 $\phi_{FN} < 0$，根号内带负号以保证开方为正数）。}
+
+\entry{比例关系}{衬底费米势 $\phi_{FB}$ 在估算中视为常数。\textbf{\textcolor{myred}{耗尽区电荷面密度与掺杂浓度的平方根成正比}}，即：$$Q_{AD} \propto N_{AD}^{\frac{1}{2}}$$}
+
+\textbf{\hlblue{氧化层电荷 $Q_{ox}$}}
+
+\entry{物理特征}{$Q_{ox}$ 与\textbf{\textcolor{myred}{制造工艺及晶向}}密切相关。为了减小界面态和氧化层缺陷电荷，MOSFET 一般采用 (100) 晶面。}
+
+\entry{定量影响}{在一阶工艺条件下，早期 $T_{ox} = 150\text{ nm}$ 时，由氧化层电荷引起的电压贡献项 $\frac{Q_{ox}}{C_{ox}}$ 高达 1.8 V 至 3.0 V，因此早期器件的阈值电压通常很高。}
+
+\textbf{\hlblue{调控阈值电压主要手段}}
+
+\textbf{\textcolor{myred}{1. 改变衬底或沟道掺杂浓度 $N$}}
+
+\textbf{\textcolor{myred}{2. 改变栅氧化层厚度 $T_{ox}$}}
+
+\textbf{\hlblue{衬底偏置效应（体效应）}}
+
+\entry{体效应定义}{阈值电压 $V_T$ 随衬源电压 $V_{BS}$ 的变化而变化的现象。}
+
+\entry{电位参考点}{源极电压 $V_S = 0$ 作为全系统的电位参考点。此时各项电压符号对齐为：栅源电压 $V_{GS}$、漏源电压 $V_{DS}$、衬源（衬底）电压 $V_{BS}$。}
+
+\textbf{N 沟道 MOSFET 定量推导}
+
+将 $V_{BS}$ 引入第 26 页公式（此时 $V_S=0, V_B=V_{BS}$），可得：
+
+$$V_T = V_{FB} + K(2\phi_{FP} - V_{BS})^{\frac{1}{2}} + 2\phi_{FP}$$
+
+有衬底偏压与无衬底偏压（$V_{BS}=0$）时的阈值电压差值 $\Delta V_T$ 为：
+
+$$\Delta V_T = (V_T)_{V_{BS} < 0} - (V_T)_{V_{BS} = 0} = K(2\phi_{FP})^{\frac{1}{2}} \left[ \left( 1 - \frac{V_{BS}}{2\phi_{FP}} \right)^{\frac{1}{2}} - 1 \right]$$
+
+\entry{符号}{由于实际加在 NMOS 衬底上的动作为反向偏置，即 $V_{BS} < 0$，带入上式后括号内大于 1，因此 $\Delta V_T > 0$。}
+
+\textbf{P 沟道 MOSFET 定量推导}
+
+\entry{P 沟道 MOSFET 的 $\Delta V_T$ 公式}{$$\Delta V_T = (V_T)_{V_{BS} > 0} - (V_T)_{V_{BS} = 0} = -K(-2\phi_{FN})^{\frac{1}{2}} \left[ \left( 1 - \frac{V_{BS}}{2\phi_{FN}} \right)^{\frac{1}{2}} - 1 \right]$$}
+
+\entry{符号判定}{PMOS 的衬底加正偏压（$V_{BS} > 0$），由于前方带有 $-K$ 系数，计算结果 $\Delta V_T < 0$。}
+
+\textbf{体效应漂移方向}
+
+当 $|V_{BS}|$ 增大时：
+
+\entry{N 沟道 MOSFET}{阈值电压向正方向变化（$V_T$ 变大，器件更难开启）。}
+
+\entry{P 沟道 MOSFET}{阈值电压向负方向变化（$V_T$ 变得更负，绝对值变大，器件同样更难开启）。}
+
+\textbf{工艺决定因素}
+
+\textbf{体因子公式：}
+
+$$K = \frac{(2q\varepsilon_s N)^{\frac{1}{2}}}{C_{ox}}$$
+
+\concepttable{
+    \conrow{氧化层厚度 $T_{ox}$}{$T_{ox}$ 越厚 $\rightarrow$ $C_{ox}$ 越小 $\rightarrow$ $K$ 越大。}
+    \conrow{衬底掺杂浓度 $N$}{$N$ 越高 $\rightarrow$ $K$ 越大。}
+}
+
+\entry{结论}{\textbf{\textcolor{myred}{$T_{ox}$ 越厚、掺杂浓度 $N$ 越高，衬底偏置效应（体效应）就越严重}}，阈值电压受衬底电压的影响漂移得越剧烈。}
+
+\textbf{\hlblue{离子注入}}
+
+\imgleft[0.25]{images/image-2026-06-22-14-10-23.png}{
+\entry{杂质分布假设}{工艺上将注入的杂质浓度简化模拟为\textbf{\textcolor{myred}{阶梯形分布}}：在距离表面 $0$ 到 $R$ 的深度范围内，杂质浓度由基体浓度 $N_A$ 升高到 $N'_A$。}
+
+\entry{空间几何限制}{注入深度 $R$ 小于沟道下的衬底耗尽区最大厚度 $x'_{d\max}$（即 $R < x'_{d\max}$）。}
+
+\entry{图形认知}{整个注入区域（厚度为 $R$）必须完全包含在强反型时的表面耗尽区内部。由于引入了额外杂质，注入后的耗尽区最大厚度 $x'_{d\max}$ 会比未注入时的 $x_{d\max}$ 有所减小。}
+}
+
+\concepttable{
+    \conrow{$N_I$}{离子注入所新增加的杂质浓度，满足 $N'_A = N_A + N_I$。}
+    \conrow{$Q_I$}{离子注入后在耗尽区内新增加的电离杂质电荷面密度：$Q_I = -q N_I R$}
+}
+
+\textbf{调整后的阈值电压公式 $V'_T$：}
+
+$$V'_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} - \frac{Q_I}{C_{ox}} - \frac{Q_A}{C_{ox}}\left(1 - \frac{q N_I R^2}{4\varepsilon_s \phi_{FP}}\right)^{\frac{1}{2}} + 2\phi_{FP}$$
+
+新公式在中间直接减去注入电荷项 $\frac{Q_I}{C_{ox}}$，并对原始耗尽层电荷项引入了根号修正系数。
+
+\textbf{阈值电压调整量 $\Delta V_T$：}
+
+$$\Delta V_T = V'_T - V_T = -\frac{Q_I}{C_{ox}} - \frac{Q_A}{C_{ox}}\left[\left(1 - \frac{q N_I R^2}{4\varepsilon_s \phi_{FP}}\right)^{\frac{1}{2}} - 1\right]$$
+
+\textbf{阈值电压调整方向（NMOS）}
+
+\noindent\textbf{1. 注入同类型杂质}
+
+\entry{符号分析}{$N_I > 0$，由于电离受主带负电，故新增加的电荷面密度 $Q_I < 0$。}
+\entry{结论}{N 沟道 MOSFET 的阈值电压向正方向调整（$V_T$ 增大）。}
+
+\noindent\textbf{2. 注入反类型杂质}
+
+\entry{符号分析}{$N_I < 0$，由于电离施主带正电，故新增加的电荷面密度 $Q_I > 0$。}
+\entry{结论}{N 沟道 MOSFET 的阈值电压向负方向调整（$V_T$ 减小）。}
+
+\textbf{\hlgreen{MOSFET 直流电流电压方程}}
+
+\textbf{\hlblue{NMOS 相关公式}}
+
+\textbf{线性区：}
+
+$$I_D = \beta\left[(V_{GS}-V_T)V_{DS}-\frac{1}{2}V_{DS}^2\right]$$
+
+\textbf{饱和区：}
+
+$$I_{Dsat} = \frac{1}{2}\beta(V_{GS}-V_T)^2$$
+
+其中$V_{Dsat} = V_{GS}-V_T$，$\beta = \frac{W}{L} \mu_{eff} C_{ox}$。
+
+\textbf{亚阈值区：}
+
+$$I_{Dsub} = \frac{Z}{L}\mu_n C_D(\phi_S)\left(\frac{kT}{q}\right)^2
+\exp\left[\frac{q}{kT}\left(\frac{V_{GS}-V_T}{n}\right)\right]
+\cdot\left[1-\exp\left(-\frac{qV_{DS}}{kT}\right)\right]$$
+
+\textbf{\hlblue{PMOS 相关公式}}
+
+\textbf{线性区：}
+
+$$I_D = \beta\left[(V_{GS}-V_T)V_{DS}-\frac{1}{2}V_{DS}^2\right]$$
+
+\textbf{饱和区：}
+
+$$I_{Dsat} = \frac{1}{2}\beta(V_{GS}-V_T)^2$$
+
+其中$V_{Dsat} = V_{GS}-V_T$。
+
+\textbf{亚阈值区：}
+
+$$I_{Dsub} = \frac{Z}{L}\mu_p C_D(\phi_S)\left(\frac{kT}{q}\right)^2
+\exp\left[\frac{q}{kT}\left(\frac{V_{GS}-V_T}{n}\right)\right]
+\cdot\left[1-\exp\left(-\frac{qV_{DS}}{kT}\right)\right]$$
+
+\textbf{\hlblue{MOSFET 的亚阈区特性}}
+
+\entry{亚阈区摆幅 $S$ 的定义}{亚阈区转移特性斜率的倒数：
+
+$$S \equiv \frac{\text{d}V_{GS}}{\text{d}(\lg I_{\text{Dsub}})} = \ln(10)\frac{nkT}{q} = \ln(10)\left[1 + \frac{C_D(\phi_s)}{C_{ox}}\right]\frac{kT}{q}$$
+
+其中 $I_{\text{Dsub}}$：亚阈区漏电流（弱反型电流）；$C_D(\phi_s)$：耗尽层电容；$C_{ox}$：栅氧化层电容；$n = 1 + \frac{C_D}{C_{ox}}$：理想因子。}
+
+\entry{物理意义}{\textbf{\textcolor{myred}{使 $I_{\text{Dsub}}$ 扩大 10 倍（一个数量级）所需的 $V_{GS}$ 增量}}。}
+
+\entry{开关性能要求与工艺减小措施}{要求 $S$ 尽量小（切换快、关断漏电小）。工艺措施：
+\begin{itemize}[nosep,leftmargin=1em]
+    \item 降低 $C_D(\phi_s)$：降低衬底掺杂浓度 $N_A$（$N_A \downarrow \Rightarrow C_D \downarrow$）
+    \item 增大 $C_{ox}$：减小栅氧化层厚度 $T_{ox}$（$T_{ox} \downarrow \Rightarrow C_{ox} \uparrow$）
+\end{itemize}}
+
+\subsubsection{MOSFET 阈值电压测量}
+
+\entry{\textbf{\hlblue{方法 1 —— 联立方程法}}}{
+
+\textbf{1. 饱和区电流基本方程}
+
+方法 1 建立在晶体管饱和区漏极电流方程的基础之上：
+$$I_{\text{Dsat}} = \frac{\beta}{2}(V_{GS} - V_T)^2$$
+式中 $\beta$ 为导电系数。
+
+\textbf{2. 测量与求解过程}（核心应试理解）
+
+测试动作：在饱和区内，人为改变栅压，分别测量两组不同的数据对：$(V_{GS1}, I_{\text{Dsat1}})$ 和 $(V_{GS2}, I_{\text{Dsat2}})$。联立方程组：
+$$\begin{cases} I_{\text{Dsat1}} = \frac{\beta}{2}(V_{GS1} - V_T)^2 \\ I_{\text{Dsat2}} = \frac{\beta}{2}(V_{GS2} - V_T)^2 \end{cases}$$
+求解结果：将测得的电压和电流作为已知数代入上式，通过代数消元，即可唯一解出工艺参数 $\beta$ 和阈值电压 $V_T$。}
+
+\entry{\textbf{\hlblue{方法 2 —— $1\ \mu\text{A}$ 法}}}{
+
+\imgleft[0.3]{images/image-2026-06-22-16-34-44.png}{
+
+\entry{定义}{将漏极电流达到某一规定值 $I_{DT}$ 时的栅源电压 $V_{GS}$ 直接定义为阈值电压 $V_T$。}
+
+\entry{标准取值}{在实际工程和早期工艺中，通常将该规定电流 $I_{DT}$ 定为 $1\ \mu\text{A}$。}
+
+\textbf{2. 优缺点对比}
+
+\begin{itemize}[nosep,leftmargin=1em]
+    \item \textbf{优点}：此方法不需要进行复杂的方程求解或作图拟合，简单易行，早期较多采用。
+    \item \textbf{缺点}（核心漏洞）：误差较大。
+\end{itemize}
+}
+
+\textbf{原因分析：}直线的斜率满足：$\text{斜率} = \sqrt{\dfrac{\beta}{2}} = \sqrt{\dfrac{Z\mu_n C_{ox}}{2L}}$（式中 $Z$ 为沟道宽度，$L$ 为沟道长度，$\frac{Z}{L}$ 为宽长比）。
+
+从图可见，\textbf{\textcolor{myred}{在电流极小的弱反型区到强反型区过渡段，电流偏离了完美的直线}}。对于两个除宽长比 $\frac{Z}{L}$ 不同、其余特性完全相同的 MOSFET，由于其饱和区电流基数不同，当强行指定 $I_{DT} = 1\ \mu\text{A}$ 时，在横轴上读出的 $V_T$ 值会产生人为的偏差，无法真实反映相同的物理阈值。}
+
+\subsubsection{MOSFET 小信号参数}
+
+\textbf{\hlblue{跨导 $g_m$}}
+
+\entry{数学定义}{$$g_m \equiv \left. \frac{\partial I_D}{\partial V_{GS}} \right|_{V_{DS}}$$}
+
+\entry{\textbf{\textbf{\textcolor{myred}{非饱和区跨导}}}}{
+原始电流方程：$I_D = \beta \left[ (V_{GS} - V_T)V_{DS} - \frac{1}{2}V_{DS}^2 \right]$
+
+对 $V_{GS}$ 求偏导：$$g_m = \beta V_{DS}$$
+}
+
+\entry{\textbf{\textbf{\textcolor{myred}{饱和区跨导}}}}{
+原始电流方程：$I_{\text{Dsat}} = \frac{1}{2}\beta(V_{GS} - V_T)^2$
+
+对 $V_{GS}$ 求偏导：$$g_{ms} = \beta(V_{GS} - V_T) = \beta V_{\text{Dsat}}$$
+}
+
+\entry{\textbf{提高饱和区跨导 $g_{ms}$ 的途径}}{
+
+\begin{itemize}[nosep,leftmargin=1em]
+    \item \textbf{器件工艺角度}（提高 $\beta$）：增大宽长比 $\frac{Z}{L}$；提高迁移率 $\mu$（改进沟道材料）；减小 $T_{ox}$（增大 $C_{ox}$）。
+    \item \textbf{电路设计角度}：提高 $V_{GS}$（增大过驱动电压）。
+\end{itemize}
+
+}
+
+\textbf{\hlblue{频率特性}}
+
+\textbf{截止频率} $f_T$：器件电流增益为1时的频率
+
+截止频率$f_T = f\left| \frac{I_d}{I_i} \right|_{=1} = \frac{g_m}{2\pi(C_{gs_T} + C_M)} = \frac{g_m}{2\pi C_G}$
+
+
+$$f_T = \frac{\mu_n(V_{GS} - V_T)}{2\pi L^2}$$
+
+\begin{multicols}{2}
+\begin{minipage}{\columnwidth}
+\textbf{\hlgreen{短沟道效应}}
+
+\img{images/image-2026-06-22-19-23-21.png}
+
+$L$ 减小，$V_T$ 减小（通常称为阈值电压滚落）。
+
+\end{minipage}
+\begin{minipage}{\columnwidth}
+\textbf{\hlgreen{窄沟道效应}}
+
+\img{images/image-2026-06-22-19-23-58.png}
+
+$W$ 减小，$V_T$ 增加。
+
+\end{minipage}
+\end{multicols}
 
 \subsection{尺寸缩小的设计方法}
 
-\subsubsection{CMOS 基本器件性能}
+\textbf{\hlgreen{按比例缩小规则总结}}
 
-\entry{说明}{主要是列出受到尺寸缩小影响的性能指标}
-
-\concepttable{
-    \conrow{栅氧化层单位面积电容 $C_{ox}$}{$C_{ox} = \frac{\varepsilon_{ox}}{t_{ox}}$}
-    \conrow{工作电流 $I_D$}{$I_D \propto \frac{W}{L} \mu_{eff} C_{ox}$}
-    \conrow{负载电容 $C_L$}{$C_L \propto W L C_{ox}$}
-    \conrow{延迟时间 $t_d$}{$t_d = \frac{C_L V_{DD}}{I_D}$}
-    \conrow{动态功耗 $P_D$}{$P_D = C_L V_{DD}^2 f$}
-    \conrow{静态功耗 $P_S$}{$P_S = I_D V_{DD}$}
-    \conrow{功耗-延迟乘积 $PDP$}{$PDP = P \times t_d$}
+\compTable{4}{
+\compheader{参数 & CE规则 & CV规则 & QCE规则}
+\comprow{器件尺寸 & $1/\alpha$ & $1/\alpha$ & $1/\alpha$}
+\comprow{电压 & $1/\alpha$ & $1$ & $\varepsilon/\alpha$}
+\comprow{掺杂浓度 & $\alpha$ & $\alpha^2$ & $\varepsilon\alpha$}
+\comprow{耗尽层宽度 & $1/\alpha$ & $1/\alpha$ & $1/\alpha$}
+\comprow{阈值电压 & $1/\alpha$ & $1$ & $\varepsilon/\alpha$}
+\comprow{电流 & $1/\alpha$ & $\alpha$ & $\varepsilon^2/\alpha$}
+\comprow{负载电容 & $1/\alpha$ & $1/\alpha$ & $1/\alpha$}
+\comprow{电场强度 & $1$ & $\alpha$ & $\varepsilon$}
+\comprow{电路门延迟 & $1/\alpha$ & $1/\alpha^2$ & $1/(\varepsilon\alpha)$}
+\comprow{功耗 & $1/\alpha^2$ & $\alpha$ & $\varepsilon^3/\alpha^2$}
+\comprow{功耗密度 & $1$ & $\alpha^3$ & $\varepsilon^3$}
+\comprow{功耗延迟积 & $1/\alpha^3$ & $1/\alpha$ & $\varepsilon^2/\alpha^3$}
 }
 
-\subsubsection{CE规则按比例缩小理论}
+其中$\varepsilon$为介电常数。
 
-\entry{定义}{恒定电场：保持晶体管内部的电场强度不变。几何尺寸按 Page 2 缩小 $\alpha$ 倍，电学参数须遵循以下两条硬性规则。}
+\begin{multicols}{2}
+\begin{minipage}{\columnwidth}
+\textbf{\hlgreen{CE 规则}}
+
+\textbf{优点：}
 
 \concepttable{
-    \conrow{外加电压 $V_{DD}$ 缩小 $\alpha$ 倍}{$V_{DD}' = \frac{V_{DD}}{\alpha}$\quad（电场 $E = \frac{V}{d}$，$d$ 缩小 $\alpha$ 倍，$V$ 须同比例缩小）}
-    \conrow{衬底掺杂浓度 $N_A$ 增大 $\alpha$ 倍}{$N_A' = \alpha N_A$\quad（使耗尽层宽度也按比例缩小 $\alpha$ 倍）}
+    \conrow{速度}{延迟时间 $t'_d = t_d/\alpha$，速度提高 $\alpha$ 倍。}
+    \conrow{功耗}{功耗 $P'_D = P_D/\alpha^2$，降低 $\alpha^2$ 倍。}
 }
 
-\entry{核心考题}{几何尺寸缩小 + CE电学规则共同作用下，$V_T, I_D, t_d, P, PDP$ 如何变化？（Page 10 给出前两个指标的推导）}
+\textbf{缺陷：}
 
-\hlblue{CE规则下的 $V_T$ 与 $I_D$ 变化结果}
+\concepttable{
+    \conrow{噪声容限降低}{$V_{DD}$ 按比例减小，噪声容限下降。}
+    \conrow{亚阈值漏电流增大}{$V_T$ 减小，漏电流大小指数项上升，关态漏电流增大（静态功耗增大）。}
+    \conrow{接口不兼容}{电压减小导致与外部常规标准电压接口不兼容。}
+}
+
+\end{minipage}
+\begin{minipage}{\columnwidth}
+
+\textbf{\hlgreen{CV 规则}}
+
+\textbf{优点：}
+
+\concepttable{
+    \conrow{集成密度}{提高 $\alpha^2$ 倍。}
+    \conrow{电路速度}{速度提高 $\alpha^2$ 倍（比 CE 规则更快）。}
+    \conrow{接口兼容性}{系统电源电压不变，方便与外围电路直接互连。}
+}
+
+\textbf{缺陷：}
+
+\concepttable{
+    \conrow{电路功耗剧增}{单个器件功耗增大 $\alpha$ 倍。}s
+    \conrow{内部电场增强}{电压不变而距离减小，电场强度增强 $\alpha$ 倍，易导致击穿等可靠性问题。}
+}
+
+\end{minipage}
+\end{multicols}
 
 \subsection{平面晶体管性能增强技术}
 
-\subsubsection{栅工程技术}
+\subsubsection{栅工程技术（HK 材料）}
 
-\subsubsection{载流子增强技术}
+\textbf{\hlblue{HK 的必要性}}
 
-\subsubsection{衬底工程技术}
+\concepttable{
+    \conrow{漏电因素}{$T_{ox}$ 持续减小，\textbf{\textcolor{myred}{栅极漏电流在 45nm 以下呈指数级剧升，超薄介质引发的直接隧道击穿}}。}
+}
+
+\textbf{\textcolor{myred}{计算公式：}}
+
+$$t_{ox} = \frac{\varepsilon_{ox} S_{gate}}{C_{ox}}$$
+
+$$EOT = \frac{\varepsilon_{SiO_2}}{\varepsilon_{ox}} t_{ox}$$
+
+\textbf{各项参数物理意义}
+
+\concepttable{
+    \conrow{$t_{ox}$}{替代介质的实际物理厚度。}
+    \conrow{$\varepsilon_{ox}$}{替代介质的介电常数。}
+    \conrow{$\varepsilon_{SiO_2}$}{二氧化硅的介电常数（定值，约为 3.9）。}
+    \conrow{\textbf{\textcolor{myred}{EOT}}}{等效氧化层厚度，即把高 K 介质的电学电容折算成等效二氧化硅介质时的物理厚度。}
+}
+
+\textbf{\hlblue{HK 选择标准}}
+
+\concepttable{
+    \conrow{介电常数}{要大}
+    \conrow{热稳定性}{要高}
+    \conrow{界面态密度}{要低}
+    \conrow{与栅材料兼容性}{要好}
+    \conrow{沉积工艺}{便于沉积，均匀性好}
+}
+
+\textbf{三种材料介电常数 $\varepsilon$ 对比}
+
+\compTable{4}{
+    \compheader{材料 & $\varepsilon$ 值}
+    \comprow{$\text{SiO}_2$ & $\approx 3.9$}
+    \comprow{$\text{Al}_2\text{O}_3$ & $\approx 9$}
+    \comprow{$\text{HfO}_2$ & $\approx 25$}
+}
+
+\textbf{定量实例与最终结论}
+
+\entry{厚度等效实例}{\textbf{\textcolor{myred}{达到相同 $EOT = 3\text{nm}$}}：$\text{SiO}_2$ 仅能做 3nm，$\text{Al}_2\text{O}_3$ 可做 6.9nm，$\text{HfO}_2$ 物理厚度可放大至 19.2nm。}
+
+\entry{结论}{铪基（Hf基）材料能够满足当前对栅介质的要求。}
+
+\textbf{\hlblue{采用 HK 的问题}}
+
+\concepttable{
+    \conrow{粗糙界面散射}{高 K 介质与硅衬底间形成粗糙界面，造成严重载流子散射，迁移率 $\mu$ 降低。}
+    \conrow{远端声子散射}{高 K 介质内部偶极子振动传递至沟道硅原子，形成声子散射，降低工作速度。}
+    \conrow{费米能级钉扎}{Hf 原子与多晶硅栅 Si 原子反应形成 Hf-Si 键，引入缺陷中心。\textbf{\textcolor{myred}{高密度缺陷使多晶硅功函数无法通过掺杂调控}}。}
+}
+
+\textbf{\hlblue{HKMG 解决方案}}
+
+\concepttable{
+    \conrow{金属栅（代替多晶硅）}{消除 Hf-Si 键形成，改善费米能级钉扎，恢复 $V_{th}$ 调控；高电子密度，彻底解决多晶硅栅耗尽。}
+    \conrow{SiON 缓冲层}{改善界面粗糙度，减轻粗糙界面散射，恢复载流子迁移率。}
+}
+
+\subsubsection{载流子增强技术（应变硅技术）}
+
+\textbf{\hlblue{源漏区嵌入SiC应变技术}}
+
+\concepttable{
+    \conrow{适用对象}{\textbf{\textcolor{myred}{NMOS}}}
+    \conrow{工艺手段}{外延生长技术在源漏区挖槽并嵌入 SiC 材料。}
+    \conrow{应力类型}{对沟道产生\textbf{张应力}。}
+    \conrow{电学本质}{张应力降低电子电导有效质量 $m^*$，由 $\mu = \frac{q\tau}{m^*}$ 得 $\mu$ 提高，\textbf{\textcolor{myred}{提升 NMOS 饱和驱动电流与工作速度}}。}
+}
+
+\textbf{\hlblue{源漏区嵌入SiGe应变技术}}
+
+\concepttable{
+    \conrow{适用对象}{\textbf{\textcolor{myred}{PMOS}}}
+    \conrow{工艺手段}{通过外延生长技术在 PMOS 的源漏区嵌入 SiGe 材料。}
+    \conrow{应力类型}{对沟道产生单轴压应力。}
+    \conrow{电学本质}{降低空穴的电导有效质量 $m_h^*$，由 $\mu_h = \frac{q\tau}{m_h^*}$ 得 $\mu_h$ 提高，\textbf{\textcolor{myred}{提升 PMOS 驱动电流与工作速度}}。}
+}
+
+\textbf{\textcolor{mygreen}{第一章 PPT 整理完毕}}
 
 \section{第二章\ SOI\ MOS器件}
 
 \subsection{SOI 技术的演变}
 
+\subsubsection{概述}
+
 \textbf{\hlblue{SOI 核心定义}}
 
-SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。\textbf{\textcolor{myred}{核心电学特征：沟道与衬底之间引入绝缘层进行电学隔离}}。
+SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。即\textbf{\textcolor{myred}{在沟道与衬底之间引入绝缘层进行电学隔离}}。
 
-\imgleft[0.3]{images/image-2026-06-11-14-28-12.png}{
-\textbf{\hlblue{三层物理结构（由上至下）}}
+\imgleft[0.2]{images/image-2026-06-11-14-28-12.png}{
+\textbf{\hlblue{三层物理结构}}
 
 \concepttable{
     \conrow{表面硅薄层（顶层硅）}{用于制作器件的源（S）、漏（D）和沟道。}
-    \conrow{埋层氧化物（BOX）}{通常为 $\text{SiO}_2$，起到关键的电学绝缘隔离作用。}
-    \conrow{硅衬底（Si substrate）}{位于最底层，主要起机械支撑作用。}
+    \conrow{\textbf{\textcolor{myred}{埋层氧化物（BOX）}}}{通常为 $\text{SiO}_2$，起到关键的电学绝缘隔离作用。}
+    \conrow{硅衬底}{位于最底层，主要起\textbf{机械支撑}作用。}
 }
 
-\entry{技术演变}{SOI 并非一步到位，其前身是早期的 \textbf{SOS}（Silicon-on-Sapphire）技术。}
+\entry{技术演变}{SOI 并非一步到位，其前身是早期的 \textbf{SOS}（蓝宝石上硅）技术。}
 }
 
-\subsubsection{SOS 技术——SOI 前身}
-
-\entry{定义}{Silicon on Sapphire（蓝宝石上硅），诞生于1963年，是 SOI 的早期异质外延形态。}
+\textbf{\hlblue{SOI器件的电学优势}}
 
 \concepttable{
-    \conrow{工艺原理}{在高纯度人工蓝宝石（$\text{Al}_2\text{O}_3$）晶体衬底上，外延生长单晶硅层。}
-    \conrow{结构差异}{SOS \textbf{\textcolor{myred}{底部为整块蓝宝石绝缘衬底}}；现代 SOI 底部为硅衬底，中间嵌入 $\text{SiO}_2$（BOX）。}
-}
-
-\textbf{\hlblue{SOS / SOI 隔离器件的核心电学优势}}
-
-\textbf{\textcolor{myred}{简答题：}}相比于传统体硅（Bulk Si）器件，SOS/SOI 等隔离技术具备哪些核心优势？
-
-\concepttable{
-    \conrow{强抗辐射}{绝缘衬底\textbf{\textcolor{myred}{阻断高能粒子在衬底中的电荷收集路径}}，有效抑制单粒子效应（SEE）。}
+    \conrow{成本低}{与体硅为同平台技术，可以节约制造成本。}
+    \conrow{强抗辐射}{绝缘衬底\textbf{\textcolor{myred}{阻断高能粒子在衬底中的电荷收集路径}}，有效抑制单粒子效应。}
     \conrow{低寄生电容}{消除源/漏与衬底间 pn 结面积，\textbf{\textcolor{myred}{寄生电容大幅降低}}，提升频率、降低功耗。}
-    \conrow{提高集成电路性能}{寄生效应减小直接带来\textbf{\textcolor{myred}{芯片速度的整体提高}}。}
-    \conrow{消除闩锁效应}{体硅中寄生晶闸管导致闩锁；SOS/SOI 介质完全隔离各器件，切断寄生路径，彻底消除。}
+    \conrow{提高电路性能}{寄生效应减小直接带来\textbf{\textcolor{myred}{芯片速度的整体提高}}。}
+    \conrow{消除闩锁效应}{体硅中寄生晶闸管导致闩锁；SOI 介质完全隔离各器件，切断寄生路径，彻底消除。}
 }
 
-\textbf{\hlblue{从 SOS 向现代 SOI 的转变}}
+\textbf{\hlblue{SOI器件的缺陷}}
 
 \concepttable{
-    \conrow{SOS 的局限性}{20世纪80年代，SOS \textbf{\textcolor{myred}{价格昂贵}}、蓝宝石衬底成本极高，且与标准单晶硅工艺兼容性差，不适合普及和民用。}
-    \conrow{现代 SOI 替代方案}{放弃蓝宝石，改用在常规硅衬底和表面硅薄层之间嵌入 $\text{SiO}_2$（BOX）绝缘层，降低成本并兼容主流硅工艺。}
-    \conrow{标准 SOI 结构}{表面硅薄层$\rightarrow$ $\text{SiO}_2$ 绝缘层（BOX）$\rightarrow$ 硅衬底。}
+    \conrow{浮体效应}{没有零电位参考面，对AC特性影响较为复杂，需要精确模型。}
+    \conrow{背界面缺陷}{衬底技术引入背界面缺陷，导致载流子散射、俘获、泄漏。}
+    \conrow{Scaling 挑战}{需要极薄的硅膜厚度，会引起相当的器件波动。}
+    \conrow{自热效应}{绝缘层不利于热耗散，造成器件电流退化。}
 }
 
 \subsubsection{现代 SOI 晶圆制造}
 
-业界制造SOI晶圆的方法都是利用嵌入或者键和的方法形成\textbf{\textcolor{myred}{埋层氧化物}}隔离顶层硅薄膜层和硅衬底
+业界方法是利用\textbf{\textcolor{myred}{嵌入或者键和}}的方法形成\textbf{\textcolor{myred}{埋层氧化物隔离}}顶层硅薄膜层和硅衬底
 
 \concepttable{
-    \conrow{工艺难点}{传统硅衬底/SOS 顶层单晶可直接在同质或异质单晶上外延生长；但在\textbf{\textcolor{myred}{非晶态 $\text{SiO}_2$ 表面无法直接外延生长单晶硅}}。}
-    \conrow{解决思路}{不能直接生长，只能利用\textbf{\textcolor{myred}{嵌入或键合}}方法，在结构内部形成埋层氧化物（BOX），以此强行隔离顶层单晶硅薄膜和硅衬底。}
+    \conrow{难点}{\textbf{\textcolor{myred}{非晶态 $\text{SiO}_2$ 表面无法直接外延生长单晶硅}}。}
+    \conrow{解决思路}{不直接生长，只能利用嵌入或键合方法，\textbf{\textcolor{myred}{在结构内部形成埋层氧化物（BOX）}}，以此强行隔离顶层单晶硅薄膜和硅衬底。}
 }
 
 \textbf{\hlblue{主流 SOI 制造技术}}
 
 \concepttable{
     \conrow{SIMOX（注入氧分离）}{\textbf{\textcolor{myred}{高剂量氧离子注入硅中}}，高温退火在内部形成 $\text{SiO}_2$ 层。}
-    \conrow{BESOI（键合回蚀）}{\textbf{\textcolor{myred}{两片氧化后的硅片表面键合}}，再从背面回蚀减薄其中一片至所需薄膜厚度。}
-    \conrow{Smart-Cut（智能剪切）}{利用氢离子注入在硅片内部形成损伤带，键合后通过热/机械剥离精准切断，\textbf{\textcolor{myred}{目前商业化最主流}}的高质量制造技术。}
+    \conrow{BESOI（键合回蚀）}{\textbf{\textcolor{myred}{两片氧化后的硅片表面键合}}，再从\textbf{\textcolor{myred}{背面回蚀}}减薄其中一片至所需薄膜厚度。}
+    \conrow{Smart-Cut（智能剪切）}{利用氢离子注入在硅片内部形成损伤带，键合后通过热/机械剥离精准切断。}
 }
 
 \textbf{\hlblue{SIMOX技术}}
 
-\imgleft[0.3]{images/image-2026-06-11-14-42-44.png}{
+\imgleft[0.24]{images/image-2026-06-11-14-42-44.png}{
 
 \concepttable{
-    \conrow{定义}{即 Separation by Implanted Oxygen（注入氧分离技术），是最早出现的 SOI 晶圆制备技术之一。}
     \conrow{物理原理}{利用离子注入技术，将高剂量的氧离子（$\text{O}^+$）强行注入到单晶硅晶圆内部，\textbf{\textcolor{myred}{在特定深度通过化学反应形成 $\text{SiO}_2$ 埋层}}，以此将顶层单晶硅薄膜与底部硅衬底在电学上彻底隔离。}
 }
 
@@ -309,112 +867,33 @@ SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。\textbf{\textcolor{
     \conrow{硅膜质量好}{顶层单晶硅直接继承原硅片的晶格结构。}
     \conrow{产能高}{适合批量离子注入生产。}
 }
-}
 
-\textbf{工艺流程：}
-
-\imgleft[0.3]{images/image-2026-06-11-14-48-42.png}{
-    \concepttable{
-    \conrow{晶圆衬底裸片}{选择高纯度的标准单晶硅作为起始材料。}
-    \conrow{氧离子注入}{使用高能量（120\textasciitilde200 keV）将高剂量氧离子注入硅晶圆。\textbf{\textcolor{myred}{高能量具有特定射程分布}}，氧离子集中分布在表面下方特定深度（峰值区）。}
-    \conrow{高温退火}{注入完成后，进行 3\textasciitilde6 小时高温退火，氧离子与硅原子反应\textbf{\textcolor{myred}{生成厚度约 400 nm 的 $\text{SiO}_2$ 绝缘层}}（BOX）。}
-}
-}
-
-\textbf{关键工艺参数}
-
-\concepttable{
-    \conrow{注入剂量}{\textbf{\textcolor{myred}{必须 $> 1.8 \times 10^{18}\text{/cm}^2$}}。
-    
-    \textbf{物理意义}：满足 $\text{Si:O} = 1:2$ ，剂量不足则无法形成连续氧化层，仅生成互不相连的 $\text{SiO}_2$ 沉淀物，隔离失败。}
-    \conrow{注入温度}{\textbf{\textcolor{myred}{控制在 600°C\textasciitilde700°C}}。
-    
-    \textbf{物理意义}：注入过程中发生自退火效应，及时修复高能离子撞击造成的晶格损伤，保持顶层硅单晶状态。}
-    \conrow{高温退火}{\textbf{\textcolor{myred}{温度必须 $> 1100\text{°C}$}}。
-    
-    \textbf{物理意义}：促使不连续 $\text{SiO}_2$ 沉淀物分解、合并为连续氧化层；彻底恢复顶层硅晶格结构，消除注入损伤。}
-}
-
-\textbf{技术局限性}
-
-\concepttable{
-    \conrow{结论}{\textbf{\textcolor{myred}{不能制备超薄}}SOI硅膜。}
-    \conrow{原因}{氧离子注入深度和分布范围\textbf{\textcolor{myred}{受控于高能注入的统计学规律}}，顶层单晶硅薄膜厚度由注入能量和后续退火反应共同决定，无法在保证单晶质量的前提下无限减薄顶层硅。}
+\textbf{技术局限性：}不能制备超薄SOI硅膜。
 }
 
 \textbf{\hlblue{BESOI技术}}
-
-\entry{定义}{BESOI 即 Bond and Etch-back SOI（键合回蚀技术）。}
 
 \textbf{基本原理与缺点}
 
 \concepttable{
     \conrow{物理原理}{通过键合技术把两片标准硅晶圆紧密键合在一起，\textbf{\textcolor{myred}{晶圆之间预先通过热氧化形成的 $\text{SiO}_2$ 层作为埋层氧化物（BOX）}}。键合完成后，再利用回蚀技术把其中一侧晶圆的厚度削薄到目标厚度，形成SOI晶圆。}
-    \conrow{核心缺点}{\textbf{\textcolor{myred}{均匀性差，薄膜难制备}}。通过机械或化学减薄（回蚀）大面积晶圆很难精准控制残留厚度，导致表面顶层硅的厚度均匀性极差。}
 }
 
-\textbf{四步标准工艺流程}
+\entry{技术局限性}{\textbf{\textcolor{myred}{均匀性差，薄膜难制备}}。通过机械或化学减薄（回蚀）大面积晶圆很难精准控制残留厚度，导致表面顶层硅的厚度均匀性极差。}
 
-\concepttable{
-    \conrow{准备两片裸片}{准备晶圆衬底裸片A和裸片B，均为标准硅单晶裸片。}
-    \conrow{热氧化处理}{对晶圆B热氧化，表面生成 $\text{SiO}_2$ 绝缘层。\textbf{\textcolor{myred}{须控制氧化环境温度}}，降低氧化层与硅界面的缺陷和杂质。}
-    \conrow{低温键合}{利用\textbf{\textcolor{myred}{硅熔融键合技术}}，将未氧化的裸晶圆A直接键合到晶圆B的 $\text{SiO}_2$ 层表面，形成"硅-氧化物-硅"三层夹心结构。}
-    \conrow{回蚀减薄}{通过回蚀技术去除晶圆A多余厚度，使其变薄。最后利用退火和CMP（化学机械抛光）消除表面损伤，形成平滑清洁的晶圆表面。}
-}
-
-\entry{技术演进}{BESOI \textbf{\textcolor{myred}{最后一步通过外部机械/化学回蚀减薄无法做到高精度的均匀性}}，不能用于 sub-3nm 等先进节点所需的超薄顶层硅。业界为克服这一缺陷，由 BESOI 衍生出了目前最主流的 Smart-Cut 技术。}
+\entry{技术演进}{BESOI 不适合制取超薄顶层硅。为克服这一缺陷，由 BESOI 衍生出了目前最主流的 Smart-Cut 技术。}
 
 \textbf{\hlblue{Smart-Cut技术}}
 
-\textbf{基本概念}
-
-\entry{定义}{Smart-Cut（智能剪切）技术是从 BESOI 衍生而来的\textbf{\textcolor{myred}{超薄 SOI 衬底主要制备方法}}。}
-
 \concepttable{
-    \conrow{起源}{从 BESOI 技术衍生而来，用氢离子注入替代机械/化学回蚀。}
-    \conrow{核心机理}{准备两片硅晶圆（A和B）。对晶圆B热氧化生成 $\text{SiO}_2$ 绝缘层后，\textbf{\textcolor{myred}{再通过离子注入将 $\text{H}^+$ 注入晶圆B}}；晶圆A不做特殊处理。}
     \conrow{核心优势}{克服 SIMOX 和 BESOI 无法做到超薄、高均匀性顶层硅的缺陷，\textbf{\textcolor{myred}{是当前商业化最主流的 SOI 制造技术}}。}
-}
-
-\textbf{四步工艺流程}
-
-\imgleft[0.25]{images/image-2026-06-11-14-54-43.png}{
-    \concepttable{
-    \conrow{热氧化 + $\text{H}^+$ 注入}{先对晶圆B表面热氧化生成 $\text{SiO}_2$，再注入高剂量 $\text{H}^+$。\textbf{\textcolor{myred}{离子注入具有射程确定性}}，$\text{H}^+$ 在晶圆B内部特定深度聚集，形成一层结构损伤带。}
-    \conrow{低温键合}{将未处理的裸片A与晶圆B的 $\text{SiO}_2$ 表面进行紧密键合，形成"硅-氧化物-硅"三层结构。}
-    \conrow{\textbf{\textcolor{myred}{热反应剥离}}}{将键合后的整体加热，损伤带处氢气膨胀，晶圆B沿损伤带\textbf{\textcolor{myred}{自动断裂/剥离}}。留在A侧的顶层硅薄膜厚度由 $\text{H}^+$ 注入射程精准决定，均匀性极高。随后高温退火加固键合，CMP处理平整表面。晶圆B剩余部分可回收重复使用。}
-    }
-}
-
-\subsubsection{SOI 技术共性优缺点}
-
-\textbf{\hlblue{优点}}
-
-\concepttable{
-    \conrow{工艺与成本}{与体硅为同平台技术，设计方案与制造工艺\textbf{\textcolor{myred}{完全兼容}}，节约制造成本。}
-    \conrow{可靠性与速度}{见上文 SOI 技术的电学优势}
-    \conrow{功耗}{结漏电小，适于低功耗电路：源漏区与衬底隔离后，反向源漏结泄漏电流显著减小，\textbf{\textcolor{myred}{静态功耗大幅降低}}。}
-}
-
-\textbf{\hlblue{缺点}}
-
-\concepttable{
-    \conrow{\textbf{\textcolor{myred}{浮体效应（FBE）}}}{\textbf{机理}：顶层硅沟道（Body）被栅氧化层、源漏结及底部 BOX 完全包围，\textbf{\textcolor{myred}{无零电位参考面}}，体区电位悬空/浮空。
-    
-    \textbf{危害}：体区电位随前一时刻源漏电压操作历史变化（历史效应），导致 AC 特性不确定，电路仿真需极精确模型，否则时序失配。}
-    \conrow{\textbf{\textcolor{myred}{自热效应（SHE）}}}{\textbf{机理}：埋层 $\text{SiO}_2$ 导热系数远低于单晶硅，\textbf{\textcolor{myred}{沟道焦耳热无法通过衬底有效耗散}}，热量积聚使器件温度升高。
-    
-    \textbf{危害}：温度升高 $\rightarrow$ 载流子迁移率显著降低 $\rightarrow$ 饱和电流退化。}
-    \conrow{Scaling 需极薄硅膜}{为抑制短沟道效应，SOI 按比例缩小时必须同步减薄顶层硅至纳米级。极薄硅膜厚度控制极难，原子层级厚度偏差即可导致严重器件性能波动（如 $V_T$ 波动）。}
 }
 
 \subsection{SOI 器件结构}
 
 \subsubsection{SOI 器件分类}
 
-\entry{决定性因素}{SOI 器件电学特性与顶层硅膜厚度 $T_{si}$ （就是沟道下面的硅的厚度）密切相关。}
-
-\entry{分类判据}{以沟道最大耗尽区宽度 $X_d$ 与硅膜厚度 $T_{si}$ 的相对大小关系分类。}
+\entry{分类判据}{以沟道最大耗尽区宽度 $X_d$ 与沟道下面硅膜的厚度 $T_{si}$ 的相对大小关系分类。}
 
 \compTable[L]{3}{
     \compheader{\textbf{种类} & \textbf{定量边界条件} & \textbf{体区状态}}
@@ -422,61 +901,28 @@ SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。\textbf{\textcolor{
     \comprow{全耗尽 FD SOI & $T_{si} < X_d$ & 体区完全耗尽，无中性区}
 }
 
-\textbf{\hlblue{部分耗尽 SOI MOSFET（PD SOI）}}
+\textbf{\hlblue{PD SOI}}
 
 \imgleft[0.15]{images/image-2026-06-11-15-21-37.png}{
     \concepttable{
     \conrow{定义}{$T_{si} > 2X_d$，称为\textbf{厚膜器件}。}
-    \conrow{耗尽区分布}{栅氧化层下方\textbf{正界面}与埋氧化层上方\textbf{背界面}各存在一个耗尽区，\textbf{\textcolor{myred}{两耗尽区互不重合}}。}
-    \conrow{核心物理特征}{硅膜厚度足够大，正/背耗尽区之间存在一个\textbf{中性区域}（未耗尽体区）。}
+    \conrow{耗尽区分布}{栅氧化层下方\textbf{正界面}与埋氧化层上方\textbf{背界面}各存在一个耗尽区，\textbf{\textcolor{myred}{两耗尽区互不重合}}。正/背耗尽区之间存在一个\textbf{中性区域}。}
+    \conrow{器件缺陷}{浮体效应、翘曲效应、寄生双极管效应、自热效应。}
 }
 }
-
-\entry{能带图}{相比于体硅向衬底深处无限延伸的中性区，PD SOI 的 $E_c$、$E_v$ 在正/背界面处弯曲（耗尽区），\textbf{\textcolor{myred}{中间存在一段平直区域$\rightarrow$中性区}}，$E_F$ 处于平衡态。}
-
-\textbf{\hlblue{固有缺陷——浮体效应（FBE）}}
 
 \concepttable{
-    \conrow{成因}{PD-SOI 器件中，夹在中间的\textbf{\textcolor{myred}{中性体区}}（阱区）\textbf{\textcolor{myred}{无连接固定电压电极}}。由于它四周被栅氧化层、源漏结和底部 BOX 完全包围隔离，该中性体区在电学上处于\textbf{悬空状态}（Floating Body）。}
+    \conrow{浮体效应（FBE）}{PD-SOI 器件中，夹在中间的\textbf{\textcolor{myred}{中性体区}}（阱区）\textbf{\textcolor{myred}{无连接固定电压电极}}。由于它四周被栅氧化层、源漏结和底部 BOX 完全包围隔离，该中性体区在电学上处于\textbf{悬空状态}。}
+    \conrow{翘曲效应}{高 $V_D$ 下漏端碰撞电离产生电子-空穴对，空穴积聚于浮体$\rightarrow$体电位升高$\rightarrow$$V_T$ 下降$\rightarrow$$I_D$ 突增，$I_D$-$V_D$ 曲线出现\textbf{台阶式突起}。}
+    \conrow{寄生双极晶体管效应}{碰撞电离产生的空穴在浮体区积累$\rightarrow$体电位抬高$\rightarrow$寄生 $n$-$p$-$n$ BJT 导通$\rightarrow$正反馈导致 Snapback 击穿。}
+    \conrow{自热效应}{埋层氧化物（BOX，$\text{SiO}_2$）提供电学隔离的同时也造成\textbf{热隔离}。沟道大电流产生焦耳热$\rightarrow$热量无法经底部 BOX 层有效耗散$\rightarrow$\textbf{\textcolor{myred}{顶层硅薄膜内热量堆积}}。}
 }
 
-\textbf{（1）翘曲效应（Kink-effect）}
-
-\concepttable{
-    \conrow{产生机理}{PD-SOI NMOS 高 $V_D$ 下，沟道电子在漏端耗尽区高电场加速获得高能$\rightarrow$\textbf{碰撞电离} 产生电子-空穴对。电子迅速入漏极，空穴滞留浮体区$\rightarrow$空穴积聚$\rightarrow$浮体电位升高$\rightarrow$体-源正偏$\rightarrow$体区势垒降低$\rightarrow$开启电压减小$\rightarrow$$I_D$ 不再饱和而迅速增加，在 $I_D$-$V_D$ 曲线上出现\textbf{台阶式突起}。}
-    \conrow{极性差异}{\textbf{NMOS 显著，PMOS 不明显}。原因：空穴电离率远低于电子，PMOS 漏端碰撞电离概率低。}
-    \conrow{数字电路影响}{有一定好处：饱和漏电流突增$\rightarrow$最大电流增大$\rightarrow$提高数字开关电路翻转速度。}
-    \conrow{模拟电路影响}{有严重危害：跨导 $g_m$ 突然增加$\rightarrow$恶化输出阻抗 $r_o$ 和增益 $A_v$$\rightarrow$电路工作不稳定。}
-    \conrow{抑制方法}{\textbf{体接触}技术：将阱体区引出接固定电位，导走碰撞电离多余空穴，控制体电势$\rightarrow$稳定源漏电路。}
-}
-
-\textbf{（2）寄生双极晶体管效应（Parasitic Bipolar Transistor Effect）}
-
-也是因碰撞电离而生的。
-
-\concepttable{
-    \conrow{结构基础}{PD-SOI 器件的源区（$n^+$）-中性体区（$p$）-漏区（$n^+$）天然构成寄生 \textbf{$n$-$p$-$n$ 双极型晶体管}。}
-    \conrow{触发条件}{碰撞电离$\rightarrow$体区电势上升$\rightarrow$源-体 $pn$ 结正向偏置$\rightarrow$寄生 BJT 导通。}
-    \conrow{正反馈机制}{沟道电流 $I_c$ 在漏端碰撞电离产生空穴流入浮体区$\rightarrow$作为寄生 BJT 基极电流 $I_b$，经 $\beta$ 放大为 $\beta I_b$$\rightarrow$总漏端电流 $I_d = M(I_c + \beta I_b)$（$M$ 为碰撞电离倍增因子）$\rightarrow$漏电流增大$\rightarrow$更多空穴反馈回基极$\rightarrow$形成\textbf{\textcolor{myred}{内部正反馈}}。当 $V_D$ 足够大时，正反馈导致器件发生\textbf{击穿（Snapback）}。}
-    \conrow{抑制手段}{\textbf{体接触}技术：将体区（寄生BJT基极）引出接固定电位。}
-    \conrow{物理原因}{体接触电极导出体区多子（NMOS为空穴），削弱空穴堆积$\rightarrow$直接控制基区电势$\rightarrow$\textbf{\textcolor{myred}{阻断源-体 $pn$ 结正偏}}$\rightarrow$切断正反馈路径。}
-    \conrow{IV曲线特征}{无体接触时低电压下即因正反馈提前击穿（曲线陡峭上冲）；有体接触后击穿电压显著提高。}
-}
-
-\textbf{（3）自热效应（Self-heating Effect）}
-
-\concepttable{
-    \conrow{成因}{埋层氧化物（BOX，$\text{SiO}_2$）提供电学隔离的同时也造成\textbf{热隔离}。单晶硅（Si）导热系数 $G_{Th}=148\text{ W/(m}\cdot\text{K)}$，$\text{SiO}_2$ 仅 $1.4\text{ W/(m}\cdot\text{K)}$，\textbf{\textcolor{myred}{相差两个数量级}}。}
-    \conrow{物理过程}{沟道大电流产生焦耳热$\rightarrow$热量无法经底部 BOX 层有效耗散$\rightarrow$\textbf{\textcolor{myred}{顶层硅薄膜内热量堆积}}。}
-    \conrow{电学危害}{温度剧烈升高$\rightarrow$晶格散射加强$\rightarrow$载流子迁移率下降$\rightarrow$饱和电流退化。}
-    \conrow{曲线特征}{$I_D$-$V_D$ 输出特性曲线饱和区出现\textbf{负微分电阻}：漏电压增大时，漏电流反而降低（曲线向下倾斜）。}
-}
-
-\subsubsection{体接触方案}
+\subsubsection{体接触}
 
 \entry{体接触}{把阱体区连出去接到一个固定电位上，从而控制体电势的变化，抑制浮体效应。}
 
-\textbf{\hlblue{T型栅（T-gate）}}
+\textbf{\hlblue{T型栅}}
 
 \imgleft[0.15]{images/image-2026-06-11-15-35-47.png}{
     \concepttable{
@@ -485,7 +931,7 @@ SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。\textbf{\textcolor{
 }
 }
 
-\textbf{\hlblue{H型栅（H-gate）}}
+\textbf{\hlblue{H型栅}}
 
 \imgleft[0.1]{images/image-2026-06-11-15-41-09.png}{
     \concepttable{
@@ -494,7 +940,7 @@ SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。\textbf{\textcolor{
 }
 }
 
-\textbf{\hlblue{BTS型栅（Body-Tied-to-Source）}}
+\textbf{\hlblue{BTS型栅}}
 
 \imgleft[0.2]{images/image-2026-06-11-15-41-45.png}{
     \concepttable{
@@ -514,72 +960,29 @@ SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。\textbf{\textcolor{
 }
 
 
-\textbf{\hlblue{全耗尽 SOI MOSFET（FD SOI）}}
+\textbf{\hlblue{FD SOI}}
 
 \imgleft[0.15]{images/image-2026-06-11-15-22-45.png}{
 \concepttable{
     \conrow{定义}{$T_{si} < X_d$，称为\textbf{薄膜器件}。}
-    \conrow{核心物理特征}{硅膜极薄，前栅耗尽区\textbf{\textcolor{myred}{直接贯穿整个顶层硅}}，体内无中性区，整层硅膜完全耗尽。}
-    \conrow{电学耦合效应}{中性区消失$\rightarrow$正背面电荷耦合。前沟道特性（如 $V_T$）直接受背界面电场与 BOX 状态影响。}
+    \conrow{物理特征}{硅膜极薄，前栅耗尽区\textbf{\textcolor{myred}{直接贯穿整个顶层硅}}，体内无中性区$\rightarrow$正背面电荷耦合。\textbf{\textcolor{myred}{前沟道特性（如 $V_T$）直接受背界面电场与 BOX 状态影响}}。}
 }
 }
-
-\entry{能带图}{$E_c$、$E_v$ \textbf{\textcolor{myred}{在顶层硅全厚度范围内均弯曲}}，无平直部分$\rightarrow$无中性载流子残留，耗尽区直接与底部 BOX 相连。}
 
 \textbf{电学优势}
 
 \concepttable{
-    \conrow{浮体效应抑制}{FD-SOI 饱和区工作时顶层硅薄膜\textbf{全耗尽}。碰撞电离空穴在源区附近即被复合，\textbf{\textcolor{myred}{体内不发生电荷积累}}，从根本上消除 PD-SOI 的浮体效应。}
-    \conrow{短沟道效应抑制}{FD-SOI 结深极薄$\rightarrow$源漏耗尽层横向扩散宽度大幅减小$\rightarrow$\textbf{\textcolor{myred}{栅极对沟道电场控制力增强}}。}
-    \conrow{背面偏置能力}{超薄 BOX 存在，可\textbf{\textcolor{myred}{对衬底施加 Back-bias}}，动态调节阈值电压。}
-    \conrow{极低电源电压}{最小工作电压可达 $0.4\text{ V}$，是超低功耗的核心支撑。}
+    \conrow{浮体效应抑制}{FD-SOI 饱和区工作时顶层硅薄膜\textbf{全耗尽}。碰撞电离空穴在源区附近即被复合，\textbf{\textcolor{myred}{体内不发生电荷积累}}。}
+    \conrow{短沟道效应抑制}{FD-SOI \textbf{\textcolor{myred}{结深极薄}}$\rightarrow$源漏耗尽层横向扩散宽度大幅减小$\rightarrow$\textbf{\textcolor{myred}{栅极对沟道电场控制力增强}}。}
+    \conrow{背面偏置能力}{超薄 BOX 存在，可\textbf{\textcolor{myred}{对衬底施加偏置}}，动态调节阈值电压。}
+    \conrow{极低电源电压}{最小工作电压可达 $0.4\text{ V}$，降低功耗。}
 }
 
-\textbf{\hlblue{FD-SOI 的工艺流程：前栅HKMG和应变硅技术}}
+\textbf{\hlblue{工艺流程}}（这里按照 CWY 期末复习课件的 10 步整理）
 
-\textbf{1. 前栅HKMG工艺}
+FD-SOI与MOSFET平面工艺制程是兼容的，其前段工艺采用了\textbf{\textcolor{myred}{前栅HKMG}}和\textbf{\textcolor{myred}{应变硅技术}}
 
-\entry{工艺类型}{FD-SOI采用\textbf{前栅（Gate-First）}工艺：在高温退火前完成完整栅极堆叠（High-k介质 + 金属栅极)}
-
-\entry{栅极堆叠}{高k介质（HfO₂等）直接沉积在超薄硅膜（$<\text{10 nm}$）上，替代传统SiO₂栅氧层，\textbf{\textcolor{myred}{解决栅极漏电流问题}}。}
-
-\textbf{工艺流程}
-
-\concepttable{
-    \conrow{界面层生长}{在超薄SOI硅膜上生长界面层（IL，通常为SiO$_\text{x}$或SiON）。}
-    \conrow{High-k沉积}{沉积High-k介质层（HfO$_2$等）。}
-    \conrow{金属栅沉积}{沉积功函数金属（TiN、TaN等）+ 栅极填充金属。}
-    \conrow{图形化与刻蚀}{进行栅极图形化和刻蚀。}
-    \conrow{高温退火}{激活源漏掺杂时栅极堆叠已存在$\rightarrow$需选用热稳定性好的材料组合。}
-}
-
-\textbf{FD-SOI特有优势}
-
-\concepttable{
-    \conrow{栅控增强}{全耗尽$\rightarrow$栅极对沟道控制力更强$\rightarrow$HKMG配合实现低漏电、高驱动电流。}
-    \conrow{界面态可控}{超薄硅膜$\rightarrow$栅极电场更均匀$\rightarrow$High-k界面态问题相对容易控制。}
-}
-
-\textbf{2. 应变硅技术}
-
-\entry{应变引入机制}{FD-SOI中通常采用全局应变或局部应变技术，实现方式与体硅不同。}
-
-\textbf{三种工艺}
-
-\concepttable{
-    \conrow{\textbf{SMT}（应力记忆技术）}{源漏区沉积高应力SiN盖帽层，退火使应力"记忆"在硅膜中，去除盖帽层后应变保留在沟道。}
-    \conrow{\textbf{epi-S/D}（源漏外延生长）}{源漏凹槽中外延生长SiGe（pMOS）或SiC（nMOS）等晶格失配材料；BOX隔离使外延层对超薄硅膜产生单轴压应变（pMOS）或张应变（nMOS）；BOX层允许更大晶格失配容忍度。}
-    \conrow{\textbf{CESL}（接触刻蚀阻挡层）}{沉积高应力SiN作为接触刻蚀阻挡层，直接对沟道施加张应力（nMOS）或压应力（pMOS）。}
-}
-
-\textbf{\hlblue{FD-SOI的应变优势}}
-
-\concepttable{
-    \conrow{BOX机械隔离}{硅膜下方为BOX而非体硅，应变更高效保留在沟道，减少应力向衬底泄漏。}
-    \conrow{超薄硅膜高灵敏度}{硅膜越薄，相同应力下应变效果越显著，载流子迁移率提升更明显。}
-    \conrow{双轴→单轴自然转换}{FD-SOI平面结构结合局部应力技术，更易实现方向性应变，优化电子和空穴迁移率。}
-}
-
+\textbf{\textcolor{myred}{衬底 $\rightarrow$ 隔离（STI） $\rightarrow$ 注入（阱区） $\rightarrow$ 栅介质（先N后P） $\rightarrow$ 栅极成型（多晶硅刻蚀） $\rightarrow$ 侧墙 $\rightarrow$ 应变源漏（NMOS用SiC，PMOS用SiGe） $\rightarrow$ 金属硅化物（减阻）}}
 
 \textbf{\hlblue{PD SOI 与 FD SOI 对比}}
 
@@ -591,33 +994,26 @@ SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。\textbf{\textcolor{
     \comprow{能带图特征 & 中间有平直段 & 全厚度弯曲}
 }
 
-\entry{根本差异}{PD SOI 内部残留无引出电极的中性体区，直接导致浮体效应等一系列电学缺陷。}
-
 \subsection{SOI 器件特性}
 
 \subsubsection{阈值电压}
 
-对于 PD SOI 器件，由于其中性区的隔离作用，正栅和背栅之间没有电学耦合，器件在电学上等效为由正栅和背栅\textbf{\textcolor{myred}{独立控制的两个体硅器件并联}}。
+\textbf{\hlblue{PD SOI}}
 
-\textbf{\hlblue{FD SOI 阈值电压模型}}
+对于 PD SOI 器件，由于其中性区的隔离作用，正栅和背栅之间没有电学耦合，器件在电学上等效为由正栅和背栅\textbf{\textcolor{myred}{独立控制的两个体硅器件并联}}，故在此不做讨论。
+
+\textbf{\hlblue{FD SOI}}
 
 \imgleft[0.3]{images/image-2026-06-12-05-08-33.png}{
 \concepttable{
-    \conrow{电学耦合状态}{FD SOI 硅膜厚度 $T_{si}$ 小于正栅和背栅最大耗尽层宽度之和$\rightarrow$正栅与背栅\textbf{\textcolor{myred}{相互耦合}}$\rightarrow$\textbf{\textcolor{myred}{两者 $V_T$ 相互影响}}。}
-    \conrow{理想简化}{忽略源/漏短沟道效应，仅考虑\textbf{\textcolor{myred}{一维（1D）SOI MOS 结构}}，沿深度方向（$x$ 轴）做一维静电学分析。}
-    \conrow{核心方程}{通过求解一维泊松方程，得到阈值电压 $V_T$。}
+    \conrow{电学耦合状态}{正栅与背栅\textbf{\textcolor{myred}{相互耦合}}$\rightarrow$\textbf{\textcolor{myred}{两者 $V_T$ 相互影响}}。}
+    \conrow{简化模型}{忽略短沟道效应，仅考虑\textbf{\textcolor{myred}{一维（1D）SOI MOS 结构}}，沿深度方向做一维静电学分析（和半导体器件物理类似）}
 }
 }
-
-\textbf{积分求解结果：}
-
-在正表面（$x = 0$ 处），电势为正表面电势 $\phi_{sf}$；
-
-在背表面（$x = T_{si}$ 处），电势为背表面电势 $\phi_{sb}$
 
 \concepttable{
     \conrow{电势分布}{$\phi(x) = \frac{qN_Ax^2}{2\varepsilon_s} + \left( \frac{\phi_{sb} - \phi_{sf}}{T_{si}} - \frac{qN_AT_{si}}{2\varepsilon_s} \right)x + \phi_{sf}$}
-    \conrow{电场分布}{对电势求负导数：$E(x) = -\frac{qN_Ax}{\varepsilon_s} + \frac{\phi_{sf} - \phi_{sb}}{T_{si}} + \frac{qN_AT_{si}}{2\varepsilon_s}$}
+    \conrow{电场分布}{$E(x) = -\frac{qN_Ax}{\varepsilon_s} + \frac{\phi_{sf} - \phi_{sb}}{T_{si}} + \frac{qN_AT_{si}}{2\varepsilon_s}$}
 }
 
 \concepttable{
@@ -625,230 +1021,160 @@ SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。\textbf{\textcolor{
     \conrow{背表面电场}{$E_{sb} = -\dfrac{qN_AT_{si}}{\varepsilon_s} + E_{sf}$}
 }
 
-\textbf{氧化层电压降公式：}
+\textbf{氧化层电压降：}
 
-设正、背栅氧化层电容分别为 $C_{oxf}$ 和 $C_{oxb}$。在忽略界面电荷和氧化层内部电荷的前提下，根据高斯定律连续性条件：
+设正、背栅氧化层电容分别为 $C_{oxf}$ 和 $C_{oxb}$：
 
 \concepttable{
     \conrow{正栅氧化层电压降}{$V_{oxf} = E_{oxf}T_{oxf} = \dfrac{\varepsilon_s E_{sf}}{\varepsilon_{ox}}T_{oxf} = \dfrac{\varepsilon_s E_{sf}}{C_{oxf}}$}
     \conrow{背栅氧化层电压降}{$V_{oxb} = E_{oxb}T_{oxb} = -\dfrac{\varepsilon_s E_{sb}}{\varepsilon_{ox}}T_{oxb} = -\dfrac{\varepsilon_s E_{sb}}{C_{oxb}}$}
 }
 
-\textbf{正/背栅电压最终表达式与电荷耦合:}
+\textbf{正/背栅电压最终表达式与电荷耦合:}（其中硅膜电容：$C_{Si} = \dfrac{\varepsilon_s}{T_{si}}$）
 
 \concepttable{
     \conrow{正栅电压}{$$V_{Gf} = V_{FBf} + \left(1 + \frac{C_{Si}}{C_{oxf}}\right)\phi_{sf} - \frac{C_{Si}}{C_{oxf}}\phi_{sb} + \frac{qN_AT_{si}}{2C_{oxf}}$$}
     \conrow{背栅电压}{$$V_{Gb} = V_{FBb} - \frac{C_{Si}}{C_{oxb}}\phi_{sf} + \left(1 + \frac{C_{Si}}{C_{oxb}}\right)\phi_{sb} + \frac{qN_AT_{si}}{2C_{oxb}}$$}
-    \conrow{硅膜电容}{$C_{Si} = \dfrac{\varepsilon_s}{T_{si}}$}
 }
 
-\textbf{电荷耦合：}
+\entry{电荷耦合关系}{正反栅电压 $V_{Gf/Gb}$ 分别受背正表面电势 $\phi_{sb/sf}$ 控制}
 
-\concepttable{
-    \conrow{耦合关系}{正栅电压 $V_{Gf}$ 直接受背表面电势 $\phi_{sb}$ 控制；背栅电压 $V_{Gb}$ 直接受正表面电势 $\phi_{sf}$ 控制。}
-    \conrow{物理结论}{两方程定量反映正/背栅间电荷耦合，数学上证实 FD SOI 器件阈值电压相互影响。}
-}
 
 \textbf{\textcolor{myred}{阈值电压：}}
 
-\textbf{情况 1 —— 背面积累时的阈值电压模型}
+\textbf{1. 背栅为积累型}
 
 \concepttable{
-    \conrow{边界条件}{正表面：$\phi_{sf} = 2\phi_{Fp}$（强反型导通）；背界面：$\phi_{sb} \sim 0$（积累态，电势几近为零）}
+    \conrow{边界条件}{$\phi_{sf} = 2\phi_{Fp}$（强反型导通）；$\phi_{sb} \sim 0$（积累态，电势几近为零）}
     \conrow{阈值电压 $V_{T,ba}$}{将边界条件代入正栅压通用公式，消除 $\phi_{sb}$ 项：$$V_{T,ba} = V_{FBf} + \left(1 + \frac{C_{Si}}{C_{oxf}}\right)2\phi_{Fp} + \frac{qN_AT_{si}}{2C_{oxf}}$$}
-    \conrow{曲线特征}{背面多子积累，形成了静电屏蔽，使得背栅电压的变化无法穿透到正面，因此 $V_T$ 不随 $V_{Gb}$ 改变。}
+    \conrow{变化特征}{背面多子积累，形成了静电屏蔽，使得 $V_T$ 不随 $V_{Gb}$ 改变。}
 }
 
-\textbf{情况 2 —— 背面反型时的阈值电压模型}
+\textbf{2. 背栅为反型}
 
 \concepttable{
-    \conrow{物理边界条件}{正背界面电势\textbf{\textcolor{myred}{均达强反型}}：$\phi_{sf} = \phi_{sb} = 2\phi_{Fp}$。}
+    \conrow{边界条件}{$\phi_{sf} = \phi_{sb} = 2\phi_{Fp}$。}
     \conrow{阈值电压 $V_{T,bi}$}{代入正栅压通用公式，$\phi_{sf}$ 与 $\phi_{sb}$ 项部分抵消，化简得：$$V_{T,bi} = V_{FBf} + 2\phi_{Fp} + \frac{qN_AT_{si}}{2C_{oxf}}$$}
-    \conrow{曲线特征}{背面由于强反型产生了高浓度的反型电荷层，再次起到静电屏蔽作用，阻断了正背栅之间的进一步耦合，使 $V_T$ 达到饱和最小值不再发生改变。}
+    \conrow{变化特征}{背面由于强反型起到静电屏蔽作用，阻断了正背栅耦合，使 $V_T$ 达到饱和最小值不再发生改变。}
 }
 
-\textbf{情况 3 —— 背面耗尽时的阈值电压模型}
+\textbf{3. 背栅为耗尽型（主要工作区间）}
 
-\imgleft[0.3]{images/image-2026-06-12-10-06-09.png}{
+\imgleft[0.25]{images/image-2026-06-12-10-06-09.png}{
     \concepttable{
-    \conrow{物理边界条件}{正面电势 $\phi_{sf} = 2\phi_{Fp}$（强反型）。}
+    \conrow{边界条件}{正面电势 $\phi_{sf} = 2\phi_{Fp}$（强反型）。}
     \conrow{背表面电势特征}{从积累态 $0$ 到反型态 $2\phi_{Fp}$。}
-    \conrow{阈值电压 $V_{T,bd}$}{在积累型与反型态之间呈线性函数关系。}
+    \conrow{阈值电压}{在积累型与反型态之间呈线性函数关系。}
 }
 
-由$V_{Gb,a} = V_{FBb} - \frac{C_{Si}}{C_{oxb}}2\phi_{Fp} + \frac{qN_AT_{si}}{2C_{oxb}}$与$V_{Gb,i} = V_{FBb} + 2\phi_{Fp} + \frac{qN_AT_{si}}{2C_{oxb}}$
+\textbf{表达式：}
 
-所以$V_{T,bd} = V_{T,ba} - \frac{C_{Si}C_{oxb}}{C_{oxf}(C_{Si}+C_{oxb})}(V_{Gb} - V_{Gb,a}) = V_{T,bi} - \frac{C_{Si}C_{oxb}}{C_{oxf}(C_{Si}+C_{oxb})}(V_{Gb} - V_{Gb,i})$
+$$V_{T,bd} = V_{T,bi} - \frac{C_{Si}C_{oxb}}{C_{oxf}(C_{Si}+C_{oxb})}(V_{Gb} - V_{Gb,i})$$
 
 }
+
+\textbf{\textcolor{myred}{调控规律：}}背栅压越大，正栅阈值电压越小。
 
 \subsubsection{电流电压特性}
 
-\textbf{自变量依赖关系}
+由于FD SOI中正背栅电荷耦合，所以$I_D$表示为三自变量电压的函数：
 
-由于全耗尽（FD）器件中背栅与正栅存在电荷耦合，所以$I_D$必须表示为三自变量电压的函数：
 $$I_D = I_D(V_{Gf}, V_{Gb}, V_D)$$
 
-\textbf{五大理论假设}
-
-推导基本电流公式时，\textbf{\textcolor{myred}{完全沿用了体硅器件的物理假设}}：
-
-\concepttable{
-    \conrow{恒定迁移率}{$\mu$ 保持不变}
-    \conrow{缓变沟道近似（GCA）}{横向电场远小于纵向电场}
-    \conrow{均匀掺杂}{沟道掺杂浓度处处一致}
-    \conrow{忽略扩散电流}{仅考虑漂移电流}
-    \conrow{仅正面沟道导电}{背面只负责电学耦合调控，不形成漏极电流导通沟道}
-}
-
-\textbf{基础公式结构}
-
-在上述假设下，电流公式的基本框架依然符合标准的体硅平面 MOSFET 线性区电流方程：
+依然假设电流-电压方程满足 MOSFET 的一般框架：
 
 $$I_D = \beta \left[ (V_{GS} - V_T)V_{DS} - \frac{1}{2}V_{DS}^2 \right]$$
 
-\textbf{\blue{背面耗尽态电流公式与定性规律}}
+\textbf{\blue{背栅为耗尽型}}（依然研究主要工作区间）
 
-\concepttable{
-    \conrow{电流公式}{$I_{D,d} = \frac{Z}{L}\mu_{nf}C_{oxf}\left[ (V_{Gf} - V_{T,bd})V_D - \left( 1 + \frac{C_{Si}C_{oxb}}{(C_{Si}+C_{oxb})C_{oxf}} \right) \frac{V_D^2}{2} \right]$}
-    \conrow{$\frac{V_D^2}{2}$ 修正系数}{$\frac{C_{Si}C_{oxb}}{(C_{Si}+C_{oxb})C_{oxf}}$ 恰为 $V_T - V_{Gb}$ 关系曲线在耗尽区直线的绝对斜率值}
+\entry{电流公式}{
+        
+    $$I_{D,d} = \frac{Z}{L}\mu_{nf}C_{oxf}\left[ (V_{Gf} - V_{T,bd})V_D - \left( 1 + \frac{C_{Si}C_{oxb}}{(C_{Si}+C_{oxb})C_{oxf}} \right) \frac{V_D^2}{2} \right]$$
 }
 
-\textbf{背栅压对电流的定性调控}
-
-\concepttable{
-    \conrow{结论}{背面耗尽时，$I_D$ 随 $V_{Gb}$ 增大而增大}
-    \conrow{因果链}{$V_{Gb} \uparrow \;\rightarrow\; V_{T,bd}$ 线性下降（正背栅耦合）$\;\rightarrow\; (V_{Gf}-V_{T,bd}) \uparrow \;\rightarrow\;$ 反型层电荷密度 $\uparrow \;\rightarrow\; I_D \uparrow$}
-}
+\textbf{\textcolor{myred}{调控规律：}}背面耗尽时，$I_D$ 随 $V_{Gb}$ 增大而增大
 
 \subsubsection{亚阈值效应}
 
-\textbf{\hlblue{亚阈值斜率}}
+\textbf{\hlblue{亚阈值斜率 $S$}}
 
-\concepttable{
-    \conrow{定义}{$$S \equiv \frac{dV_{GS}}{d(\lg I_{Dsub})} = \ln(10)\frac{nkT}{q} = \ln(10)\left[1 + \frac{C_D(\phi_s)}{C_{ox}}\right]\frac{kT}{q}$$}
-    \conrow{物理意义}{表征栅电压对亚阈值漏电流的控制能力：$S$ 越小，栅控能力越强，关态向开态转换越快。}
-}
+\entry{物理意义}{表征\textbf{\textcolor{myred}{栅电压对亚阈值漏电流的控制能力}}：$S$ 越小，栅控能力越强，关态向开态转换越快。}
 
 \textbf{\hlblue{背面耗尽态下的 $S_{bd}$}}
 
-\entry{背景}{当背面处于耗尽时，背表面电势 $\phi_{sb}$ 从积累时的 $0$ 变化到反型时的 $2\phi_{Fp}$。}
-
-\concepttable{
-    \conrow{$S_{bd}$ 表达式}{$$S_{bd} = (\ln 10)\frac{kT}{q}\left[1 + \frac{C_{Si}C_{oxb}}{C_{oxf}(C_{Si} + C_{oxb})}\right]$$}
-}
+\entry{表达式}{$$S_{bd} = (\ln 10)\frac{kT}{q}\left[1 + \frac{C_{Si}C_{oxb}}{C_{oxf}(C_{Si} + C_{oxb})}\right]$$}
 
 一般情况下，埋氧化层（BOX）厚度远大于顶层硅层厚度和正栅氧化层厚度。电容大小与介质厚度成反比，因此：
 
 $$C_{oxb} \ll C_{Si} \quad \text{和} \quad C_{oxb} \ll C_{oxf}$$
 
-\concepttable{
-    \conrow{结论}{将上述近似关系代入 $S_{bd}$ 公式，$C_{oxb}$ 极小使 $\frac{C_{Si}C_{oxb}}{C_{oxf}(C_{Si} + C_{oxb})} \to 0$，背面耗尽时亚阈值斜率近似理想值：$$S \approx (\ln 10)\frac{kT}{q}$$}
-    \conrow{电学优势}{背面耗尽器件亚阈值斜率小，关态泄漏电流小，有利于大幅降低芯片静态功耗。}
-}
+代入 $S_{bd}$ 公式，$C_{oxb}$ 极小使 $\frac{C_{Si}C_{oxb}}{C_{oxf}(C_{Si} + C_{oxb})} \to 0$，背面耗尽时亚阈值斜率近似理想值：
+
+$$S \approx (\ln 10)\frac{kT}{q}$$
+
+\entry{电学优势}{\textbf{\textcolor{myred}{背面耗尽器件亚阈值斜率小}}，关态泄漏电流小，有利于大幅降低芯片静态功耗。}
+
 
 \subsection{SOI 器件增强技术}
 
 \subsubsection{短沟道效应}
 
-\entry{短沟道特性判据}{$L/\lambda_1$，即沟道长度与特征长度之比。\textbf{比值越大，抗短沟道效应特性越好。}}
+\entry{短沟道特性判据}{$L/\lambda_1$，即沟道长度与特征长度之比。\textbf{\textcolor{myred}{比值越大，抗短沟道效应特性越好。}}}
 
-\concepttable{
-    \conrow{$\lambda_1$ 表达式(特征长度)}{$$\lambda_1 = \sqrt{\frac{\varepsilon_s}{\varepsilon_{ox}} T_{Si} T_{oxf}}$$前提：埋氧化层厚度远大于硅层厚度和正栅氧化层厚度。}
-    \conrow{参数说明}{$\varepsilon_s$、$\varepsilon_{ox}$：硅与氧化物的介电常数；$T_{Si}$：顶层硅膜厚度；$T_{oxf}$：正栅氧化层厚度。}
-}
+\imgleft[0.3]{images/image-2026-06-24-05-32-42.png}{
 
-\textbf{\hlblue{性能提升手段（一）：减薄顶层硅厚度 $T_{Si}$}}
+\entry{特征长度$\lambda_1$}{$$\lambda_1 = \sqrt{\frac{\varepsilon_s}{\varepsilon_{ox}} T_{Si} T_{oxf}}$$}
 
-\imgleft[0.25]{images/image-2026-06-12-10-49-19.png}{
-\concepttable{
-    \conrow{控制机理}{减薄 $T_{Si}$ 时，前沟道与背沟道发生电学耦合，\textbf{\textcolor{myred}{前栅的控制力显著增强}}，从而形成对二者的统一控制。}
-    \conrow{电学收益}{减薄 $T_{Si}$ 直接减小特征长度 $\lambda_1$，从而抑制短沟道效应，降低关态泄漏电流（如图，$T_{Si}$ 由 $500\text{ Å}$ 减至 $250\text{ Å}$ 后，亚阈值特性曲线明显变陡，漏电显著降低）。}
-    \conrow{工艺减压收益}{减薄 $T_{Si}$ 可压低 $\lambda_1$，降低对前栅氧化层厚度 $T_{oxf}$ 必须无限减薄的物理限制，缓解前栅因过度减薄导致的量子隧穿漏电风险。}
-}
-}
+由特征长度表达式可知，增强抗短沟道性可以通过减小 $T_{Si}$ 或 $T_{oxf}$ 来实现。
 
-\textbf{\hlblue{性能提升手段（二）—— 减薄埋氧层}}
-
-\concepttable{
-    \conrow{静电耦合抑制机理}{\textbf{BOX 较厚（$100\text{nm}$）}：漏端电场穿透进入 BOX 内部，发生漏端到沟道的横向静电耦合，削弱前栅控制力。
-    
-    \textbf{BOX 较薄（$10\text{nm}$）}：底部低电位硅衬底被拉近，\textbf{\textcolor{myred}{薄 BOX 在沟道中感应出较大垂直电场，}}高密度等电位线被压入衬底，从而抑制漏端与沟道之间的横向静电耦合。}
-    \conrow{结论}{减薄 BOX 使亚阈值电流通路主要位于前沟道而非背沟道，确保高漏压下栅极电场阻断能力优异。}
+于是 SOI 器件的发展顺序：\textbf{\textcolor{myred}{PD-SOI $\rightarrow$ FD-SOI $\rightarrow$ UTB-SOI}}
 }
 
 \subsubsection{寄生效应}
 
-\textbf{\hlblue{源/漏寄生电阻（$R_S, R_D$）}}
-
-\concepttable{
-    \conrow{表达式}{$$R_S = R_D = R_{C0} + R_{EXT} + R_{TIP} + R_{SPR}$$}
-    \conrow{四个组成成分}{\textbf{$R_{C0}$}：金属-半导体接触电阻。\newline
-    \textbf{$R_{EXT}$}：延伸区电阻。\newline
-    \textbf{$R_{TIP}$}：尖端电阻。\newline
-    \textbf{$R_{SPR}$}：扩展电阻。}
-}
-
-\textbf{\hlblue{延伸区电阻 $R_{EXT}$}}
-
-\concepttable{
-    \conrow{定量公式}{$$R_{EXT} = \rho \frac{S}{x_j W}, \quad \rho = \frac{1}{N_D q \mu_n}$$}
-    \conrow{结论}{$R_{EXT}$ 与掺杂浓度（$N_D$）和结深（$x_j$）密切相关：\textbf{\textcolor{myred}{增大掺杂浓度或加深结深，均能有效降低延伸区电阻}}。}
-}
-
-\textbf{SOI 结构对寄生电阻的影响}
-
-\concepttable{
-    \conrow{硅膜减薄 $\to$ $R_{EXT} \uparrow$}{根据 $R_{EXT} = \rho \frac{S}{x_j W}$，延伸区电阻与结深 $x_j$ 成反比。FD-SOI 中为抑制短沟道效应，顶层硅膜 $T_{Si}$ 被极度减薄，强行限制源漏延伸区物理结深 $x_j$，导致 $R_{EXT}$ 大幅上升。}
-    \conrow{BOX 边缘电场调制 $R_{EXT}$}{埋氧层（BOX）与衬底之间存在电荷耦合，BOX 边缘的二维电场线穿透并调制源漏延伸区底部的载流子浓度分布，从而调控 $R_{EXT}$。}
-}
-
-\textbf{\hlblue{SOI 寄生电容的成分演变}}
-
-\concepttable{
-    \conrow{结电容的退化}{传统体硅中源漏下方为 pn 结电容；SOI 中源漏区下方直接与埋氧层接触，传统结电容退化为埋氧层平板电容 $C_{box}$。}
-    \conrow{新增寄生电容成分}{\textbf{$C_{BDFR}$}：埋氧边缘场电容（Buried Oxide Fringe Cap）。\newline
-    \textbf{$C_{BC}$}：衬底耦合电容（Substrate Coupling Cap）。}
-}
-
-\textbf{\hlblue{Gate-to-Contact 电容的统治地位与尺寸缩小趋势}}
-
-\concepttable{
-    \conrow{主要贡献源}{现代紧凑版图下，Gate-to-Contact 电容（$C_{PCCA}$）占寄生电容的绝大部分。}
-    \conrow{尺寸缩小演变规律}{随特征尺寸按比例缩小，$L_{PCCA}/L_g$ 减小，栅极与金属接触孔间距被强行压缩，\textbf{\textcolor{myred}{空间介电耦合加剧，寄生电容快速增加}}。}
-}
-
-\entry{逻辑衔接}{寄生电阻 $R_{SD}$ 的增加路径与寄生电容 $C_{para}$ 的攀升趋势同步变化，直接决定芯片最终工作速度。}
+\textbf{\textcolor{mygreen}{由于未出现在期末复习 PPT 中，暂时不进行整理}}
 
 \subsubsection{SOI-like 技术}
+
+\textbf{\textcolor{mygreen}{由于未出现在期末复习 PPT 中，暂时不进行整理}}
+
+\textbf{\textcolor{mygreen}{第二章 PPT 整理完毕}}
 
 \section{第三章\ 多栅MOS器件}
 
 \subsection{FinFET 技术的发展}
 
-\textbf{\textcolor{mygreen}{前面吹水讲述胡正明历史的部分就略过了}}
+\textbf{\hlgreen{特征尺寸小于 $25$ nm的两条途径}}
+
+\concepttable{
+\conrow{平面改良}{即 UTB-SOI（超薄体绝缘体上硅），\textbf{\textcolor{myred}{绝缘层上硅膜的厚度应限制在栅长的四分之一（$\frac{1}{4}$）左右}}。}
+
+\conrow{三维立体}{即 FinFET（鳍式场效应晶体管）。FinFET 内部又分化为 Bulk FinFET（体 FinFET） 和 SOI FinFET 两种。}
+}
+
+\textbf{\hlblue{两条路线比较}}
+
+\compTable{3}{
+    \compheader{ & UTB-SOI & SOI FinFET / 体 FinFET}
+    \comprow{工艺形态 & \textbf{平面工艺}& \textbf{立体工艺}}
+    \comprow{工艺难度与成本 & 较低 & \textbf{\textcolor{myred}{更复杂、成本更高}}}
+}
 
 \textbf{\hlblue{体 FinFET 与 SOI FinFET 比较}}
 
 \compTable{3}{
     \compheader{ & 体 FinFET & SOI FinFET}
-    \comprow{衬底材料 & 体硅晶圆 & SOI 晶圆（绝缘体上硅）}
+    \comprow{衬底材料 & 体硅晶圆 & SOI 晶圆}
     \comprow{缺陷密度与成本 & \textbf{\textcolor{myred}{缺陷密度更低、成本更低}} & 缺陷密度较高、成本较高}
     \comprow{散热性能 & \textbf{\textcolor{myred}{更优}}（体硅导热率 $\gg$ 埋氧层 $\text{SiO}_2$） & 较差（BOX 层阻碍散热）}
-    \comprow{电学性能（高频低功耗） & 寄生结电容较大 & \textbf{\textcolor{myred}{更优}}（寄生结电容低，适合高频低功耗）}
+    \comprow{电学性能（高频低功耗） & 寄生结电容较大 & \textbf{\textcolor{myred}{寄生结电容低}}，适合高频低功耗}
 }
 
-\textbf{\hlblue{UTB-SOI 与 SOI FinFET 比较}}
 
-\compTable{3}{
-    \compheader{ & UTB-SOI & SOI FinFET / 体 FinFET}
-    \comprow{工艺形态 & \textbf{平面工艺}，与传统 MOSFET 兼容 & \textbf{立体晶体管工艺}}
-    \comprow{工艺难度与成本 & 较低 & \textbf{\textcolor{myred}{更复杂、成本更高}}}
-}
 
 \subsection{FinFET 器件特性}
 
-\textbf{\hlblue{FinFET有效栅宽}}
+\textbf{\hlblue{栅宽（有效栅宽）}}
 
 \imgleft[0.2]{images/image-2026-06-12-16-47-09.png}{
     \concepttable{
@@ -858,12 +1184,12 @@ $$C_{oxb} \ll C_{Si} \quad \text{和} \quad C_{oxb} \ll C_{oxf}$$
 
 \entry{公式}{$$ W_{\text{eff}} = 2 \times H_{\text{fin}} + W_{\text{fin}}$$}
 
-\textbf{物理含义}：FinFET是三面包裹的有源区——栅极覆盖鳍片左侧面（$H_{\text{fin}}$）、右侧面（$H_{\text{fin}}$）及顶面（$W_{\text{fin}}$），故高度计入两次。
+\textbf{物理含义}：FinFET是\textbf{\textcolor{myred}{三面包裹的有源区—}}—栅极覆盖鳍片左侧面（$H_{\text{fin}}$）、右侧面（$H_{\text{fin}}$）及顶面（$W_{\text{fin}}$），故高度计入两次。
 }
 
-\entry{real-三栅}{仅当截面为正方形（$t_{\text{Si1}} = t_{\text{Si2}}$，即 $H_{\text{fin}} = W_{\text{fin}}$）时，才是真正的三栅极器件。}
+\entry{real-三栅}{仅当截面为\textbf{\textcolor{myred}{正方形}}（$t_{\text{Si1}} = t_{\text{Si2}}$，即 $H_{\text{fin}} = W_{\text{fin}}$）时，才是真正的三栅极器件。}
 
-\textbf{\hlblue{形态演变路线}}
+\textbf{形态演变路线：}
 
 \compTable{3}{
     \compheader{ & 走向双栅 FinFET & 走向单栅 FDSOI}
@@ -871,35 +1197,74 @@ $$C_{oxb} \ll C_{Si} \quad \text{和} \quad C_{oxb} \ll C_{oxf}$$
     \comprow{特点 & 版面效率高 & 工艺复杂度高}
 }
 
-\textbf{1. $H_{\text{fin}} \ll W_{\text{fin}}$ 简化分析}
+Fin的宽度远小于光刻机所能制造的最小尺寸，因此Fin的有源区并不是通过光刻形成的，而是采用\textbf{\textcolor{myred}{SADP（self-aligned double patterning）技术}}
 
-\imgleft[0.15]{images/image-2026-06-12-16-52-24.png}{
-    \concepttable{
-    \conrow{截面特征}{$H_{\text{fin}} \ll W_{\text{fin}}$，鳍片高度远小于宽度（高宽比极小）。}
-    \conrow{物理效应}{两侧鳍片高度可忽略，左右栅极影响不计。}
-    \conrow{简化模型}{器件退化为\textbf{平面单栅器件}（单栅FD-SOI）进行近似电学分析。}
-}
-}
+\comment{1}{\textbf{\textcolor{myred}{为什么FinFET要把Fin宽度制造得很薄？}}}{沟道内的点，距离栅极越远，由于短沟道效应（具体为 DIBL，漏极引起的势垒降低），导致沟道区域的势垒高度降低（对应能带图中降低了 $\Phi_{DIBL}$），导致栅压控制能力变弱，器件性能越差，因此要将栅宽做得很薄，必须设法使沟道中任意点到栅的距离 $\le 0.25 \times L_g$（$L_g$为栅长） 的范围内。}
 
-\textbf{2. $H_{\text{fin}} \gg W_{\text{fin}}$ 简化分析}
+\subsection{FinFET 优点}
+
+\textbf{\textcolor{mygreen}{在此省略分析过程，直接记住器件优点}}
 
 \concepttable{
-    \conrow{截面特征}{$H_{\text{fin}} \gg W_{\text{fin}}$，鳍片高度远大于宽度（高宽比极大）。}
-    \conrow{物理效应}{顶部宽度占比极小，可忽略顶栅的影响。}
-    \conrow{简化模型}{器件简化为\textbf{双栅器件}进行近似电学分析。}
+\conrow{结构优势}{通过几何结构加强了对短沟道效应的抑制}
+\conrow{亚阈值特性}{器件的亚阈值斜率接近理论理想值}
+\conrow{功耗与性能}{具有低的泄漏电流，适用于高性能和低功耗}
+\conrow{掺杂与一致性}{沟道区掺杂浓度无需按比例增加，可以轻掺杂甚至不掺杂。避免了迁移率退化及沟道杂质涨落（RDF），提高了器件参数的一致性}
+\conrow{驱动能力}{器件导通时，栅覆盖的多个表面参与导电，增大了电流驱动能力（即总有效栅宽 $W_{\text{eff}}$ 增大）。}
 }
-
-\entry{二维泊松方程}{设 $x$ 为垂直于沟道方向，$y$ 为平行于沟道方向：
-    $$\frac{d\phi^2(x,y)}{dx^2} + \frac{d\phi^2(x,y)}{dy^2} = \frac{qN_A}{\varepsilon_s}$$
-}
-
-
-
-
 
 \subsection{FinFET 结构设计}
 
+\subsubsection{高宽比对阈值电压影响}
+
+FinFET的高宽比AR增大可以更好地抑制阈值电压下降，对短沟道效应有所改善。
+
+\img{images/image-2026-06-24-06-16-02.png}
+
+\begin{itemize}
+\item 增大FinFET的高宽比可以降低亚阈值斜率。
+\item 采用大高宽比的结构可以增大芯片中的器件密度，提高版图效率，芯片面积：
+
+$$S_{\text{准双栅}} = 0.75 \times S_{\text{三栅}} = 0.60 \times S_{\text{准单栅}}$$
+\end{itemize}
+
+为了保持良好短沟道特性的同时，得到较大的驱动电流，需要采用\textbf{\textcolor{myred}{Multi-Fin}}的FinFET结构（三个Fin比单个Fin可以更好地抑制阈值电压下降的短沟道效应，且多 Fin 可以增大电流驱动能力，但会增加有效栅宽（增加栅电容，进而增加延时），因此\textbf{\textcolor{myred}{需要在延时与电流驱动能力之间权衡}}）
+
 \subsection{围栅MOS器件（GAA, Gate-All-Around）}
+
+围栅MOS器件是多栅器件的终极形态。
+
+\textbf{\hlblue{器件特征长度大全}}
+
+\concepttable{
+    \conrow{双栅}{$\displaystyle \lambda = \sqrt{\frac{\varepsilon_{Si}}{2\varepsilon_{ox}}\left(1 + \frac{\varepsilon_{ox}t_{si}}{4\varepsilon_{Si}t_{ox}}\right)t_{Si}t_{ox}} \approx \sqrt{\frac{1}{2}}\lambda_1$}
+    \conrow{三栅}{$\displaystyle \lambda = \sqrt{\frac{\varepsilon_{Si}}{3\varepsilon_{ox}}\left(1 + \frac{\varepsilon_{ox}t_{si}}{4\varepsilon_{Si}t_{ox}}\right)t_{Si}t_{ox}} \approx \sqrt{\frac{1}{3}}\lambda_1$}
+    \conrow{PI栅}{$\displaystyle \lambda = \sqrt{\frac{\varepsilon_{Si}}{3.14\varepsilon_{ox}}\left(1 + \frac{\varepsilon_{ox}t_{si}}{4\varepsilon_{Si}t_{ox}}\right)t_{Si}t_{ox}} \approx \sqrt{\frac{1}{3.14}}\lambda_1$}
+    \conrow{$\Omega$栅}{$\displaystyle \lambda = \sqrt{\frac{\varepsilon_{Si}}{3.4\varepsilon_{ox}}\left(1 + \frac{\varepsilon_{ox}t_{si}}{4\varepsilon_{Si}t_{ox}}\right)t_{Si}t_{ox}} \approx \sqrt{\frac{1}{3.4}}\lambda_1$}
+    \conrow{围栅}{$\displaystyle \lambda = \sqrt{\frac{\varepsilon_{Si}}{4\varepsilon_{ox}}\left(1 + \frac{\varepsilon_{ox}t_{si}}{4\varepsilon_{Si}t_{ox}}\right)t_{Si}t_{ox}} \approx \frac{1}{2}\lambda_1$}
+}
+
+\textbf{\hlblue{核心优势}}
+
+\concepttable{
+    \conrow{抑制短沟道效应}{得益于360度全包围的栅极控制力。}
+    \conrow{高器件性能}{}
+    \conrow{低泄漏电流}{关断状态下沟道漏电极低。}
+    \conrow{随机离散掺杂免疫}{沟道栅控极强，通常轻掺杂或不掺杂，免疫掺杂原子随机涨落带来的电学偏差。}
+    \conrow{高密度集成}{利用垂直堆叠进一步节省版图面积。}
+}
+
+\textbf{\hlblue{核心劣势}}
+
+\concepttable{
+    \conrow{制备复杂度}{工艺制造难度极高，如悬空纳米片/线的刻蚀与栅包裹工艺。}
+    \conrow{寄生效应}{多层堆叠和复杂的内部接触，寄生电容与寄生电阻增大。}
+    \conrow{自热效应}{沟道完全被栅极和氧化层包裹，热量不易通过衬底散出，导致器件内部温度升高。}
+    \conrow{涨落问题}{--}
+    \conrow{可靠性问题}{--}
+}
+
+\textbf{\textcolor{mygreen}{第三章 PPT 总结完毕}}
 
 \section{第四章\ 面向实际应用的器件}
 
@@ -907,9 +1272,9 @@ $$C_{oxb} \ll C_{Si} \quad \text{和} \quad C_{oxb} \ll C_{oxf}$$
 
 \subsubsection{杂质随机分布(RDD)}
 
-\textbf{物理根源}：\textbf{\textcolor{myred}{离子注入与扩散在原子尺度离散随机}}。纳米尺度下（$L_g < 100\text{ nm}$）沟道耗尽层体积 $W \cdot L \cdot X_{dep}$ 极小，杂质原子总数 $N$ 降至数十至数百个。
+\textbf{物理机理}：\textbf{\textcolor{myred}{离子注入与扩散在原子尺度离散随机}}。纳米尺度下（$L_g < 100\text{ nm}$）沟道耗尽层体积 $W \cdot L \cdot X_{dep}$ 极小，杂质原子总数 $N$ 降至数十至数百个。
 
-\entry{杂质数目统计}{服从泊松分布，$\sigma_N = \sqrt{N}$，相对涨落 $\frac{\sigma_N}{N} = \frac{1}{\sqrt{N}}$。$N$ 越小，涨落越大，相邻器件杂质数目出现显著微观差异。}
+\entry{杂质数目 N}{服从泊松分布，$\sigma_N = \sqrt{N}$，相对涨落 $\frac{\sigma_N}{N} = \frac{1}{\sqrt{N}}$。\textbf{\textcolor{myred}{$N$ 越小，涨落越大，相邻器件杂质数目出现显著微观差异}}。}
 
 \concepttable{
     \conrow{杂质数目涨落}{沟道内杂质原子总数的统计起伏。}
@@ -917,10 +1282,12 @@ $$C_{oxb} \ll C_{Si} \quad \text{和} \quad C_{oxb} \ll C_{oxf}$$
 }
 
 RDD通过掺杂浓度 $N_A$ 的起伏\textbf{\textcolor{myred}{映射为阈值电压 $V_T$ 波动}}：
-$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} + \frac{K(2\phi_{FP})^{\frac{1}{2}}}{C_{ox}} + 2\phi_{FP}$$
-其中系数 $K \propto \sqrt{N_A}$，掺杂浓度的微观起伏直接传导至 $V_T$。
 
-\textbf{\hlblue{RDD 定量影响}}
+$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} + \frac{K(2\phi_{FP})^{\frac{1}{2}}}{C_{ox}} + 2\phi_{FP}$$
+
+其中主要影响系数 $K \propto \sqrt{N_A}$，掺杂浓度的微观起伏直接传导至 $V_T$。
+
+\textbf{\hlblue{杂质数目涨落影响}}
 
 \entry{掺杂浓度相对涨落}{$\frac{\sigma_{N_A}}{N_A} \approx 2.4\%$}
 \entry{沟道杂质原子数相对起伏}{$\frac{\sigma_{n_a}}{n_a} \approx 2.3\%$}
@@ -929,31 +1296,30 @@ $$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} + \frac{K(2\phi_{FP})^{\frac{1}{2}}}{C
 $\sigma_{V_T}$（阈值电压标准差）随 $L_{eff}$ （有效栅长）缩小的演进：
 
 \concepttable{
-    \conrow{$L_{eff} = 0.5\,\mu\text{m}$}{$\sigma_{V_T} = 6.9\text{ mV}\ (\approx 1.4\%)$}
-    \conrow{$L_{eff} = 0.3\,\mu\text{m}$}{$\sigma_{V_T} = 10.6\text{ mV}\ (\approx 2.2\%)$}
+    \conrow{$0.5\,\mu\text{m}$}{$\sigma_{V_T} = 6.9\text{ mV}\ (\approx 1.4\%)$}
+    \conrow{$0.3\,\mu\text{m}$}{$\sigma_{V_T} = 10.6\text{ mV}\ (\approx 2.2\%)$}
 }
 
 \textbf{\textcolor{myred}{随 $L_{eff}$ 缩小，$\sigma_{V_T}$ 显著增大，分布（近高斯）变宽变矮}}，器件间性能离散度增加。影响 $\sigma_{V_T}$ 的设计变量还包括栅氧化层厚度、栅宽及掺杂浓度本身。
 }
 
-\textbf{\hlblue{$\sigma_{V_T}$ 对结构与工艺参数的依赖关系}}
-
 \concepttable{
-    \conrow{栅氧化层厚度 $t_{ox}$}{$t_{ox}\uparrow\ \Rightarrow\ \sigma_{V_T}\uparrow$。机理：$t_{ox}$ 增大 $\rightarrow$ $C_{ox}$ 减小 $\rightarrow$ 栅对沟道电荷控制减弱，微观电荷起伏对 $V_T$ 的调制放大。}
-    \conrow{器件面积 $W\times L$}{$WL\downarrow$（即 $1/\sqrt{LW}\uparrow$）$\Rightarrow$ $\sigma_{V_T}\uparrow$。机理：符合面积平方根倒数定律，\textbf{\textcolor{myred}{沟道内杂质原子绝对数越少，统计起伏越剧烈}}。}
-    \conrow{掺杂浓度 $N$}{$N\uparrow\ \Rightarrow\ \sigma_{V_T}\uparrow$（$\sigma_{V_T}\propto N^{1/4}$）。机理：耗尽区电荷总量随 $N$ 增大而增大，\textbf{\textcolor{myred}{绝对电荷涨落总量同步上升}}。}
+    \conrow{栅氧化层厚度 $t_{ox}$}{\textbf{\textcolor{myred}{$t_{ox}\uparrow\ \Rightarrow\ \sigma_{V_T}\uparrow$}}。
+    
+    \textbf{机理：}$t_{ox}$ 增大 $\rightarrow$ $C_{ox}$ 减小 $\rightarrow$ 栅对沟道电荷控制减弱，微观电荷起伏对 $V_T$ 的调制放大。}
+    \conrow{器件面积 $W\times L$}{\textbf{\textcolor{myred}{$WL\downarrow$（即 $1/\sqrt{LW}\uparrow$）$\Rightarrow$ $\sigma_{V_T}\uparrow$}}。
+    
+    \textbf{机理：}符合面积平方根倒数定律，沟道内杂质原子绝对数越少，统计起伏越剧烈。}
+    \conrow{掺杂浓度 $N$}{\textbf{\textcolor{myred}{$N\uparrow\ \Rightarrow\ \sigma_{V_T}\uparrow$}}。
+    
+    \textbf{机理：}耗尽区电荷总量随 $N$ 增大而增大，绝对电荷涨落总量同步上升。}
 }
 
-\textbf{\hlblue{RDD 第二维度：杂质空间位置随机性}}
+\textbf{\hlblue{杂质位置涨落影响}}
 
-\concepttable{
-    \conrow{控制变量}{固定沟道耗尽层内杂质原子数 $\equiv 170$}
-    \conrow{现象}{$V_T$ 仍从 $\sim 0.5\text{ V}$ 至 $\sim 0.8\text{ V}$ 宽幅离散}
-    \conrow{机理}{杂质靠近源端/漏端/沟道中心，局域静电势调制权重截然不同}
-    \conrow{结论}{\textbf{\textcolor{myred}{仅控制掺杂总数无法消除 $V_T$ 涨落，空间随机分布同等关键}}}
-}
+\entry{结论}{\textbf{\textcolor{myred}{仅控制掺杂总数无法消除 $V_T$ 涨落，空间随机分布同等关键}}}
 
-\textbf{\hlblue{RDD 对电路时序的影响}}
+\textbf{\hlblue{对电路时序的影响}}
 
 \entry{传导机制}{$V_T$ 涨落 $\rightarrow$ $I_{on} \propto (V_{GS}-V_T)^\alpha$ 波动 $\rightarrow$ 负载电容充放电速度起伏 $\rightarrow$ \textbf{\textcolor{myred}{逻辑门延迟 5\%\textasciitilde15\% 离散}}。}
 
@@ -967,14 +1333,9 @@ $\sigma_{V_T}$（阈值电压标准差）随 $L_{eff}$ （有效栅长）缩小�
     \comprow{NOR  & 0.761 & 0.111 & 1.616 & 0.169}
 }
 
-\concepttable{
-    \conrow{NAND $t_r$/ $t_f$ 起伏}{$\sigma_{t_r} = 0.070\text{ ps}$，$\sigma_{t_f} = 0.056\text{ ps}$。}
-    \conrow{NOR 特征}{串联堆叠使 $t_{LH}$ 基数与波动均大于 NAND（$\sigma = 0.169\text{ ps}$），$t_{HL}$ 则相反。}
-}
+\entry{后果}{关键路径时序不确定性 $\rightarrow$ \textbf{\textcolor{myred}{时钟频率受限、时序收敛困难}}。}
 
-\entry{工程后果}{关键路径时序不确定性 $\rightarrow$ \textbf{\textcolor{myred}{时钟频率受限、时序收敛困难}}。}
-
-\textbf{\hlblue{逆向掺杂（减小杂质随机分布的措施）}}
+\textbf{\hlblue{反制措施（逆向掺杂）}}
 
 \entry{核心思路}{使表面处杂质掺杂浓度很低甚至不掺杂，而\textbf{\textcolor{myred}{在一定深度处增加一层高掺杂层来抑制泄漏电流}}}
 
@@ -989,7 +1350,7 @@ $\sigma_{V_T}$（阈值电压标准差）随 $L_{eff}$ （有效栅长）缩小�
 
 \subsubsection{线条边沿粗糙（LER）}
 
-\entry{线条边沿粗糙（LER）}{\textbf{\textcolor{myred}{栅极线条边沿的原子级不规则凹凸不平}}，导致沿栅宽 $W$ 方向局域实际栅长随机变异。}
+\entry{定义}{\textbf{\textcolor{myred}{栅极线条边沿的原子级不规则凹凸不平}}，导致沿栅宽 $W$ 方向局域实际栅长随机变异。}
 
 \imgleft[0.2]{images/image-2026-06-09-21-11-03.png}{
 
@@ -1007,48 +1368,32 @@ $\sigma_{V_T}$（阈值电压标准差）随 $L_{eff}$ （有效栅长）缩小�
 
 方均根值 $\Delta$（RMS）：
 
-$\Delta = \left( \frac{1}{n} \sum_{i=1}^n \delta_i^2 \right)^{\frac{1}{2}}$
+$$\Delta = \left( \frac{1}{n} \sum_{i=1}^n \delta_i^2 \right)^{\frac{1}{2}}$$
 
 $\delta_i$：实际栅边沿与理想边沿的几何位置偏差；$n$：沿线条方向采样点数目。\textbf{\textcolor{myred}{工业界常用 $3\Delta$（3 倍 RMS）表征 LER}}，覆盖约 99.73$\%$ 统计波动。
 
-\imgleft[0.35]{images/image-2026-06-09-21-17-11.png}{
+\imgleft[0.3]{images/image-2026-06-09-21-17-11.png}{
 
-\entry{从 LER 到 LWR（线宽粗糙度）}{MOSFET 沟道由\textbf{双侧}栅边缘共同定义，故引入线条宽度粗糙度（LWR）：$\Delta_{LWR} = \left[ \frac{1}{n} \sum_{i=1}^n (L_{gi} - L_g)^2 \right]^{\frac{1}{2}}$
+\entry{LWR（线宽粗糙度）}{MOSFET 沟道由\textbf{双侧}栅边缘共同定义，故引入线条宽度粗糙度（LWR）：$$\Delta_{LWR} = \left[ \frac{1}{n} \sum_{i=1}^n (L_{gi} - L_g)^2 \right]^{\frac{1}{2}}$$
 
-其中：$L_{gi}$：局域实际栅线条宽度；$L_g$：平均栅长（设计标称值）。}
+其中：$L_{gi}$：局域实际栅线条宽度；$L_g$：平均栅长。}
+
+}
 
 \textbf{双侧相关系数}：
 
 \concepttable{
     \conrow{$\rho = 0$（最常见）}{两侧粗糙不相关，独立叠加：$\sigma_{LWR}^2 = 2\sigma_{LER}^2$。}
-    \conrow{$\rho = -1$（完全负相关）}{互补波浪状，线宽变异最大：$\sigma_{LWR}^2 = 4\sigma_{LER}^2$。}
-    \conrow{$\rho = 1$（完全正相关）}{整体弯曲但宽度恒定，线宽无起伏：$\sigma_{LWR}^2 = 0$。}
+    \conrow{$\rho = -1$（负相关）}{互补波浪状，线宽变异最大：$\sigma_{LWR}^2 = 4\sigma_{LER}^2$。}
+    \conrow{$\rho = 1$（正相关）}{整体弯曲但宽度恒定，线宽无起伏：$\sigma_{LWR}^2 = 0$。}
 }
 
-}
-
-\textbf{\hlblue{LER/LWR 对器件电学性能的影响}}
+\textbf{\hlblue{定性影响}}
 
 \entry{尺寸依赖性}{参数标准差随 $W$ 减小而显著增大。}
 
-\entry{电学不对称响应}{\textbf{\textcolor{myred}{LER 对 $I_{on}$ 影响小，对 $I_{off}$ 影响显著}}。机理：$I_{on}$ 取决于沟道平均电阻（并联沟道的线性平均效应），局部栅长起伏被均值平抑；$I_{off}$ 与栅长呈指数反比（DIBL 在短栅长处加剧），LWR 导致局域栅长极度缩短处漏电流指数暴增，拉高整体 $I_{off}$。}
-
-\textbf{仿真数据（固定 $\bm{\sigma = 5.7\text{ nm}}$，不同 $W$）}
-
-\concepttable{
-    \conrow{$V_{tlin}$ $3\sigma$ 变异}{$W$: $10\,\mu\text{m}\rightarrow 0.050\,\mu\text{m}$，$0.311\%\rightarrow 5.03\%$。}
-    \conrow{$V_{tsat}$ $3\sigma$ 变异}{$W$: $10\,\mu\text{m}\rightarrow 0.050\,\mu\text{m}$，$1.40\%\rightarrow 20.0\%$。}
-    \conrow{$I_{off}$（$W=0.050\,\mu\text{m}$）}{均值 $31.08\rightarrow 60.13\text{ nA/}\mu\text{m}$，$3\sigma$ 变异 $141.0\%$。}
-    \conrow{$I_{on}$（$W=0.050\,\mu\text{m}$）}{均值 $768\,\mu\text{A/}\mu\text{m}$ 无偏移，$3\sigma$ 变异仅 $4.50\%$。}
-}
-
-\textbf{\hlblue{LER 对电学参数的量化影响}}
-
-\entry{阈值电压 $V_T$ 起伏}{$\sigma_{V_T}$ 随方均根涨落 $\Delta$ 单调上升；相同 $\Delta$ 下，$L=30\text{ nm}$ 的 $\sigma_{V_T}$ 斜率远高于 $L=50\text{ nm}$，表明\textbf{\textcolor{myred}{器件缩小剧烈放大 LER 对 $V_T$ 的扰动}}，并伴随 $V_T$ 降低效应。}
-
-\entry{关态电流 $I_{off}$ 起伏}{$\sigma_{\log_{10}I_{off}}$ 随 $\Delta$ 增大而上升，$V_D = 1.0\text{ V}$ 时波动远大于 $V_D = 0.1\text{ V}$。机理：高漏压下 DIBL 加剧，LER 致局域栅长极度缩短处势垒严重下陷，\textbf{\textcolor{myred}{局域漏电指数暴增}}。}
-
-\entry{开态电流 $I_{on}$ 对比}{$\sigma_{I_{on}}$ 虽随 $\Delta$ 上升，但斜率与幅度远小于 $I_{off}$，\textbf{\textcolor{myred}{印证 LER 对 $I_{off}$ 影响远大于 $I_{on}$}}。}
+\entry{不对称影响}{\textbf{\textcolor{myred}{LER 对 $I_{on}$ 影响小，对 $I_{off}$ 影响显著}}。}
+\entry{阈值电压 $V_T$}{$\sigma_{V_T}$ 随方均根涨落 $\Delta$ 单调上升；相同 $\Delta$ 下，$L=30\text{ nm}$ 的 $\sigma_{V_T}$ 斜率远高于 $L=50\text{ nm}$，表明\textbf{\textcolor{myred}{器件缩小剧烈放大 LER 对 $V_T$ 的扰动}}，并伴随 $V_T$ 降低效应。}
 
 \textbf{\hlblue{工艺解决方案：侧墙光刻技术}}
 
@@ -1103,18 +1448,17 @@ NMOS 和 PMOS上拉电阻的涨落源非对称性对比：
 
 \section{第五章\ 存储器}
 
-\subsection{存储器概述}
+\subsection{概述}
 
-存储层次结构源于\textbf{单一介质无法兼顾高速与高密度}，故引入金字塔型层次。\textbf{\textcolor{myred}{从顶端到底端：速度递减、容量递增、每比特成本递减}}。
+\textbf{单一介质无法兼顾高速与高密度}，故引入金字塔型层次。\textbf{\textcolor{myred}{从顶端到底端：速度递减、容量递增、每比特成本递减}}。
 
-\concepttable{
-    \conrow{Processing}{访问时间 $\sim$ 1ns，基准（Size: 1x, Latency: 1x）。}
-    \conrow{Memory}{DRAM/NVDIMM 延迟 $\sim$ 10ns（Size: 10x, Latency: 100x）。}
-    \conrow{SCM}{介于DRAM与SSD间（Size: 100x, Latency: 1,000x），\textbf{\textcolor{myred}{填补主存与外存性能鸿沟}}。}
-    \conrow{Storage}{SSD延迟 $\sim$ 100,000x；HDD $\sim$ 10ms（Latency: 10,000,000x）。}
+\compTable{4}{%
+    \compheader{层次 & 典型延迟/访问时间 & Size & Latency}
+    \comprow{Processing & $\sim$ 1ns & 1x（基准） & 1x}
+    \comprow{Memory & $\sim$ 10ns & 10x & 100x}
+    \comprow{SCM & 介于DRAM与SSD间 & 100x & 1,000x}
+    \comprow{Storage & $\sim$ 100,000x（SSD）；$\sim$ 10ms（HDD） & --- & 10,000,000x}
 }
-
-主存与外存间存在数个数量级的延迟断层，此即驱动SCM及新型非易失性存储器（RRAM、MRAM等）发展的根本原因。
 
 存储器分类基于\textbf{\textcolor{myred}{物理特性（易失性/非易失性）和工作原理}}：
 
@@ -1134,31 +1478,6 @@ NMOS 和 PMOS上拉电阻的涨落源非对称性对比：
     \comprow{读/写时间 & 50ns & 8ns / 8ns & 1us / 1-100ms}
     \comprow{耐久性 & $\infty$ & $\infty$ & $>10^5$}
     \comprow{缩放瓶颈 & 电容保持 & 漏电 & EOT}
-}
-
-新型非易失存储器横向对比：
-
-% 5列对比（表格会自动计算 1个左对齐 + 4个居中对齐）
-\compTable{5}{%
-    \compheader{维度 & FeRAM & MRAM & PRAM & \textbf{\textcolor{myred}{RRAM}}}
-    \comprow{非易失性 & $\circ$ & $\circ$ & $\circ$ & $\circ$}
-    \comprow{晶体管数 & 1T & 1T & 1T & 0$\sim$1T}
-    \comprow{擦写时间 & --- & --- & --- & 10ns/30ns}
-    \comprow{读时间 & --- & --- & --- & 20ns}
-    \comprow{Cell Size & --- & --- & --- & 4 $F^2$}
-    \comprow{Endurance & --- & $\infty$ & --- & $\sim10^9$}
-}
-
-RRAM 优势：擦写电压/功耗低，速度接近SRAM/DRAM，4 $F^2$极限缩放（受限于光刻），CMOS兼容性好（BEOL），局限：Endurance $\sim10^9$劣于MRAM（$\infty$）和DRAM。
-
-\imgleft[0.4]{images/image-2026-06-06-20-52-05.png}{
-    \concepttable{
-        \conrow{单元阵列}{基本存储单元按行列矩阵排列，\textbf{\textcolor{myred}{存储核心}}。}
-        \conrow{地址输入缓冲器}{接收 $A_0,A_1,\dots,A_n$，\textbf{行/列地址分时复用}同一引脚锁存，减少管脚数。}
-        \conrow{行译码器 / 列译码器}{行地址 $\rightarrow$ 激活字线（WL）选中整行；列地址 $\rightarrow$ 控制位线（BL）开关定位目标单元。}
-        \conrow{数据 I/O 缓冲器}{衔接 $D_{\text{in}}/D_{\text{out}}$ 总线，对微弱读写信号放大、锁存、整形驱动。}
-        \conrow{时钟与控制电路}{接收 $\overline{\text{WE}}$, $\overline{\text{CE}}$, $\overline{\text{RAS}}$, $\overline{\text{CAS}}$，产生内部时序协调各模块。}
-    }
 }
 
 \subsection{挥发性存储器}
@@ -1212,55 +1531,12 @@ RRAM 优势：擦写电压/功耗低，速度接近SRAM/DRAM，4 $F^2$极限缩�
     \conrow{放大}{将微弱$\Delta V$放大至满幅逻辑电平（$V_{DD}$或GND）。}
     \conrow{再生（回写）}{放大信号立即写回$C_s$，恢复原存储数据，解决破坏性读出。}
 }
-
-\noindent\textbf{传输特性}：横轴$\Delta V_{in}$，纵轴$\Delta V_{out}$。即使$\Delta V_{in}$极小，放大器亦能迅速拉伸至$\sim V_{DD}$，\textbf{\textcolor{myred}{增益极高、再生能力强}}。
-
-\noindent\textbf{阵列差分工作（差分输入放大器）}：
-
-\imgleft[0.4]{images/image-2026-06-08-20-55-48.png}{
-
-\concepttable{
-    \conrow{差分结构}{BL与$\overline{BL}$配对；读前均预充至$V_R = \frac{V_{S1} + V_{S0}}{2}$（公正比较基准）。}
-    \conrow{信号差}{选通$WL_i$：$C_s$与BL电荷共享，BL变，$\overline{BL}$保持$V_R$。
-    $\Delta V_1 = V_{B1} - V_R = \frac{C_s}{C_s + C_B}(V_{S1} - V_R),\quad
-      \Delta V_0 = V_R - V_{B0} = \frac{C_s}{C_s + C_B}(V_R - V_{S0})$
-    \textbf{\textcolor{myred}{信号大小受制于传输比$\frac{C_s}{C_s+C_B}$}}。}
-    \conrow{判决与再生}{S/R感知$\Delta V_1$或$\Delta V_0$后，正反馈迅速拉伸至电源轨，完成逻辑判决并回写$V_{S1}$/$V_{S0}$。}
-}
-
-}
-
-\textbf{\hlblue{设计要求与核心矛盾}}
-
-\concepttable{
-    \conrow{传输效率（性能优值）}{$T = \dfrac{\Delta V_B}{\Delta V_S} = \dfrac{1}{1 + \frac{C_B}{C_S}}$；$C_B$越小或$C_s$越大则$T\to1$，读出信号越强。}
-    \conrow{单元面积（密度优值）}{$A_{cell} = NF^2$（$F$为特征尺寸/最小布线间距之半，$N$为常数）；提升容量须不断缩小$N$与$F$。}
-    \conrow{\textcolor{myred}{核心矛盾}}{面积缩小$\to$存储电极面积减小$\to C_s$减小$\to T$降低$\to$读出信号微弱至S/R无法识别。}
-}
-
-\noindent\textbf{后续演进目标}：在面积缩小的同时维持/提升$C_s$。
-
-\textbf{\hlblue{MB 及 GB级 DRAM}}
-
-见课件「第六讲-1」P21-28，这里暂不整理。
-
 \textbf{\hlblue{DRAM 的刷新}}
 
 \concepttable{
-    \conrow{“动态”之源}{$C_s$无绝对绝缘，泄漏电流$I_{leak}$使存储电荷持续流失，需周期刷新维持数据。}
+    \conrow{动态成因}{$C_s$无绝对绝缘，泄漏电流$I_{leak}$使存储电荷持续流失。}
     \conrow{失效阈值}{高电平下降\textbf{\textcolor{myred}{20\%}}即判定信息丢失（对应$\Delta V = 0.2V_{S1}$）。}
     \conrow{刷新操作}{失效前由S/R将衰退电平重新放大并写回$C_s$，恢复标准逻辑电平。}
-}
-
-\noindent\textbf{\hlblue{泄漏电流来源（6类）}}
-
-\concepttable{
-    \conrow{亚阈值电流}{WL低电平时，表面势引起源漏间微弱载流子扩散。}
-    \conrow{穿通电流}{短沟下源漏耗尽区展宽接触，势垒降低，栅控失效。}
-    \conrow{pn结反向电流}{$n^+$节点与p衬底反偏，产生势垒区产生-复合电流及少子扩散电流。}
-    \conrow{氧化层隧穿电流}{栅氧极薄时电子量子隧穿穿透绝缘层。}
-    \conrow{热电子效应}{强场下载流子碰撞电离，少子被存储节点收集，改变存储电荷。}
-    \conrow{场区寄生沟道泄漏}{场氧隔离不良，下方硅表面形成寄生反型层，导致相邻单元电荷串扰。}
 }
 
 \textbf{\hlblue{刷新效率 $\eta$（系统性能指标）}}
@@ -1305,9 +1581,9 @@ SRAM核心为\textbf{\textcolor{myred}{交叉耦合反相器对}}（节点N1/N2�
 
 \compTable{4}{%
     \compheader{类型 & 负载 & 静态电流 & 特征}
-    \comprow{NMOS 6T早期 & 耗尽型NMOS（非线性电阻） & $I_{on}=K_DV_{TD}^2\approx1.4\times10^{-5}$A & 直流通路，功耗极大}
-    \comprow{多晶硅负载4T过渡 & 高阻多晶硅$R_L$ & $I_{on}\approx V_{DD}/R_L=10^{-8}$A & 降3个数量级，仍存直流功耗}
-    \comprow{CMOS 6T现代主流 & PMOS上拉+NMOS下拉 & $\approx0$（仅亚阈值漏电） & 无直流通路，信号稳定}
+    \comprow{NMOS 6T早期 & 耗尽NMOS & $I_{on}\approx 1.4\times10^{-5}$A & 直流通路，功耗极大}
+    \comprow{多晶硅负载4T过渡 & 高阻多晶硅$R_L$ & $I_{on}\approx 10^{-8}$A & 降3个数量级，仍存直流功耗}
+    \comprow{CMOS 6T & PMOS上拉+NMOS下拉 & $\approx0$（仅亚阈值漏电） & 无直流通路，信号稳定}
 }
 
 \textbf{\textcolor{myred}{对比DRAM}}：静态正反馈锁存，无需刷新，速度极快，广泛用于cache与嵌入式存储。
@@ -1325,7 +1601,7 @@ SRAM核心为\textbf{\textcolor{myred}{交叉耦合反相器对}}（节点N1/N2�
 \imgleft[0.4]{images/image-2026-06-08-21-46-30.png}{
 
 \concepttable{
-    \conrow{物理过程（写"0"）}{原态 N1=1,N2=0；WL拉高$\to$M5导通；BL拉低至0V。$V_{DD}$经负载管M3向N1充电，BL经门管M5将N1放电，形成$V_{DD}$-M3-N1-M5-BL直流通路（分压电路）。}
+    \conrow{物理过程（写"0"）}{WL拉高$\to$M5导通，BL拉低$\to$M3与M5在N1形成$V_{DD}$-GND分压，门管须强于负载管方可拉低N1翻转。}
     \conrow{核心参数}{$\displaystyle\beta_Q=\frac{K_p}{K_a}=\frac{K_3}{K_5}=\frac{K_4}{K_6}$；$K_p$为负载管（PMOS）导电因子，$K_a$为门管（NMOS）导电因子。}
     \conrow{物理本质}{$\beta_Q$越小写入越易：门管导电能力须强于负载管，方能将N1电位拉低越过反相器翻转阈值。故设计上需\textbf{\textcolor{myred}{减小PMOS尺寸、增大传输门NMOS尺寸}}。}
 }
@@ -1364,7 +1640,297 @@ $$\beta_R = \frac{K_d}{K_a} = \frac{K_1}{K_5} = \frac{K_2}{K_6}$$
 
 \subsection{不挥发性存储器}
 
+\subsubsection{Mask ROM}
+
+\entry{基本结构与工作原理}{
+    每个存储单元仅由一个MOS晶体管构成。引脚连接：栅极（Gate）接字线（WL），漏极（Drain）接位线（BL），源极（Source）共同接地（GND）。
+    
+    \textbf{物理本质：}存储的逻辑内容（“0”或“1”）完全由管子本身的导通或截止状态决定。
+}
+
+\entry{三种编程方法及物理机制}{
+    掩膜式ROM在出厂制造时就通过光刻步骤决定了数据，其具体的物理实现手段有三种：
+    \concepttable{
+        \conrow{离子注入掩膜版编程}{通过光刻掩膜，在特定单元的 NMOS 沟道中注入硼（B）离子。由于硼是p型掺杂，这会显著提高该MOS管的阈值电压（$V_{TH}$）。在正常读取电压下，该管子保持截止，位线不放电。}
+        \conrow{有源区掩膜版编程}{改变有源区几何拓扑，只有当有源区与多晶硅栅极发生空间叠置时，才会实际形成MOS管。若不叠置，则该位置无沟道，相当于永久截止。}
+        \conrow{引线孔掩膜版编程}{控制接触孔（Contact）的有无。只有存在接触孔时，MOS管才能与位线（BL）电学连接并对其放电。有孔导通放电存“1”，无孔不导通保持预充存“0”。}
+    }
+}
+
+\subsubsection{PROM}
+
+\entry{单元电路拓扑}{
+    采用多晶硅电阻负载PROM单元。其物理层叠为：位线（BL） $\rightarrow$ 高阻多晶硅电阻 $\rightarrow$ MOS晶体管漏极 $\rightarrow$ 源极接地。字线（WL）同样接MOS晶体管的栅极。
+}
+
+\entry{阻态与逻辑状态映射}{
+    \concepttable{
+        \conrow{高阻态（HR-poly）}{单元只有很小的导通电流，系统判决为存“0”。}
+        \conrow{低阻态（$\text{n}^+$-poly）}{单元具有较大的导通电流，系统判决为存“1”。}
+    }
+}
+
+\entry{出厂状态与编程逻辑}{
+    出厂时所有单元默认都是“0”（即所有多晶硅负载均处于高阻态）。\textbf{\textcolor{myred}{用户在后期使用时，根据需要向特定单元施加编程电信号或热效应}}，使高阻多晶硅（HR-poly）转化为低阻的多晶硅（$\text{n}^+$-poly），将其确定为存“1”单元。此操作不可逆，属于一次性编程（OTP）。
+}
+
+\subsubsection{EPROM/E²PROM/Flash}
+
+\entry{共同点}{
+    Flash、EPROM、E²PROM 均是基于浮栅管结构实现信息存储。它们都是利用浮栅内捕获电子导致的阈值电压漂移来存储数据。
+}
+
+\entry{EPROM/E²PROM/Flash 对比}{
+    \compTable{4}{
+        \compheader{特性 & EPROM & E²PROM & Flash}
+        \comprow{物理特征 & 浮栅下面是较厚的氧化层 & 结构非对称，漏区上方有薄氧化层 & 整个浮栅下面整体是较薄的隧穿氧化层}
+        \comprow{擦除机制 & 无法电擦除，需紫外光全片擦除 & 漏区薄氧化层高压 F-N 隧穿，单字节擦除 & 源区隧穿氧化层 F-N 隧穿，块/扇区擦除}
+    }
+}
+
 \subsection{新型存储器}
+
+\subsubsection{CTM}(Charge Trapping Memory，电荷陷阱存储器)
+
+\imgleft[0.3]{images/image-2026-06-26-10-40-32.png}{
+    \entry{SONOS结构}{
+        CTM最典型的实现形式是 SONOS 结构：
+        \concepttable{
+            \conrow{S (Silicon)}{单晶硅衬底，源极接 SL，漏极接 BL。}
+            \conrow{O (Oxide)}{隧穿层，材料为二氧化硅（$\text{SiO}_2$）。}
+            \conrow{N (Nitride)}{俘获层，材料为氮化硅（$\text{SiN}$）。（核心加星考点）}
+            \conrow{O (Oxide)}{阻挡层，材料为二氧化硅（$\text{SiO}_2$）。}
+            \conrow{S (Silicon)}{控制栅极，材料为多晶硅（Poly-Si），连接至字线（WL）。}
+        }
+    }
+    \entry{存储机制的物理本质区别}{
+    传统的闪存（Flash）依靠导电的浮栅（多晶硅）来存储电荷。CTM 的本质创新在于：利用绝缘的氮化硅（$\text{SiN}$）俘获层内部的高密度固有陷阱（Traps）来俘获并存储电荷。
+    }
+}
+
+\compTable{4}{
+    \compheader{特征 & Flash（浮栅） & CTM（电荷陷阱）}
+    \comprow{栅介质结构 & 双层多晶硅栅（控制栅+浮栅） & ONO 复合介质，工艺简化}
+    \comprow{电荷存在形式 & 全导电浮栅，电荷自由移动（“面”存储） & 绝缘俘获层，\textbf{\textcolor{myred}{电荷被孤立限制在陷阱中}}（“点”存储）}
+    \comprow{EOT 微缩 & 存在氧化层隧穿，EOT 无法做薄 & \textbf{\textcolor{myred}{各陷阱相互绝缘}}}
+    \comprow{抗辐射机制 & 辐射电离缺陷易使导电浮栅电荷漏光 & 空间分立陷阱束缚电荷，抗辐射电荷泄漏能力强}
+}
+
+
+\subsubsection{FeRAM}(Ferroelectric RAM，铁磁随机访问存储器)
+
+\imgleft[0.3]{images/image-2026-06-26-10-31-12.png}{
+    \entry{等效电路与拓扑结构（1T1C）}{
+        FeRAM在电路拓扑上\textbf{\textcolor{myred}{完全继承了传统DRAM的1T1C}}（1个晶体管+1个电容）架构：
+        \concepttable{
+            \conrow{WL（字线）}{连接至选择晶体管的栅极（Word Line），控制开关管的导通与截止。}
+            \conrow{BL（位线）}{连接至晶体管的源/漏端（Bit Line），用作数据的输入与输出，图中 $C_B$ 代表位线寄生电容。}
+            \conrow{$C_{FE}$（铁电电容）}{晶体管的另一个源/漏端垂直连接至铁电电容的上电极。}
+            \conrow{PL（极板线）}{铁电电容的下电极统一连接至板线（Plate Line）。}
+        }
+        \textbf{与DRAM的本质区别：}传统DRAM电容采用普通介质材料，断电后电荷泄露导致信息丢失；而FeRAM将常规电容介质替换为铁电材料，利用其非挥发性物理特性实现非易失性存储。
+    }
+}
+
+\entry{存储原理}{
+    利用铁电材料\textbf{\textcolor{myred}{在外部电场作用下极化方向发生翻转}}的特性来实现信息的永久存储。即使断开外部供电，材料内部的极化状态依然保持。
+}
+
+\imgleft[0.3]{images/image-2026-06-26-10-33-54.png}{
+    \entry{电滞曲线（$P \sim E$ 或 $P \sim V$ 曲线）}{
+        铁电材料的核心特征体现在其电滞回线上，纵轴为极化强度（$P$），横轴为电压（$V$）或电场（$E$）：
+        \concepttable{
+            \conrow{$P_s$（自发极化强度）}{施加外加电场使材料内部铁电畴趋向完全对齐时的最大饱和极化强度（图顶部的虚线横坐标投影）。}
+            \conrow{$P_r$（剩余极化强度}{当外部电场/电压彻底移除（$V=0$）时，材料内部依然保持的极化强度（即曲线与纵轴的交点）}
+        }
+    }
+    \entry{存储状态与逻辑映射}{
+        铁电材料在零偏置下有两个物理稳态，即正向剩余极化强度 $+P_r$（点D）和负向剩余极化强度 $-P_r$（点G）：
+        \concepttable{
+            \conrow{状态“0”}{当极化强度处于 $+P_r$（点D）状态时，定义为存储逻辑 “0”。}
+            \conrow{状态“1”}{当极化强度处于 $-P_r$（点G）状态时，定义为存储逻辑 “1”。}
+        }
+    }
+}
+
+\subsubsection{MRAM}(Magnetic Random Access Memory，磁性随机访问存储器)
+
+\entry{核心效应}{
+    基于磁阻隧道结（MTJ），利用巨磁阻（GMR）效应来实现信息存储。
+}
+
+\imgleft[0.3]{images/image-2026-06-26-10-24-38.png}{
+    \entry{MTJ的三层物理结构}{
+        \concepttable{
+            \conrow{自由层}{材料为 NiFe。其磁化方向不固定，可随外加磁场发生翻转。}
+            \conrow{绝缘层}{材料为 AlOx。}
+            \conrow{固定层}{材料为 NiFe。其磁化方向被固定，不随外部操作磁场翻转。}
+        }
+    }
+    \entry{阻态与逻辑定义}{
+        \concepttable{
+            \conrow{同向低阻}{当自由层与固定层的磁化方向一致（平行）时，电子隧穿阻碍较小，器件呈现低阻态，对应逻辑 “1”。}
+            \conrow{反向高阻}{当两层的磁化方向相反（反平行）时，电子阻碍较大，器件呈现高阻态，对应逻辑 “0”。}
+        }
+    }
+}
+
+\subsubsection{PRAM}(Phase-change RAM，\textbf{\textcolor{myred}{相变}}随机访问存储器)
+
+\imgleft[0.3]{images/image-2026-06-26-10-00-11.png}{
+    \entry{核心材料与机制}{
+        中间的相变材料采用硫族化合物，具体为 GST 合金（$\text{Ge}_x\text{Sb}_y\text{Te}_z$ / 锗锑碲合金）。利用材料在\textbf{\textcolor{myred}{非晶相和结晶相之间的可逆转变}}来代表逻辑“0”和“1”。
+    }
+    \concepttable{
+        \conrow{非晶态}{对应逻辑 “0”。其内部原子排列无序，物理特征为\textbf{\textcolor{myred}{电阻率高（高阻态）}}。}
+        \conrow{结晶态}{对应逻辑 “1”。其内部原子排列规则，物理特征为\textbf{\textcolor{myred}{电阻率低（低阻态）}}。}
+    }
+    \entry{微观}{
+        当阻性电极通电时，产生的焦耳热会加热与其接触的加热头附近的一小块 GST 材料，\textbf{\textcolor{myred}{通过控制加热温度和散热速率，实现两态之间的物理转换}}。
+    }
+}
+
+\textbf{\hlblue{PRAM的工作原理}}
+
+\imgleft[0.3]{images/image-2026-06-26-10-18-33.png}{
+    \entry{擦除（RESET）—— 写“0”}{
+        \concepttable{
+            \conrow{施加电流脉冲}{脉宽小、幅度大（\textbf{\textcolor{myred}{高窄脉冲}}）。}
+            \conrow{材料局部温度 $T$}{必须大于材料熔点 $T_m$（$T > T_m$），\textbf{\textcolor{myred}{使 GST 材料熔化}}。}
+            \conrow{\textbf{\textcolor{myred}{散热要求}}}{脉冲的下降时间 $t_f$ 必须小于结晶感应时间 $t_{in}$（$t_f < t_{in}$）。}
+            \conrow{结果}{由于施加的是窄脉冲且瞬间切断电流，\textbf{\textcolor{myred}{材料在熔化后经历极快速的降温，导致原子来不及排列结晶，直接锁定为无序的非晶态}}，器件呈现高阻，成功写入“0”。}
+        }
+    }
+}
+
+\entry{编程（SET）—— 写“1”}{
+    \concepttable{
+        \conrow{施加电流脉冲}{脉宽大、幅度小（低宽脉冲）。}
+        \conrow{材料局部温度 $T$}{必须满足 $T_x < T < T_m$（即大于结晶温度 $T_x$，但小于熔点 $T_m$）。}
+        \conrow{\textbf{\textcolor{myred}{时间要求}}}{脉冲的宽度 $t_2$ 必须大于结晶感应时间 $t_{in}$（$t_2 > t_{in}$）。}
+        \conrow{结果}{材料在此温度区间内保持足够长的时间，\textbf{\textcolor{myred}{原子有充分的时间进行重新排列}}，完成重结晶过程，转变为结晶态，器件呈现低阻，成功写入“1”。}
+    }
+}
+
+\entry{读操作}{
+    \concepttable{
+        \conrow{偏置条件}{
+            被选中单元的字线（WL）加高电平（使 1T1R 中的 MOS 管完全导通）。位线（BL）加低电压（施加一微小的读取电压 $V_R$）。
+        }
+        \conrow{状态判决逻辑}{
+            \textbf{\textcolor{myred}{保持偏置电压不变，检测电流}}：电流小则为高阻态（非晶态），读“0”；电流大则为低阻态（结晶态），读“1”。
+        }
+        \conrow{非破坏性读出原理}{
+            读操作施加远低于阈值电压 $V_{th}$ 的读取电压 $V_R$（$V_R \ll V_{th}$），使焦耳热温度低于 $T_x$ 和 $T_m$，\textbf{\textcolor{myred}{避免相变}}，保证数据完整无损。
+        }
+    }
+}
+
+\subsubsection{RRAM}（Resistive RAM，阻变随机访问存储器）
+
+\imgleft[0.3]{images/image-2026-06-25-19-51-23.png}{
+\entry{定义}{
+    \textbf{广义：}在外界激励（光、声、热、电、磁等）作用下，器件电阻值发生改变的器件。
+        
+    \textbf{\textcolor{myred}{狭义：}}在电场的作用下发生了阻值改变的器件。
+}
+\concepttable{
+    \conrow{MIM叠层结构}{
+        RRAM的基本物理拓扑为\textbf{金属-绝缘体-金属（MIM）}叠层结构。
+
+        上电极$\rightarrow$ 忆阻材料（阻变介质层，通常为过渡金属氧化物） $\rightarrow$ 下电极。\textbf{\textcolor{myred}{}}
+    }
+}
+}
+
+\textbf{三种RRAM连接架构：}
+
+\imgleft[0.3]{images/image-2026-06-25-19-53-22.png}{
+    \concepttable{
+        \conrow{0T1R}{
+            上电极接字线（WL），下电极接位线（BL），结构最简单，密度最高（可达 $4F^2$）
+        }
+        \conrow{1D1R}{
+            连接方式：字线（WL）接二极管阳极，下电极接位线（BL）。
+        }
+        \conrow{1T1R}{
+            连接方式：字线（WL）接MOS管栅极，下电极接位线（BL），源极接源线（SL）。
+        }
+    }
+}
+
+\textbf{\hlblue{RRAM 阻变特性}}
+
+\entry{核心阻态}{
+    高阻态（HRS）对应逻辑“0”，低阻态（LRS）对应逻辑“1”。
+}
+
+\imgleft[0.25]{images/image-2026-06-25-20-01-00.png}{
+    \concepttable{
+        \conrow{初始化过程}{
+            器件制备完成后的初始状态通常极高，需要\textbf{\textcolor{myred}{在初次使用时施加一个较大的电压}}，使其从 HRS 转到 LRS。属于\textbf{\textcolor{myred}{一次性的电击穿/激活机制}}。
+        }
+        \conrow{RESET过程}{
+            处于 LRS 的 RRAM 在施加一定电压后，器件内部导电长丝断开，转换到 HRS。
+        }
+        \conrow{SET过程}{
+            处于 HRS 的 RRAM 通过施加一定电压，内部导电长丝重新连接，转换到 LRS。
+        }
+    }
+}
+
+\textbf{阻变特性分类}
+
+\imgleft[0.3]{images/image-2026-06-25-20-06-11.png}{
+    \concepttable{
+        \conrow{单极型}{SET 和 RESET 操作电压极性相同。靠电压/电流的大小来区分操作。SET/RESET 有一定的窗口，通常 $V_{SET} > V_{RESET}$。
+        }
+        \conrow{双极型}{SET 和 RESET 的电压是相反的。}
+        \conrow{无极型}{SET 和 RESET 的操作不受极性的限制。
+        }
+    }
+}
+
+\textbf{\hlblue{RRAM 阻变材料}}
+
+\concepttable{
+    \conrow{演变路径}{非晶态半导体（硫系 $\dots$）、钙钛矿类化合物$\rightarrow$过渡金属氧化物。}
+    \conrow{演进动因}{后者在与CMOS\textbf{\textcolor{myred}{工艺兼容性、稳定性以及可靠性}}这三个关键维度上具有压倒性优势。}
+}
+
+\textbf{阻变材料分类与物理本质}
+
+\concepttable{
+    \conrow{电极材料}{Pt、TiN、W、Cu、Al}
+    \conrow{中间介质层}{$\text{CuO}_x$、$\text{NiO}$、$\text{ZnO}$、$\text{WO}_x$、$\text{HfO}_x$、$\text{TiO}_x$、$\text{ZrO}$、$\text{CeO}$、$\text{TaO}_x$、$\text{MoO}_x$、$\text{NbO}$、$\text{MnO}\dots$}
+    \conrow{选材原因}{\textbf{\textcolor{myred}{过渡金属化合物化合价较多并且容易发生变价}}。这是在电场下形成/断开氧空位缺陷导电长丝的化学基础。\textbf{\textcolor{myred}{部分金属与IC工艺兼容}}（如 $\text{Ti}$、$\text{W}$、$\text{Al}$ 在标准CMOS后道工艺中本就是常用金属）。}
+}
+
+\textbf{\hlblue{RRAM 应用}}
+
+\concepttable{
+    \conrow{非挥发性存储器}{利用其HRS/LRS状态的持久保持特性，作常规的\textbf{\textcolor{myred}{高密度高速外存}}。}
+    \conrow{忆阻器}{能够实现\textbf{\textcolor{myred}{连续阻值的调制}}，表现出非线性记忆。用于非线性网络系统或需要可变电阻的电路模块。用于模仿大脑神经网络的电子神经突触。}
+    \conrow{开关应用}{作\textbf{\textcolor{myred}{可重构逻辑开关}}。利用其非线性整流特征，用于 ESD（静电释放）保护、检波、整流等。}
+    \conrow{其它应用}{rSRAM（阻变非易失性SRAM架构）。\textbf{\textcolor{myred}{改善MOS管的阈值涨落}}（利用其阻值可调性来补偿前道晶体管的工艺失配）。}
+}
+
+\textbf{\hlgreen{新型存储器横向对比}}
+
+\compTable{5}{
+    \compheader{特性 & FeRAM & MRAM & PRAM & RRAM}
+    \comprow{不挥发性 & 是 & 是 & 是 & 是}
+    \comprow{单元晶体管数 & 1T & 1T & 1T & \textbf{\textcolor{myred}{0-1T}}}
+    \comprow{编程功耗 & 中等 & 高 & 较低 & \textbf{\textcolor{myred}{低}}}
+    \comprow{读信号范围 & - & 20\%-40\% & 10X-100X & 10X-1000X}
+    \comprow{写/擦时间 & 50ns/50ns & \textbf{\textcolor{myred}{10ns/10ns}} & 10ns/50ns & 10ns/30ns}
+    \comprow{读时间 & 50ns & \textbf{\textcolor{myred}{10ns}} & 20ns & 20ns}
+    \comprow{CMOS兼容性 & 差 & 中等 & \textbf{\textcolor{myred}{好}} & \textbf{\textcolor{myred}{好}}}
+    \comprow{多值存储 & \textbf{\textcolor{myred}{可以}} & 不 & \textbf{\textcolor{myred}{可以}} & \textbf{\textcolor{myred}{可以}}}
+    \comprow{耐久性 & \textbf{\textcolor{myred}{$>10^{12}$}} & \textbf{\textcolor{myred}{$>10^{12}$}} & \textbf{\textcolor{myred}{$>10^{12}$}} & $>10^6$}
+    \comprow{单元尺寸 (F$^2$) & 30-100 & 20-30 & 5-8 & \textbf{\textcolor{myred}{$\sim$4}}}
+    \comprow{每位成本 & 高 & 中等 & \textbf{\textcolor{myred}{低}} & \textbf{\textcolor{myred}{低}}}
+}
 
 \section{第六章\ 新原理器件}
 

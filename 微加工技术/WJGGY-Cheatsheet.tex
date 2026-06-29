@@ -168,6 +168,22 @@
     #1 \\ \noalign{\vspace{1.5pt}{\color{myblue}\hrule height 0.4pt}\vspace{2.5pt}}%
 }
 
+% 题干专属方框 (minipage版)
+% 用法: \prob{大题号}{小题号}{题干内容}，小题号可空
+% 框宽占满行宽，超出行宽时自动换行
+\newcommand{\prob}[3]{%
+    \par\vspace{3pt}\noindent%
+    \fcolorbox{myblue}{myblue!5}{%
+        \begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+        \vspace{1pt}%
+        \textbf{\textcolor{myblue}{[T#1\if\relax\detokenize{#2}\relax\else(#2)\fi]}} #3%
+        \vspace{1pt}%
+        \end{minipage}%
+    }%
+    \par\vspace{3pt}%
+}
+
+
 
 
 % -------------------------------------------------
@@ -182,604 +198,385 @@
 
 \section{第一章\ 单晶硅衬底}
 
-\subsection{硅晶体的结构特点}
+\prob{1}{}{比较 Si 单晶锭 CZ，MCZ，FZ 三种生长方式的优缺点?}
 
-\entry{禁带宽度 $E_g$ (300K)}{Si: $1.12\text{eV}$(间接), Ge: $0.67\text{eV}$(间接), GaAs: $1.43\text{eV}$(直接)}
+\textbf{解：}
 
-\entry{本征载流子浓度 $n_i$}{Si: $1.45\times10^{10}\text{cm}^{-3}$}
-\entry{迁移率 $\mu_n/\mu_p$}{Si: $\mu_n=1350,\ \mu_p=480\text{cm}^2/\text{V}\!\cdot\!\text{s}$; GaAs $\mu_n=8600$, Si不适用于超高速}
-\entry{Si工艺优势}{1)原料丰富; 2)热氧化生成高质量SiO$_2$(绝缘/钝化/栅介质, Ge/GaAs不具备); 3)密度$2.33\text{g/cm}^3$; 4)热膨胀小、热导率高}
-\entry{Si原子结构}{原子序数14, 电子排布$2,8,4$, 最外层4个价电子}
-\entry{晶体结构}{金刚石结构: 每个Si与4个Si共价键结合, 正四面体}
-\entry{单胞原子数}{$8\times\frac{1}{8}+6\times\frac{1}{2}+4=8$ (顶角$8\times\frac{1}{8}$, 面心$6\times\frac{1}{2}$, 体内4)}
-\entry{晶格常数}{$a=5.43\text{\AA}=5.4305\times10^{-8}\text{cm}$}
-\entry{原子密度}{$8/a^3\approx5\times10^{22}\text{atoms/cm}^3$}
-\entry{空间利用率}{$\frac{\sqrt{3}\pi}{16}\approx0.34\,(34\%)$; $r=\frac{\sqrt{3}}{8}a$; 非紧密堆积}
-\entry{$\langle100\rangle$晶向族}{$[100],[010],[001],[\bar{1}00],[0\bar{1}0],[00\bar{1}]$}
-\entry{$\{100\}$晶面族}{$(100),(010),(001),(\bar{1}00),(0\bar{1}0),(00\bar{1})$}
-\entry{IC晶面选择}{\textbf{\textcolor{myred}{$(100)$晶面——热氧化界面态电荷密度低, 利于MOS器件}}}
+\textbf{\textcolor{mygreen}{cheatsheet 上可查，覆盖全。}}
 
-\subsection{单晶硅衬底制备}
+\begin{enumerate}
+\item CZ法工艺成熟可拉制大直径硅锭，但\textbf{\textcolor{myred}{受坩埚熔融带来的氧等杂质浓度高}}，存在一定杂质分布。
 
-\subsection{硅晶体缺陷}
+\item MCZ法生长的单晶硅质量更好，能得到\textbf{\textcolor{myred}{均匀、低氧的大直径硅锭}}。但MCZ设备较CZ\textbf{\textcolor{myred}{设备复杂得多，造价也高得多}}，强磁场的存在使得生产成本也大幅提高。MCZ法在生产高品质大直径硅锭上已成为主要方法。
 
-\subsection{硅晶体的杂质}
+\item FZ法与CZ、MCZ法相比，去掉了坩埚，因此没有坩埚带来的污染，能拉制出更高纯度、无氧的高阻硅，是制备高纯度，高品质硅锭，及硅锭提存的方法。但因存在熔融区因此拉制硅锭的直径受限。FZ法硅锭的\textbf{\textcolor{myred}{直径比CZ、MCZ法小得多}}。
 
-\subsection{切制硅片}
+\end{enumerate}
+
+\prob{\textbf{\hlyellow{2}}}{}{直拉硅单晶，晶锭生长过程中掺杂，需要考虑哪些因素会对硅锭杂质浓度及均匀性带来影响？
+}
+
+\textbf{解：}
+
+直拉法生长单晶时，通常采用液相掺杂方法，对硅锭杂质浓度及均匀性带来影响的因素主要有：\textbf{\textcolor{myred}{杂质分凝}}效应，\textbf{\textcolor{myred}{杂质蒸发}}现象，所拉制\textbf{\textcolor{mygreen}{晶锭的直径，坩锅内的温度及其分布}}。
+
+\prob{\textbf{\hlyellow{3}}}{MCZ - 抑制对流}{
+    磁控直拉设备本质上是模仿空间微重力环境来制备单晶硅。为什么在空间微重力实验室能生长出优质单晶硅？
+}
+
+\textbf{解：}
+
+\textbf{地面直拉单晶对流问题：}
+\begin{itemize}
+\item 熔体温度梯度 $\rightarrow$ 密度梯度 $\rightarrow$ 重力驱动自然对流。
+\item 坩埚增大使对流加剧，导致：\textbf{\textcolor{myred}{氧杂质混入}}、\textbf{\textcolor{myred}{生长环境不稳}}（硅锭条纹，均匀性差）。
+\item MCZ法：附加强磁场，洛伦兹力抑制熔体对流，改善晶体质量。
+\end{itemize}
+
+\textbf{空间微重力优势：}
+\begin{itemize}
+\item 重力场可忽略，熔体不因密度梯度形成自然对流。
+\item \textbf{\textcolor{myred}{无对流扰动，可生长出优质单晶}}。
+\end{itemize}
+
+\prob{\textbf{\hlyellow{4}}}{}{
+以直拉法拉制掺硼硅锭，切割后获硅片，在晶锭顶端切下的硅片，硼浓度为 $3 \times 10^{15}\text{atoms/cm}^3$。当熔料的 90\%已拉出，剩下 10\%开始生长时，所对应的晶锭上的该位置处切下的硅片，硼浓度是多少？已知硼在硅中的分凝系数 $k_B=0.8$
+}
+
+\textbf{解题思路：}利用分凝系数定义与正常凝固模型，由晶锭顶端硼浓度反推熔体初始浓度，再计算剩余熔料分数为10\%时的固相浓度。
+
+\textbf{解：}
+
+已知晶锭顶端硼浓度 $C_B^0 = 3\times10^{15}\;\text{atoms/cm}^3$，分凝系数 $k_B = 0.35$。
+
+由分凝系数定义 $k_B = C_s / C_l$，得熔体中硼的初始浓度：
+\[
+C_l^0 = \frac{C_B^0}{k_B}
+      = \frac{3\times10^{15}}{0.35}
+      \approx 8.57\times10^{15}\;\text{atoms/cm}^3
+\]
+
+根据正常凝固方程 $C_s = k C_0 (1-X)^{k-1}$，当剩余熔料分数 $X = 0.9$（即已拉出90\%）时，对应晶锭位置的硼浓度为：
+\[
+\begin{aligned}
+C_B^{90\%}
+  &= k_B C_l^0 \times (1 - X)^{k_B - 1} \\
+  &= 0.35 \times 8.57\times10^{15} \times 0.1^{0.35 - 1} \\
+  &\approx 1.34\times10^{16}\;\text{atoms/cm}^3
+\end{aligned}
+\]
+
+\prob{\textbf{\hlyellow{5}}}{}{
+    硅熔料含 $0.1\%$ 原子百分比的磷，假定溶液总是均匀的，计算当晶体拉出 $10\%$，$50\%$，$90\%$ 时的掺杂浓度。已知磷在硅中的分凝系数 $k_P=0.35$。
+}
+
+\textbf{解：}
+
+根据正常凝固模型，晶体中杂质浓度随凝固分数变化的关系为 $C_s = k C_0 (1-X)^{k-1}$。
+已知硅原子密度 $N_{Si} = 5\times10^{22}\;\text{atoms/cm}^3$，磷原子百分比为 $0.1\%$，
+分凝系数 $k_P = 0.8$。首先计算熔体中磷的初始浓度：
+\[
+C_P^0 = N_{Si} \times 0.1\% = 5\times10^{19}\;\text{atoms/cm}^3
+\]
+
+代入正常凝固方程，计算不同凝固分数 $X$ 下的掺杂浓度：
+
+\begin{itemize}
+    \item 当 $X = 10\%$（剩余熔料 $1-X = 0.9$）：
+    \[
+    \begin{aligned}
+    C_P^{10\%}
+        &= k_P C_P^0 (1-X)^{k_P-1} \\
+        &= 0.8 \times 5\times10^{19} \times 0.9^{0.8-1} \\
+        &\approx 4.09\times10^{19}\;\text{atoms/cm}^3
+    \end{aligned}
+    \]
+
+    \item 当 $X = 50\%$（剩余熔料 $1-X = 0.5$）：
+    \[
+    \begin{aligned}
+    C_P^{50\%}
+        &= 0.8 \times 5\times10^{19} \times 0.5^{0.8-1} \\
+        &\approx 4.59\times10^{19}\;\text{atoms/cm}^3
+    \end{aligned}
+    \]
+
+    \item 当 $X = 90\%$（剩余熔料 $1-X = 0.1$）：
+    \[
+    \begin{aligned}
+    C_P^{90\%}
+        &= 0.8 \times 5\times10^{19} \times 0.1^{0.8-1} \\
+        &\approx 6.34\times10^{19}\;\text{atoms/cm}^3
+    \end{aligned}
+    \]
+\end{itemize}
+
+\prob{\textbf{\hlyellow{6}}}{}{
+    电阻率为 $2\text{-}3\;\Omega\text{cm}$ 的 n-Si，杂质为磷时，5 千克硅，需掺入多少杂质？已知硅的密度为 $2.33\text{g/cm}^3$；P 原子量为 $30.97$；原子量单位为 $1.6606\times10^{-27}\text{kg}$；
+}
+
+\textbf{解题思路：}根据目标电阻率确定所需载流子浓度，结合硅的质量与密度计算所需掺杂原子总数，再根据磷的原子量换算为掺杂质量。
+
+\textbf{解：}
+
+已知：$\rho_p = 2\text{-}3\;\Omega\text{cm}$，硅密度 $\sigma_p = 2.33\;\text{g/cm}^3$。
+
+由图 1-13 的 $\rho\text{-}n$ 曲线得载流子浓度：
+\[
+n_p \approx 1\times10^{16}\;\text{atoms/cm}^3
+\]
+
+掺入磷的原子数：
+\[
+N_P = \frac{W_{\text{Si}} n_p}{\sigma_p}
+     = \frac{5\times10^3 \times 1\times10^{16}}{2.33}
+     \approx 2.146\times10^{19}\;\text{atoms}
+\]
+
+磷原子量 $M_P = 30.97$，原子质量单位 $u = 1.6606\times10^{-27}\;\text{kg}$，掺杂磷的质量为：
+\[
+m_P = N_P \times M_P \times u
+    \approx 2.146\times10^{19} \times 30.97 \times 1.6606\times10^{-27}
+    \approx 1.1\;\text{mg}
+\]
 
 \section{第二章\ 外延}
 
-\section{第三章\ 氧化层制备}
+\prob{1}{}{
+    硅气相外延工艺采用的衬底不是准确的晶向，通常偏离（100）或（111）等晶向 一个小角度，为什么?
+}
 
-\subsection{二氧化硅薄膜概述}
+\textbf{解：}
+
+\begin{itemize}
+\item 外延生长过程：外延剂在衬底表面吸附 $\rightarrow$ 分解出 Si 原子 $\rightarrow$ 迁移至结点位置 $\rightarrow$ 被后续原子覆盖。
+\item 结点位置是外延顺利进行的关键。
+\item 偏离准确晶向一小角度（\textbf{\textcolor{myred}{偏离<100>晶面 3°}}），可在表面引入大量结点位置，促进外延生长。
+\end{itemize}
+
+\prob{\textbf{\hlyellow{2}}}{}{
+    外延层杂质的分布主要受哪几种因素影响?
+}
+
+\textbf{解：}
+
+外延温度，衬底杂质及其浓度，外延方法，外延设备等因素影响。
+
+\prob{\textbf{\hlyellow{3}}}{}{
+    异质外延对衬底和外延层有什么要求?
+}
+
+\textbf{解：}
+
+异质外延的兼容性要求（B/A型）：
+
+\begin{itemize}
+\item \textbf{化学兼容}：外延温度下不发生\textbf{\textcolor{myred}{化学反应}}或大量\textbf{\textcolor{myred}{互溶}}。
+\item \textbf{热力学兼容}：热膨胀系数接近，避免冷却时产生残余\textbf{\textcolor{myred}{应力}}、位错或龟裂。
+\item \textbf{晶格兼容}：晶体结构与晶格常数接近，减少\textbf{\textcolor{myred}{界面缺陷与应力}}。
+\end{itemize}
+
+\prob{\textbf{\hlyellow{4}}}{}{
+    比较分子束外延(MBE)生长硅与气相外延（VPE）生长硅的优缺点？
+}
+
+\textbf{解：}
+
+\textbf{优点：}
+\begin{itemize}
+\item 外延温度低，\textbf{\textcolor{myred}{无杂质再分布}}现象。
+\item 工艺环境清洁，杂质分布精确可控。
+\item 可精确控制外延层厚度，能生长\textbf{\textcolor{myred}{极薄外延层}}及复杂杂质结构。
+\end{itemize}
+
+\textbf{缺点：}
+\begin{itemize}
+\item 设备复杂、工艺\textbf{\textcolor{myred}{成本高}}、效率低。
+\end{itemize}
+
+\section{第三章\ 热氧化}
+
+\prob{1}{}{
+    解释石英晶体与非晶二氧化硅密度与电阻率的差异性，并解释原因。
+}
+
+\textbf{解：}
+
+\compTable{4}{
+    \compheader{性质 & 石英晶体 & 非晶SiO$_2$薄膜 & 注}
+    \comprow{密度(g/cm$^3$) & 2.2 & 2$\sim$2.2 & 致密程度的标志。密度大表示致密程度高}
+    \comprow{熔点($^\circ$C) & 1732 & $\approx$1500软化 & 软化点与致密度、掺杂有关}
+    \comprow{电阻率($\Omega\cdot$cm) & 10$^{16}$ & 10$^7$$\sim$10$^{15}$ & \textbf{\textcolor{myred}{工艺温度越高电阻率越大}}}
+    \comprow{介电常数 & 3.9 & $\approx$3.9 & }
+    \comprow{介电击穿强度(V/$\mu$m) & 1000 & 100$\sim$1000 & 与致密度}
+    \comprow{折射率 & & 1.33$\sim$1.37 & }
+    \comprow{腐蚀性 & 与HF酸、强碱反应缓慢 & & 与致密度、掺杂有关}
+}
+
+\prob{2}{}{
+    简述二氧化硅薄膜在微电子器件中的作用。
+}
+
+\textbf{解：}
+
+掺杂掩蔽膜，芯片钝化和保护膜，电隔离膜，光器件组成部分。
+
+\prob{3}{}{
+    简述热氧化生成氧化膜厚度与时间的关系（提示，两种极限情况）
+}
+
+\textbf{解：}
+
+氧化速率方程：
+\[
+x_{SiO_2}^2 + A x_{SiO_2} = B(t + \tau)
+\]
+其中
+\[
+A = 2D_{SiO_2} \left( \frac{1}{k_s} + \frac{1}{h} \right),\quad
+B = \frac{2D_{SiO_2}HP_g}{N_1},\quad
+\tau = \frac{x_0^2 + Ax_0}{B}
+\]
+厚度显式解为
+\[
+x_{SiO_2} = \frac{A}{2} \left( \sqrt{1 + \frac{4(t+\tau)}{A^2}} - 1 \right)
+\]
+
+两种极限情况：
+\begin{enumerate}
+    \item \textbf{短时间极限} ($t \to 0$)：方程线性化，
+    \[
+    x_{SiO_2} = \frac{B}{A}(t + \tau)
+    \]
+    其中 $\frac{B}{A}$ 为线性速率常数，生长由\textbf{化学反应控制}。
+
+    \item \textbf{长时间极限} ($t \to \infty$)：方程简化为抛物线形式，
+    \[
+    x_{SiO_2}^2 = B(t + \tau)
+    \]
+    其中 $B$ 为抛物线速率常数，生长由\textbf{扩散控制}。
+\end{enumerate}
+
+\prob{3}{}{
+    热氧化供应不包括哪步？
+}
+
+\textbf{解：}
+
+热氧化工艺流程：洗片-升温-生长-取片
+
+\section{第四章\ 扩散技术}
+
+\prob{1}{}{
+    什么是菲克定律？
+}
+
+\textbf{解：}
+
+\begin{enumerate}
+    \item \textbf{菲克第一定律}：扩散通量 $J$ 与浓度梯度成正比，
+    \[
+    J = -D \frac{dC}{dx}
+    \]
+    其中 $D$ 为扩散系数。
+
+    \item \textbf{菲克第二定律}：浓度随时间的变化率与浓度梯度的空间变化率成正比，
+    \[
+    \frac{\partial C}{\partial t} = D \frac{\partial^2 C}{\partial x^2}
+    \]
+\end{enumerate}
 
 
-
-\section{第四章\ 扩散}
-
-\section{第五章\ 沟道效应}
+\section{第五章\ 离子注入技术}
 
 \section{第六章\ CVD 工艺}
 
-\subsection{概述}
-
-\entry{定义}{将气/液态反应剂蒸气引入反应室，在衬底表面发生化学反应并沉积成膜。要素：\textbf{\textcolor{myred}{化学方法、气相反应剂、沉积固体}}。}
-
-\concepttable{%
-\conrow{结构与衬底}{薄膜为非晶或多晶态；衬底不要求单晶，满足平整度与耐受沉积温度即可。}
-\conrow{关键反应}{$$\text{SiH}_4 = \text{Si}(\text{多晶}) + 2\text{H}_2(\text{g});\quad \text{SiH}_4 + \text{O}_2 = \text{SiO}_2(\text{薄膜}) + 2\text{H}_2$$}
+\prob{1}{}{
+    标准的卧式LPCVD的反应器是热壁式的炉管，衬底硅片被竖立装在炉管的石英舟上，反应气体从炉管前端进入后端抽出，这会产生什么效应，怎么解决？
 }
 
-\concepttable{%
-\conrow{按气压（热激活）}{常压CVD (APCVD)、低压CVD (LPCVD)。}
-\conrow{按反应激活方式}{等离子增强CVD (PECVD)、金属有机物CVD (MOCVD)、激光诱导CVD (LCVD)、微波等离子体CVD (MWCVD)。}
+\textbf{解：}
+
+一端进气，沿气流方向反应剂不断消耗，导致硅片边缘到中心薄膜生长速率递减，即\textbf{气缺效应}。解决方法：
+
+\begin{enumerate}
+    \item 控制加热器沿气流方向温度逐步提高；
+    \item 提高炉管进气速度；
+    \item 将工艺温度控制在表面反应限制区，降低沉积速率对气体浓度均匀性的要求。
+\end{enumerate}
+
+\prob{2}{}{
+    氧化硅要怎么沉淀？
 }
 
-\subsection{CVD 工艺原理}
+\textbf{解：}
 
-\subsubsection{薄膜淀积过程}
-
-\entry{薄膜沉积五步}{①\textbf{边界层形成}（粘滞流、层流）；②反应气体\textbf{扩散}穿过边界层；③含硅原子团\textbf{吸附}于表面；④表面反应与成膜：$\text{SiH}_4 \rightarrow \text{Poly-Si} + 2\text{H}_2$，成核$\rightarrow$成膜；⑤副产物解吸，排出反应器。}
-
-\concepttable{%
-\conrow{气相质量输运}{反应气体以\textbf{扩散}方式穿过边界层。较外延要求低。}
-\conrow{表面化学反应}{衬底温度更低、淀积速率更快、衬底不要求单晶；薄膜呈\textbf{非晶或多晶态}。}
-\conrow{低温激活CVD}{\textbf{PECVD}：电能 $\rightarrow$ 化学能；
-
-\textbf{LCVD}：光能 $\rightarrow$ 化学能；
-
-\textbf{MWCVD}：微波能 $\rightarrow$ 化学能。}
-\conrow{气相反应}{不同气相化合物在空间直接反应，会导致空间成核形成颗粒，导致薄膜疏松、粘附性差、电学不良。\textbf{CVD应促使表面反应，抑制气相反应}。}
-}
-
-\subsubsection{薄膜淀积速率及影响速率}
-
-\textbf{\hlblue{Grove 生长动力学模型}}
-
-\entry{局限性}{仅在反应剂浓度\textbf{较低}时与实测吻合，高浓度时偏差大。原因：忽略气态副产物解吸、扩散对浓度影响；以及忽略室内温度梯度对气相输运的影响。}
-
-\concepttable{%
-\conrow{气相扩散流密度}{$J_g = -D_g \frac{C_s - C_g}{\delta} = h_g(C_g - C_s)$， $h_g$为质量输运系数（$\delta$：边界层厚度）}
-\conrow{表面反应流密度}{$J_s = k_s C_s$，表面反应系数 $k_s = k_0 e^{-E_A / kT}$}
-\conrow{稳态条件}{令$J_g = J_s = J$，得 $C_s = C_g \left( 1 + \frac{k_s}{h_g} \right)^{-1}$}
-\conrow{摩尔百分比}{$Y = C_g / C_T$（$C_T$：主气流区单位体积分子总数）}
-\conrow{\textbf{\textcolor{myred}{淀积速率 $G$}}}{$G = \frac{J}{N} = \frac{k_s h_g}{k_s + h_g} \frac{C_g}{N} = \frac{k_s h_g}{k_s + h_g} \frac{C_T}{N} Y$，$N_{\text{Si}} = 5 \times 10^{22} \text{ cm}^{-3}$}
-}
-
-\textbf{\hlblue{两种极限情况}}
-$Y$一定时，$G$ 由 $h_g$ 与 $k_s$ 中较小者决定
-
-\concepttable{%
-\conrow{表面反应控制（$h_g \gg k_s$）}{$G \approx \frac{C_T}{N} k_s Y$；对温度非常敏感。}
-\conrow{质量输运控制（$h_g \ll k_s$）}{$G \approx \frac{C_T}{N} h_g Y$；$h_g = \frac{D_g}{\delta}$，$D_g \propto T^{1 \sim 1.8}$，对温度不敏感。}
-}
-
-\textbf{\hlblue{温度影响}}
-
-\concepttable{%
-\conrow{低温区（$k_s \ll h_g$）}{表面反应控制，$G \propto e^{-E_A/kT}$，Arrhenius 斜率大，对温度敏感。}
-\conrow{高温区（$k_s \gg h_g$）}{质量输运控制，$D_g \propto T^{1\sim1.8}$，对温度不敏感，曲线平缓。}
-}
-
-\textbf{\hlblue{反应剂流量影响}}
-
-\concepttable{%
-\conrow{反应剂流量影响}{$G \propto C_g$，流量增加$\Rightarrow C_g\uparrow \Rightarrow$淀积速率加快。}
-}
-
-\subsubsection{薄膜质量控制}
-
-\textbf{\hlblue{台阶覆盖特性}}
-
-\textbf{\hlblue{影响台阶覆盖因素}}
-
-\textbf{\hlblue{薄膜内应力}}
-
-\textbf{\hlblue{其他质量特性}}
-
-
-
-
-
-\subsection{CVD 工艺方法}
-
-\subsection{二氧化硅薄膜沉积}
-
-\subsection{氮化硅薄膜沉积}
-
-\subsection{多晶硅薄膜沉积}
-
-\subsection{CVD 金属及金属化合物薄膜}
+APCVD、LPCVD、PECVD
 
 \section{第七章\ PVD 工艺}
 
-\subsection{PVD 概述}
-
-\entry{定义}{利用物理过程实现物质转移，原子/分子由源（靶）\textbf{\textcolor{myred}{气相转移到衬底表面沉积成薄膜}}。}
-
-\concepttable{%
-\conrow{对比 CVD}{\textbf{优点}：工艺温度低（室温~几百℃），工艺原理简单。
-
-\textbf{缺点}：台阶覆盖特性、附着性、致密性均不如 CVD。}
-\conrow{用途}{主用于\textbf{\textcolor{myred}{金属类薄膜}}及其他 CVD 难以沉积的薄膜（金属电极、互连系统附着层/阻挡层合金、金属硅化物薄膜）。}
+\prob{课件例题 1}{真空度相关概念}{
+一个抽速为1000 l/min的泵，初始工作时泵入口压力为1atm，这时它的流量是多少？一段时间后( τ时刻 )，泵入口压力变为0.1atm，这时流量是多少？两者是否相等？
 }
 
-\textbf{\hlblue{真空蒸镀}}
+解：根据流量与抽速、压力的关系式 $Q = S_p P$，分别计算初始与 $\tau$ 时刻的流量。
 
-\imgleft[0.3]{images/image-2026-06-11-09-59-24.png}{
-\concepttable{%
-\conrow{原理}{高真空室内\textbf{\textcolor{myred}{加热源材料使其气化}}，气相转移至衬底表面凝结成膜。}
-\conrow{主要分类}{电阻蒸镀、电子束蒸镀、激光蒸镀。}
-\conrow{优缺点}{\textbf{优点}：设备简单、易操作；薄膜纯度高、成膜速度快；生长机理简单。
+由 $Q = S_p P$ 得：
+\[
+Q_0 = S_p P_0 = 1000 \times 1 = 1000 \; \mathrm{slm}
+\]
+\[
+Q_\tau = S_p P_\tau = 1000 \times 0.1 = 100 \; \mathrm{slm}
+\]
 
-\textbf{缺点}：薄膜附着性差，台阶覆盖性不够理想。}
-\conrow{应用}{蒸镀 Al 电极（双极型晶体管）、蒸镀 Pt。}
-\conrow{光刻剥离技术（Lift-off）}{\textbf{时序}：薄膜沉积前先光刻。
+两者不相等，$Q_0 \neq Q_\tau$。
 
-\textbf{过程}：用蒸镀将金属沉积在光刻胶及窗口上 $\rightarrow$ 光刻胶剥离液去胶 $\rightarrow$ 胶顶金属随之剥离 $\rightarrow$ 形成金属图形。}
-}
-}
-
-\textbf{\hlblue{溅射}}
-
-\imgleft[0.3]{images/image-2026-06-11-10-00-28.png}{
-\concepttable{%
-\conrow{原理}{\textbf{\textcolor{myred}{一定真空度下使气体等离子体化}}，离子轰击靶阴极，逸出靶原子气相转移至衬底表面沉积成膜。}
-\conrow{主要分类}{直流溅射、射频溅射、磁控溅射。}
-\conrow{优缺点}{\textbf{优点}：薄膜附着性好、台阶覆盖能力强；沉积多元化合物薄膜时成分容易控制。
-
-\textbf{缺点}：沉淀速率低、衬底温度高、设备复杂、造价高。}
-\conrow{地位}{当前集成电路制造中制备\textbf{\textcolor{myred}{金属、合金、金属硅化物薄膜}}最常用的技术。}
-\conrow{应用}{反应磁控溅射：制备 TiN、TaN 阻挡层。磁控溅射：制备 Cu 种子层。}
-}
+\prob{课件例题 2}{真空蒸镀-质量消耗率公式}{
+铝在蒸发温度时，单位蒸发面积的质量消耗率是多少?
 }
 
-\subsection{真空系统以及真空的获得}
-
-\subsubsection{真空系统简介}
-
-\entry{真空度}{指真空室内气体压力。工艺平衡：\textbf{\textcolor{myred}{抽吸室内气体与通入工艺气体二者平衡}} $\rightarrow$ 维持恒定真空度。}
-
-\textbf{核心公式与物理量}
-
-\concepttable{%
-\conrow{气体流量 $Q$}{$$Q = \frac{d(PV)}{dt}$$单位：标准体积（$0^\circ\text{C}, 1\text{atm}$ 下），slm（标准升/分），sccm（标准毫升/分）。}
-\conrow{核心关系式}{$$Q = S_p P$$}
-\conrow{真空泵抽速 $S_p$}{$$S_p = \frac{dV}{dt} = \frac{Q}{P}$$}
-\conrow{结论}{同一泵的 $S_p$ 固定时，入口压力 $P$ 改变则流量 $Q$ 改变。}
-\conrow{气体质量流量 $q_m$}{$$q_m = \frac{dG}{dt}$$ $G$ 为气体质量（与气体分子量和密度有关）}
-\conrow{气体导管导率 $C$}{$$C = \frac{Q}{P_1 - P_2}$$ \textbf{并联}：各导管导率简单相加。
-
-\textbf{串联}：各导管导率倒数相加。}
-}
-
-\concepttable{%
-\conrow{设计要求}{要保持真空室压力接近泵入口压力 $\rightarrow$ 要求导管有大导率。}
-\conrow{尺寸与几何影响}{直径越大、长度越短 $\rightarrow$ 导率越大；有波纹、弯曲 $\rightarrow$ 导率减小。}
-}
-
-\subsubsection{真空的获得}
-
-\textbf{单位换算}：$1\text{ atm} = 760\text{ Torr} = 1.013 \times 10^5\text{ Pa}$，$1\text{ Pa} = 1\text{ N/m}^2$，$1\text{ Torr} = 133\text{ Pa}$。
-
-微电子工艺设备一般工作在低、中真空度；通入工作气体前，设备基压在高、超高真空度。
-
-\compTable{5}{%
-\compheader{真空等级 & 压力范围 (Pa) & 压力范围 (Torr) & 条件判定 & 运动状态}
-\comprow{低真空   & $10^5 \sim 10^2$   & $760 \sim 1$        & $\lambda \ll d$           & 粘滞流}
-\comprow{中真空   & $10^2 \sim 10^{-1}$ & $1 \sim 10^{-3}$     & 尺寸接近 & 中间流}
-\comprow{高真空   & $10^{-1} \sim 10^{-5}$ & $10^{-3} \sim 10^{-7}$ & $\lambda > d$           & 分子流}
-\comprow{超高真空 & $<10^{-5}$           & $<10^{-7}$           & $\lambda \gg d$           & 分子流}
-}
-$d$ 为真空室特征尺寸，$\lambda$ 为气体分子平均自由程。
-
-\textbf{\hlblue{低、中真空度的获得}}
-
-\concepttable{%
-\conrow{机械泵原理}{利用活塞/叶片/隔膜的机械运动将气体正向移位（油封转片式真空泵、罗茨泵）。}
-\conrow{工作三个步骤}{捕捉气体 $\rightarrow$ 压缩气体 $\rightarrow$ 排出气体。}
-\conrow{\textbf{\textcolor{myred}{压缩比}}}{泵气体出/入口压力的比值。}
-}
-
-若要在气体入口和出口之间产生更高的压力差，必须采用多个压缩泵串联（即多级连接）。
-
-\textbf{\hlblue{高、超真空度的获得}}
-
-\entry{高真空泵工作条件}{必须在一定真空度下工作；否则无法工作，甚至导致泵损坏（需前级机械泵预抽），要在气体入/出口间产生更大压差，\textbf{\textcolor{myred}{须使用多级泵串联}}。}
-
-\textbf{分级与机制：}
-
-\compTable{4}{%
-\compheader{ & 机制 & 抽吸气体流量 & 代表}
-\comprow{二级泵 & 通过\textbf{\textcolor{myred}{转移动量}}给气体分子实现抽气 & 大流量气体 & 扩散泵、分子泵}
-\comprow{三级泵 & 通过\textbf{\textcolor{myred}{俘获气体分子}}实现抽气 & 小流量气体 & 低温泵、升华泵}
-}
-
-\textbf{二级高真空泵原理对比}
-
-\compTable{3}{%
-\compheader{ & 扩散泵 & 分子泵}
-\comprow{原理 & 泵油蒸汽向气体分子转移动量 & 利用高速旋转的转子把动量传输给气体分子}
-\comprow{循环 & 加热泵底油使其挥发 $\rightarrow$ 蒸汽流从中央叠塔上部孔洞喷出 $\rightarrow$ 碰撞水冷泵体后凝结回流至泵底 & ——}
-\comprow{分类 & —— & 牵引分子泵、涡轮分子泵、复合分子泵}
-\comprow{缺点 & 会导致油蒸气回流进入真空室或后级泵，造成系统油污染 & ——}
-\comprow{优点 & —— & 更清洁}
-}
-
-
-\subsubsection{真空测量}
-
-\textbf{\hlblue{真空计分类与量程}}
-
-\concepttable{%
-\conrow{测低、中真空度}{电容压力计、热偶规。}
-\conrow{测高、超高真空度}{电离规、B-A规（热阴极电离规）、复合真空计。}
-}
-
-\textbf{\hlblue{热偶规}}
-
-\entry{测量原理}{热偶电势 $\propto$ 加热元件温度 $\propto$ 气体热传导特性 → 反应真空度。}
-
-\entry{逻辑链}{真空度越高 → 气体分子密度越低 → 气体散热越慢 → 加热丝温度越高（热电势随之改变）。}
-
-\textbf{\hlblue{电离规}}
-
-\entry{结构}{由内到外依次为：中心灯丝 → 栅网 → 筒状收集极（收集极在栅网外面）。}
-
-\entry{测量原理}{热阴极（灯丝）发射电子 → 碰撞电离气体分子 → 产生离子被外层收集极收集 → 气体压强 $\propto$ 收集的离子流大小。}
-
-\subsection{真空蒸镀}
-
-\subsubsection{工艺原理}
-
-\entry{工艺原理与三过程}{在高真空度下，加热源材料使其蒸发（\textbf{\textcolor{myred}{蒸发过程}}）$\rightarrow$ 蒸气分子流直射到衬底表面（\textbf{\textcolor{myred}{气相质量输运过程}}）$\rightarrow$ 凝结形成薄膜（\textbf{\textcolor{myred}{淀积成膜过程}}）}
-
-\textbf{\hlblue{蒸发过程}}
-
-\entry{相变}{固/液态源 $\xrightarrow{\text{蒸发/升华}}$ 分子/原子。}
-
-\entry{饱和蒸气压}{固/液态物质在平衡时的蒸气压强。}
-
-\entry{净蒸发条件}{周围环境中该物质的蒸气分压 $<$ 它的平衡饱和蒸气压。}
-
-\entry{蒸发温度}{物质的蒸气压为 $1.33\text{ Pa}$ 时所对应的温度。}
-
-\entry{单位时间、单位面积气体分子流通量 $J_n$}{$$J_n = \sqrt{\frac{P^2}{2\pi kTM}}$$}
-
-\entry{源质量消耗率 $R_{ML}$（坩埚内源面积为 $A$）}{$$R_{ML} = J_n M A = \sqrt{\frac{P_e^2 M}{2\pi k T_e}} \cdot A$$}
-
-\textbf{\hlblue{气相质量输运过程}}
-
-\entry{分子平均自由程 $\lambda$（$d$ 为原子半径）}{$$\lambda = \frac{kT}{\sqrt{2}\pi d^2 P} \propto \frac{1}{P}$$}
-
-\entry{无散射输运条件}{$$\lambda > L$$（$L$ 为衬底与源之距）。}
-
-\entry{到达衬底表面比例系数（空间几何关系）$K$（假设全吸附且分子流满量相等）}{$$\frac{\cos\theta \cos\phi}{\pi L^2} = K$$}
-
-\entry{特殊几何（球面配置）}{此时 $\cos\theta = \cos\phi = \frac{L}{2r}$，则：$$K = \frac{1}{4\pi r^2}$$}
-
-\entry{到达衬底分子流通量 $J_d$}{$$J_d = K \cdot R_{ML} = K \sqrt{\frac{M P_e^2}{2\pi k T_e}} \cdot A$$}
-
-\textbf{\hlblue{淀积成膜过程}}
-
-\entry{核心时序}{吸附 $\rightarrow$ 成核 $\rightarrow$ 连片 $\rightarrow$ 生长。}
-
-\entry{物理机制}{蒸气分子动能低 $\rightarrow$ 吸附后少再蒸发 $\rightarrow$ 表面扩散移动 $\rightarrow$ 凝聚成团 $\rightarrow$ 达临界大小形成稳定核 $\rightarrow$ 岛状核扩大 $\rightarrow$ 延展成片 $\rightarrow$ 继续生长成薄膜。}
-
-\entry{薄膜淀积速率 $R_d$（$\rho$ 为膜的质量密度，$f$ 为蒸镀系数，考虑再蒸发，视工艺在 $0 \sim 1$ 之间）}{$$R_d = \frac{J_d}{\rho} = f \cdot K \sqrt{\frac{M}{2\pi k \rho^2}} \cdot \frac{P_e}{\sqrt{T_e}} \cdot A$$}
-
-\subsubsection{蒸镀设备}
-
-\entry{蒸镀工艺分类}{电阻蒸镀、高频感应蒸镀、电子束（EB）蒸镀、激光蒸镀。}
-
-\concepttable{%
-\conrow{真空室}{系统核心，\textbf{\textcolor{myred}{提供真空环境}}。组件含：源加热器、挡板、衬底支架、控温装置。}
-\conrow{真空系统}{\textbf{\textcolor{myred}{维持真空}}。组件含：多级真空泵、各种阀门（放气阀/旁通阀/前置阀）、真空规（高/低真空气规）、冷凝器、过滤器、管路。}
-\conrow{监测系统与控制台}{核心功能\textbf{\textcolor{myred}{为对薄膜厚度、淀积速率、薄膜结构、成分进行实时监测}}。}
-}
-
-\textbf{\hlblue{加热器内部结构特征}}
-
-\concepttable{%
-\conrow{电阻加热器}{螺旋式、锥形篮式、舟式、坩埚式。}
-\conrow{电子束加热器构成}{灯丝、加速栅极、偏转板、偏转磁铁、坩埚、原材料、电子束。}
-\conrow{高频感应加热器构成}{RF（射频）线圈、BN（氮化硼）坩埚、原材料。}
-}
-
-\subsubsection{蒸镀工艺}
-
-\entry{工艺参数确定依据}{\textbf{薄膜材料特性}：单/多组分、各组分熔沸点、分解温度、饱和蒸气压-温度曲线、相图。\textbf{系统匹配}：衬底耐温情况、设备情况。}
-
-\entry{蒸发功率对成膜质量影响}{\textbf{功率过高}（速率过快）：薄膜晶粒长大、表面不平整。\textbf{功率过低}：薄膜疏松、与衬底粘附不牢。}
-
-\textbf{\hlblue{五大工艺步骤}}
-
-\concepttable{%
-\conrow{准备}{放衬底、试旋转、装源材料、换观察窗保护玻璃、换晶振。}
-\conrow{抽真空}{开真空系统、加热衬底。}
-\conrow{预蒸}{不开挡板升高加热功率。（目的：去除表面杂质、达到稳定速率）}
-\conrow{蒸发}{打开挡板开始蒸镀（控制速率） $\rightarrow$ 达到厚度关闭挡板 $\rightarrow$ 降低加热功率至 0。}
-\conrow{取片}{等温度降到室温附近 $\rightarrow$ 停抽真空 $\rightarrow$ 通气 $\rightarrow$ 开腔取片。（目的：保护衬底材料和源）}
-}
-
-\entry{多组分薄膜的蒸镀方式}{}
-
-\compTable{4}{%
-\compheader{蒸镀方式 & 场景 / 工艺控制 & 物理机制}
-\comprow{单源蒸发 & 各组分的平衡蒸气压接近。 & 熔融合金单源蒸发。}
-\comprow{多源同时蒸发 & 组分蒸气压不同，分立独立加热。 & 不同温度下同时蒸发；对淀积速率和温度控制要求较高。}
-\comprow{多源顺次蒸发 & 形成多层交替结构。 & 利用打开或关断挡板来实现交替淀积。}
-}
-
-\textbf{\hlblue{真空蒸镀（质量及控制）}}
-
-\textbf{1. 为什么要求高真空度}
-
-\concepttable{%
-\conrow{直进性与致密度}{保证蒸发分子直线性质量输运。若真空度低 $\rightarrow$ 气体分子多次散射 $\rightarrow$ 方向改变、动量降低 $\rightarrow$ 薄膜疏松、致密度低。}
-\conrow{防止气相氧化}{若真空度低 $\rightarrow$ 氧和水汽高 $\rightarrow$ 金属原子在气相即被氧化 $\rightarrow$ 形成氧化物薄膜。}
-\conrow{保证纯度}{避免气体杂质分子被原子流裹挟淀积 $\rightarrow$ 恶化薄膜纯度和质量。}
-}
-
-\textbf{2. 台阶覆盖特性及均匀性的改善方法}
-
-\concepttable{%
-\conrow{衬底加热（几百°C）}{改善原子迁移和再反射；直接影响成膜、平整度及薄膜成分。}
-\conrow{衬底旋转}{改善因遮蔽效应带来的台阶阴影区覆盖问题，提高厚度均匀性。}
-\conrow{支架几何设计}{采用半球形支架（坩埚位于球面中心位置） $+$ 行星式转动 $\rightarrow$ 进一步提高成膜均匀性。}
-}
-
-\textbf{3. 蒸发速率控制与质量特征}
-
-\entry{速率双刃剑效应}{\textbf{适当提高速率}：可提高薄膜纯度、与衬底结合力及表面质量。\textbf{速率过快}：气相原子碰撞加剧 $\rightarrow$ 动能降低 $\rightarrow$ 原子结团后淀积 $\rightarrow$ 薄膜表面不平坦。}
-
-\textbf{4. 控制因素}
-
-\concepttable{%
-\conrow{蒸发速度}{加热温度、蒸发面积}
-\conrow{薄膜纯度}{真空室基压、加热方式、挡板开/关时间}
-\conrow{与衬底粘附性（结合力）}{衬底温度、蒸发速率}
-}
-
-\subsection{溅射}
-
-\subsubsection{工艺原理}
-
-\entry{工艺四阶段}{利用等离子体中的离子轰击阴极靶，使靶原子/颗粒飞溅并淀积在衬底表面成膜。\textbf{四大过程}：工作气体等离子体化 $\rightarrow$ 离子轰击靶 $\rightarrow$ 靶原子气相输运 $\rightarrow$ 淀积成膜。}
-
-\textbf{\hlblue{气体离子化（阶段一）}}
-
-\concepttable{%
-\conrow{实现方式}{直流或射频气体\textbf{\textcolor{myred}{辉光放电}}。}
-\conrow{物理条件}{自由电子碰撞原子时，转移能量 $>$ 原子的电离能。}
-\conrow{影响离子浓度因素}{工作气压、电（磁）场激发功率。}
-\conrow{高密度等离子体（HDP）}{离子浓度较高，磁控 HDP 技术是溅射常采用的方法。}
-}
-
-\textbf{\hlblue{离子轰击靶与溅射产额（阶段二）}}
-
-\entry{机理}{正离子轰击处于负电位的靶，激发靶原子。}
-
-入射离子能量对表面的四种物理效应：
-
-\compTable{2}{%
-\compheader{能量范围 & 物理效应}
-\comprow{能量很低 & 离子从表面反射回来。}
-\comprow{能量较低（$<10\text{ eV}$） & 离子吸附于表面，释放能量。}
-\comprow{能量较高（$10\text{ eV} \sim 10\text{ keV}$） & 与表层原子碰撞，溅射出靶原子（注：不同材料靶的溅射阈值能量不同）。}
-\comprow{能量很高（$>10\text{ keV}$） & 离子注入表面，造成衬底损伤。}
-}
-
-\entry{溅射率（溅射产额）$S$}{$$S = \frac{\text{溅射出的靶原子数}}{\text{入射离子数}}$$}
-
-\entry{结论}{$S$ 越高 $\rightarrow$ 淀积到衬底原子越多 $\rightarrow$ 薄膜淀积速率越快。}
-
-\textbf{4. 影响溅射率 $S$ 的因素}
-
-\concepttable{%
-\conrow{入射角 $\theta$（入射方向与靶法线的夹角）}{在低能量下，$S$ 随 $\theta$ 增加而增加；但当 $\theta \rightarrow 80^\circ$ 时，$S$ 迅速下降。}
-\conrow{靶材料特性}{靶原子的序数、表面原子的结合状态、结晶取向（纯金属或合金）对 $S$ 有影响。}
-\conrow{靶温度}{靶温几乎不影响溅射率；但当温度高于一定范围时，溅射率有迅速增加的走向。}
-}
-
-\textbf{\hlblue{靶原子气相输运（阶段三）}}
-
-\concepttable{%
-\conrow{较低真空度下}{靶原子到达衬底前与其它粒子发生多次散射，\textbf{\textcolor{myred}{到达衬底某点的原子数与该点的到达角有关}}。}
-\conrow{高真空度下}{气相输运轨迹是直线，衬底表面某点到达的靶原子数受遮蔽效应限制。}
-}
-
-\textbf{\hlblue{沉淀成膜（阶段四）}}
-
-\concepttable{%
-\conrow{能量特征}{溅射离子与靶原子间能量传递大，逸出原子携带的动量较高，在 $10 \sim 50\text{ eV}$ 之间。}
-\conrow{成膜质量}{由于动能高，原子在衬底的迁移能力、再发射能力都强 $\rightarrow$ 成膜的台阶覆盖性和附着力都较好。}
-}
-
-\subsubsection{直流溅射}
-
-\entry{别名}{阴极溅射、二级溅射。}
-
-\entry{适用材料}{利用\textbf{\textcolor{myred}{金属、半导体靶}}制备金属或半导体薄膜。}
-
-\concepttable{%
-\conrow{溅射四要素}{工作气体、工作气压、溅射电压、靶电流密度。}
-\conrow{气压效应}{工作气体的气压直接影响薄膜的淀积速率和致密度。}
-\conrow{\textbf{\textcolor{myred}{淀积速率}}}{$R \sim \frac{W}{d} = \frac{IV}{d}$（$W$ 为溅射功率，$I$ 为电流，$V$ 为电压，$d$ 为靶与衬底的距离）}
-\conrow{\textbf{\textcolor{myred}{局限性}}}{各工艺参量不能独立控制。工作气体气压较高。只能制备导电的金属薄膜。不能淀积绝缘体薄膜。}
-}
-
-\subsubsection{射频溅射}
-
-\entry{基本原理}{利用\textbf{\textcolor{myred}{交变电场（工业标准频率 $13.56MHz$）激发气体等离子化}}。}
-
-\entry{特点（对比直流）}{可以溅射绝缘体薄膜（如介质薄膜等）。}
-
-\entry{缺点}{淀积速率较慢、设备成本高、存在辐射污染。}
-
-\textbf{\hlblue{自偏压与电极特性}}
-
-\entry{自偏压}{由于电子迁移率远大于离子，电子的积累导致靶面呈现负偏压，从而负责吸引正离子向靶材轰击。}
-
-\concepttable{%
-\conrow{阴阳极面积/电位公式}{$\frac{V_L}{V_R} = \left(\frac{A_R}{A_L}\right)^4$（$V_L$ 为靶/阴极电位，$V_R$ 为衬底/阳极电位；$A_L$ 为阴极靶面积，$A_R$ 为阳极面积）}
-\conrow{结论}{面积较小的电极（靶 $A_L$）有较低的电位（$V_L$），从而专门负责吸引离子的强力轰击。}
-}
-
-\subsubsection{磁控溅射}
-
-\subsubsection{其他溅射方法}
-
-\subsubsection{溅射薄膜质量及改善方法}
-
-
-\subsection{PVD 金属及化合物薄膜}
-
-\subsubsection{铝及铝合金薄膜淀积}
-
-\subsubsection{铜及其阻挡层薄膜的淀积}
-
-\subsubsection{其它金属薄膜和化合物薄膜}
+\textbf{解：}
+
+根据气体分子动力论，单位面积质量蒸发率由饱和蒸气压、摩尔质量及温度决定，直接代入已知参数计算即可。
+
+已知：
+\[
+P_e = 1.33 \, \text{Pa}, \quad T_e = 1250^\circ\text{C}
+\]
+
+由质量消耗率公式：
+\[
+R_{ML} = \sqrt{\frac{P_e^2 M}{2\pi k T_e}}
+\]
+
+代入数值计算得：
+\[
+R_{ML} \approx 0.775 \, \text{g} \cdot \text{m}^{-2} \cdot \text{s}^{-1}
+\]
 
 \section{第八章\ 光刻工艺}
 
-\subsection{光刻工艺概述}
 
-\entry{光刻}{将掩模版（光刻版）上的几何图形，转移到覆盖在硅衬底表面对光辐射敏感的光刻胶上的工艺。}
-
-\entry{特征线宽 (CD)}{光刻胶图形能分辨线条的最小线宽。与光刻版、光刻胶、衬底及工艺操作相关。}
-
-\entry{分辨率}{光学系统精确区分目标的能力（由瑞利判据决定）。}
-
-\textbf{核心公式}
-
-\concepttable{%
-\conrow{特征线宽公式}{$CD = L_{min} = k_1 \frac{\lambda}{NA}$}
-\conrow{数值孔径公式}{$NA = n \sin\alpha$（定义系统收集光的能力；$n$为介质折射率；$\alpha$为入射光线穿透介质的半角）}
-\conrow{降低CD途径}{$k_1 \downarrow$、$\lambda \downarrow$、$NA \uparrow$}
-}
-
-\textbf{提升途径：}
-
-\compTable{3}{%
-\compheader{途径 & 方法 & 效果}
-\comprow{$\lambda \downarrow$ & 更换短波长光源 & 436nm $\rightarrow$ 13.5nm，CD从0.5$\mu$m降至20nm }
-\comprow{$NA \uparrow$ & 浸润式光刻（主镜头与硅片间有液体） & 利用液体折射率$n>n_{空气}$提高$NA$}
-\comprow{$k_1 \downarrow$ & 改良光学系统与光刻工艺 & 减少工艺相关参数$k_1$（一般$>0.25$） }
-}
-
-\textbf{\hlblue{物理极限与线对分辨率}}
-
-\concepttable{%
-\conrow{线对分辨率 $R_{max}$}{$R_{max} = \dfrac{1}{2L_{min}}$（单位尺寸内能分辨的\textbf{\textcolor{myred}{最窄线条对}}的数量）}
-\conrow{衍射限制最小线宽}{$L_{min} \ge \dfrac{\lambda}{2}$（受波动性所显现的衍射效应限制）}
-\conrow{曝光粒子束波长}{$\lambda = \dfrac{h}{\sqrt{2mE}}$}
-\conrow{粒子束光刻物理极限线宽}{$L_{min} \ge \dfrac{h}{2\sqrt{2mE}}$}
-}
-
-\textbf{\hlblue{套准精度}}
-
-\entry{定义}{光刻形成的图形层和衬底前次光刻图形层的最大相对位移。}
-
-\entry{结论}{套准容差大约为关键尺寸（CD）的三分之一。}
-
-\textbf{\hlblue{焦深（DOF）}}
-
-\entry{定义}{能刻出特征线宽时，曝光相偏离焦平面的范围（成像清晰的前后平面之间的距离）。}
-
-\concepttable{%
-\conrow{公式}{$DOF = \dfrac{k_2 \lambda}{(NA)^2}$}
-\conrow{相关因素}{特征线宽的变化范围、曝光剂量、光刻胶倾斜角度等。}
-\conrow{作用}{使有一定厚度的光刻胶膜上下均匀曝光，对实际曝光系统获得优良图像分辨率至关重要。}
-}
-
-\textbf{\hlblue{对比度（CON/MTF）}}
-
-\entry{定义}{评价成像图形质量的重要指标。与图形的尺寸有关。}
-
-\concepttable{%
-\conrow{公式}{$CON = \dfrac{I_{max} - I_{min}}{I_{max} + I_{min}}$（$I_{max}$、$I_{min}$ 分别代表空间图像中对应透光区与暗区的实际光强）}
-\conrow{要求}{一般要求 $CON > 0.5$。}
-}
-
-\subsection{基本流程}
-
-\entry{基本光刻工艺流程}{底膜处理 $\rightarrow$ 涂胶 $\rightarrow$ 前烘 $\rightarrow$ 曝光 $\rightarrow$ 显影 $\rightarrow$ 坚膜、检验 $\rightarrow$ 刻蚀 $\rightarrow$ 去胶 $\rightarrow$ 光刻检验}
-
-\subsubsection{底膜处理}
-
-\entry{目的}{增强衬底与光刻胶之间的黏附性。}
-
-\concepttable{%
-\conrow{核心步骤}{%
-  \textbf{清洗}：使硅片表面洁净，与光刻胶形成良好接触。\newline
-  \textbf{烘烤}：去除衬底表面水汽，使其彻底干燥。\newline
-  \textbf{增黏处理}：涂敷能增加光刻胶与硅片表面附着能力的化合物。}
-\conrow{增黏材料}{六甲基二硅氮烷 HMDS}
-\conrow{润湿性指标}{不浸润：接触角 $\theta > 90^\circ$；浸润：接触角 $\theta < 90^\circ$}
-\conrow{表面化学变化}{未处理的氧化硅表面有 Si-OH 基团（易吸水导致不黏胶），经HMDS处理后，表面反应形成疏水的 $Si-O-Si(CH_3)_2$ 结构。}
-}
-
-\subsubsection{涂胶 (Spin Coating)}
-
-\concepttable{%
-\conrow{质量要求}{厚度均匀、附着性强、没有缺陷。}
-\conrow{工艺机理}{利用离心力向外甩胶，最终留在表面的光刻胶 $< 1\%$；伴随溶剂挥发，光刻胶干燥且黏度增加。}
-\conrow{厚度规律}{转速提升 $\rightarrow$ 薄膜均匀性越好，厚度越薄。}
-\conrow{核心参数}{转速 3000~6000 rpm；胶膜厚度 0.5~1 $\mu m$。}
-\conrow{注意事项}{必须在\textbf{\textcolor{myred}{超净环境}}进行（光刻胶具黏性，易黏附微粒）。喷洒的光刻胶中不能含有空气（防产生气泡引起缺陷）。}
-}
-
-\subsubsection{前烘 (Pre-bake / 软烘)}
-
-\entry{主要作用}{\newline
-  \textbf{溶剂挥发}：使衬底表面涂敷的胶膜溶剂挥发。\newline
-  \textbf{增强黏附性}：增强与衬底的黏附性。\newline
-  \textbf{增强光吸收与抗腐蚀}：增强胶膜的光吸收与抗腐蚀能力。\newline
-  \textbf{缓和内应力}：缓和光刻胶中的内应力。}
-
-\concepttable{%
-\conrow{溶剂含量演变}{液态胶（65~85\%）$\rightarrow$ 涂胶后固态薄膜（10~30\%）$\rightarrow$ 前烘后（降至 5\%）。}
-\conrow{薄膜厚度变化}{前烘后减幅 10~20\%。}
-\conrow{前烘方法}{热平板传导、红外线辐射、干燥循环热风。}
-\conrow{核心参数}{烘箱前烘温度 80~110°C，烘烤时间 5~10min。}
-\conrow{异常影响}{温度过高或时间过长 $\rightarrow$ 光刻胶变脆且附着力降低；前烘不足 $\rightarrow$ 影响后续显影效果。}
-}
-
-\subsubsection{曝光 (Exposure)}
-
-\concepttable{%
-\conrow{工艺定义}{前烘好的衬底在光刻机上与光刻版对准后曝光，受光辐射的光刻胶发生光化学变化，形成潜影。}
-\conrow{光源选择}{波长须与光刻胶响应匹配（在敏感光波段，通常为紫外光）。}
-\conrow{对准目的}{光刻板与衬底上的对版标记精确对准，确定硅片位置和方向，确保多套光刻板各版间图形彼此套准。}
-\conrow{曝光时间决定因素}{由光源强度、光刻胶种类、厚度、光源与硅片间距等决定。}
-\conrow{曝光时间异常影响}{过长：显影后胶面出现皱纹，分辨率降低。过短：光刻胶交联不充分，显影时部分被溶解，抗蚀性大大降低。}
-\conrow{驻波效应 (Standing Wave Effect)}{引起图形边缘不齐。消除手段：在曝光后进行烘烤，即曝光后烘焙 (PEB)。}
-}
-
-\subsection{常见问题}
 
 \section{第九章\ 光刻技术}
+
+\prob{1}{}{
+    光刻分辨率参数
+}
+
+\textbf{解：}
+
+特征线宽公式：
+\[
+L_{\min} = \frac{k_1 \lambda}{NA}
+\]
+其中 $k_1$ 为分辨率增强因子，$\lambda$ 为光源波长，$NA = n \sin\theta$ 为数值孔径。
+
+减小特征线宽的方法：
+\begin{itemize}
+    \item 减小光源波长 $\lambda$
+    \item 提高数值孔径 $NA$
+\end{itemize}
 
 \section{第十章\ 刻蚀技术}
 
