@@ -340,6 +340,67 @@ m_P = N_P \times M_P \times u
     \approx 1.1\;\text{mg}
 \]
 
+\textbf{\hlyellow{作业题（L3作业题）}}
+
+\prob{1}{}{
+给定单晶硅的参数如下，计算最大提拉速度的理论值。
+\begin{align*}
+k_s &= 150 \text{ W/m·K} \\
+\rho &= 2.33 \text{ g/cm}^3 \\
+L &= 340 \text{ cal/g} \\
+\left. \frac{dT}{dx} \right|_s &= 10 \text{ °C/cm}
+\end{align*}
+}
+
+\textbf{解：}
+
+cheatsheet 上面有最直接的计算公式，往里代数就行。
+
+\prob{2}{}{
+生长电阻率为 $10\Omega\cdot cm$ 的 n-Si，多晶硅重量为 $50kg$，杂质为磷，需掺多少磷？若先制备 1:15 的磷硅合金？需掺多少合金？若称量误差为 $\pm 0.1mg$？分别计算误差百分比？
+
+\img{images/image-2026-07-01-23-14-43.png}
+}
+
+\textbf{解：}
+
+\textbf{解题思路：}根据目标电阻率确定掺杂浓度，由硅体积与掺杂浓度计算磷原子总数，结合磷的原子量求得所需磷的质量。对于磷硅合金，按质量比例换算合金总质量。称量误差百分比由绝对误差与理论称量值之比确定。
+
+\textbf{已知参数：}
+\begin{itemize}
+    \item 硅密度 $d_{Si} = 2.33 \text{ g/cm}^3$
+    \item 磷原子量 $M_P = 30.97 \text{ g/mol}$
+    \item 阿伏加德罗常数 $N_A = 6.022 \times 10^{23} \text{ atoms/mol}$
+    \item 多晶硅重量 $W_{Si} = 50 \text{ kg} = 50000 \text{ g}$
+    \item 目标掺杂浓度 $N_d = 5 \times 10^{14} \text{ atoms/cm}^3$
+\end{itemize}
+
+\textbf{计算步骤：}
+
+1. \textbf{纯磷重量 $W_P$}
+\[
+W_P = \frac{W_{Si}}{d_{Si}} \times N_d \times \frac{M_P}{N_A}
+= \frac{50000}{2.33} \times (5 \times 10^{14}) \times \frac{30.97}{6.022 \times 10^{23}}
+\approx 5.52 \times 10^{-4} \text{ g} = \mathbf{0.552 \text{ mg}}
+\]
+
+2. \textbf{1:15 磷硅合金重量 $W_{alloy}$}
+合金中磷质量占比为 $1/16$：
+\[
+W_{alloy} = 16 \times W_P = 16 \times 0.552 \text{ mg}
+= \mathbf{8.83 \text{ mg}}
+\]
+
+3. \textbf{称量误差百分比}
+\[
+\text{误差百分比} = \frac{\text{称量误差}}{\text{理论称量重量}} \times 100\%
+\]
+\begin{itemize}
+    \item 纯磷误差：$\dfrac{0.1 \text{ mg}}{0.552 \text{ mg}} \times 100\% \approx \mathbf{18.12\%}$
+    \item 合金误差：$\dfrac{0.1 \text{ mg}}{8.83 \text{ mg}} \times 100\% \approx \mathbf{1.13\%}$
+\end{itemize}
+
+
 \section{第二章\ 外延}
 
 \prob{1}{}{
@@ -457,15 +518,342 @@ x_{SiO_2} = \frac{A}{2} \left( \sqrt{1 + \frac{4(t+\tau)}{A^2}} - 1 \right)
     其中 $B$ 为抛物线速率常数，生长由\textbf{扩散控制}。
 \end{enumerate}
 
-\prob{3}{}{
+\prob{4}{}{
+    简述什么是干氧氧化，什么是水汽氧化？说明二者的区别。
+}
+
+\begin{enumerate}
+    \item \textbf{干氧氧化}：$Si + O_2 \rightarrow SiO_2$
+    \begin{itemize}
+        \item 优点：氧化层结构致密，掩蔽能力强；表面为 Si-O 结构，干燥，适合光刻。
+        \item 缺点：生长速率慢，不适合生长厚氧化层。
+    \end{itemize}
+
+    \item \textbf{水汽氧化}：$Si + 2H_2O \rightarrow SiO_2 + 2H_2$
+    \begin{itemize}
+        \item 优点：氧化速度快。
+        \item 缺点：氧化层质量较差，结构疏松，致密性差；表面易吸水，与光刻胶粘附性差。
+    \end{itemize}
+
+    \item \textbf{湿氧氧化}：$Si + H_2O(O_2) \rightarrow SiO_2 + H_2O$
+    \begin{itemize}
+        \item 兼有干氧氧化和水汽氧化两种作用，生长速率和质量介于二者之间。
+    \end{itemize}
+\end{enumerate}
+
+\prob{5}{}{
+    简述热氧化过程中的杂质再分布（四因素）。
+}
+
+\textbf{解：}
+
+\begin{itemize}
+    \item 杂质的分凝现象;
+    \item 杂质从$SiO_2$表面逸出;
+    \item 杂质在$SiO_2$、Si中的扩散速率;
+    \item 杂质在$SiO_2/Si$界面的移动速率。
+\end{itemize}
+
+\prob{6}{}{
+    简述热氧化是为什么要加入氯？
+}
+
+\textbf{解：}
+
+\begin{itemize}
+    \item 能降低固定正电荷密度和界面态密度
+    \item 钝化可动离子，尤其是钠离子
+    \item 减少$SiO_2$中缺陷，提高了氧化层的抗电击穿能力
+    \item 减少氧化导致的硅的层错，增加了氧化层下面硅中少数载流子的寿命。
+\end{itemize}
+
+\prob{7}{}{
+    简述什么是高压氧化？高压氧化的优势有哪些？
+}
+
+\textbf{解：}
+
+氧化剂的压力在几个到几百个大气压之间的热氧化称高压氧化。
+
+\textbf{工艺特点：}
+\begin{itemize}
+    \item 氧化温度多在 650$\sim$950$\,^{\circ}\mathrm{C}$ 之间，属于低温快速热氧化方法；
+    \item 可分为高压干氧氧化和高压水汽氧化。
+\end{itemize}
+
+\textbf{优势：}
+\begin{itemize}
+    \item 减少了氧化层错；
+    \item 杂质再分布和分凝效应减小。
+\end{itemize}
+
+\prob{8}{}{
+    计算在100 min内，1000 °C 湿氧氧化生长二氧化硅的厚度。假定此前硅片表面已有100 nm的氧化层。已知： $A=0.226\ \mu\text{m}$，$B=0.278\ \mu\text{m}^2/\text{h}$。
+}
+
+\textbf{解题思路：}基于 Deal-Grove 模型，考虑初始氧化层厚度，求解氧化时间对应的氧化层总厚度。
+
+\textbf{解：}
+
+Deal-Grove 模型考虑初始氧化层厚度 $x_i$ 时，氧化层总厚度 $x_{ox}$ 满足：
+\[
+x_{ox}^2 + A x_{ox} = B(t + \tau),\quad \tau = \frac{x_i^2 + A x_i}{B}
+\]
+
+代入已知参数：$t = 100\ \text{min} = \frac{5}{3}\ \text{h}$，$x_i = 100\ \text{nm} = 0.1\ \mu\text{m}$，得：
+\[
+\tau = \frac{0.1^2 + 0.226 \times 0.1}{0.278} \approx 0.114\ \text{h}
+\]
+\[
+x_{ox}^2 + 0.226 x_{ox} = 0.278 \times \left( \frac{5}{3} + 0.114 \right) \approx 0.481
+\]
+
+解一元二次方程：
+\[
+x_{ox} = \frac{-A + \sqrt{A^2 + 4 \times 0.481}}{2}
+      = \frac{-0.226 + \sqrt{0.0511 + 1.924}}{2}
+      \approx 0.556\ \mu\text{m}
+\]
+
+因此，100 min 内生长的氧化层总厚度约为 $0.556\ \mu\text{m}$，扣除初始 100 nm，新增厚度约为 $0.456\ \mu\text{m}$。
+
+\prob{9}{}{
+    $SiO_2$膜网络结构特点是什么？氧和杂质在$SiO_2$网络结构中的作用和用途是什么？ 对$SiO_2$膜性能有哪些影响？
+}
+
+\textbf{1. $SiO_2$ 膜网络结构特点}
+
+\begin{itemize}
+    \item \textbf{基本结构}：以 $Si-O$ 四面体为单元构成的网络状结构，中心为 $Si$ 原子，四个顶角上为 $O$ 原子。
+    \item \textbf{结构特征}：长程无序、短程有序，属于无定形玻璃体，是半导体工艺中常用的 $SiO_2$ 形态。
+    \item \textbf{氧的作用}：
+        \begin{itemize}
+            \item \textbf{桥联氧}：连接两个 $Si-O$ 四面体，桥联氧越多，网络越紧密。
+            \item \textbf{非桥联氧}：只连接一个四面体，非桥联氧越多，网络越疏松。
+        \end{itemize}
+\end{itemize}
+
+\textbf{2. 杂质在 $SiO_2$ 网络中的分类与作用}
+
+按杂质在网络中的位置可分为两类：
+
+\begin{itemize}
+    \item \textbf{替代式杂质（网络形成杂质）}
+        \begin{itemize}
+            \item \textbf{代表元素}：IIIA、VA 族（如 $B$、$P$），离子半径与 $Si$ 相近或更小。
+            \item \textbf{作用}：取代 $Si$ 原子位置，改变网络结构和性质。
+            \item \textbf{典型应用}：$P$ 形成磷硅玻璃（$PSG$），$B$ 形成硼硅玻璃（$BSG$）。
+        \end{itemize}
+
+    \item \textbf{间隙式杂质（网络变形杂质）}
+        \begin{itemize}
+            \item \textbf{代表元素}：碱金属、碱土金属（如 $Na$、$K$、$Ca$、$Ba$、$Pb$）。
+            \item \textbf{作用}：占据网络间隙，其氧化物电离后将氧离子交给网络，使非桥联氧增多、桥联氧减少。
+            \item \textbf{对性能的影响}：
+                \begin{itemize}
+                    \item 非桥联氧浓度增大，网络孔洞增多；
+                    \item 网络结构强度降低；
+                    \item 熔点降低；
+                    \item 其他电学、机械性能发生变化。
+                \end{itemize}
+        \end{itemize}
+\end{itemize}
+
+\prob{10}{}{
+    在SiO2系统中存在哪几种电荷？他们对器件性能有些什么影响？工艺上如何降低 他们的密度？
+}
+
+\textbf{SiO$_2$系统中的四种电荷及其影响：}
+
+\begin{enumerate}
+    \item \textbf{可动离子电荷}：$Na^+$、$K^+$、$H^+$等荷正电的碱金属离子。
+    \item \textbf{氧化层固定电荷}：位于氧化层距硅界面$3\,\text{nm}$范围内，荷正电的氧空位。
+    \item \textbf{界面陷阱电荷}：能量处于硅禁带中，可与价带或导带交换电荷的陷阱能级或电荷状态。
+    \item \textbf{氧化层陷阱电荷}：由氧化层内的杂质或不饱和键俘获电子或空穴所引起。
+\end{enumerate}
+
+\textbf{避免或降低电荷面密度的方法：}
+
+\begin{itemize}
+    \item 加强工艺卫生；
+    \item 采用超高纯度的水、气体与试剂等；
+    \item 采用掺氯干氧氧化工艺；
+    \item 热氧化后在高温惰性气体中进行退火。
+\end{itemize}
+
+\prob{11}{}{
+    欲对扩散的杂质起有效的屏蔽作用，对$SiO_2$膜有何要求？工艺上如何控制氧化膜生长质量？
+}
+
+\textbf{掩膜有效性的基本条件：}
+
+硅衬底上的 $SiO_2$ 若要能够当作掩膜来实现定域扩散，应满足杂质在 $SiO_2$ 层中的扩散深度 $x_j$ 小于 $SiO_2$ 本身的厚度 $x_{SiO_2}$，即
+$$x_j < x_{SiO_2}$$
+
+实际上，只有对满足 $D_{SiO_2} < D_{Si}$（即 $\frac{D_{Si}}{D_{SiO_2}} > 1$）的杂质，使用 $SiO_2$ 膜掩蔽才具有实用价值。
+
+\textbf{掩膜最小厚度确定：}
+
+$SiO_2$ 膜能起到有效掩蔽作用的条件包括：
+\begin{itemize}
+    \item 预生长的 $SiO_2$ 膜具有足够的厚度；
+    \item 杂质在衬底硅中的扩散系数 $D_{Si}$ 远大于其在 $SiO_2$ 中的扩散系数 $D_{SiO_2}$（即 $D_{Si} \gg D_{SiO_2}$）；
+    \item $SiO_2$ 表面杂质浓度（$C_s$）与 $SiO_2$-Si 界面杂质浓度（$C_i$）之比达到一定数值。
+\end{itemize}
+
+若取 $\frac{C_s}{C_i} = 10^3$，则所需氧化层的最小厚度为
+$$x_{min} = 4.6\sqrt{D_{SiO_2}t}$$
+
+\prob{12}{}{
+    由热氧化机理解释干、湿氧速率相差很大这一现象。
+}
+
+\textbf{解：}
+
+\textbf{热氧化机理：}
+\begin{itemize}
+    \item \textbf{原子运动性：} $SiO_2$ 中 O 原子（桥联/非桥联）比 Si 原子更容易运动（需打断的键更少），易形成氧空位并扩散至 $SiO_2$/Si 界面。
+    \item \textbf{反应位置：} 氧化剂（$O_2$ 或 $H_2O$）在界面与 Si 反应生成新 $SiO_2$，使膜增厚；Si 原子不易移动，故反应不在表层进行。
+\end{itemize}
+
+\textbf{晶向影响模型：}
+水分子与界面 Si-Si 键直接反应。界面 Si 原子分为桥联（上 O）与非桥联（下 Si），反应活性取决于氧化激活能与反应格点浓度，故不同晶向氧化速率不同。
+
+\textbf{水汽影响（实验数据）：}
+干氧中微量水汽显著加速氧化。对 (100) 晶面，$800^{\circ}\mathrm{C}$ 氧化 700 分钟：
+\begin{itemize}
+    \item 水汽 $<1\ \mathrm{ppm}$：厚度 $300\ \mathrm{\mathring{A}}$
+    \item 水汽 $25\ \mathrm{ppm}$：厚度 $370\ \mathrm{\mathring{A}}$
+\end{itemize}
+实验采用液态氧源及双层石英管（夹层通高纯 $N_2$/Ar）以精确控制水汽。
+
+\prob{13}{}{
+    掺氯氧化为何对提高氧化层质量有作用?
+}
+
+\textbf{解：}
+
+掺氯氧化即在热生长 $SiO_2$ 时向膜中掺入氯离子，主要分布在 $Si-SiO_2$ 界面附近 $100\mathring{A}$ 处。其作用机制如下：
+\begin{itemize}
+    \item \textbf{电荷中和：} 氯离子作为负电荷中心，中和氧化膜中的正电荷离子。
+    \item \textbf{离子俘获：} 在氧化膜中形成陷阱态，俘获可动离子。
+    \item \textbf{杂质去除：} 与碱金属、重金属离子形成高蒸气压氯化物而被除去。
+    \item \textbf{缺陷修复：} 填补氧空位，形成 $Si-Cl$ 或 $Si-O-Cl$ 复合体，降低固定正电荷密度和界面态密度（可降低约一个数量级）。
+\end{itemize}
+综合效果：减少氧化膜缺陷，提高平均击穿电压，增加氧化速率，提高硅中少数载流子寿命。
+
+\prob{14}{}{
+    热氧化法生长1000Å厚的氧化层，工艺条件：1000℃，干氧氧化，无初始氧化层， 试问氧化工艺需多长时间？
+}
+
+\textbf{解题思路：}基于 Deal-Grove 模型建立氧化层厚度与生长时间的解析关系，通过查表获取干氧氧化速率常数，代入无初始氧化层条件求解生长时间。
+
+\textbf{解：}
+
+氧化层生长厚度与生长时间的关系由 Deal-Grove 模型给出：
+\[
+x_{SiO_2}^2 + A x_{SiO_2} = B(t + \tau)
+\]
+
+已知参数：$\tau = 0$，温度 $1000^{\circ}\mathrm{C}$，干氧氧化。查表 4-2 得：
+\[
+A = 0.165\ \mu\mathrm{m},\quad
+B = 1.95 \times 10^{-4}\ \mu\mathrm{m}^2/\mathrm{min},\quad
+x_{SiO_2} = 0.1\ \mu\mathrm{m}
+\]
+
+代入模型计算生长时间：
+\[
+t = \frac{x_{SiO_2}^2 + A x_{SiO_2}}{B} \approx 135.9\ \mathrm{min}
+\]
+
+\prob{15}{}{
+    硅器件为避免芯片沾污，可否最后热氧化一层SiO2作为保护膜？为什么？
+}
+
+不可以。
+
+Si的热氧化是高温工艺，硅器件芯片完成后再进行高温工艺\textbf{\textcolor{myred}{会因金属电极的氧化、杂质再分布等原因损害器件性能}}、甚至使其彻底实效。另外，热氧化需要\textbf{\textcolor{myred}{消耗衬底硅}}，器件表面无硅位置生长不出氧化层。
+
+\prob{16}{}{
+    在1050℃湿氧氧化气氛生长1$\mu m$厚的氧化层，计算所需时间？若抛物线形速率常 数与氧化气压成正比，分别计算5个、20个大气压下的氧化时间？
+}
+
+\textbf{解题思路：}利用 Deal-Grove 模型描述氧化层厚度与时间的关系，结合查表所得速率常数，求解常压下的生长时间；再根据抛物线速率常数与气压的正比关系，按比例缩放得到不同气压下的生长时间。
+
+\textbf{解：}
+
+氧化层生长厚度与生长时间的关系由 Deal-Grove 模型给出：
+\[
+x_{SiO_2}^2 + A x_{SiO_2} = B(t + \tau)
+\]
+
+已知参数：$\tau = 0$，温度 $1050^\circ \text{C}$，湿氧氧化，（111）晶向。查表 4-3 得：
+\[
+A = 0.18\ \mu\text{m},\quad B = 0.314\ \mu\text{m}^2/\text{h},\quad x_{SiO_2} = 1\ \mu\text{m}
+\]
+
+代入模型计算常压下的生长时间：
+\[
+t \approx 3.76\ \text{h}
+\]
+
+设抛物线速率常数与气压成正比，即 $B = kP$，则不同气压下的生长时间按 $t(P) = t(1\ \text{atm}) / P$ 计算：
+\begin{align*}
+\text{5 atm 下：}&\quad t(5) \approx 3.76 / 5 = 0.75\ \text{h} \\
+\text{20 atm 下：}&\quad t(20) \approx 3.76 / 20 = 0.188\ \text{h}
+\end{align*}
+
+\textbf{\hlyellow{考试真题回忆}}
+
+\prob{4}{疑似出现在选填？}{
     热氧化供应不包括哪步？
 }
 
 \textbf{解：}
 
-热氧化工艺流程：洗片-升温-生长-取片
+\textbf{热氧化工艺流程：}洗片-升温-生长-取片
+
 
 \section{第四章\ 扩散技术}
+
+\prob{1}{}{
+    求下列条件下固溶度与扩散系数：1. B在1050℃ 2. P在950℃
+}
+
+\textbf{解：}
+
+解题思路：通过查阅固溶度曲线与扩散参数表，结合阿伦尼乌斯公式计算给定温度下的扩散系数。
+
+\begin{enumerate}
+    \item \textbf{固溶度}（查图 1-15）：
+    \begin{itemize}
+        \item B 在 $1050^\circ \text{C}$ 下：$\approx 5 \times 10^{20}\ \text{atoms/cm}^3$
+        \item P 在 $950^\circ \text{C}$ 下：$\approx 8 \times 10^{20}\ \text{atoms/cm}^3$
+    \end{itemize}
+
+    \item \textbf{扩散系数计算}：
+    玻尔兹曼常数 $k = 1.3806 \times 10^{-23}\ \text{J/K} = 8.617 \times 10^{-5}\ \text{eV/K}$。
+
+    由阿伦尼乌斯公式 $D = D_0 \exp(-E_a / kT)$，查表 5-1 得：
+    \[
+    D_0 = 10.5\ \text{cm}^2 \cdot \text{s}^{-1},\quad E_a = 3.69\ \text{eV}
+    \]
+
+    代入计算：
+    \begin{itemize}
+        \item B 在 $1050^\circ \text{C}$：
+        \[
+        D = D_0 \exp\left(-\frac{E_a}{kT}\right)
+          = 9.85 \times 10^{-14}\ \text{cm}^2/\text{s}
+        \]
+        \item P 在 $950^\circ \text{C}$：
+        \[
+        D = D_0 \exp\left(-\frac{E_a}{kT}\right)
+          = 6.62 \times 10^{-15}\ \text{cm}^2/\text{s}
+        \]
+    \end{itemize}
+\end{enumerate}
 
 \prob{1}{}{
     什么是菲克定律？
@@ -486,10 +874,89 @@ x_{SiO_2} = \frac{A}{2} \left( \sqrt{1 + \frac{4(t+\tau)}{A^2}} - 1 \right)
     \]
 \end{enumerate}
 
+\prob{2}{}{
+    在1000℃工作的扩散炉，温度偏差在±1℃，扩散深度相应的偏差是多少？假定是高斯扩散。
+}
+
+\textbf{解：}
+
+\textbf{解题思路：}基于扩散系数随温度的指数依赖关系，计算温度偏差引起的扩散系数相对变化，进而通过高斯扩散深度与扩散系数的平方根关系得到扩散深度偏差。
+
+扩散深度偏差主要来源于扩散系数随温度的波动。扩散系数表达式为
+\[
+D = D_0 \exp\left(-\frac{E_a}{\kappa T}\right)
+\]
+以磷扩散为例，计算 $\pm 1^\circ\mathrm{C}$ 温度偏差下的扩散系数相对变化：
+\[
+\frac{D(1001)}{D(1000)} = \exp\left(\frac{E_a}{1274\kappa} - \frac{E_a}{1273\kappa}\right) \approx 97.46\%
+\]
+\[
+\frac{D(999)}{D(1000)} = \exp\left(\frac{E_a}{1272\kappa} - \frac{E_a}{1273\kappa}\right) \approx 103.04\%
+\]
+对于高斯扩散，扩散深度 $x \propto \sqrt{Dt}$，因此\textbf{\textcolor{myred}{扩散深度相对偏差约为扩散系数相对偏差的一半}}，即温度 $+1^\circ\mathrm{C}$ 时深度偏差约为 $-1.27\%$，$-1^\circ\mathrm{C}$ 时约为 $+1.52\%$。
+
+
+\textbf{\hlyellow{作业题（L10作业题）}}
+
+\prob{3}{}{
+    解释什么是恒定表面源扩散，什么是限定表面源扩散，什么是两部扩散工艺。
+}
+
+\prob{4}{}{
+    总结 pn结电学特性与扩散工艺的关系。
+}
+
+\noindent \textbf{1. 击穿电压和反向漏电流}
+
+pn结击穿类型及成因：
+\begin{enumerate}
+    \item[(a)] \textbf{软击穿}：表面杂质沾污或Si/SiO$_2$界面态导致表面漏电。
+    \item[(b)] \textbf{低压硬击穿}：局部尖峰、层错、位错或合金点等缺陷导致。
+    \item[(c)] \textbf{靠背椅击穿}（沟道击穿）：由表面沟道效应引起。
+    \item[(d)] \textbf{分段击穿}：硅片局部薄弱点（如层错、位错、边缘不整齐等）导致。
+\end{enumerate}
 
 \section{第五章\ 离子注入技术}
 
+
+\prob{1}{}{
+    什么是沟道效应？如何才能避免？
+}
+
+\textbf{沟道效应（Channeling effect）}：对晶体靶进行离子注入时，若离子注入方向与靶晶体的某个晶向平行，离子将沿沟道运动，很少受到原子核碰撞。同时沟道中电子密度低，电子阻止作用也很小，导致离子能量损失率很低。这使得注入离子的浓度分布难以控制，注入深度大于无定形靶中的深度，且分布出现长拖尾，纵向分布峰值偏离高斯分布。
+
+\textbf{减少沟道效应的措施：}
+\begin{enumerate}
+    \item 对大离子，将注入方向沿沟道轴向（如 (110)）偏离 $7-10^{\circ}$；
+    \item 用 Si、Ge、F、Ar 等离子注入使表面预非晶化，形成非晶层（Pre-amorphization）；
+    \item 增加注入剂量，使晶格损伤增加、非晶层形成，从而减少沟道离子；
+    \item 在表面覆盖 $SiO_2$ 层作为掩膜。
+\end{enumerate}
+
+\prob{1}{}{
+    硼注入，峰值浓度（$R_p$）在0.1$\mu$m处，注入能量是多少？
+}
+
+\textbf{解：}通过查表，注入能量为 $E = 30k\ \text{eV}$。
+
+\prob{2}{}{
+    什么是硼的逆退火特性？
+}
+
+对于两种较高剂量（$N_s = 2.5 \times 10^{14}/cm^2$ 和 $N_s = 2 \times 10^{15}/cm^2$）的注入情况，根据退火特性与温度的关系可分为三个温度区：
+
+\begin{itemize}
+    \item \textbf{I区}（$500^\circ C$ 以下）与 \textbf{III区}（$600^\circ C$ 以上）：电激活比例随退火温度升高而增加。
+    \item \textbf{II区}（$500 \sim 600^\circ C$）：表现出反常的\textbf{逆退火现象}，即电激活比例随温度升高反而下降。
+\end{itemize}
+
+\textbf{逆退火现象的机理：}
+
+在 $500 \sim 600^\circ C$ 范围内，点缺陷通过重新组合或结团（例如凝聚为位错环等二次缺陷）以降低能量。由于硼原子尺寸小，与缺陷团作用强，容易迁移并被结合到缺陷团的非激活位置中，导致替位硼浓度随温度升高而下降，即自由载流子浓度降低。在 $600^\circ C$ 附近，替位硼浓度降至最低值。此时的最终状态为：少量替代位硼原子和大量非替代位硼原子，后者可能淀积或靠近位错处。
+
 \section{第六章\ CVD 工艺}
+
+\textbf{\hlyellow{考试真题回忆}}
 
 \prob{1}{}{
     标准的卧式LPCVD的反应器是热壁式的炉管，衬底硅片被竖立装在炉管的石英舟上，反应气体从炉管前端进入后端抽出，这会产生什么效应，怎么解决？
@@ -512,6 +979,22 @@ x_{SiO_2} = \frac{A}{2} \left( \sqrt{1 + \frac{4(t+\tau)}{A^2}} - 1 \right)
 \textbf{解：}
 
 APCVD、LPCVD、PECVD
+
+\prob{3}{}{
+    BPSG（硼磷硅玻璃）如何回流？
+}
+
+在磷硅玻璃（PSG）反应气体中掺入硼源，形成三元氧化薄膜系统——硼磷硅玻璃（BPSG）。
+
+\begin{enumerate}
+    \item \textbf{回流温度：} BPSG 可在 850℃ 以下实现回流平坦化，低于 PSG 的 950--1100℃，从而减少浅结杂质扩散。
+    \item \textbf{应用：} 广泛用于金属淀积前，使金属层与下方多晶硅绝缘。
+    \item \textbf{浓度限制：}
+    \begin{itemize}
+        \item 磷浓度 $\ge$ 5wt\% 后，回流温度不再降低；
+        \item 硼含量 $>$ 5wt\% 后，薄膜结晶，吸潮性增强。
+    \end{itemize}
+\end{enumerate}
 
 \section{第七章\ PVD 工艺}
 
@@ -554,11 +1037,55 @@ R_{ML} = \sqrt{\frac{P_e^2 M}{2\pi k T_e}}
 R_{ML} \approx 0.775 \, \text{g} \cdot \text{m}^{-2} \cdot \text{s}^{-1}
 \]
 
+\textbf{\hlyellow{作业题（L20作业题）}}
+
+\prob{1}{}{
+    简述CVD、PVD（蒸镀、溅射）的主要工艺过程
+}
+
+cheatsheet 上有。
+
+\textbf{\textcolor{mygreen}{cheatsheet 上有。}}
+
+\prob{2}{}{
+    有一特定 LPCVD 工艺，在 700 °C 下受表面反应速率限制，激活能为 2eV，在此温度下淀积速率为 100 nm/min。问 750 °C 时的淀积速率是多少?
+}
+
+解：$k_s = k_0 e^{-E_{\mathrm{A}}/kT}$  
+
+$\frac{G_{750}}{G_{700}} = \frac{k_{s750}}{k_{s700}} = \frac{e^{-E_{\mathrm{A}}/[k(750 + 273)]}}{e^{-E_{\mathrm{A}}/[k(700 + 273)]}}$，其中$k \sim 8.617 \times 10^{-5}\ \text{eV/K}$  
+
+$G_{750} \sim 320\ \text{nm/min}$
+
+\prob{3}{}{
+    简述真空度以及蒸发速度对真空蒸镀薄膜质量的影响。
+}
+
+\textbf{真空度影响：}
+
+\begin{itemize}
+    \item 1. 蒸发分子（或原子）的质量输运应为直线，若真空度过低，输运过程被气体分子多次散射，方向改变，动量降低，淀积的薄膜疏松、致密度低；
+    \item 2. 若真空度低，气体中的氧和水汽，使蒸发的金属原子在气相就被氧化，淀积的薄膜成为氧化物薄膜；
+    \item 3. 若真空室中有较多气体杂质分子，它被蒸发原子流裹挟也淀积在衬底上，影响淀积薄膜纯度和质量。
+\end{itemize}
+
+\textbf{蒸发速率影响：}
+
+\begin{itemize}
+    \item 1. 提高蒸发速率，能提高所淀积薄膜的纯度和与衬底的结合力，以及表面质量。
+    \item 2. 蒸发速率过快，蒸气原子碰撞会加剧，动能降低，甚至会引起蒸气原子结团后再淀积，这将导致出现薄膜表面不平坦等质量问题。
+\end{itemize}
+
+\prob{4}{}{
+    一台蒸镀机的坩埚表面面积为 $5\text{cm}^2$，衬底上每 $\text{cm}^2$ 接收到的铝原子为总蒸发量的 $0.1\%$，蒸镀系数为 $0.9$，求把坩埚中的铝加热到蒸发温度后，铝在衬底表面的淀积速率。（铝蒸发温度为 $1250$ 摄氏度，密度为 $2700\text{kg/m}^3$）
+}
+
 \section{第八章\ 光刻工艺}
 
+感觉 8-9 章主要是以选填的形式考察：
 
+\textbf{\hlyellow{考试真题回忆}}
 
-\section{第九章\ 光刻技术}
 
 \prob{1}{}{
     光刻分辨率参数
@@ -578,7 +1105,44 @@ L_{\min} = \frac{k_1 \lambda}{NA}
     \item 提高数值孔径 $NA$
 \end{itemize}
 
+\textbf{\hlyellow{作业题（L24作业题）}}
+
+\prob{1}{}{
+    简述硅集成电路平面制造工艺流程中常规光刻工艺的工艺步骤。
+}
+
+cheatsheet 上有。
+
+\prob{2}{}{
+    简述光刻掩模版（铬版）的基本构造，以及光刻胶的3种成分。
+}
+
+铬版：石英玻璃、铬膜及氧化铬、保护膜
+
+\prob{3}{}{
+设某工艺中需要用光刻胶作为掩膜对二氧化硅进行刻蚀，以移除非掩蔽区的所有二氧化硅。若此工艺对光刻胶的刻蚀速率为 $10\ \mathrm{nm/min}$，对二氧化硅的刻蚀速率为 $60\ \mathrm{nm/min}$。
+（1）请计算被刻蚀材料与掩蔽层材料的选择比；
+（2）若二氧化硅的厚度为 $1200\ \mathrm{nm}$，假设所有材料的厚度和刻蚀速率绝对均匀，至少需要多厚的光刻胶才可保证被掩蔽的二氧化硅不被刻蚀？刻蚀时间是多少？
+}
+
+(1) 选择比: $60/10 = 6$
+
+(2) 刻蚀时间: $1200/60 = 20\ \mathrm{min}$
+
+最小光刻胶厚度: $10 \times 20 = 200\ \mathrm{nm}$
+
+\section{第九章\ 光刻技术}
+
+\textbf{\hlyellow{考试真题回忆}}
+
+\prob{1}{疑似选填？}{电子束光刻}
+
+电子束曝光是用低功率密度的电子束直接描画或投影照射电致抗蚀剂，经显影后在抗蚀剂中产生图形的一种微细加工技术。其原理是具有一定能量的电子与光刻胶碰撞作用，发生化学反应完成曝光。它的特点是分辨率高、图形产生与修改容易、制作周期短。电子束光刻精度可达到纳米量级，已应用于制造高精度掩模版、移相掩膜版和X射线掩模版。电子束散射有前向散射和背散射，背散射角大，是造成邻近效应的主要原因。
+
 \section{第十章\ 刻蚀技术}
+
+\section{第十一章\ 工艺集成}
+
 
 % --- 手动换栏命令（如果需要强制换列）---
 % \columnbreak 

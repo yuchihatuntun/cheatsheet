@@ -182,6 +182,17 @@
     \par\vspace{3pt}%
 }
 
+\newcommand{\prob}[3]{%
+    \par\vspace{3pt}\noindent%
+    \fcolorbox{myblue}{myblue!5}{%
+        \begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+        \vspace{1pt}%
+        \textbf{\textcolor{myblue}{[T#1\if\relax\detokenize{#2}\relax\else(#2)\fi]}} #3%
+        \vspace{1pt}%
+        \end{minipage}%
+    }%
+    \par\vspace{3pt}%
+}
 % -------------------------------------------------
 % 正文
 % -------------------------------------------------
@@ -201,7 +212,7 @@ MOSFET 晶体管结构如下：
 \imgleft[0.4]{images/image-2026-06-01-16-28-58.png}{
     \concepttable{
     \conrow{源漏重掺杂区}{最外侧高浓度掺杂区，\textbf{\textcolor{myred}{实现优质欧姆接触}}，提升载流子注入/引出效率。}
-    \conrow{源漏扩展区}{HDD与沟道间的\textbf{\textcolor{myred}{浅结中等掺杂区}}，缓解高场效应，抑制热载流子注入，保障导通连续性。}
+    \conrow{源漏扩展区}{HDD与沟道间的浅结中等掺杂区，\textbf{\textcolor{myred}{缓解高场效应}}，抑制热载流子注入，保障导通连续性。}
     }
 
     \concepttable{
@@ -224,28 +235,34 @@ MOSFET 晶体管结构如下：
 
 \textbf{\hlblue{工艺与互连层面}}
 
-\entry{特征尺寸}{第一层金属半节距：$\frac{1}{2}\times\text{metal1 pitch}$。metal1 pitch 为相邻 metal1 导线中心距。传统 ITRS 以此命名技术节点（如 90nm、65nm）。}
+\entry{特征尺寸}{第一层金属半节距：$\frac{1}{2}\times$相邻导线中心距。传统 ITRS 以此命名技术节点（如 90nm、65nm）。}
 \entry{via0}{第0层通孔（接触层与 metal1 间互连），集成度特征尺寸还受层间对准和通孔工艺制约。}
 
 \subsubsection{MOSFET 工作原理}
 
 \concepttable{
-    \conrow{$V_{GS} < V_T$（截止）}{$N^+$ 源漏被 P 型衬底隔离，无导电沟道，$I_D = 0$。}
-    \conrow{$V_{GS} > V_T$（导通）}{P 型硅表面强反型，形成 N 型沟道，$V_{DS}$ 驱动电子产生 $I_D$。}
+    \conrow{$V_{GS} < V_T$（截止）}{源漏之间被衬底隔离，无导电沟道，$I_D = 0$。}
+    \conrow{$V_{GS} > V_T$（导通）}{沟道表面形成强反型，形成沟道，$V_{DS}$ 驱动电子产生 $I_D$。}
 }
 
-\entry{控制规律}{恒定 $V_{DS}$ 下，$V_{GS} \uparrow \rightarrow$ 沟道电子 $\uparrow \rightarrow$ 沟道电阻 $\downarrow \rightarrow I_D \uparrow$。}
+\imgleft[0.3]{images/image-2026-06-30-18-58-54.png}{
+    \entry{阈值电压 $V_T$}{使栅下硅表面开始强反型时的栅电压。\textbf{\textcolor{myred}{表面少子浓度 $\ge$ 体内平衡多子浓度时}}，称为表面发生了强反型。}
 
-\concepttable{
-    \conrow{N 沟道增强型}{$V_T>0$，常关，$V_{GS}>V_T$ 开启}
-    \conrow{N 沟道耗尽型}{$V_T<0$，常开，$V_{GS}<V_T$ 截止}
-    \conrow{P 沟道增强型}{$V_T<0$，常关，$V_{GS}<V_T$ 开启}
-    \conrow{P 沟道耗尽型}{$V_T>0$，常开，$V_{GS}>V_T$ 截止}
+    \entry{平带电压 $V_{FB}$}{使半导体体内\textbf{\textcolor{myred}{无能带弯曲}}的栅压（表面势 $\phi_S = 0$）。}
+
+    \entry{控制规律}{恒定 $V_{DS}$ 下，$V_{GS} \uparrow \rightarrow$ 沟道电子 $\uparrow \rightarrow$ 沟道电阻 $\downarrow \rightarrow I_D \uparrow$。}
+
+    \concepttable{
+        \conrow{N 沟道增强型}{$V_T>0$，常关，$V_{GS}>V_T$ 开启}
+        \conrow{N 沟道耗尽型}{$V_T<0$，常开，$V_{GS}<V_T$ 截止}
+        \conrow{P 沟道增强型}{$V_T<0$，常关，$V_{GS}<V_T$ 开启}
+        \conrow{P 沟道耗尽型}{$V_T>0$，常开，$V_{GS}>V_T$ 截止}
+    }
 }
 
 \subsubsection{MOS结构阈值电压}
 
-以下推导以 P 型 MOSFET 为例。
+以下推导以 P 衬底 MOSFET 为例（公式记忆也以 NMOS 为主）。
 
 \imgleft[0.3]{images/image-2026-06-21-16-09-56.png}{
 \textbf{\hlblue{理想 MOS 能带结构}}
@@ -279,23 +296,22 @@ MOSFET 晶体管结构如下：
 
 \textbf{\hlblue{\textbf{\textcolor{myred}{MOS 结构}}阈值电压公式}}
 
-\textbf{对于 PMOS：}
-
-$$V_T = V_{FB} + V_{ox} + 2\phi_{FP} = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} - \frac{Q_S}{C_{ox}} + 2\phi_{FP}$$
-
 \textbf{对于 NMOS：}
 
-$$V_T = V_{FB} + V_{ox} + 2\phi_{FP} = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} + \frac{Q_S}{C_{ox}} + 2\phi_{FN}$$
+$$\boxed{V_T = V_{FB} + V_{ox} + 2\phi_{FP} = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} - \frac{Q_S}{C_{ox}} + 2\phi_{FP}}$$
 
-对于 NMOS（Al/p-Si），$\phi_{FN}$通常为负值（约 -0.9V 左右），这也会使 $V_T$ 向正方向移动。
+MOS 结构的阈值电压为
+
+$$V_{T} = \phi_{MS} - \frac{Q_{OX}}{C_{OX}} + K(2\phi_{FP})^{\frac{1}{2}} + 2\phi_{FP} = \phi_{MS} - \frac{Q_{OX}}{C_{OX}} + K(\phi_{S})^{\frac{1}{2}} + 2\phi_{FP}$$
+
+式中，$ K = \frac{(2q N_A \varepsilon_s)^{\frac{1}{2}}}{C_{OX}} $，称为\textbf{\textcolor{myred}{体因子}}，仅由工艺参数（衬底掺杂浓度 $N_A$、氧化层电容 $C_{ox}$）决定，与外加电势无关。
 
 \subsubsection{MOSFET 阈值电压}
 
 \textbf{MOSFET（四端）与 MOS 结构（三端）的边界条件有区别：}
 
 \imgleft[0.3]{images/image-2026-06-22-12-29-32.png}{
-\entry{栅极有效驱动电压修正}{栅-衬电压由 $V_G$ 变为 $V_G-V_B$，故有效栅电压修正为：
-$$V_G - V_B - V_{FB}$$}
+\entry{栅极有效驱动电压修正}{栅-衬电压由 $V_G$ 变为 $V_G-V_B$。}
 
 \entry{\textbf{\textcolor{myred}{强反型临界 $\phi_s$ 修正}}}{源/漏及反型层与衬底间 PN 结承受反向电压 $V_S-V_B$，使强反型更难。$\phi_s$ 阈值由 $2\phi_{FP}$ 增大为：
 $$\phi_s = 2\phi_{FP} + V_S - V_B$$}
@@ -304,58 +320,6 @@ $$\phi_s = 2\phi_{FP} + V_S - V_B$$}
 将 $\phi_s = 2\phi_{FP} + V_S - V_B$ 代入传统氧化层压降公式中，得到：
 
 $$-\frac{Q_S}{C_{ox}} = \frac{(2q N_A \varepsilon_s)^{\frac{1}{2}}}{C_{ox}} (2\phi_{FP} + V_S - V_B)^{\frac{1}{2}} = K(2\phi_{FP} + V_S - V_B)^{\frac{1}{2}}$$
-
-体因子$K$：$$K = \frac{(2q N_A \varepsilon_s)^{\frac{1}{2}}}{C_{ox}}$$
-
-$K$ 仅由工艺参数（衬底掺杂浓度 $N_A$、氧化层电容 $C_{ox}$）决定，与外加电势无关。
-
-\textbf{\hlblue{MOSFET 阈值电压公式对比}}
-
-\begin{multicols}{2}
-
-\raggedcolumns
-
-\textbf{\hlblue{N 沟道 MOSFET（NMOS）}}
-
-\textbf{P 型衬底费米势 $\phi_{FP}$：}
-$$\phi_{FP} = \frac{kT}{q}\ln\frac{N_A}{n_i} > 0$$
-
-\textbf{体因子 $K$：}
-$$K = \frac{\sqrt{2q N_A \varepsilon_s}}{C_{ox}}$$
-
-\textbf{偏置情况下的完整公式（$V_S > 0, V_B < 0$）：}
-
-$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}}$$
-$$+ K(2\phi_{FP} + V_S - V_B)^{\frac{1}{2}}$$
-$$+ 2\phi_{FP} + V_S$$
-
-\textbf{$V_S = 0, V_B = 0$ 时（源与衬底均接地）：}
-$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}}$$
-$$+ K(2\phi_{FP})^{\frac{1}{2}} + 2\phi_{FP}$$
-
-\columnbreak
-
-\textbf{\hlblue{P 沟道 MOSFET（PMOS）}}
-
-\textbf{N 型衬底费米势 $\phi_{FN}$：}
-$$\phi_{FN} = -\frac{kT}{q}\ln\frac{N_D}{n_i} < 0$$
-
-\textbf{体因子 $K$：}
-$$K = \frac{\sqrt{2q N_D \varepsilon_s}}{C_{ox}}$$
-
-\textbf{偏置情况下的完整公式（$V_S < 0, V_B > 0$）：}
-
-$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}}$$
-$$- K(-2\phi_{FN} + V_B - V_S)^{\frac{1}{2}}$$
-$$+ 2\phi_{FN} + V_S$$
-
-\textbf{$V_S = 0, V_B = 0$ 时（源与衬底均接地）：}
-
-$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}}$$
-
-$$- K(-2\phi_{FN})^{\frac{1}{2}} + 2\phi_{FN}$$
-
-\end{multicols}
 
 \subsubsection{阈值电压影响因素}
 
@@ -380,79 +344,41 @@ $$V_T = \phi_{MS} - \frac{T_{ox}}{\varepsilon_{ox}}Q_{ox} - \frac{T_{ox}}{\varep
     $$\phi_{FB} = \begin{cases} \phi_{FP} = \frac{kT}{q}\ln\frac{N_A}{n_i} > 0 & \text{(N 沟道)} \\ \phi_{FN} = -\frac{kT}{q}\ln\frac{N_D}{n_i} < 0 & \text{(P 沟道)} \end{cases}$$
 }
 
-\entry{掺杂强弱依赖性}{$\phi_{FB}$ 与衬底掺杂浓度（$N_A$ 或 $N_D$）呈对数（$\ln$）关系，因此\textbf{\textcolor{myred}{掺杂浓度对其影响不大}}。}
-
-\entry{高频特征常数}{在室温下，当衬底掺杂浓度为 $\mathbf{10^{15}\text{ cm}^{-3}}$ 时，$|\phi_{FB}|$ 约为 0.3 V。即：
-
-N 沟道 MOSFET：$2\phi_{FB} = 2\phi_{FP} = \mathbf{0.6\text{ V}}$
-
-P 沟道 MOSFET：$2\phi_{FB} = 2\phi_{FN} = \mathbf{-0.6\text{ V}}$}
+$\phi_{FB}$ 与衬底掺杂浓度（$N_A$ 或 $N_D$）呈对数（$\ln$）关系，因此\textbf{\textcolor{myred}{掺杂浓度对其影响不大}}。
 
 \textbf{\hlblue{功函数差 $\phi_{MS}$}}
 
-\entry{物理决定因素}{功函数差 $\phi_{MS}$ 仅与以下三者相关：\textbf{\textcolor{myred}{金属种类、半导体种类以及掺杂浓度}}（题干里应该会给）。}
+\entry{物理决定因素}{功函数差 $\phi_{MS}$ 仅与\textbf{\textcolor{myred}{金属种类、半导体种类以及掺杂浓度}}相关。}
 
-以 \textbf{\textcolor{myred}{$N = 10^{15}\text{ cm}^{-3}$}} 的 \textbf{\textcolor{myred}{Al-Si 体系}} \textbf{\textcolor{myred}{N 沟道}}增强型 MOSFET 为例：
+\textbf{Al-Si 材料},当 $N = 10^{15}\,\text{cm}^{-3}$ 时，
 
-$$V_T = \underbrace{-0.9\text{ V}}_{\phi_{MS}} - \frac{T_{ox}}{\varepsilon_{ox}}Q_{ox} - \frac{T_{ox}}{\varepsilon_{ox}}Q_{AD} + \underbrace{0.6\text{ V}}_{2\phi_{FB}}$$
+$$\phi_{\text{MS}} = \begin{cases} -0.9\,\text{V} & \text{(N 沟)} \\ -0.3\,\text{V} & \text{(P 沟)} \end{cases}$$
 
 \textbf{\hlblue{耗尽区空间电荷 $Q_{AD}$}}
 
-\entry{N 沟道（NMOS）}{$$Q_A = -q N_A x_d = -(4q N_A \varepsilon_s \phi_{FP})^{\frac{1}{2}} < 0$$耗尽区内为电离受主杂质，电荷面密度为负值。}
+\entry{N 沟道（NMOS）}{$$Q_A = -q N_A x_d = -(4q N_A \varepsilon_s \phi_{FP})^{\frac{1}{2}} < 0$$}
 
-\entry{P 沟道（PMOS）}{$$Q_D = q N_D x_d = (-4q N_D \varepsilon_s \phi_{FN})^{\frac{1}{2}} > 0$$耗尽区内为电离施主杂质，电荷面密度为正值（注：因 $\phi_{FN} < 0$，根号内带负号以保证开方为正数）。}
-
-\entry{比例关系}{衬底费米势 $\phi_{FB}$ 在估算中视为常数。\textbf{\textcolor{myred}{耗尽区电荷面密度与掺杂浓度的平方根成正比}}，即：$$Q_{AD} \propto N_{AD}^{\frac{1}{2}}$$}
+$$Q_{AD} \propto N_{AD}^{\frac{1}{2}}$$
 
 \textbf{\hlblue{氧化层电荷 $Q_{ox}$}}
 
-\entry{物理特征}{$Q_{ox}$ 与\textbf{\textcolor{myred}{制造工艺及晶向}}密切相关。为了减小界面态和氧化层缺陷电荷，MOSFET 一般采用 (100) 晶面。}
-
-\entry{定量影响}{在一阶工艺条件下，早期 $T_{ox} = 150\text{ nm}$ 时，由氧化层电荷引起的电压贡献项 $\frac{Q_{ox}}{C_{ox}}$ 高达 1.8 V 至 3.0 V，因此早期器件的阈值电压通常很高。}
+$Q_{ox}$ 与\textbf{\textcolor{myred}{制造工艺及晶向}}密切相关。为了减小界面态和氧化层缺陷电荷，MOSFET 一般采用 (100) 晶面。
 
 \textbf{\hlblue{调控阈值电压主要手段}}
 
 \textbf{\textcolor{myred}{1. 改变衬底或沟道掺杂浓度 $N$}}
-
+\ \ \ \ \ 
 \textbf{\textcolor{myred}{2. 改变栅氧化层厚度 $T_{ox}$}}
 
 \textbf{\hlblue{衬底偏置效应（体效应）}}
 
-\entry{体效应定义}{阈值电压 $V_T$ 随衬源电压 $V_{BS}$ 的变化而变化的现象。}
-
-\entry{电位参考点}{源极电压 $V_S = 0$ 作为全系统的电位参考点。此时各项电压符号对齐为：栅源电压 $V_{GS}$、漏源电压 $V_{DS}$、衬源（衬底）电压 $V_{BS}$。}
-
-\textbf{N 沟道 MOSFET 定量推导}
-
-将 $V_{BS}$ 引入第 26 页公式（此时 $V_S=0, V_B=V_{BS}$），可得：
-
-$$V_T = V_{FB} + K(2\phi_{FP} - V_{BS})^{\frac{1}{2}} + 2\phi_{FP}$$
-
-有衬底偏压与无衬底偏压（$V_{BS}=0$）时的阈值电压差值 $\Delta V_T$ 为：
-
-$$\Delta V_T = (V_T)_{V_{BS} < 0} - (V_T)_{V_{BS} = 0} = K(2\phi_{FP})^{\frac{1}{2}} \left[ \left( 1 - \frac{V_{BS}}{2\phi_{FP}} \right)^{\frac{1}{2}} - 1 \right]$$
-
-\entry{符号}{由于实际加在 NMOS 衬底上的动作为反向偏置，即 $V_{BS} < 0$，带入上式后括号内大于 1，因此 $\Delta V_T > 0$。}
-
-\textbf{P 沟道 MOSFET 定量推导}
-
-\entry{P 沟道 MOSFET 的 $\Delta V_T$ 公式}{$$\Delta V_T = (V_T)_{V_{BS} > 0} - (V_T)_{V_{BS} = 0} = -K(-2\phi_{FN})^{\frac{1}{2}} \left[ \left( 1 - \frac{V_{BS}}{2\phi_{FN}} \right)^{\frac{1}{2}} - 1 \right]$$}
-
-\entry{符号判定}{PMOS 的衬底加正偏压（$V_{BS} > 0$），由于前方带有 $-K$ 系数，计算结果 $\Delta V_T < 0$。}
+\entry{体效应定义}{阈值电压 $V_T$ 随衬源电压 $V_{BS}$ 的变化而变化的现象，即前文所述 MOSFET 的阈值电压公式。}
 
 \textbf{体效应漂移方向}
 
-当 $|V_{BS}|$ 增大时：
+当 $|V_{BS}|$ 增大时：N阈值电压向正方向变化（$V_T$ 变大，器件更难开启）。
 
-\entry{N 沟道 MOSFET}{阈值电压向正方向变化（$V_T$ 变大，器件更难开启）。}
-
-\entry{P 沟道 MOSFET}{阈值电压向负方向变化（$V_T$ 变得更负，绝对值变大，器件同样更难开启）。}
-
-\textbf{工艺决定因素}
-
-\textbf{体因子公式：}
-
-$$K = \frac{(2q\varepsilon_s N)^{\frac{1}{2}}}{C_{ox}}$$
+\entry{体因子 $K$}{$$K = \frac{(2q\varepsilon_s N)^{\frac{1}{2}}}{C_{ox}}$$ 反映体效应的强弱。}
 
 \concepttable{
     \conrow{氧化层厚度 $T_{ox}$}{$T_{ox}$ 越厚 $\rightarrow$ $C_{ox}$ 越小 $\rightarrow$ $K$ 越大。}
@@ -461,74 +387,41 @@ $$K = \frac{(2q\varepsilon_s N)^{\frac{1}{2}}}{C_{ox}}$$
 
 \entry{结论}{\textbf{\textcolor{myred}{$T_{ox}$ 越厚、掺杂浓度 $N$ 越高，衬底偏置效应（体效应）就越严重}}，阈值电压受衬底电压的影响漂移得越剧烈。}
 
-\textbf{\hlblue{离子注入}}
+\textbf{\hlblue{离子注入}}（非重点，了解即可）
 
-\imgleft[0.25]{images/image-2026-06-22-14-10-23.png}{
-\entry{杂质分布假设}{工艺上将注入的杂质浓度简化模拟为\textbf{\textcolor{myred}{阶梯形分布}}：在距离表面 $0$ 到 $R$ 的深度范围内，杂质浓度由基体浓度 $N_A$ 升高到 $N'_A$。}
+\entry{基本概念}{通过离子注入改变沟道掺杂浓度，从而调整阈值电压 $V_T$。工艺上常将杂质分布简化为\textbf{\textcolor{myred}{阶梯形分布}}。}
 
-\entry{空间几何限制}{注入深度 $R$ 小于沟道下的衬底耗尽区最大厚度 $x'_{d\max}$（即 $R < x'_{d\max}$）。}
-
-\entry{图形认知}{整个注入区域（厚度为 $R$）必须完全包含在强反型时的表面耗尽区内部。由于引入了额外杂质，注入后的耗尽区最大厚度 $x'_{d\max}$ 会比未注入时的 $x_{d\max}$ 有所减小。}
+\entry{关键参数}{
+    $N_I$：新增杂质浓度，$N'_A = N_A + N_I$；\\
+    $Q_I = -q N_I R$：注入区新增电离杂质电荷面密度。
 }
 
-\concepttable{
-    \conrow{$N_I$}{离子注入所新增加的杂质浓度，满足 $N'_A = N_A + N_I$。}
-    \conrow{$Q_I$}{离子注入后在耗尽区内新增加的电离杂质电荷面密度：$Q_I = -q N_I R$}
-}
-
-\textbf{调整后的阈值电压公式 $V'_T$：}
-
-$$V'_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} - \frac{Q_I}{C_{ox}} - \frac{Q_A}{C_{ox}}\left(1 - \frac{q N_I R^2}{4\varepsilon_s \phi_{FP}}\right)^{\frac{1}{2}} + 2\phi_{FP}$$
-
-新公式在中间直接减去注入电荷项 $\frac{Q_I}{C_{ox}}$，并对原始耗尽层电荷项引入了根号修正系数。
-
-\textbf{阈值电压调整量 $\Delta V_T$：}
-
-$$\Delta V_T = V'_T - V_T = -\frac{Q_I}{C_{ox}} - \frac{Q_A}{C_{ox}}\left[\left(1 - \frac{q N_I R^2}{4\varepsilon_s \phi_{FP}}\right)^{\frac{1}{2}} - 1\right]$$
-
-\textbf{阈值电压调整方向（NMOS）}
-
-\noindent\textbf{1. 注入同类型杂质}
-
-\entry{符号分析}{$N_I > 0$，由于电离受主带负电，故新增加的电荷面密度 $Q_I < 0$。}
-\entry{结论}{N 沟道 MOSFET 的阈值电压向正方向调整（$V_T$ 增大）。}
-
-\noindent\textbf{2. 注入反类型杂质}
-
-\entry{符号分析}{$N_I < 0$，由于电离施主带正电，故新增加的电荷面密度 $Q_I > 0$。}
-\entry{结论}{N 沟道 MOSFET 的阈值电压向负方向调整（$V_T$ 减小）。}
+\entry{调整效果}{注入同类型杂质（$N_I>0$）$\rightarrow$ $V_T$ 增大；注入反类型杂质（$N_I<0$）$\rightarrow$ $V_T$ 减小。}
 
 \textbf{\hlgreen{MOSFET 直流电流电压方程}}
 
-\textbf{\hlblue{NMOS 相关公式}}
-
-\textbf{线性区：}
-
-$$I_D = \beta\left[(V_{GS}-V_T)V_{DS}-\frac{1}{2}V_{DS}^2\right]$$
-
-\textbf{饱和区：}
-
-$$I_{Dsat} = \frac{1}{2}\beta(V_{GS}-V_T)^2$$
-
-其中$V_{Dsat} = V_{GS}-V_T$，$\beta = \frac{W}{L} \mu_{eff} C_{ox}$。
-
-\textbf{亚阈值区：}
-
-$$I_{Dsub} = \frac{Z}{L}\mu_n C_D(\phi_S)\left(\frac{kT}{q}\right)^2
-\exp\left[\frac{q}{kT}\left(\frac{V_{GS}-V_T}{n}\right)\right]
-\cdot\left[1-\exp\left(-\frac{qV_{DS}}{kT}\right)\right]$$
-
-\textbf{\hlblue{PMOS 相关公式}}
-
-\textbf{线性区：}
-
-$$I_D = \beta\left[(V_{GS}-V_T)V_{DS}-\frac{1}{2}V_{DS}^2\right]$$
-
-\textbf{饱和区：}
-
-$$I_{Dsat} = \frac{1}{2}\beta(V_{GS}-V_T)^2$$
-
-其中$V_{Dsat} = V_{GS}-V_T$。
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{NMOS}
+    \concepttable{
+        \conrow{饱和漏压}{$V_{DS(sat)} = V_{GS} - V_{TN}$}
+        \conrow{线性区}{$\frac{W \mu_n C_{ox}}{2L} [2(V_{GS}-V_{T})V_{DS}]$}
+        \conrow{饱和区}{$I_D = \frac{W \mu_n C_{ox}}{2L} (V_{GS} - V_{TN})^2$}
+        \conrow{线性跨导}{$g_m = \frac{W \mu_n C_{ox}}{2L} V_{DS}$}
+        \conrow{饱和跨导}{$g_m = \frac{W \mu_n C_{ox}}{L} (V_{GS} - V_{TN})$}
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\linewidth}
+    \blue{PMOS}
+    \concepttable{
+        \conrow{饱和漏压}{$V_{SD(sat)} = V_{SG} - |V_{TP}|$}
+        \conrow{线性区}{$\frac{W \mu_p C_{ox}}{2L} [2(V_{SG}-|V_{T}|)V_{SD}]$}
+        \conrow{饱和区}{$I_D = \frac{W \mu_p C_{ox}}{2L} (V_{SG} - |V_{TP}|)^2$}
+        \conrow{线性跨导}{$g_m = \frac{W \mu_p C_{ox}}{2L} V_{SD}$}
+        \conrow{饱和跨导}{$g_m = \frac{W \mu_p C_{ox}}{L} (V_{SG} - |V_{TP}|)$}
+    }
+\end{minipage}
 
 \textbf{亚阈值区：}
 
@@ -542,11 +435,11 @@ $$I_{Dsub} = \frac{Z}{L}\mu_p C_D(\phi_S)\left(\frac{kT}{q}\right)^2
 
 $$S \equiv \frac{\text{d}V_{GS}}{\text{d}(\lg I_{\text{Dsub}})} = \ln(10)\frac{nkT}{q} = \ln(10)\left[1 + \frac{C_D(\phi_s)}{C_{ox}}\right]\frac{kT}{q}$$
 
-其中 $I_{\text{Dsub}}$：亚阈区漏电流（弱反型电流）；$C_D(\phi_s)$：耗尽层电容；$C_{ox}$：栅氧化层电容；$n = 1 + \frac{C_D}{C_{ox}}$：理想因子。}
+其中 $C_D(\phi_s)$：耗尽层电容；$C_{ox}$：栅氧化层电容；$n = 1 + \frac{C_D}{C_{ox}}$：理想因子。}
 
 \entry{物理意义}{\textbf{\textcolor{myred}{使 $I_{\text{Dsub}}$ 扩大 10 倍（一个数量级）所需的 $V_{GS}$ 增量}}。}
 
-\entry{开关性能要求与工艺减小措施}{要求 $S$ 尽量小（切换快、关断漏电小）。工艺措施：
+\entry{开关性能要求与工艺减小措施}{要求 $S$ 尽量小（切换快、关断漏电小）：
 \begin{itemize}[nosep,leftmargin=1em]
     \item 降低 $C_D(\phi_s)$：降低衬底掺杂浓度 $N_A$（$N_A \downarrow \Rightarrow C_D \downarrow$）
     \item 增大 $C_{ox}$：减小栅氧化层厚度 $T_{ox}$（$T_{ox} \downarrow \Rightarrow C_{ox} \uparrow$）
@@ -597,13 +490,13 @@ $$\begin{cases} I_{\text{Dsat1}} = \frac{\beta}{2}(V_{GS1} - V_T)^2 \\ I_{\text{
 \entry{\textbf{\textbf{\textcolor{myred}{非饱和区跨导}}}}{
 原始电流方程：$I_D = \beta \left[ (V_{GS} - V_T)V_{DS} - \frac{1}{2}V_{DS}^2 \right]$
 
-对 $V_{GS}$ 求偏导：$$g_m = \beta V_{DS}$$
+对 $V_{GS}$ 求偏导：$$\boxed{g_m = \beta V_{DS}}$$
 }
 
 \entry{\textbf{\textbf{\textcolor{myred}{饱和区跨导}}}}{
 原始电流方程：$I_{\text{Dsat}} = \frac{1}{2}\beta(V_{GS} - V_T)^2$
 
-对 $V_{GS}$ 求偏导：$$g_{ms} = \beta(V_{GS} - V_T) = \beta V_{\text{Dsat}}$$
+对 $V_{GS}$ 求偏导：$$\boxed{g_{ms} = \beta(V_{GS} - V_T) = \beta V_{\text{Dsat}}}$$
 }
 
 \entry{\textbf{提高饱和区跨导 $g_{ms}$ 的途径}}{
@@ -619,10 +512,11 @@ $$\begin{cases} I_{\text{Dsat1}} = \frac{\beta}{2}(V_{GS1} - V_T)^2 \\ I_{\text{
 
 \textbf{截止频率} $f_T$：器件电流增益为1时的频率
 
-截止频率$f_T = f\left| \frac{I_d}{I_i} \right|_{=1} = \frac{g_m}{2\pi(C_{gs_T} + C_M)} = \frac{g_m}{2\pi C_G}$
+$$f_T = f\left| \frac{I_d}{I_i} \right|_{=1} = \frac{g_m}{2\pi(C_{gs_T} + C_M)} = \frac{g_m}{2\pi C_G}$$
 
+\textbf{饱和区截止频率：}
 
-$$f_T = \frac{\mu_n(V_{GS} - V_T)}{2\pi L^2}$$
+$$\boxed{f_T = \frac{\mu_n(V_{GS} - V_T)}{2\pi L^2}}$$
 
 \begin{multicols}{2}
 \begin{minipage}{\columnwidth}
@@ -630,7 +524,7 @@ $$f_T = \frac{\mu_n(V_{GS} - V_T)}{2\pi L^2}$$
 
 \img{images/image-2026-06-22-19-23-21.png}
 
-$L$ 减小，$V_T$ 减小（通常称为阈值电压滚落）。
+沟道缩短使源/漏\textbf{\textcolor{myred}{耗尽区占比增大}}，有效沟道变短、$V_T$ 下降（阈值滚落）；横向电场增强致迁移率退化、速度饱和及 DIBL 效应，亚阈值斜率变差、漏电流增大，开关特性退化。
 
 \end{minipage}
 \begin{minipage}{\columnwidth}
@@ -638,7 +532,7 @@ $L$ 减小，$V_T$ 减小（通常称为阈值电压滚落）。
 
 \img{images/image-2026-06-22-19-23-58.png}
 
-$W$ 减小，$V_T$ 增加。
+$W$ 缩小使沟道边缘耗尽区占比增大，有效沟道宽度减小、$V_T$ 升高（阈值反向滚落），边缘电场致迁移率退化、驱动电流下降，开关特性退化。
 
 \end{minipage}
 \end{multicols}
@@ -649,16 +543,16 @@ $W$ 减小，$V_T$ 增加。
 
 \compTable{4}{
 \compheader{参数 & CE规则 & CV规则 & QCE规则}
-\comprow{器件尺寸 & $1/\alpha$ & $1/\alpha$ & $1/\alpha$}
-\comprow{电压 & $1/\alpha$ & $1$ & $\varepsilon/\alpha$}
-\comprow{掺杂浓度 & $\alpha$ & $\alpha^2$ & $\varepsilon\alpha$}
+\comprow{\textbf{\textcolor{myred}{器件尺寸}} & $1/\alpha$ & $1/\alpha$ & $1/\alpha$}
+\comprow{\textbf{\textcolor{myred}{电压}} & $1/\alpha$ & $1$ & $\varepsilon/\alpha$}
+\comprow{\textbf{\textcolor{myred}{掺杂浓度}} & $\alpha$ & $\alpha^2$ & $\varepsilon\alpha$}
 \comprow{耗尽层宽度 & $1/\alpha$ & $1/\alpha$ & $1/\alpha$}
-\comprow{阈值电压 & $1/\alpha$ & $1$ & $\varepsilon/\alpha$}
-\comprow{电流 & $1/\alpha$ & $\alpha$ & $\varepsilon^2/\alpha$}
+\comprow{\textbf{\textcolor{myred}{阈值电压}} & $1/\alpha$ & $1$ & $\varepsilon/\alpha$}
+\comprow{\textbf{\textcolor{myred}{电流}} & $1/\alpha$ & $\alpha$ & $\varepsilon^2/\alpha$}
 \comprow{负载电容 & $1/\alpha$ & $1/\alpha$ & $1/\alpha$}
 \comprow{电场强度 & $1$ & $\alpha$ & $\varepsilon$}
-\comprow{电路门延迟 & $1/\alpha$ & $1/\alpha^2$ & $1/(\varepsilon\alpha)$}
-\comprow{功耗 & $1/\alpha^2$ & $\alpha$ & $\varepsilon^3/\alpha^2$}
+\comprow{\textbf{\textcolor{myred}{电路门延迟}} & $1/\alpha$ & $1/\alpha^2$ & $1/(\varepsilon\alpha)$}
+\comprow{\textbf{\textcolor{myred}{功耗}} & $1/\alpha^2$ & $\alpha$ & $\varepsilon^3/\alpha^2$}
 \comprow{功耗密度 & $1$ & $\alpha^3$ & $\varepsilon^3$}
 \comprow{功耗延迟积 & $1/\alpha^3$ & $1/\alpha$ & $\varepsilon^2/\alpha^3$}
 }
@@ -679,8 +573,8 @@ $W$ 减小，$V_T$ 增加。
 \textbf{缺陷：}
 
 \concepttable{
-    \conrow{噪声容限降低}{$V_{DD}$ 按比例减小，噪声容限下降。}
-    \conrow{亚阈值漏电流增大}{$V_T$ 减小，漏电流大小指数项上升，关态漏电流增大（静态功耗增大）。}
+    \conrow{噪声容限}{$V_{DD}$ 按比例减小，噪声容限下降。}
+    \conrow{亚阈值漏电流}{$V_T$ 减小，漏电流大小指数项上升，关态漏电流增大（静态功耗增大）。}
     \conrow{接口不兼容}{电压减小导致与外部常规标准电压接口不兼容。}
 }
 
@@ -700,7 +594,7 @@ $W$ 减小，$V_T$ 增加。
 \textbf{缺陷：}
 
 \concepttable{
-    \conrow{电路功耗剧增}{单个器件功耗增大 $\alpha$ 倍。}s
+    \conrow{电路功耗剧增}{\textbf{\textcolor{myred}{单个器件功耗增大 $\alpha$ 倍}}。}
     \conrow{内部电场增强}{电压不变而距离减小，电场强度增强 $\alpha$ 倍，易导致击穿等可靠性问题。}
 }
 
@@ -793,6 +687,163 @@ $$EOT = \frac{\varepsilon_{SiO_2}}{\varepsilon_{ox}} t_{ox}$$
 }
 
 \textbf{\textcolor{mygreen}{第一章 PPT 整理完毕}}
+
+\textbf{\hlyellow{作业习题整理}}
+
+\prob{1}{}{某铝栅N沟道MOSFET的衬底掺杂浓度为$N_A=1\times10^{15}\,\text{cm}^{-3}$，栅SiO$_2$氧化层厚度为$120\,\text{nm}$，栅氧化层中有效电荷面密度为$3\times10^{11}\,\text{cm}^{-2}$，试确定该器件为耗尽型还是增强型，并计算$V_T$}
+
+\textbf{解题思路：} 根据 MOSFET 阈值电压公式，依次计算功函数差 $\phi_{MS}$、氧化层固定电荷项 $Q_{OX}/C_{OX}$、体效应系数 $K$ 及衬底费米势 $\phi_{FP}$，代入求得 $V_T$ 并依据其正负判断器件类型。
+
+\vspace{0.5em}
+\textbf{解题过程：}
+
+阈值电压公式为：
+$$V_{T} = \phi_{MS} - \frac{Q_{OX}}{C_{OX}} + K\sqrt{2\phi_{FP}} + 2\phi_{FP}, \quad K = \frac{\sqrt{2q N_A \varepsilon_s}}{C_{OX}}$$
+
+\begin{enumerate}
+    \item \textbf{功函数差 $\phi_{MS}$}
+    
+    Al-Si 材料，当 $N_A = 10^{15}\,\text{cm}^{-3}$（N 沟）时：
+    $$\phi_{MS} = -0.9\,\text{V}$$
+
+    \item \textbf{氧化层参数}
+    
+    $$Q_{ox} = 3 \times 10^{15} \times 1.6 \times 10^{-19} = 4.8 \times 10^{-4}\,C/m^2$$
+    $$C_{ox} = \frac{\varepsilon_{ox}}{t_{ox}} = \frac{3.9 \times 8.85 \times 10^{-12}}{120 \times 10^{-9}} = 2.88 \times 10^{-4}\,F/m^2$$
+
+    \item \textbf{衬底费米势 $\phi_{FP}$}
+    
+    $$\phi_{FP} = \frac{kT}{q} \ln \frac{N_A}{n_i} = 0.026 \times \ln \frac{10^{21}}{1.5 \times 10^{16}} \approx 0.288\,\text{V}$$
+
+    \item \textbf{体效应系数 $K$}
+    
+    $$K = \frac{\sqrt{2 \times 1.6 \times 10^{-19} \times 10^{21} \times 11.5 \times 8.85 \times 10^{-12}}}{2.88 \times 10^{-4}} \approx 0.828\,V^{1/2}$$
+
+    \item \textbf{计算 $V_T$ 并判断类型}
+    
+    $$V_T = -0.9 - \frac{4.8 \times 10^{-4}}{2.88 \times 10^{-4}} + 0.828 \times \sqrt{2 \times 0.288} + 2 \times 0.288$$
+    $$V_T = -0.9 - 1.67 + 0.476 + 0.576 \approx -1.518\,V$$
+\end{enumerate}
+
+由于 $V_T < 0$，该器件为\textbf{耗尽型}。
+
+\prob{2}{}{某N沟道MOSFET的$V_T=1V$，$\mu_n=500cm^2V^{-1}s^{-1}$，$SiO_2$氧化层厚度为$80nm$，$W/L=100$，求当$V_{GS}=6V$时，$V_{DS}$分别为2、4、6、8、10V时的漏极电流。}
+
+\textbf{解题思路}
+
+首先计算氧化层电容 $C_{ox}$ 与增强因子 $\beta$，进而得到过驱动电压 $V_{GS}-V_T$。根据 $V_{DS}$ 与 $V_{GS}-V_T$ 的大小关系判断工作区：当 $V_{DS} \le V_{GS}-V_T$ 时器件处于线性区，使用线性区电流公式计算 $I_D$；当 $V_{DS} > V_{GS}-V_T$ 时器件进入饱和区，漏极电流达到饱和值 $I_{Dsat}$，与 $V_{DS}$ 无关。
+
+\textbf{解题过程}
+
+\begin{enumerate}
+    \item \textbf{计算 $C_{ox}$ 与 $\beta$}
+    
+    $$ C_{ox} = \frac{\varepsilon_{ox}}{t_{ox}} = \frac{3.9 \times 8.85 \times 10^{-12}}{80 \times 10^{-9}} = 4.31 \times 10^{-4}\,F/m^2 $$
+    $$ \beta = \frac{W}{L} \mu C_{ox} = 100 \times 500 \times 10^{-4} \times 4.31 \times 10^{-4} = 2.16 \times 10^{-3} $$
+    
+    \item \textbf{过驱动电压}
+    
+    $$ V_{GS} - V_T = 6\,\text{V} - 1\,\text{V} = 5\,\text{V} $$
+    
+    \item \textbf{线性区电流 ($V_{DS} = 2\,\text{V}, 4\,\text{V}$)}
+    
+    线性区公式：
+    $$ I_D = \beta \left[ (V_{GS} - V_T)V_{DS} - \frac{1}{2}V_{DS}^2 \right] $$
+    
+    当 $V_{DS} = 2\,\text{V}$：
+    $$ I_D = 2.16 \times 10^{-3} \times [5 \times 2 - 0.5 \times 4] = 17.28\,\text{mA} $$
+    
+    当 $V_{DS} = 4\,\text{V}$：
+    $$ I_D = 2.16 \times 10^{-3} \times [5 \times 4 - 0.5 \times 16] = 25.92\,\text{mA} $$
+    
+    \item \textbf{饱和区电流 ($V_{DS} = 6\,\text{V}, 8\,\text{V}, 10\,\text{V}$)}
+    
+    饱和区公式：
+    $$ I_{Dsat} = \frac{1}{2}\beta (V_{GS} - V_T)^2 $$
+    
+    当 $V_{DS} > 5\,\text{V}$ 时，器件进入饱和区，电流恒定为：
+    $$ I_D = 0.5 \times 2.16 \times 10^{-3} \times 25 = 27\,\text{mA} $$
+\end{enumerate}
+
+\prob{3}{}{某N沟道MOSFET 的$N_A=1\times 10^{15} cm^{-3}$，栅$SiO_2$氧化层厚度为$150nm$，$\mu_n=500cm^2V^{-1}s^{-1}$，$L=4\mu m$，$W=100\mu m$，$V_T=0.5V$，计算$V_{GS}=4V$时的跨导$g_m$和截止频率$f_T$}
+
+\textbf{解题思路}：基于饱和区模型，先计算工艺跨导参数 $\beta$，再代入跨导公式 $g_{ms} = \beta(V_{GS} - V_T)$ 求得 $g_m$；截止频率 $f_T$ 由饱和区特征频率公式 $f_T = \mu_n(V_{GS} - V_T) / (2\pi L^2)$ 直接计算。
+
+\begin{enumerate}
+    \item \textbf{计算工艺跨导参数 $\beta$}
+    \[
+        \beta = \frac{W}{L} \mu_n C_{ox}
+             = 25 \times 500 \times 10^{-4}
+               \times \frac{3.9 \times 8.85 \times 10^{-12}}{150 \times 10^{-9}}
+             = 2.87 \times 10^{-4} \; \text{A/V}^2
+    \]
+
+    \item \textbf{计算饱和区跨导 $g_m$}
+    \[
+        g_{ms} = \beta (V_{GS} - V_T)
+              = 2.87 \times 10^{-4} \times 3.5
+              \approx 1.0 \times 10^{-3} \; \text{S}
+    \]
+
+    \item \textbf{计算截止频率 $f_T$}
+    \[
+        f_T = \frac{\mu_n (V_{GS} - V_T)}{2\pi L^2}
+            = \frac{500 \times 10^{-4} \times 3.5}
+                   {2\pi \times (4 \times 10^{-6})^2}
+            = 1.74 \times 10^9 \; \text{Hz}
+    \]
+\end{enumerate}
+
+\prob{4}{}{试计算题3中器件在工作电压为$5V$时，分别按CV和CE规则缩小$0.7$倍时($1/\alpha=0.7$)，对应的$V_T$、$I_D$、$t_d$、动态功耗的值}
+
+\textbf{解题思路：}根据恒定电场（CE）与恒定电压（CV）两种缩放规则，分别对阈值电压 $V_T$、漏极电流 $I_D$、延迟时间 $t_d$ 及动态功耗 $P_d$ 进行缩放计算。CE 规则下，电压与尺寸同比例缩小 $1/\alpha$，电流与功耗按 $1/\alpha$ 缩放；CV 规则下，电压保持不变，电流与功耗按 $\alpha$ 放大，延迟按 $1/\alpha^2$ 缩小。
+
+\vspace{0.5em}
+\textbf{CV 缩放规则（$\alpha = 1.43$）}
+
+\begin{align*}
+    V_T &= 0.5 \, \text{V} \\
+    I_D &= 1.76 \, \text{mA} \times 1.43 = 2.52 \, \text{mA} \\
+    t_d &= 2.61 \times 10^{-10} \, \text{s} \times 0.7 \times 0.7
+         = 1.28 \times 10^{-10} \, \text{s} \\
+    P_d &= 8.81 \times 10^{-3} \, \text{W} \times 1.43
+         = 1.26 \times 10^{-2} \, \text{W}
+\end{align*}
+
+\vspace{0.5em}
+\textbf{CE 缩放规则（$\alpha = 1.43$）}
+
+\begin{align*}
+    V_T &= 0.5 \, \text{V} \times 0.7 = 0.35 \, \text{V} \\
+    I_D &= 1.76 \, \text{mA} \times 0.7 = 1.23 \, \text{mA} \\
+    t_d &= 2.61 \times 10^{-10} \, \text{s} \times 0.7
+         = 1.83 \times 10^{-10} \, \text{s} \\
+    P_d &= 8.81 \times 10^{-3} \, \text{W} \times 0.7 \times 0.7
+         = 4.32 \times 10^{-3} \, \text{W}
+\end{align*}
+
+\prob{5}{}{已知某技术代的等效$EOT$为$1.7nm$，试计算分别采用$HfO_2$和$Al_2O_3$作为栅介质材料的厚度}
+
+\textbf{解题思路：}利用等效氧化层厚度（EOT）定义式，将目标介质的物理厚度表示为 EOT 与相对介电常数之比的函数，代入已知参数求解。
+
+已知 $SiO_2$ 相对介电常数 $\varepsilon_{SiO_2}=3.9$，$HfO_2$ 相对介电常数 $\varepsilon_{HfO_2}=25$，$Al_2O_3$ 相对介电常数 $\varepsilon_{Al_2O_3}=9$，目标 $EOT=1.7\,\text{nm}$。
+
+由 EOT 定义：
+\[
+EOT = \frac{\varepsilon_{SiO_2}}{\varepsilon_{ox}} t_{ox}
+\quad\Longrightarrow\quad
+t_{ox} = \frac{\varepsilon_{ox}}{\varepsilon_{SiO_2}} EOT
+\]
+
+分别计算两种介质厚度：
+\begin{align*}
+t_{HfO_2} &= \frac{\varepsilon_{HfO_2}}{\varepsilon_{SiO_2}} EOT
+          = \frac{25 \times 1.7}{3.9}
+          \approx 10.9\,\text{nm} \\[4pt]
+t_{Al_2O_3} &= \frac{\varepsilon_{Al_2O_3}}{\varepsilon_{SiO_2}} EOT
+            = \frac{9 \times 1.7}{3.9}
+            \approx 3.9\,\text{nm}
+\end{align*}
 
 \section{第二章\ SOI\ MOS器件}
 
@@ -893,7 +944,9 @@ SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。即\textbf{\textcol
 
 \subsubsection{SOI 器件分类}
 
-\entry{分类判据}{以沟道最大耗尽区宽度 $X_d$ 与沟道下面硅膜的厚度 $T_{si}$ 的相对大小关系分类。}
+以沟道最大耗尽区宽度 $X_d$ 与沟道下面硅膜的厚度 $T_{si}$ 的相对大小关系分类。
+
+\img{images/image-2026-06-30-20-47-35.png}
 
 \compTable[L]{3}{
     \compheader{\textbf{种类} & \textbf{定量边界条件} & \textbf{体区状态}}
@@ -978,7 +1031,7 @@ SOI 即 \textbf{Silicon-on-insulator}（绝缘体上硅）。即\textbf{\textcol
     \conrow{极低电源电压}{最小工作电压可达 $0.4\text{ V}$，降低功耗。}
 }
 
-\textbf{\hlblue{工艺流程}}（这里按照 CWY 期末复习课件的 10 步整理）
+\textbf{\hlblue{工艺流程}}
 
 FD-SOI与MOSFET平面工艺制程是兼容的，其前段工艺采用了\textbf{\textcolor{myred}{前栅HKMG}}和\textbf{\textcolor{myred}{应变硅技术}}
 
@@ -1089,7 +1142,7 @@ $$I_D = \beta \left[ (V_{GS} - V_T)V_{DS} - \frac{1}{2}V_{DS}^2 \right]$$
 
 \entry{电流公式}{
         
-    $$I_{D,d} = \frac{Z}{L}\mu_{nf}C_{oxf}\left[ (V_{Gf} - V_{T,bd})V_D - \left( 1 + \frac{C_{Si}C_{oxb}}{(C_{Si}+C_{oxb})C_{oxf}} \right) \frac{V_D^2}{2} \right]$$
+    $$\boxed{I_{D,d} = \frac{Z}{L}\mu_{nf}C_{oxf}\left[ (V_{Gf} - V_{T,bd})V_D - \left( 1 + \frac{C_{Si}C_{oxb}}{(C_{Si}+C_{oxb})C_{oxf}} \right) \frac{V_D^2}{2} \right]}$$
 }
 
 \textbf{\textcolor{myred}{调控规律：}}背面耗尽时，$I_D$ 随 $V_{Gb}$ 增大而增大
@@ -1129,14 +1182,6 @@ $$S \approx (\ln 10)\frac{kT}{q}$$
 
 于是 SOI 器件的发展顺序：\textbf{\textcolor{myred}{PD-SOI $\rightarrow$ FD-SOI $\rightarrow$ UTB-SOI}}
 }
-
-\subsubsection{寄生效应}
-
-\textbf{\textcolor{mygreen}{由于未出现在期末复习 PPT 中，暂时不进行整理}}
-
-\subsubsection{SOI-like 技术}
-
-\textbf{\textcolor{mygreen}{由于未出现在期末复习 PPT 中，暂时不进行整理}}
 
 \textbf{\textcolor{mygreen}{第二章 PPT 整理完毕}}
 
@@ -1197,7 +1242,7 @@ $$S \approx (\ln 10)\frac{kT}{q}$$
     \comprow{特点 & 版面效率高 & 工艺复杂度高}
 }
 
-Fin的宽度远小于光刻机所能制造的最小尺寸，因此Fin的有源区并不是通过光刻形成的，而是采用\textbf{\textcolor{myred}{SADP（self-aligned double patterning）技术}}
+Fin的宽度远小于光刻机所能制造的最小尺寸，因此Fin的有源区并不是通过光刻形成的，而是采用\textbf{\textcolor{myred}{SADP技术}}
 
 \comment{1}{\textbf{\textcolor{myred}{为什么FinFET要把Fin宽度制造得很薄？}}}{沟道内的点，距离栅极越远，由于短沟道效应（具体为 DIBL，漏极引起的势垒降低），导致沟道区域的势垒高度降低（对应能带图中降低了 $\Phi_{DIBL}$），导致栅压控制能力变弱，器件性能越差，因此要将栅宽做得很薄，必须设法使沟道中任意点到栅的距离 $\le 0.25 \times L_g$（$L_g$为栅长） 的范围内。}
 
@@ -1206,11 +1251,11 @@ Fin的宽度远小于光刻机所能制造的最小尺寸，因此Fin的有源�
 \textbf{\textcolor{mygreen}{在此省略分析过程，直接记住器件优点}}
 
 \concepttable{
-\conrow{结构优势}{通过几何结构加强了对短沟道效应的抑制}
-\conrow{亚阈值特性}{器件的亚阈值斜率接近理论理想值}
-\conrow{功耗与性能}{具有低的泄漏电流，适用于高性能和低功耗}
-\conrow{掺杂与一致性}{沟道区掺杂浓度无需按比例增加，可以轻掺杂甚至不掺杂。避免了迁移率退化及沟道杂质涨落（RDF），提高了器件参数的一致性}
-\conrow{驱动能力}{器件导通时，栅覆盖的多个表面参与导电，增大了电流驱动能力（即总有效栅宽 $W_{\text{eff}}$ 增大）。}
+\conrow{结构优势}{抑制短沟道效应}
+\conrow{亚阈值特性}{亚阈值斜率接近理想值}
+\conrow{功耗与性能}{低泄漏，适用高性能与低功耗}
+\conrow{掺杂与一致性}{轻掺杂，避免迁移率退化与RDF，一致性高}
+\conrow{驱动能力}{多表面导电，增大 $W_{\text{eff}}$ 与驱动电流}
 }
 
 \subsection{FinFET 结构设计}
@@ -1274,18 +1319,14 @@ $$S_{\text{准双栅}} = 0.75 \times S_{\text{三栅}} = 0.60 \times S_{\text{�
 
 \textbf{物理机理}：\textbf{\textcolor{myred}{离子注入与扩散在原子尺度离散随机}}。纳米尺度下（$L_g < 100\text{ nm}$）沟道耗尽层体积 $W \cdot L \cdot X_{dep}$ 极小，杂质原子总数 $N$ 降至数十至数百个。
 
-\entry{杂质数目 N}{服从泊松分布，$\sigma_N = \sqrt{N}$，相对涨落 $\frac{\sigma_N}{N} = \frac{1}{\sqrt{N}}$。\textbf{\textcolor{myred}{$N$ 越小，涨落越大，相邻器件杂质数目出现显著微观差异}}。}
-
 \concepttable{
     \conrow{杂质数目涨落}{沟道内杂质原子总数的统计起伏。}
     \conrow{杂质位置涨落}{杂质原子在耗尽层内的具体坐标随机变化。}
 }
 
-RDD通过掺杂浓度 $N_A$ 的起伏\textbf{\textcolor{myred}{映射为阈值电压 $V_T$ 波动}}：
+\entry{杂质数目 N}{服从泊松分布，$\sigma_N = \sqrt{N}$，相对涨落 $\frac{\sigma_N}{N} = \frac{1}{\sqrt{N}}$。\textbf{\textcolor{myred}{$N$ 越小，涨落越大，相邻器件杂质数目出现显著微观差异}}。}
 
-$$V_T = \phi_{MS} - \frac{Q_{ox}}{C_{ox}} + \frac{K(2\phi_{FP})^{\frac{1}{2}}}{C_{ox}} + 2\phi_{FP}$$
-
-其中主要影响系数 $K \propto \sqrt{N_A}$，掺杂浓度的微观起伏直接传导至 $V_T$。
+RDD通过掺杂浓度 $N_A$ 的起伏\textbf{\textcolor{myred}{映射为阈值电压 $V_T$ 波动}}，其中主要影响系数 $K \propto \sqrt{N_A}$，掺杂浓度的微观起伏直接传导至 $V_T$。
 
 \textbf{\hlblue{杂质数目涨落影响}}
 
@@ -1404,24 +1445,22 @@ $\delta_i$：实际栅边沿与理想边沿的几何位置偏差；$n$：沿线�
     \conrow{侧墙光刻}{边缘由均匀薄膜沉积外延侧壁定义 → 沿栅宽方向 $L_g$ 高度一致，消除几何畸变引入的局域短沟道效应。}
 }
 
-\subsubsection{栅材料的功函数变化}
+\subsubsection{栅材料的功函数变化（WKF）}
 
-\entry{物理机制}{金属栅（HK/MG）由随机取向晶粒构成，各晶向逸出功不同 → 栅平面内功函数 $\phi_M$ 空间不均匀，即 WKF。\textbf{\textcolor{myred}{由 $\phi_{MS} = \phi_M - \phi_S$，$\phi_M$ 局域波动直接传导至 $V_T$，引发 $\sigma_{V_T}$ 退化。}}}
+\entry{物理机制}{金属栅（HK/MG）由随机取向晶粒构成，各晶向逸出功不同 → 栅平面内功函数 $\phi_M$ 空间不均匀。\textbf{\textcolor{myred}{由 $\phi_{MS} = \phi_M - \phi_S$，$\phi_M$ 局域波动直接传导至 $V_T$，引发 $\sigma_{V_T}$ 退化。}}}
 
 \entry{材料依赖性（栅面积 $(16\text{ nm})^2$）}{$\sigma_{V_{th}}$ 由低到高：$\text{TiN}\,(98\text{ mV}) < \text{TaN}\,(120\text{ mV}) < \text{WN}\,(157\text{ mV}) < \text{MoN}\,(295\text{ mV})$。\textbf{\textcolor{myred}{晶粒尺寸与晶向各向异性决定涨落敏感度}}。}
 
-\subsubsection{NMOS 与 PMOS 涨落源非对称性对比}
+\subsubsection{NMOS 与 PMOS 涨落源对比}
 
 NMOS 和 PMOS上拉电阻的涨落源非对称性对比：
 
 \concepttable{
-    \conrow{NMOS $\sigma_{V_{th}}$ 排序}{RDD（$43\text{ mV}$）$>$ PVE（$28\text{ mV}$）$>$ WKF（$24.7\text{ mV}$）。\textbf{\textcolor{myred}{沟道掺杂精度是 NMOS 一致性核心}}。}
+    \conrow{NMOS $\sigma_{V_{th}}$ 排序}{RDD（$43\text{ mV}$）$>$ PVE（工艺变化造成关键尺寸变化）（$28\text{ mV}$）$>$ WKF（$24.7\text{ mV}$）。\textbf{\textcolor{myred}{沟道掺杂精度是 NMOS 一致性核心}}。}
     \conrow{PMOS $\sigma_{V_{th}}$ 排序}{WKF（$73.6\text{ mV}$）$>$ RDD（$42.2\text{ mV}$）$>$ PVE（$27.6\text{ mV}$）。\textbf{\textcolor{myred}{栅极晶粒起伏是 PMOS 一致性核心}}。}
 }
 
 \textbf{\hlblue{电路级时序涨落对比}}
-
-\entry{瞬态波形离散}{200 晶体管样本仿真表明：$\sigma_{V_{th}}$ 离散引致 $t_f$、$t_r$、$t_{HL}$、$t_{LH}$ 开关沿发散，输出瞬态曲线在转换沿形成明显散布带。}
 
 \concepttable{
     \conrow{RDD}{四项时序参数影响均衡，$\sigma \sim 0.08\!-\!0.13\text{ ps}$。}
@@ -1435,15 +1474,36 @@ NMOS 和 PMOS上拉电阻的涨落源非对称性对比：
 
 \entry{物理根源}{宏观电流衰减直接反映老化应力下 \textbf{\textcolor{myred}{$\Delta V_T > 0$（阈值电压正向漂移）或 $\mu_{eff}$（有效迁移率）严重退化}} 等微观病变。}
 
-\subsubsection{偏置温度不稳定性}
+\entry{可靠性研究方法}{
+    \concepttable{
+        \conrow{加速退化实验}{工作条件下退化时间很长（~年）；利用高应力条件（高温、高压）加速退化；从高应力条件外推器件寿命。}
+        \conrow{退化表征方法}{电学参数提取（阈值电压漂移、饱和漏电流改变）；缺陷测量（CV、电荷泵等，测氧化层陷阱、界面态）。}
+        \conrow{缺陷产生模型、寿命预测模型}{预测准确性依赖于退化随时间演化的模型准确性。}
+    }
+}
 
-\entry{BTI 定义}{高温且栅极承受较大偏压应力下，器件特性参数（核心为 $V_{th}$）发生漂移的现象。}
+\subsubsection{偏置温度不稳定性（BTI）}
+
+\entry{定义}{器件在高温且栅极承受较大偏置电压时，特性参数发生漂移的现象（如 $V_{th}$）。}
 
 \concepttable{
-    \conrow{触发条件}{高温 + 栅极大偏置电压（应力电场）。}
-    \conrow{极性分类}{\textbf{PBTI}（正偏压）：正栅压应力，主要对应 nFET。\ \textbf{NBTI}（负偏压）：负栅压应力，主要对应 pFET。}
-    \conrow{典型 NBTI 偏置状态}{pFET（n-well 上，$p^+$ 源漏）：源/漏/n-well/p-衬底接地，栅极施加负压 $V$。}
-    \conrow{核心电学特征}{应力阶段参数持续退化，恢复阶段出现松弛回漂。}
+    \conrow{分类}{根据栅压极性分为 \textbf{PBTI}（正偏）与 \textbf{NBTI}（负偏）。}
+    \conrow{物理关联}{与栅氧化层/半导体界面及氧化层缺陷密切相关。}
+}
+
+\subsubsection{热载流子注入(HCI)}
+
+\entry{定义}{沟道载流子在强横向电场下加速获得高动能，与氧化层界面作用释放能量，破坏结构并产生缺陷。}
+
+\subsubsection{经时击穿(TDDB)}
+
+\entry{定义}{栅氧化层在工作一段时间后发生击穿的一种失效现象。}
+
+\entry{现象}{
+    \concepttable{
+        \conrow{软击穿}{电流、电压突然增加，器件仍可正常工作。}
+        \conrow{硬击穿}{大电流释放能量致栅氧化层破裂，器件失效。}
+    }
 }
 
 \section{第五章\ 存储器}
@@ -1463,9 +1523,9 @@ NMOS 和 PMOS上拉电阻的涨落源非对称性对比：
 存储器分类基于\textbf{\textcolor{myred}{物理特性（易失性/非易失性）和工作原理}}：
 
 \concepttable{
-    \conrow{挥发随机存储器（DRAM、SRAM）}{断电数据消失，随机地址读写，位于层次金字塔上部。}
-    \conrow{不挥发性存储器（Flash）}{断电不丢失，ROM$\rightarrow$PROM$\rightarrow$EPROM$\rightarrow$E$^2$PROM$\rightarrow$\textbf{Flash}（SSD主力），擦写速度慢。}
-    \conrow{新型非易失性存储器}{结合RAM高速与ROM非易失性，SCM层候选：\textbf{CTM}、\textbf{FeRAM}、\textbf{MRAM}、\textbf{PRAM}、\textbf{RRAM}。}
+    \conrow{挥发随机存储器}{断电数据消失，随机地址读写，位于层次金字塔上部，包含\textbf{DRAM、SRAM}。}
+    \conrow{不挥发性存储器}{断电不丢失，ROM$\rightarrow$PROM$\rightarrow$EPROM$\rightarrow$E$^2$PROM$\rightarrow$\textbf{Flash}（SSD主力），擦写速度慢。}
+    \conrow{新型存储器}{结合RAM高速与ROM非易失性，SCM层候选：\textbf{CTM}、\textbf{FeRAM}、\textbf{MRAM}、\textbf{PRAM}、\textbf{RRAM}。}
 }
 
 发展脉络：$ROM \rightarrow PROM \rightarrow EPROM \rightarrow E^2PROM \rightarrow Flash$
@@ -1591,7 +1651,9 @@ SRAM核心为\textbf{\textcolor{myred}{交叉耦合反相器对}}（节点N1/N2�
 \textbf{\hlblue{SRAM单元稳定性}}
 
 \concepttable{
-    \conrow{不稳定性来源}{内部：工艺偏差致阈值电压/宽长比失配；外部：$\alpha$粒子辐射、线路串扰、$V_{DD}$波动。干扰超阈值则正反馈破坏$\to$状态翻转。}
+    \conrow{不稳定性来源}{\textbf{内部：}工艺偏差致阈值电压/宽长比失配；
+    
+    \textbf{外部：}$\alpha$粒子辐射、线路串扰、$V_{DD}$波动。干扰超阈值则正反馈破坏$\to$状态翻转。}
     \conrow{写稳定性}{外部驱动强制改变内部状态的难易程度——越易写入则写稳定性越好。}
     \conrow{读稳定性}{读操作时内部节点受位线电压扰动，抵抗干扰维持原态的能力。}
 }
@@ -1651,9 +1713,9 @@ $$\beta_R = \frac{K_d}{K_a} = \frac{K_1}{K_5} = \frac{K_2}{K_6}$$
 \entry{三种编程方法及物理机制}{
     掩膜式ROM在出厂制造时就通过光刻步骤决定了数据，其具体的物理实现手段有三种：
     \concepttable{
-        \conrow{离子注入掩膜版编程}{通过光刻掩膜，在特定单元的 NMOS 沟道中注入硼（B）离子。由于硼是p型掺杂，这会显著提高该MOS管的阈值电压（$V_{TH}$）。在正常读取电压下，该管子保持截止，位线不放电。}
-        \conrow{有源区掩膜版编程}{改变有源区几何拓扑，只有当有源区与多晶硅栅极发生空间叠置时，才会实际形成MOS管。若不叠置，则该位置无沟道，相当于永久截止。}
-        \conrow{引线孔掩膜版编程}{控制接触孔（Contact）的有无。只有存在接触孔时，MOS管才能与位线（BL）电学连接并对其放电。有孔导通放电存“1”，无孔不导通保持预充存“0”。}
+        \conrow{离子注入掩膜版编程}{沟道注入硼离子，$V_{TH}$升高，读取时截止，位线不放电。}
+        \conrow{有源区掩膜版编程}{控制有源区与栅极叠置，无叠置则无沟道，永久截止。}
+        \conrow{引线孔掩膜版编程}{控制接触孔有无，有孔导通放电存“1”，无孔保持预充存“0”。}
     }
 }
 
@@ -1677,8 +1739,10 @@ $$\beta_R = \frac{K_d}{K_a} = \frac{K_1}{K_5} = \frac{K_2}{K_6}$$
 \subsubsection{EPROM/E²PROM/Flash}
 
 \entry{共同点}{
-    Flash、EPROM、E²PROM 均是基于浮栅管结构实现信息存储。它们都是利用浮栅内捕获电子导致的阈值电压漂移来存储数据。
+    Flash、EPROM、E²PROM 都是利用浮栅内捕获电子导致的阈值电压漂移来存储数据。
 }
+
+\img{images/image-2026-06-30-21-51-02.png}
 
 \entry{EPROM/E²PROM/Flash 对比}{
     \compTable{4}{
@@ -1704,9 +1768,11 @@ $$\beta_R = \frac{K_d}{K_a} = \frac{K_1}{K_5} = \frac{K_2}{K_6}$$
         }
     }
     \entry{存储机制的物理本质区别}{
-    传统的闪存（Flash）依靠导电的浮栅（多晶硅）来存储电荷。CTM 的本质创新在于：利用绝缘的氮化硅（$\text{SiN}$）俘获层内部的高密度固有陷阱（Traps）来俘获并存储电荷。
+    CTM 的本质创新在于\textbf{\textcolor{myred}{利用绝缘的氮化硅（$\text{SiN}$）俘获层内部的高密度固有陷阱}}（Traps）来俘获并存储电荷。
     }
 }
+
+
 
 \compTable{4}{
     \compheader{特征 & Flash（浮栅） & CTM（电荷陷阱）}
@@ -2140,7 +2206,7 @@ $$P = C_{\text{L}}V_{\text{DD}}^2\alpha f + I_{\text{leak}}V_{\text{DD}}$$
 
 \subsubsection{开关机制}
 
-\entry{TFET 导通机制 —— 关态下的超低漏电}{
+\entry{关态下具有超低漏电}{
     当 $V_{\text{GS}} = 0\text{V}$ 时，器件处于关态。源端与沟道之间的势垒极宽，电子无法发生隧穿。$I_{\text{OFF}}$ 本质是反偏 P-I-N 结的\textbf{\textcolor{myred}{反向漏电流}}。
 
     \concepttable{

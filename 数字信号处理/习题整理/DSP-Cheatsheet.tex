@@ -1129,24 +1129,11 @@ $$x(n)=\operatorname{Res}[F(z), 0.5]+\operatorname{Res}[F(z), 2]=3\cdot\left(\fr
 
 \textbf{解：}
 
-\textbf{解题思路：}直接利用 DFT 定义式 $X(k)=\sum_{n=0}^{N-1}x(n)W_N^{kn}$ 逐项计算，并结合几何级数求和公式、DFT 频移性质及欧拉公式进行化简。
+\textbf{解题思路：}答案是直接利用 DFT 定义式 $X(k)=\sum_{n=0}^{N-1}x(n)W_N^{kn}$ 逐项计算，我们不可能这么算，直接查表就好。
 
-(1) 常数序列 $x(n)=1$：
-\[
-X(k)=\sum_{n=0}^{N-1}W_N^{kn}
-     =\sum_{n=0}^{N-1}e^{-j\frac{2\pi}{N}kn}
-     =\frac{1-e^{-j\frac{2\pi}{N}kN}}{1-e^{-j\frac{2\pi}{N}k}}
-     =\begin{cases}
-        N, & k=0 \\
-        0, & k=1,2,\cdots,N-1
-       \end{cases}
-\]
+(1)~(9)都可以直接查表，表上都有直接答案。
 
-(2) 单位脉冲序列 $x(n)=\delta(n)$：
-\[
-X(k)=\sum_{n=0}^{N-1}\delta(n)W_N^{kn}=1,
-\quad k=0,1,\cdots,N-1
-\]
+(10)的话先查$R_N(n)$，再用频域微分性质。
 
 \prob{3}{}{已知长度为 $N=10$ 的两个有限长序列：\newline $x_1(n)=\begin{cases} 1 & 0 \leqslant n \leqslant 4 \\ 0 & 5 \leqslant n \leqslant 9 \end{cases}$\newline $x_2(n)=\begin{cases} 1 & 0 \leqslant n \leqslant 4 \\ -1 & 5 \leqslant n \leqslant 9 \end{cases}$\newline 用矩阵相乘的方式计算 $y(n)=x_1(n)\circledast x_2(n)$，循环卷积区间长度 $L=10$。}
 
@@ -1184,19 +1171,143 @@ y(n) = \begin{cases}
 
 \prob{7}{}{证明：若 $x(n)$ 为实序列，$X(k)=\mathrm{DFT}[x(n)]_N$，则 $X(k)$ 为共轭对称序列，即 $X(k)=X^*(N-k)$；若 $x(n)$ 实偶对称，即 $x(n)=x(N-n)$，则 $X(k)$ 也实偶对称；若 $x(n)$ 实奇对称，即 $x(n)=-x(N-n)$，则 $X(k)$ 为纯虚函数并奇对称。}
 
+\textbf{解：}
+
+直接背结论：实序列的 DFT 是共轭对称序列，即 $X(k)=X^*(N-k)$（后面给出半个序列的题能用上这个结论）。
+
+以及实偶-实偶，虚偶-虚偶，实奇-虚奇，虚奇-实奇（\textbf{\textcolor{mygreen}{这个 cheatsheet 上有}}）
 
 \prob{12}{}{已知 $f(n)=x(n)+\mathrm{j}y(n)$，$x(n)$ 与 $y(n)$ 均为长度为 $N$ 的实序列。设\newline $F(k)=\mathrm{DFT}[f(n)]_N \quad 0 \leqslant k \leqslant N-1$\newline (1) \quad $F(k)=\dfrac{1-a^N}{1-aW_N^k}+\mathrm{j}\,\dfrac{1-b^N}{1-bW_N^k} \quad a,b\text{ 为实数}$\newline (2) \quad $F(k)=1+\mathrm{j}N$\newline 试求 $X(k)=\mathrm{DFT}[x(n)]_N$，$Y(k)=\mathrm{DFT}[y(n)]_N$ 以及 $x(n)$ 和 $y(n)$。}
 
+\textbf{解：}
+
+\textbf{解题思路：} 利用复序列的实部和虚部与其 DFT 的共轭对称分量之间的关系：实部对应共轭对称分量，虚部对应共轭反对称分量。由已知 $F(k)$ 的表达式分别提取 $X(k)$ 和 $Y(k)$，再通过 IDFT 求和公式及正交性得到时域序列。
+
+（1）由 $f(n)=x(n)+\mathrm{j}y(n)$，有
+\[
+X(k) = F_{\text{ep}}(k) = \frac{1}{2}[F(k) + F^*(N-k)],
+\quad
+Y(k) = -\mathrm{j}F_{\text{op}}(k) = \frac{1}{2\mathrm{j}}[F(k) - F^*(N-k)].
+\]
+
+代入 $F(k) = \dfrac{1-a^N}{1-aW_N^k} + \mathrm{j}\,\dfrac{1-b^N}{1-bW_N^k}$，得
+\[
+X(k) = \frac{1 - a^N}{1 - a W_N^k},
+\qquad
+Y(k) = \frac{1 - b^N}{1 - b W_N^k}.
+\]
+
+由 cheatsheet 上查表可知：
+
+\[
+x(n) = a^n, \quad 0 \le n \le N-1.
+\]
+
+同理可得
+\[
+y(n) = b^n, \quad 0 \le n \le N-1.
+\]
+
+(2)同理：
+$$F(k) = 1 + \text{j}N$$
+
+\textbf{\textcolor{myred}{记住计算时的符号变化：}}
+
+\textbf{\textcolor{myred}{$$X(k) = \frac{1}{2} [F(k) + F^*(N-k)] = \frac{1}{2} [1 + \text{j}N + 1 - \text{j}N] = 1$$}}
+
+$$Y(k) = \frac{1}{2\text{j}} [F(k) - F^*(N-k)] = N$$
+
+$$x(n) = \frac{1}{N} \sum_{k=0}^{N-1} W_N^{-kn} = \delta(n)$$
+
+$$y(n) = \frac{1}{N} \sum_{k=0}^{N-1} W_N^{-kn} = N\delta(n)$$
+
+\comment{}{}{
+\textbf{核心结论：} 设 $x(n)$ 长度为 $L_x$，$y(n)$ 长度为 $L_y$，DFT 点数为 $N$。线性卷积 $f_l(n)=x(n)*y(n)$ 长度为 $L=L_x+L_y-1$。$N$ 点循环卷积 $f(n)=\mathrm{IDFT}[X(k)Y(k)]_N$ 与线性卷积满足
+\[
+f(n) = \sum_{m=-\infty}^{\infty} f_l(n+Nm) R_N(n).
+\]
+当 $N \ge L$ 时无混叠，对 $0 \le n \le N-1$ 有 $f(n)=f_l(n)$；当 $N < L$ 时，混叠区间为 $0 \le n \le L-N-1$，在无混叠区间 $L-N \le n \le N-1$ 上 $f(n)=f_l(n)$。
+}
+
 \prob{14}{}{两个有限长序列 $x(n)$ 和 $y(n)$ 的零值区间为\newline $x(n)=0 \quad n<0,\,8\leqslant n$\newline $y(n)=0 \quad n<0,\,20\leqslant n$\newline 对每个序列作 20 点 DFT，即\newline $X(k)=\mathrm{DFT}[x(n)] \quad k=0,1,\cdots,19$\newline $Y(k)=\mathrm{DFT}[y(n)] \quad k=0,1,\cdots,19$\newline 如果\newline $F(k)=X(k)\cdot Y(k) \quad k=0,1,\cdots,19$\newline $f(n)=\mathrm{IDFT}[F(k)] \quad k=0,1,\cdots,19$\newline 试问在哪些点上 $f(n)$ 与 $x(n)*y(n)$ 值相等，为什么？}
 
+\textbf{解题思路：} 本题考察循环卷积与线性卷积的关系。线性卷积 $f_l(n)=x(n)*y(n)$ 的长度为 $L_x+L_y-1=8+20-1=27$，而 20 点循环卷积 $f(n)$ 是线性卷积以 20 为周期延拓后取主值区间的结果。当线性卷积的长度不超过 DFT 点数时，周期延拓无混叠，循环卷积与线性卷积在主值区间内相等。
+
+解：记线性卷积 $f_l(n)=x(n)*y(n)$，其长度为
+\[
+L = 8 + 20 - 1 = 27.
+\]
+20 点循环卷积为
+\[
+f(n) = \mathrm{IDFT}[F(k)] = x(n) \circledast y(n).
+\]
+由循环卷积与线性卷积的关系（教材式 (3.4.3)）得
+\[
+f(n) = \sum_{m=-\infty}^{\infty} f_l(n+20m) R_{20}(n).
+\]
+
+$f_l(n)$ 的非零区间为 $0 \leqslant n \leqslant 26$，以 20 为周期延拓后，混叠区间为 $0 \leqslant n \leqslant 6$（即 $n$ 与 $n+20$ 重叠）。因此，在无混叠的区间
+\[
+7 \leqslant n \leqslant 19
+\]
+上有
+\[
+f(n) = f_l(n) = x(n) * y(n).
+\]
+
 \prob{15}{}{已知实序列 $x(n)$ 的 8 点 DFT 的前 5 个值为 $0.25$，$0.125-\mathrm{j}0.3018$，$0$，$0.125-\mathrm{j}0.0518$，$0$。\newline (1) 求 $X(k)$ 的其余 3 点的值；\newline (2) $x_1(n)=\sum\limits_{m=-\infty}^{+\infty}x(n+5+8m)R_8(n)$，求 $X_1(k)=\mathrm{DFT}[x_1(n)]_8$；\newline (3) $x_2(n)=x(n)\mathrm{e}^{\mathrm{j}\pi n/4}$，求 $x_2(k)=\mathrm{DFT}[x_2(n)]_8$。}
+
+\textbf{解题思路：} 第一问是利用实序列 DFT 的\textbf{\textcolor{myred}{共轭对称性}}求未知点；2-3 问是考察 DFT 的基本性质。
+
+(1) 由实序列 DFT 的共轭对称性 \(X(k)=X^*(N-k)\)，得
+\[
+\{X(5),X(6),X(7)\}
+= \{0.125+\mathrm{j}0.0518,\ 0,\ 0.125+\mathrm{j}0.3018\}.
+\]
+
+（注意X(k)是从0开始的就好）
+
+(2) 由时域循环移位性质，
+\[
+X_1(k)=\mathrm{DFT}[x_1(n)]_8=W_8^{-5k}X(k).
+\]
+
+(3) 由频域调制性质，
+\[
+\begin{aligned}
+X_2(k)&=\mathrm{DFT}[x_2(n)]_8
+=\sum_{n=0}^{7}x(n)\mathrm{e}^{\mathrm{j}\pi n/4}W_8^{kn} \\
+&=\sum_{n=0}^{7}x(n)W_8^{(k-1)n}
+=X\big((k-1)\big)_8R_8(k).
+\end{aligned}
+\]
 
 \prob{16}{}{
 已知 $x(n)$、$x_1(n)$、$x_2(n)$ 分别如题 16 图 (a)、(b)、(c) 所示，$X(k)=\mathrm{DFT}[x(n)]_8$。
 求 $X_1(k)=\mathrm{DFT}[x_1(n)]_8$ 和 $X_2(k)=\mathrm{DFT}[x_2(n)]_8$（用 $X(k)$ 表示）。
+
+\img{images/image-2026-06-29-15-31-21.png}
 }
 
+\textbf{解题思路：} 利用 DFT 时域循环移位性质，将 $x_1(n)$ 与 $x_2(n)$ 表示为 $x(n)$ 的循环移位形式，直接代入性质公式得到频域表达式。
 
+由题图可知
+\[
+x_1(n) = x((n+3))_8 R_8(n),\qquad
+x_2(n) = x((n-2))_8 R_8(n).
+\]
+
+根据 DFT 时域循环移位性质
+\[
+\text{DFT}[x((n+m))_N R_N(n)] = W_N^{-mk} X(k),
+\]
+可得
+\[
+\begin{aligned}
+X_1(k) &= \text{DFT}[x_1(n)]_8 = W_8^{-3k} X(k), \\
+X_2(k) &= \text{DFT}[x_2(n)]_8 = W_8^{2k} X(k).
+\end{aligned}
+\]
 
 \textbf{\hlgreen{频域采样定理}}
 
@@ -1244,18 +1355,6 @@ $$N_{\min} = T_{p\min} \cdot f_{s\min}
         = 10 \times 10^{-3} \times 2.2 \times 10^{3} = 22$$
 
 （注意，对窄带已调信号可采用亚奈奎斯特采样以压缩码率，本题按基带信号采样定理求解。）
-
-\textbf{\hlgreen{快速傅里叶变换}}
-
-\prob{1}{}{如果某通用单片计算机的速度为平均每次复数乘需要 $4\,\mu\text{s}$，每次复数加需要 $1\,\mu\text{s}$，用来计算 $N=1024$ 点 DFT，问直接计算需要多少时间。用 FFT 计算呢？照这样计算，用 FFT 进行快速卷积来对信号进行处理时，估计可实现实时处理的信号最高频率。}
-
-\prob{2}{}{如果将通用单片机换成数字信号处理专用单片机 TMS320 系列，计算复数乘和复数加各需要 $10\,\text{ns}$。请重复做上题。}
-
-\prob{3}{}{已知 $X(k)$ 和 $Y(k)$ 是两个 $N$ 点实序列 $x(n)$ 和 $y(n)$ 的 DFT，希望从 $X(k)$ 和 $Y(k)$ 求 $x(n)$ 和 $y(n)$，为提高运算效率，试设计用一次 $N$ 点 IFFT 来完成的算法。}
-
-\prob{4}{}{设 $x(n)$ 是长度为 $2N$ 的有限长实序列，$X(k)$ 为 $x(n)$ 的 $2N$ 点 DFT。\newline (1) 试设计用一次 $N$ 点 FFT 完成计算 $X(k)$ 的高效算法；\newline (2) 若已知 $X(k)$，试设计用一次 $N$ 点 IFFT 实现求 $X(k)$ 的 $2N$ 点 IDFT 运算。}
-
-\prob{5}{}{分别画出 $16$ 点基 2 DIT-FFT 和 DIF-FFT 运算流图，并计算其复数乘次数，如果考虑三类碟形的乘法计算，试计算复乘次数。}
 
 \subsection{西邮习题集整理}
 
@@ -2140,23 +2239,234 @@ H_a(s) = \frac{\Omega_c^5}{(s^2 + 0.6180\Omega_c s + \Omega_c^2)
 
 \prob{2}{}{设计一个切比雪夫低通滤波器，要求通带截止频率 $f_p=3\,\text{kHz}$，通带最大衰减 $\alpha_p=0.2\,\text{dB}$，阻带截止频率 $f_s=12\,\text{kHz}$，阻带最小衰减 $\alpha_s=50\,\text{dB}$。求出滤波器归一化系统函数 $G(p)$ 和实际的 $H_a(s)$。}
 
+\textbf{解题思路}：根据切比雪夫低通滤波器的技术指标，先确定通带、阻带参数与频率比，计算波纹参数 $\varepsilon$ 与阶数 $N$，再求解归一化原型滤波器极点并得到 $G(p)$，最后通过频率去归一化得到实际系统函数 $H_a(s)$。
+
+\begin{enumerate}
+\item[(1)] \textbf{确定技术指标}。
+\[
+\alpha_{p} = 0.2\ \mathrm{dB},\quad
+\Omega_{p} = 2\pi f_{p} = 6\pi \times 10^{3}\ \mathrm{rad/s}
+\]
+\[
+\alpha_{s} = 50\ \mathrm{dB},\quad
+\Omega_{s} = 2\pi f_{s} = 24\pi \times 10^{3}\ \mathrm{rad/s}
+\]
+\[
+\lambda_{p} = 1,\quad
+\lambda_{s} = \frac{\Omega_{s}}{\Omega_{p}} = 4
+\]
+
+\item[(2)] \textbf{求阶数 $N$ 与波纹参数 $\varepsilon$}。
+\[
+k^{-1} = \sqrt{\frac{10^{0.1\alpha_{s}} - 1}{10^{0.1\alpha_{p}} - 1}}
+      \approx 1456.65
+\]
+\[
+N = \frac{\operatorname{arch} k^{-1}}{\operatorname{arch} \lambda_{s}}
+  = \frac{\operatorname{arch} 1456.65}{\operatorname{arch} 4}
+  \approx 3.8659
+\]
+取 $N = 4$ 以满足指标要求。
+\[
+\varepsilon = \sqrt{10^{0.1\alpha_{p}} - 1} = 0.2171
+\]
+
+\item[(3)] \textbf{求归一化系统函数 $G(p)$}。
+\[
+G(p) = \frac{1}{\varepsilon \cdot 2^{N-1} \prod_{k=1}^{N}(p-p_{k})}
+     = \frac{1}{1.7368 \prod_{k=1}^{4}(p-p_{k})}
+\]
+极点由下式给出：
+\[
+p_{k} = -\cosh \xi \sin \frac{(2k-1)\pi}{2N}
+        + j \cosh \xi \cos \frac{(2k-1)\pi}{2N},
+\quad k=1,2,3,4
+\]
+其中
+\[
+\xi = \frac{1}{N} \operatorname{arsh}\frac{1}{\varepsilon}
+    = \frac{1}{4} \operatorname{arsh}\frac{1}{0.2171}
+    \approx 0.5580
+\]
+计算得
+\begin{align*}
+p_{1} &= -0.4438 + j 1.0715, &
+p_{2} &= -1.0715 + j 0.4438, \\
+p_{3} &= -1.0715 - j 0.4438, &
+p_{4} &= -0.4438 - j 1.0715.
+\end{align*}
+
+\item[(4)] \textbf{去归一化得实际系统函数 $H_a(s)$}。
+令 $s_k = \Omega_p p_k = 6\pi \times 10^3 p_k$，则
+\[
+H_a(s) = G(p)\big|_{p = s/\Omega_p}
+       = \frac{\Omega_p^4}{1.7368 \prod_{k=1}^{4}(s - s_k)}.
+\]
+利用共轭对称性 $p_4 = p_1^*,\ p_3 = p_2^*$，将分母化为二阶实系数因子：
+\[
+H_a(s) = \frac{7.2687 \times 10^{16}}
+               {(s^2 + 1.6731 \times 10^4 s + 4.7791 \times 10^8)}
+               {(s^2 + 4.0394 \times 10^4 s + 4.7790 \times 10^8)}.
+\]
+分母多项式形式可由上式展开得到。
+\end{enumerate}
+
 \prob{3}{}{设计一个巴特沃斯高通滤波器，要求其通带截止频率 $f_p=20\,\text{kHz}$，阻带截止频率 $f_s=10\,\text{kHz}$，$f_p$ 处最大衰减为 $3\,\text{dB}$，阻带最小衰减 $\alpha_s=15\,\text{dB}$。求出该高通滤波器的系统函数 $H_a(s)$。}
+
+解：\textbf{解题思路}：通过频率变换将高通指标转换为归一化低通指标，按巴特沃斯逼近确定滤波器阶数及归一化系统函数，再通过 $p = \Omega_c / s$ 变换得到实际高通系统函数。
+
+\begin{enumerate}
+\item[(1)] \textbf{确定高通滤波器技术指标}。  
+$f_{p}=20\,\text{kHz}$，$\alpha_{p}=3\,\text{dB}$；  
+$f_{s}=10\,\text{kHz}$，$\alpha_{s}=15\,\text{dB}$。
+
+\item[(2)] \textbf{转换为归一化低通指标}。  
+由高通到低通频率变换公式 $\lambda_{p}=1$，$\lambda_{s}=\Omega_{p}/\Omega_{s}$，得  
+\[
+\lambda_{p}=1,\quad a_{p}=3\,\text{dB},\quad
+\lambda_{s}=2,\quad a_{s}=15\,\text{dB}.
+\]
+
+\item[(3)] \textbf{设计归一化低通 $G(p)$}。  
+巴特沃斯滤波器参数计算：
+\[
+k_{sp}=\sqrt{\frac{10^{0.1\alpha_{p}}-1}{10^{0.1\alpha_{s}}-1}}=0.18,\quad
+\lambda_{sp}=\frac{\lambda_{s}}{\lambda_{p}}=2,
+\]
+\[
+N=-\frac{\lg k_{sp}}{\lg\lambda_{sp}}=-\frac{\lg0.18}{\lg2}=2.47.
+\]
+取 $N=3$，查表得三阶巴特沃斯归一化低通系统函数：
+\[
+G(p)=\frac{1}{p^{3}+2p^{2}+2p+1}.
+\]
+
+\item[(4)] \textbf{频率变换得高通系统函数 $H(s)$}。  
+令 $p=\Omega_c/s$，代入 $G(p)$ 得
+\[
+H(s)=G(p)\big|_{p=\Omega_c/s}
+     =\frac{s^{3}}{s^{3}+2\Omega_c s^{2}+2\Omega_c^{2}s+\Omega_c^{3}}.
+\]
+\end{enumerate}
 
 \prob{4}{}{已知模拟滤波器的系统函数 $H_a(s)$ 如下：\newline (1) $H_a(s)=\dfrac{s+a}{(s+a)^2+b^2}$\newline (2) $H_a(s)=\dfrac{b}{(s+a)^2+b^2}$\newline 式中 $a$、$b$ 为常数，设 $H_a(s)$ 因果稳定，试采用脉冲响应不变法将其转换成数字滤波器 $H(z)$。}
 
+解：本题针对两种二阶模拟滤波器基本节，采用脉冲响应不变法推导其数字滤波器系统函数。基本步骤为：确定模拟滤波器极点，进行部分分式展开，对每一项极点套用脉冲响应不变法变换公式 $H(z)=\sum_{k}\frac{A_k}{1-e^{s_k T}z^{-1}}$，最后通分合并为实系数有理分式形式。设采样周期为 $T$。
+
+\begin{enumerate}
+\item[(1)] $ H_{a}(s)=\dfrac{s+a}{(s+a)^{2}+b^{2}} $
+
+\textbf{极点：}
+$$ s_{1}=-a+\mathrm{j}b, \quad s_{2}=-a-\mathrm{j}b $$
+
+\textbf{部分分式展开：}
+设 $H_{a}(s)=\dfrac{A_{1}}{s-s_{1}}+\dfrac{A_{2}}{s-s_{2}}$，比较分子系数得
+$$
+\begin{cases}
+A_{1}+A_{2}=1 \\
+-A_{1}s_{2}-A_{2}s_{1}=a
+\end{cases}
+$$
+解得 $A_{1}=A_{2}=1/2$，即
+$$ H_{a}(s)=\frac{1/2}{s-(-a+\mathrm{j}b)}+\frac{1/2}{s-(-a-\mathrm{j}b)} $$
+
+\textbf{脉冲响应不变法变换：}
+$$
+H(z)=\frac{1/2}{1-e^{(-a+\mathrm{j}b)T}z^{-1}}+\frac{1/2}{1-e^{(-a-\mathrm{j}b)T}z^{-1}}
+$$
+
+\textbf{合并化简：}
+$$
+H(z)=\frac{1-z^{-1}e^{-aT}\cos(bT)}
+          {1-2e^{-aT}\cos(bT)z^{-1}+e^{-2aT}z^{-2}}
+$$
+
+\item[(2)] $ H_{a}(s)=\dfrac{b}{(s+a)^{2}+b^{2}} $
+
+\textbf{极点：}
+$$ s_{1}=-a+\mathrm{j}b, \quad s_{2}=-a-\mathrm{j}b $$
+
+\textbf{部分分式展开：}
+$$ H_{a}(s)=\frac{\mathrm{j}/2}{s-(-a-\mathrm{j}b)}+\frac{-\mathrm{j}/2}{s-(-a+\mathrm{j}b)} $$
+
+\textbf{脉冲响应不变法变换：}
+$$
+H(z)=\frac{\mathrm{j}/2}{1-e^{(-a-\mathrm{j}b)T}z^{-1}}
+     +\frac{-\mathrm{j}/2}{1-e^{(-a+\mathrm{j}b)T}z^{-1}}
+$$
+
+\textbf{合并化简：}
+$$
+H(z)=\frac{z^{-1}e^{-aT}\sin(bT)}
+          {1-2e^{-aT}\cos(bT)z^{-1}+e^{-2aT}z^{-2}}
+$$
+\end{enumerate}
+
 \prob{5}{}{已知模拟滤波器的系统函数如下：\newline (1) $H_a(s)=\dfrac{1}{s^2+s+1}$\newline (2) $H_a(s)=\dfrac{b}{2s^2+3s+1}$\newline 试采用脉冲响应不变法和双线性变换法将其转换为数字滤波器。设 $T=2\,\text{s}$。}
+
+解：
+\textbf{解题思路：}
+脉冲响应不变法通过部分分式展开将模拟滤波器极点映射为数字滤波器极点，利用 $H(z)=\sum_{k}\frac{A_k}{1-e^{s_k T}z^{-1}}$ 进行变换；双线性变换法通过 $s=\frac{2}{T}\frac{1-z^{-1}}{1+z^{-1}}$ 代入模拟传递函数，经代数化简得到数字滤波器传递函数。
+
+Ⅰ. 脉冲响应不变法（$T=2$）
+
+(1) $H_a(s)=\dfrac{1}{s^2+s+1}$
+
+极点：
+$$s_{1,2}=-\frac{1}{2}\pm j\frac{\sqrt{3}}{2}$$
+
+部分分式展开：
+$$H_a(s)=\frac{-j\frac{\sqrt{3}}{3}}{s-s_1}+\frac{j\frac{\sqrt{3}}{3}}{s-s_2}$$
+
+数字滤波器传递函数：
+$$H(z)=\frac{-j\frac{\sqrt{3}}{3}}{1-e^{s_1 T}z^{-1}}
+      +\frac{j\frac{\sqrt{3}}{3}}{1-e^{s_2 T}z^{-1}}$$
+
+代入 $T=2$，合并化简：
+$$H(z)=\frac{2\sqrt{3}}{3}\cdot
+      \frac{z^{-1}e^{-1}\sin\sqrt{3}}
+           {1-2z^{-1}e^{-1}\cos\sqrt{3}+e^{-2}z^{-2}}$$
+
+(2) $H_a(s)=\dfrac{b}{2s^2+3s+1}=\dfrac{b}{(2s+1)(s+1)}$
+
+极点：$s_1=-\dfrac{1}{2},\ s_2=-1$
+
+部分分式展开：
+$$H_a(s)=\frac{-b}{s+1}+\frac{b}{s+\frac{1}{2}}$$
+
+数字滤波器传递函数：
+$$H(z)=\frac{-b}{1-e^{-T}z^{-1}}+\frac{b}{1-e^{-\frac{1}{2}T}z^{-1}}$$
+
+代入 $T=2$，合并化简：
+$$H(z)=\frac{bz^{-1}(e^{-1}-e^{-2})}
+           {1-(e^{-1}+e^{-2})z^{-1}+e^{-3}z^{-2}}$$
+
+Ⅱ. 双线性变换法（$T=2$）
+
+(1) $H_a(s)=\dfrac{1}{s^2+s+1}$
+
+代入 $s=\dfrac{2}{T}\dfrac{1-z^{-1}}{1+z^{-1}}=\dfrac{1-z^{-1}}{1+z^{-1}}$：
+$$H(z)=\frac{1}{\left(\frac{1-z^{-1}}{1+z^{-1}}\right)^2
+            +\frac{1-z^{-1}}{1+z^{-1}}+1}$$
+
+化简：
+$$H(z)=\frac{(1+z^{-1})^2}{(1-z^{-1})^2+(1-z^{-1})(1+z^{-1})+(1+z^{-1})^2}
+      =\frac{1+2z^{-1}+z^{-2}}{3+z^{-2}}$$
+
+(2) $H_a(s)=\dfrac{b}{2s^2+3s+1}$
+
+代入 $s=\dfrac{1-z^{-1}}{1+z^{-1}}$：
+$$H(z)=\frac{b}{2\left(\frac{1-z^{-1}}{1+z^{-1}}\right)^2
+            +3\frac{1-z^{-1}}{1+z^{-1}}+1}$$
+
+化简：
+$$H(z)=\frac{b(1+z^{-1})^2}
+           {2(1-z^{-1})^2+3(1-z^{-2})+(1+z^{-1})^2}
+      =\frac{b(1+2z^{-1}+z^{-2})}{6-2z^{-1}}$$
 
 \prob{6}{}{设 $h_a(t)$ 表示一模拟滤波器的单位冲激响应，即\newline $h_a(t) = \begin{cases} e^{-0.9t} & t \geq 0 \\ 0 & t < 0 \end{cases}$\newline 用脉冲响应不变法，将此模拟滤波器转换成数字滤波器（用 $h(n)$ 表示单位脉冲响应，即 $h(n)=h_a(nT)$）。确定系统函数 $H(z)$，并把 $T$ 作为参数，证明：$T$ 为任何值时，数字滤波器是稳定的，并说明数字滤波器近似为低通滤波器还是高通滤波器。}
 
 \prob{7}{}{假设某模拟滤波器 $H_a(s)$ 是一个低通滤波器，又知 $H(z)=H_a(s)\big|_{s=\frac{z-1}{z+1}}$，数字滤波器 $H(z)$ 的通带中心位于下面哪种情况？并说明原因。\newline (1) $\omega=0$（低通）。\newline (2) $\omega=\pi$（高通）。\newline (3) 除 $0$ 或 $\pi$ 以外的某一频率（带通）。}
-
-\prob{9}{}{设计低通数字滤波器，要求通带内频率低于 $0.2\pi$ rad 时，容许幅度误差在 $1$ dB 之内；频率在 $0.3\pi$ 到 $\pi$ 之间的阻带衰减大于 $10$ dB。试采用巴特沃斯型模拟滤波器进行设计，用脉冲响应不变法进行转换，采样间隔 $T=1$ ms。}
-
-\prob{10}{}{要求同题 9，试采用双线性变换法设计数字低通滤波器。}
-
-\prob{11}{}{设计一个数字高通滤波器，要求通带截止频率 $\omega_p=0.8\pi$ rad，通带衰减不大于 3 dB，阻带截止频率 $\omega_s=0.5\pi$ rad，阻带衰减不小于 18 dB，希望采用巴特沃斯型滤波器。}
-
-\prob{12}{}{设计一个数字带通滤波器，通带范围为 $0.25\pi$ rad 到 $0.45\pi$ rad，通带内最大衰减为 3 dB，$0.15\pi$ rad 以下和 $0.55\pi$ rad 以上为阻带，阻带内最小衰减为 15 dB。试采用巴特沃斯型模拟低通滤波器。}
 
 \subsection{西邮习题集整理}
 

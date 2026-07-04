@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  28 JUN 2026 21:11
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  2 JUL 2026 00:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -962,24 +962,30 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 201.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Missing character: There is no τ (U+03C4) in font [lmroman5-regular]:mapping=tex-text;!
-[1
+File: images/image-2026-07-01-23-14-43.png Graphic file (type bmp)
+<images/image-2026-07-01-23-14-43.png>
+ [1
 
-] [2] (./WJGGY-Cheatsheet.aux)
+]
+Missing character: There is no ^^W (U+0017) in font [lmroman5-regular]:mapping=tex-text;!
+Missing character: There is no ^^W (U+0017) in font [lmroman5-regular]:mapping=tex-text;!
+[2]
+Missing character: There is no τ (U+03C4) in font [lmroman5-regular]:mapping=tex-text;!
+[3] (./WJGGY-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `WJGGY-Cheatsheet.out' has not changed.
-(rerunfilecheck)             Checksum: B1AA7C885B6AC71237998BB06FA48F90;1086.
+(rerunfilecheck)             Checksum: 453CBDB1C34C6313062AB264E6B1EBA4;1203.
  ) 
 Here is how much of TeX's memory you used:
- 27969 strings out of 473832
- 605201 string characters out of 5729481
- 1138527 words of memory out of 5000000
- 50544 multiletter control sequences out of 15000+600000
- 562592 words of font info for 69 fonts, out of 8000000 for 9000
+ 28099 strings out of 473832
+ 613126 string characters out of 5729481
+ 1127662 words of memory out of 5000000
+ 50669 multiletter control sequences out of 15000+600000
+ 562600 words of font info for 70 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,11n,114p,589b,608s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,13n,114p,589b,823s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on WJGGY-Cheatsheet.pdf (2 pages).
+Output written on WJGGY-Cheatsheet.pdf (3 pages).

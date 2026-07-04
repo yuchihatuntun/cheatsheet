@@ -454,9 +454,9 @@ FT 的处理对象 $x_N(n)$ 是 DFS 的处理对象 $\tilde{x}_N(n)$ 的主值�
     \comprow{$x_1[n]x_2[n]$ & $\frac{1}{N}\sum\limits_{l=0}^{N-1} X_1(l)X_2(k-l)$}
     \comprow{$x^*[n]$ & $X^*[((-k))_N]$;\quad $x^*(-n) \leftrightarrow X^*[k]$}
     \comprow{$\text{Re}\{x[n]\}$ & $X_{e}[k]=\frac{1}{2}\{X(k)+X^*(-k)\}$}
-    \comprow{$\text{Im}\{x[n]\}$ & $X_{o}[k]=\frac{1}{2}\{X(k)-X^*(-k)\}$}
+    \comprow{$j(\text{Im}\{x[n]\})$ & $X_{o}[k]=\frac{1}{2}\{X(k)-X^*(-k)\}$}
     \comprow{$x_{e}[n]=\frac{1}{2}\{x(n)+x^*(-n)\}$ & $\text{Re}\{X[k]\}$}
-    \comprow{$x_{o}[n]=\frac{1}{2}\{x(n)-x^*(-n)\}$ & $\text{Im}\{X[k]\}$}
+    \comprow{$x_{o}[n]=\frac{1}{2}\{x(n)-x^*(-n)\}$ & $j(\text{Im}\{X[k]\})$}
     \comprow{$\sum_{n=0}^{N-1} |x(n)|^2$ & $\frac{1}{N} \sum_{k=0}^{N-1} |X(k)|^2$}
 }
 
@@ -470,6 +470,14 @@ FT 的处理对象 $x_N(n)$ 是 DFS 的处理对象 $\tilde{x}_N(n)$ 的主值�
 
 $C\!=\!\begin{bmatrix} 1 & 0 & 0 & 0 & 4 & 3 \\ 2 & 1 & 0 & 0 & 0 & 4 \\ 3 & 2 & 1 & 0 & 0 & 0 \\ 4 & 3 & 2 & 1 & 0 & 0 \\ 0 & 4 & 3 & 2 & 1 & 0 \\ 0 & 0 & 4 & 3 & 2 & 1 \end{bmatrix}_{6\times 6}$，再相乘即可：
 $\cdot \begin{bmatrix} 5 \\ 6 \\ 7 \\ 0 \\ 0 \\ 0 \end{bmatrix}=[5,16,28,40,0,0]^T$。
+
+\textbf{循环卷积与线性卷积的关系：}
+设 $x(n)$ 长度为 $L_x$，$y(n)$ 长度为 $L_y$，DFT 点数为 $N$。线性卷积 $f_l(n)=x(n)*y(n)$ 长度为 $L=L_x+L_y-1$。$N$ 点循环卷积 $f(n)=\mathrm{IDFT}[X(k)Y(k)]_N$ 与线性卷积满足
+$f(n) = \sum_{m=-\infty}^{\infty} f_l(n+Nm) R_N(n)$
+
+当 $N \ge L$ 时无混叠，对 $0 \le n \le N-1$ 有 $f(n)=f_l(n)$；
+
+当 $N < L$ 时，混叠区间为 $0 \le n \le L-N-1$，在无混叠区间 $L-N \le n \le N-1$ 上 $f(n)=f_l(n)$。
 
 \textbf{\hlgreen{常用 DFT 变换对}}（$N$ 点 DFT，$0 \le n,k \le N-1$）
 
@@ -512,8 +520,13 @@ $\tilde{x}_N(n) = \sum_{n=-\infty}^{\infty} x(n+iN)$ 会发生时域混叠。通
     \comprow{$\begin{cases} x(n), & n=0,\dots,N-1 \\ 0, & n=N,\dots,2N-1 \end{cases}$ & $\begin{aligned} Y(2k) &= X(k), \\ Y(2k+1) &= X(k+\tfrac12) \end{aligned}$ & 时域后段补零，频域奇偶分离}
     \comprow{$\begin{cases} 0, & n=0,\dots,N-1 \\ x(n), & n=N,\dots,2N-1 \end{cases}$ & $\begin{aligned} Y(2k) &= X(k), \\ Y(2k+1) &= X(k-\tfrac12) \end{aligned}$ & 时域前段补零，频域奇偶分离}
     \comprow{$\begin{cases} x(n), & n=0,\dots,N-1 \\ x(n), & n=N,\dots,2N-1 \end{cases}$ & $\begin{cases}2X(k/2), & k \text{为偶数}, \\0,       & k \text{为奇数},\end{cases}$& 周期序列截取 $2N$ 点，频域偶位保留奇位为零}
-    \comprow{$\begin{cases} x(n), & n=0,\dots,N-1 \\ 0, & n=N,\dots,2N-1 \\ x(n-N), & n=2N,\dots,3N-1 \end{cases}$ & $Y(k) = X((k))_{N} R_{2N}(k)$ & 时域中间插零，频域周期延拓叠加}
+    \comprow{$\begin{cases} x(n/2), & n \text{为偶数} \\ 0, & n \text{为奇数} \end{cases}$ & $Y(k) = X((k))_{N} R_{2N}(k)$ & 时域中间插零，频域周期延拓叠加}
 }
+
+\textbf{解题步骤：}将 $y(n)$ 按前后半段分解：
+$y_1(n) = y(n) + y(n+N), \quad y_2(n) = [y(n) - y(n+N)] W_{2N}^n$
+由 DIF-FFT 原理，时域分前后则频域分奇偶，[然后分别对 $y_1(n)$ 和 $y_2(n)$ 进行 DFT，得到$Y(2k)，Y(2k+1) $]
+
 
 \section{第四章\ 时域离散系统的算法结构}
 

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  28 JUN 2026 16:56
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  29 JUN 2026 17:19
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1022,25 +1022,28 @@ File: images/image-2026-06-15-20-40-48.png Graphic file (type bmp)
 File: images/image-2026-06-15-20-49-04.png Graphic file (type bmp)
 <images/image-2026-06-15-20-49-04.png>
 [3] [4]
+File: images/image-2026-06-29-15-31-21.png Graphic file (type bmp)
+<images/image-2026-06-29-15-31-21.png>
+
 Missing character: There is no ， (U+FF0C) in font [lmroman5-regular]:mapping=tex-text;!
 Missing character: There is no ， (U+FF0C) in font [lmroman5-regular]:mapping=tex-text;!
 
-Overfull \hbox (6.55678pt too wide) in paragraph at lines 1412--1412
+Overfull \hbox (6.55678pt too wide) in paragraph at lines 1511--1511
 []|$[]$|  
  []
 
 
-Overfull \hbox (6.55678pt too wide) in paragraph at lines 1412--1412
+Overfull \hbox (6.55678pt too wide) in paragraph at lines 1511--1511
 []|$[]$|  
  []
 
 
-Overfull \hbox (6.55678pt too wide) in paragraph at lines 1412--1412
+Overfull \hbox (6.55678pt too wide) in paragraph at lines 1511--1511
 []|$[]$|  
  []
 
 
-Overfull \hbox (25.34045pt too wide) in paragraph at lines 1412--1412
+Overfull \hbox (25.34045pt too wide) in paragraph at lines 1511--1511
 []|$[]$|  
  []
 
@@ -1060,7 +1063,7 @@ File: images/image-2026-06-18-19-59-06.png Graphic file (type bmp)
 File: images/image-2026-06-18-20-03-51.png Graphic file (type bmp)
 <images/image-2026-06-18-20-03-51.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1854--1854
+Underfull \hbox (badness 10000) in paragraph at lines 1953--1953
 []$\OML/cmm/m/it/5 H[]\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 z\OT1/cmr/m/n/5 ) = []\OML/cmm/m/it/5 ; H[]\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 z\OT1/cmr/m/n/5 ) =
  []
 
@@ -1068,17 +1071,17 @@ File: images/image-2026-06-17-11-37-38.png Graphic file (type bmp)
 <images/image-2026-06-17-11-37-38.png>
 File: images/image-2026-06-17-11-39-27.png Graphic file (type bmp)
 <images/image-2026-06-17-11-39-27.png>
+[7]
 File: images/image-2026-06-19-03-48-22.png Graphic file (type bmp)
 <images/image-2026-06-19-03-48-22.png>
 File: images/image-2026-06-19-03-53-49.png Graphic file (type bmp)
 <images/image-2026-06-19-03-53-49.png>
 File: images/image-2026-06-19-04-02-39.png Graphic file (type bmp)
 <images/image-2026-06-19-04-02-39.png>
-[7]
 File: images/image-2026-06-19-05-04-56.png Graphic file (type bmp)
 <images/image-2026-06-19-05-04-56.png>
 
-Overfull \hbox (53.5pt too wide) in paragraph at lines 1981--1981
+Overfull \hbox (53.5pt too wide) in paragraph at lines 2080--2080
  []|[][][][][][][] [][][] 
  []
 
@@ -1086,29 +1089,37 @@ File: images/image-2026-06-28-10-34-42.png Graphic file (type bmp)
 <images/image-2026-06-28-10-34-42.png>
 File: images/image-2026-06-28-10-35-10.png Graphic file (type bmp)
 <images/image-2026-06-28-10-35-10.png>
-
-Overfull \hbox (12.33676pt too wide) detected at line 2130
+[8]
+Overfull \hbox (12.33676pt too wide) detected at line 2229
 \OML/cmm/m/it/5 H[]\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 s\OT1/cmr/m/n/5 ) = \OML/cmm/m/it/5 G\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 p\OT1/cmr/m/n/5 )[][] = []\OML/cmm/m/it/5 :
  []
 
-[8]
-Overfull \hbox (53.5pt too wide) in paragraph at lines 2165--2165
+
+Underfull \hbox (badness 10000) in paragraph at lines 2407--2410
+[]\TU/PingFangSC(0)/m/n/5 解：|  \TU/PingFangSC(0)/b/n/5 解 题 思 路：|  \TU/PingFangSC(0)/m/n/5 脉 冲 响 应 不 变 法 通 过 部 分 分 式 展 开 将 模 拟 滤 波 器 极 点 映 射 为 数 字 滤 波 器 极 点，|  利 用 $\OML/cmm/m/it/5 H\OT1/cmr/m/n/5 (\OML/cmm/m/it/5 z\OT1/cmr/m/n/5 ) =
+ []
+
+Missing character: There is no Ⅰ (U+2160) in font [lmroman5-regular]:mapping=tex-text;!
+[9]
+Missing character: There is no Ⅱ (U+2161) in font [lmroman5-regular]:mapping=tex-text;!
+
+Overfull \hbox (53.5pt too wide) in paragraph at lines 2475--2475
  []|[][][][][][][] [][][] 
  []
 
+[10]
 File: images/image-2026-06-27-11-10-15.png Graphic file (type bmp)
 <images/image-2026-06-27-11-10-15.png>
-[9]
 File: images/image-2026-06-27-11-17-49.png Graphic file (type bmp)
 <images/image-2026-06-27-11-17-49.png>
 File: images/image-2026-06-27-11-19-47.png Graphic file (type bmp)
 <images/image-2026-06-27-11-19-47.png>
- [10]
-Overfull \hbox (20.7952pt too wide) in paragraph at lines 2734--2734
+ [11]
+Overfull \hbox (20.7952pt too wide) in paragraph at lines 3044--3044
 []|$[] [][] \OML/cmm/m/it/5 ^^N  []$|  
  []
 
-[11] (./DSP-Cheatsheet.aux)
+[12] (./DSP-Cheatsheet.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
@@ -1117,12 +1128,12 @@ Package rerunfilecheck Info: File `DSP-Cheatsheet.out' has not changed.
 (rerunfilecheck)             Checksum: C97F001CD6132ADF2269A8744FE2D812;2047.
  ) 
 Here is how much of TeX's memory you used:
- 29001 strings out of 473832
- 636395 string characters out of 5729481
- 1120699 words of memory out of 5000000
- 51537 multiletter control sequences out of 15000+600000
+ 29010 strings out of 473832
+ 636760 string characters out of 5729481
+ 1117699 words of memory out of 5000000
+ 51545 multiletter control sequences out of 15000+600000
  562600 words of font info for 70 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,22n,114p,671b,806s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,22n,114p,671b,768s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on DSP-Cheatsheet.pdf (11 pages).
+Output written on DSP-Cheatsheet.pdf (12 pages).
